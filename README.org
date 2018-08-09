@@ -1,1 +1,121 @@
-/Comptage/ application for ne.ch
+Canton Neuchâtel's /Comptage/ QGIS plugin
+* Questions
+** TODO UC1 - how to represent on campaing on the map?
+   Using a point? Which information is to be showed when the point is selected?
+   Standard QGIS forms?
+** TODO UC3 - how to select the measures to insert into the plan?
+   Graphically on the map or from the table?
+** TODO UC5 - how to manage multiple files import?
+** TODO UC5 - how to determine if imported data are conficting?
+** TODO UC5 - how to manage binary files?
+** TODO UC6 - what is the content of the report?
+** TODO UC6 - report format can be something different than xlsx?
+** TODO Data migration
+   What is the structure of the current database?
+* Engineering
+** Purpose 
+   The purposes of the QGIS plugin are:
+   - plan the future measure campaigns
+   - prepare the current measure campaign
+   - import and management of the measure data
+   - centralized management of the measure data
+** Glossary
+   | English          | French                 | Description |
+   |------------------+------------------------+-------------|
+   | measure          | comptage               |             |
+   | measure campaign | campagne de comptage   |             |
+   |                  | poste de comptage      |             |
+   |                  | machine                |             |
+   |                  | capteurs               |             |
+   |                  | compteur MD            |             |
+   |                  | cas spécial            |             |
+   |                  | canal                  |             |
+   |                  | période de pose        |             |
+   |                  | période de comptage    |             |
+   |                  | fiche de pose          |             |
+   |                  | tronçon                |             |
+   |                  | voie de circulation    |             |
+   |                  | direction              |             |
+   |                  | fichier de config      |             |
+   |                  | fichier binaire        |             |
+   |                  | ficher ASCII           |             |
+   |                  | ficher rapport (Excel) |             |
+   |                  | fichier rapport (PDF)  |             |
+   |                  | étape de contrôle      |             |
+   |                  | étape de validation    |             |
+   |                  | comptages temporaires  |             |
+   |                  | comptages permanents   |             |
+   |                  | classe de véhicules    |             |
+** Use cases
+*** UC1 Visualisation of existing measure campaigns
+    The user requests to see the past measure campaigns. He can filter the
+    results by date, type of measure and type of device.
+    * Input:
+      * date from
+      * date to
+      * type of measure
+      * type of device
+    * Output: 
+      - map
+*** UC2 Create device configuration
+    The user selects the tool to create a new device configuration. He clicks on
+    the map to define the location and he sets all the details of the measure
+    and the used device in the showed form. Once the details are inserted, he
+    is informed if there are some issues (e.g. non-working days) and he can
+    download the configuration file to be used into the measure machine.
+    - Input:
+      - measure details
+      - device details
+    - Output:
+      - configuration file
+*** UC3 Create measure plan
+    The user selects the tool to create a measure plan. He is asked to select
+    the desired measures and then he can download the measure plan. 
+    - Input: 
+      - selection of measure points
+    - Output:
+      - plan file with map
+*** UC4 Insert device number
+    The user selects an existing measure on the map and can edit the details and
+    (e.g. insert the device number).
+    - Input:
+      - device number
+    - Output:
+      - 
+*** UC5 Import measure data
+    The user selects the tool to import the measure data. He can select one or
+    more files from the file system. 
+    - Input:
+      - data files
+    - Output:
+      - chart of measures
+*** UC6 Create report
+    The user selects the tool to create a report. He define the details of the
+    report he wants to export and he can download the report. 
+    - Input:
+      - measure id
+    - Output:
+      - report (xlsx)
+*** UC7 Validate report
+    The user selects the tool to validate the report. He can select if the
+    report is accepted or not.
+    - Input:
+      - report validation
+    - Output:
+      - 
+*** UC8 Validate measure
+    The user (trafic engineer) opens the attribute table of the measures and sets
+    the validity flag of the data he wants to validate.
+    - Input:
+      - Validity state
+    - Output:
+      - 
+*** UC9 Import non-working days
+    The user selects the tool to insert the non-working days. He can select a
+    ics file from the file system.  
+    - Input:
+      - ics file
+    - Output:
+      - 
+** Functional requirements
+** Non-functional requirements
