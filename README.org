@@ -1,17 +1,4 @@
 Canton Neuchâtel's /Comptage/ QGIS plugin
-* Questions
-** TODO UC1 - how to represent on campaing on the map?
-   Using a point? Which information is to be showed when the point is selected?
-   Standard QGIS forms?
-** TODO UC3 - how to select the measures to insert into the plan?
-   Graphically on the map or from the table?
-** TODO UC5 - how to manage multiple files import?
-** TODO UC5 - how to determine if imported data are conficting?
-** TODO UC5 - how to manage binary files?
-** TODO UC6 - what is the content of the report?
-** TODO UC6 - report format can be something different than xlsx?
-** TODO Data migration
-   What is the structure of the current database?
 * Engineering
 ** Purpose 
    The purposes of the QGIS plugin are:
@@ -49,7 +36,10 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
 ** Use cases
 *** UC1 Visualisation of existing measure campaigns
     The user requests to see the past measure campaigns. He can filter the
-    results by date, type of measure and type of device.
+    results by date, type of measure and type of device. The campaigns are
+    showed as colored road segments for the temporary measure and as a point for
+    the permanent measures. If the measure campaign was during a special event
+    or a non working days, an information is showed.
     * Input:
       * date from
       * date to
@@ -70,7 +60,8 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
       - configuration file
 *** UC3 Create measure plan
     The user selects the tool to create a measure plan. He is asked to select
-    the desired measures and then he can download the measure plan. 
+    the desired measures and then he can download the measure plan with the
+    picture and the map of the location
     - Input: 
       - selection of measure points
     - Output:
@@ -84,7 +75,9 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
       - 
 *** UC5 Import measure data
     The user selects the tool to import the measure data. He can select one or
-    more files from the file system. 
+    more files from the file system. Only the data of the measure days are
+    imported. After the import, the user sees a chart of the imported data and
+    can decide if he wants to finalize the import or abort it.
     - Input:
       - data files
     - Output:
@@ -95,7 +88,7 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     - Input:
       - measure id
     - Output:
-      - report (xlsx)
+      - report PDF
 *** UC7 Validate report
     The user selects the tool to validate the report. He can select if the
     report is accepted or not.
@@ -118,4 +111,13 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     - Output:
       - 
 ** Functional requirements
+   Note:
+   - create an interface to set the "tronçon" details (e.g. picture, ...) 
+   - log all modification of the data, logging the timestamp and the windows user.
 ** Non-functional requirements
+* deadlines
+  - 15.08 Neuchâtel sends info about tables and a dump of the actual postgres db
+  - 24.08 we send the database model
+  - 06.09 Neuchâtel vaidate the database model
+  - 05.10 13:00 meeting (perhaps online) to present the prototype
+  - 14.11 13:00 meeting 
