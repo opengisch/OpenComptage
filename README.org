@@ -39,7 +39,7 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     results by date, type of measure and type of device. The campaigns are
     showed as colored road segments for the temporary measure and as a point for
     the permanent measures. If the measure campaign was during a special event
-    or a non working days, an information is showed.
+    or a holidays, an information is showed.
     * Input:
       * date from
       * date to
@@ -49,7 +49,7 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
       - map
 *** UC2 Create device configuration
     The user selects the tool to create a new device configuration. He clicks on
-    the map to define the location and he sets all the details of the measure
+    the map to define the location and he sets all the details of the measure campaign
     and the used device in the showed form. Once the details are inserted, he
     is informed if there are some issues (e.g. non-working days) and he can
     download the configuration file to be used into the measure machine.
@@ -89,35 +89,202 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
       - measure id
     - Output:
       - report PDF
-*** UC7 Validate report
-    The user selects the tool to validate the report. He can select if the
-    report is accepted or not.
-    - Input:
-      - report validation
-    - Output:
-      - 
-*** UC8 Validate measure
+*** UC7 Validate measure
     The user (trafic engineer) opens the attribute table of the measures and sets
     the validity flag of the data he wants to validate.
     - Input:
       - Validity state
     - Output:
       - 
-*** UC9 Import non-working days
+*** UC8 Import non-working days
     The user selects the tool to insert the non-working days. He can select a
     ics file from the file system.  
     - Input:
       - ics file
     - Output:
       - 
+*** UC9 Set road segment details
+    The user select a road segment and set the details (picture, common name).
+    - Input:
+      - picture, common name of the segment
+    - Output:
+      - 
 ** Functional requirements
-   Note:
-   - create an interface to set the "tronçon" details (e.g. picture, ...) 
-   - log all modification of the data, logging the timestamp and the windows user.
+*** FR1
+    The product shall show the recorded measure campaigns on a map.
+    - Rationale
+      Users want to consult past data to plan futures measure campagins.
+    - Fit criteria
+      All permanent measures are showed as a point on the map and all temporary
+      measures area showed as a colored road segment on the map.
+    - Use cases
+      - UC1
+*** FR2
+    The product shall allow to filter the displayed measure campagins by date,
+    type of measure and type of device.
+    - Rationale
+      To semplify the analysis of existing measure campaigns.
+    - Fit criteria
+      All and only the measure campaigns that match the filters are showed on
+      the map.
+    - Use cases
+      - UC1
+*** FR3
+    The product shall show the data of a measure campaign when clicked.
+    - Rationale
+      To allow the user to analyse data.
+    - Fit criteria
+      When a measure campaign showed on the map is clicked a table with the data
+      of the measure campaign appear.
+    - Use cases
+      - UC1
+*** FR4
+    The product shall alert the user if the measure campaign was during a
+    special event or a holiday. 
+    - Rationale
+      Measures during special days can distort data.
+    - Fit criteria
+      When the measure campaign details are showed, if a day of the campaign was
+      holiday or a special event day, an alert message is showed.
+    - Use cases
+      - UC1
+*** FR5
+    The product shall allow to click on a road segment or a permanent measure
+    place, when the specific tool is selected, to add a new measure campaign and
+    insert the campaign details or modify the existing details.
+    - Rationale
+      To create a new measure campaign and create the config file for the
+      measure machine.
+    - Fit criteria 
+      Clicking on a road segment or a measure location, the form to
+      insert the details is showed and the measure campaign is created.
+    - Use cases
+      - UC2
+      - UC4
+*** FR6
+    The product shall alert the user if a new campaign is defined during a
+    special event or a holiday.
+    - Rationale
+      So the user can modify immediately the period of the measure.
+    - Fit Criteria
+      If a special event or a holiday occur during the measure period, an alert
+      is showed.
+    - Use cases
+      - UC2
+*** FR7
+    The product shall generate a configuration file for the measure machine from
+    a measure campaign.
+    - Rationale
+      To make the real measure campaign
+    - Fit Criteria
+      A configuration file in the machine format is created and stored on the
+      file system.
+    - Use cases
+      - UC2
+*** FR8
+    The product shall create a measure plan from the selected measure campaigns.
+    - Rationale
+      To have a document to give to the workers with the measure campaign
+      information.
+    - Fit Criteria
+      A document with the information of the selected measure campagins is
+      created and stored on the file system.
+    - Use cases
+      - UC3
+*** FR9
+    The product shall import the measure data files.
+    - Rationale
+      To import the data collected from the measure campaign into the system.
+    - Fit Criteria
+      The data contained in the measure data files are imported into the system.
+    - Use cases
+      - UC5
+*** FR10
+    The product shall import only the data of the days that are defined as
+    measure days in the campaign details.
+    - Rationale
+      To avoid junk data into the system
+    - Fit Criteria
+      All the data imported into the system are from measure days.
+    - Use cases
+      - UC5
+*** FR11
+    The product shall display a chart of the imported data and ask to confirm or
+    abort the import.
+    - Rationale
+      To notice before the import if some data are missing or strange.
+    - Fit Criteria
+      A chart with the imported data, divided by hour is displayed.
+    - Use cases
+      - UC5
+*** FR12
+    The product shall create a report of a measure campaign.
+    - Rationale 
+      To have a document to send to the traffic engineer or to share with
+      someone else.
+    - Fir Criteria
+      A PDF with the content of the current report is created.
+    - Use cases
+      - UC6
+*** FR13
+    The product shall allow to validate a measure campaign data.
+    - Rationale
+      To identify which data are been verified and certified by the traffic
+      engineer.
+    - Fit Criteria
+      A measure campaign data contains a flag that indicate if the data are
+      validated.
+    - Use cases
+      - UC7
+*** FR14
+    The product shall import ics files with holidays and special event
+    days. 
+    - Rationale
+      To alert if a measure campaign is during a special day.
+    - Fit Criteria
+      All the dates contained into the ics file are stored into the system.
+    - Use cases
+      - UC8
+*** FR15
+    The product shall allow to set the road segment details: picture and common
+    name. 
+    - Rationale
+      To have the information for the measure plan.
+    - Fit Criteria
+      Each road segment can have a picture and a common name.
+    - Use cases
+      - UC9
 ** Non-functional requirements
+*** NFR1
+    The product shall record a log for all the modification to the database,
+    with datestamp and user.
+    - Rationale
+      To be able to identify who changed the data if something is wrong
+    - Fit Criteria
+      All modification to the database are stored in a log table.
+*** NFR2
+    The product shall use the correct terminology in all user interfaces.
+    - Rationale
+      To avoid confusion and misunderstanding
+    - Fit Criteria
+      The terms used in all user interfaces match with the glossary of the
+      /Cahier des charges/.
 * deadlines
   - 15.08 Neuchâtel sends info about tables and a dump of the actual postgres db
   - 24.08 we send the database model
   - 06.09 Neuchâtel vaidate the database model
   - 05.10 13:00 meeting (perhaps online) to present the prototype
   - 14.11 13:00 meeting 
+* Notes
+** Develop the plugin with TDD. 
+** Is it possible to use SQLAlchemy into the plugin without installing external tools?
+   I think yes, because is a simply pip install. For Postgis there is geoalchemy
+   https://geoalchemy-2.readthedocs.io/en/latest/
+*** Create ER diagram from sqlalchemy
+    https://stackoverflow.com/questions/44981986/sqlalchemy-er-diagram-in-python-3
+** Use Denis's CI integration for QGIS 
+   Deploy automatically a new QGIS plugin to download for each new tag
+** Use the strategy design pattern
+   To be able to use different algorithms to create configuration files and use
+   different algorithms to import data from different sources.
+
