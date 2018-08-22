@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1-beta1" last-position="0,0" last-zoom="1"
+	 default-owner="postgres">
+<database name="new_database" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="comptages" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
+
+<table name="measurement">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<comment><![CDATA[This table contains the info about the imported data into the system. A row corresponds to an import from an ASCII file and all the fields come from the ASCII file.]]></comment>
+	<position x="440" y="60"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="format">
+		<type name="text" length="0"/>
+	</column>
+	<column name="formatter">
+		<type name="text" length="0"/>
+	</column>
+	<column name="instrument">
+		<type name="text" length="0"/>
+	</column>
+	<column name="filename">
+		<type name="text" length="0"/>
+	</column>
+	<column name="gridref">
+		<type name="text" length="0"/>
+	</column>
+	<column name="headings">
+		<type name="text" length="0"/>
+	</column>
+	<column name="recording_begin">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="recording_end">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="units">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="prunits">
+		<type name="text" length="0"/>
+	</column>
+	<column name="class">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="measurement_pk" type="pk-constr" table="comptages.measurement">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="data_int_2">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1380" y="60"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="timestamp" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="channel">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="reserve_code">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="type">
+		<type name="text" length="0"/>
+	</column>
+	<column name="interval">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="bin_01">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_02">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_03">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_04">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_05">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_06">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_07">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_08">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_09">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_10">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_11">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="bin_12">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="data_int_2_pk" type="pk-constr" table="comptages.data_int_2">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_measurement" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="measurement_fk" index="0"/>
+	</customidxs>
+</table>
+
+<table name="data_vbv_1">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1060" y="160"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="vehicle_nr" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="timestamp" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="reserve_code">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="distance_front_front">
+		<type name="numeric" length="3" precision="1"/>
+	</column>
+	<column name="distance_front_rear">
+		<type name="numeric" length="3" precision="1"/>
+	</column>
+	<column name="speed">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="length">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="class">
+		<type name="text" length="0"/>
+	</column>
+	<column name="chassis_height">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="lane_nr">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="direction">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="data_vbv_1_pk" type="pk-constr" table="comptages.data_vbv_1">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="campaign">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="60" y="80"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="placement_begin">
+		<type name="date" length="0"/>
+	</column>
+	<column name="placement_end">
+		<type name="date" length="0"/>
+	</column>
+	<column name="measure_begin" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="measure_end" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="comments">
+		<type name="text" length="0"/>
+	</column>
+	<column name="device_number">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="failure">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="validation">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="class" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="campaign_pk" type="pk-constr" table="comptages.campaign">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="section">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1220" y="460"/>
+	<column name="code" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="road">
+		<type name="text" length="0"/>
+	</column>
+	<column name="way">
+		<type name="text" length="0"/>
+	</column>
+	<column name="owner">
+		<type name="text" length="0"/>
+	</column>
+	<column name="pr">
+		<type name="text" length="0"/>
+	</column>
+	<column name="distance_begin">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="distance_end">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="municipality_number">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="municipality_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geometry" not-null="true">
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="2056"/>
+	</column>
+	<constraint name="section_pk" type="pk-constr" table="comptages.section">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="measure_place">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="80" y="440"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="permanent" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="picture">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geometry" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="2056"/>
+	</column>
+	<constraint name="measure_place_pk" type="pk-constr" table="comptages.measure_place">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="special_date">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1380" y="760"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="period_begin" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="period_end" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+</table>
+
+<relationship name="measurement_has_many_data_int_2" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="comptages.measurement"
+	 dst-table="comptages.data_int_2"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="measurement_has_many_data_vbv_1" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="comptages.measurement"
+	 dst-table="comptages.data_vbv_1"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="campaign_has_many_measurement" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="comptages.campaign"
+	 dst-table="comptages.measurement"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-61.8245" y="94.384"/>
+	</label>
+</relationship>
+
+<usertype name="data_int_type" configuration="enumeration">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<enumeration values="LEN,CLS,SPD,DRN"/>
+</usertype>
+
+<relationship name="measure_place_has_one_campaign" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="comptages.campaign"
+	 dst-table="comptages.measure_place"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="77.2336" y="15.5757"/>
+	</label>
+</relationship>
+
+<relationship name="measurement_has_one_section" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="comptages.section"
+	 dst-table="comptages.measurement"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-95.6187" y="-3.11603"/>
+	</label>
+</relationship>
+
+<table name="measure_place_configuration">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="660" y="520"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="measure_place_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="section_code">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="channel">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="direction">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="device">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="measure_place_configuration_pk" type="pk-constr" table="comptages.measure_place_configuration">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<view name="temporary_measure_place">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="920" y="800"/>
+	<reference table="comptages.section" column="geometry"/>
+	<reference table="comptages.measure_place" column="name"/>
+	<reference table="comptages.measure_place" column="picture"/>
+	<expression type="select-exp">0,1,2</expression>
+</view>
+
+<relationship name="rel_temporary_measure_place_section" type="reltv"
+	 src-table="comptages.temporary_measure_place"
+	 dst-table="comptages.section"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_temporary_measure_place_measure_place" type="reltv"
+	 src-table="comptages.temporary_measure_place"
+	 dst-table="comptages.measure_place"
+	 src-required="false" dst-required="false"/>
+
+<view name="permanent_measure_place">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="440" y="800"/>
+	<reference table="comptages.measure_place" column="geometry"/>
+	<reference table="comptages.measure_place" column="name"/>
+	<reference table="comptages.measure_place" column="picture"/>
+	<expression type="select-exp">0,1,2</expression>
+</view>
+
+<relationship name="rel_permanent_measure_place_measure_place" type="reltv"
+	 src-table="comptages.permanent_measure_place"
+	 dst-table="comptages.measure_place"
+	 src-required="false" dst-required="false"/>
+
+<constraint name="measure_place_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="comptages.measure_place" table="comptages.measure_place_configuration">
+	<columns names="measure_place_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="section_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="comptages.section" table="comptages.measure_place_configuration">
+	<columns names="section_code" ref-type="src-columns"/>
+	<columns names="code" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_measure_place_configuration_measure_place" type="relfk"
+	 src-table="comptages.measure_place_configuration"
+	 dst-table="comptages.measure_place" reference-fk="measure_place_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_measure_place_configuration_section" type="relfk"
+	 src-table="comptages.measure_place_configuration"
+	 dst-table="comptages.section" reference-fk="section_fk"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>

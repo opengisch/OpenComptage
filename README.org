@@ -7,32 +7,32 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
    - import and management of the measure data
    - centralized management of the measure data
 ** Glossary
-   | English          | French                 | Description |
-   |------------------+------------------------+-------------|
-   | measure          | comptage               |             |
-   | measure campaign | campagne de comptage   |             |
-   |                  | poste de comptage      |             |
-   |                  | machine                |             |
-   |                  | capteurs               |             |
-   |                  | compteur MD            |             |
-   |                  | cas spécial            |             |
-   |                  | canal                  |             |
-   |                  | période de pose        |             |
-   |                  | période de comptage    |             |
-   |                  | fiche de pose          |             |
-   |                  | tronçon                |             |
-   |                  | voie de circulation    |             |
-   |                  | direction              |             |
-   |                  | fichier de config      |             |
-   |                  | fichier binaire        |             |
-   |                  | ficher ASCII           |             |
-   |                  | ficher rapport (Excel) |             |
-   |                  | fichier rapport (PDF)  |             |
-   |                  | étape de contrôle      |             |
-   |                  | étape de validation    |             |
-   |                  | comptages temporaires  |             |
-   |                  | comptages permanents   |             |
-   |                  | classe de véhicules    |             |
+   | English           | French                 | Description |
+   |-------------------+------------------------+-------------|
+   | measure           | comptage               |             |
+   | measure campaign  | campagne de comptage   |             |
+   | measure place     | poste de comptage      |             |
+   | device            | machine                |             |
+   |                   | capteurs               |             |
+   |                   | compteur MD            |             |
+   |                   | cas spécial            |             |
+   |                   | canal                  |             |
+   |                   | période de pose        |             |
+   |                   | période de comptage    |             |
+   |                   | fiche de pose          |             |
+   | sections          | tronçon                |             |
+   |                   | voie de circulation    |             |
+   |                   | direction              |             |
+   |                   | fichier de config      |             |
+   |                   | fichier binaire        |             |
+   |                   | ficher ASCII           |             |
+   |                   | ficher rapport (Excel) |             |
+   |                   | fichier rapport (PDF)  |             |
+   |                   | étape de contrôle      |             |
+   |                   | étape de validation    |             |
+   | temporary measure | comptages temporaires  |             |
+   | permanent measure | comptages permanents   |             |
+   |                   | classe de véhicules    |             |
 ** Use cases
 *** UC1 Visualisation of existing measure campaigns
     The user requests to see the past measure campaigns. He can filter the
@@ -120,10 +120,10 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     - Use cases
       - UC1
 *** FR2
-    The product shall allow to filter the displayed measure campagins by date,
+    The product shall allow to filter the displayed measure campaigns by date,
     type of measure and type of device.
     - Rationale
-      To semplify the analysis of existing measure campaigns.
+      To simplify the analysis of existing measure campaigns.
     - Fit criteria
       All and only the measure campaigns that match the filters are showed on
       the map.
@@ -246,12 +246,13 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     - Use cases
       - UC8
 *** FR15
-    The product shall allow to set the road segment details: picture and common
+    The product shall allow to set the road segment details for the temporary
+    measure locations: picture and common
     name. 
     - Rationale
       To have the information for the measure plan.
     - Fit Criteria
-      Each road segment can have a picture and a common name.
+      Each temporary measure location can have a picture and a common name.
     - Use cases
       - UC9
 ** Non-functional requirements
@@ -269,9 +270,67 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
     - Fit Criteria
       The terms used in all user interfaces match with the glossary of the
       /Cahier des charges/.
+*** NFR3
+    The product shall allow to add the support to a new measure device easily.
+    - Rationale
+      The customer wants to be able to write himself the modification to the
+      product to support another measure device type.
+    - Fit Criteria
+      To support a new measure device, it's enough to create a new class, well
+      documented.
+** Data model
+   The data model has been created to easily allow to add functionality to the product
+   e.g. adding new vehicle classes and to be as simple as possible and easily
+   usable into QGIS. It is flexible enough to support natively all the current
+   special cases without write special management code.
+   
+   [[file:/home/mario/workspace/repos/comptages/db/export_20180822_1437.png]]
+
+*** Tables
+**** measurement
+     This table contains the info about the imported data into the system. A row
+     corresponds to an import from an ASCII file and all the fields come from the
+     ASCII file.
+     
+     Open points:
+     - [ ] what is the meaning of the prunit field
+     - [ ] what is the meaning of the gridref field
+**** data_int_2
+     This table contains the data from the INT-2 ASCII files. Each data row of
+     the ASCII file corresponds to a row of the table.
+     - Type can be LEN, CLS, SPD, DRN
+     
+     Open points:
+     - [ ] fields like peaktime, peakint, lenbins etc, are needed?
+**** data_vbv_1
+     This table contains the data from the VBV-1 ASCII files. Each data row of
+     the ASCII file corresponds to a row of the table.
+**** campaign
+     This table contains the info about the measure campaigns. Each record
+     corresponds to a measure campaign.
+**** section
+     This table contains the street sections (/tronçons/). The primary key is the
+     8 digit segment code.  
+
+     Open points:
+     - [ ] meaning and type of road, way, pr, direction_1, direction_2?
+**** measure_place
+     This table contains all the measure places, permanents and
+     temporaries. This table has a relation 1-to-many (1-to-2 for temporary
+     places) with measure_place_configuration table.  The table contains a
+     geometry point filed. This field is used only for the permanent measure places. 
+**** measure_place_configuration
+     This table contains the configurations for the measure place. In fact
+     relates a section direction with a device and a channel. It allows to
+     manage the special cases and the "super-special" case.
+**** special_dates
+     This table contains the dates of holidays, school vacations and similar.
+*** Views
+**** Temporary measure place
+**** Permanent measure place
 * deadlines
   - 15.08 Neuchâtel sends info about tables and a dump of the actual postgres db
-  - 24.08 we send the database model
+  - 24.08 We send the database model
   - 06.09 Neuchâtel vaidate the database model
   - 05.10 13:00 meeting (perhaps online) to present the prototype
   - 14.11 13:00 meeting 
@@ -287,4 +346,46 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
 ** Use the strategy design pattern
    To be able to use different algorithms to create configuration files and use
    different algorithms to import data from different sources.
+** Data model notes
+   - Which approach use to the measure tables.
+     - 2 tables (int and vbv) with all the data
+       pros
+       - simple
+       cons
+       - duplicated columns
+       - maybe more difficult to expand in the future if there is a new ASCII
+         data format
+     - a table measure with the common data and 2 tables (int and vbv) that
+       extend the measure table
+       pros
+       - similar to what I do with the software
+       - logical structure
+       cons
+       - it is a problem to manage ineritance in postgres? And in qgis? 
+     - A single table, with common data as columns and other data as external
+       fields-value 
+       pros
+       - only one table
+       cons
+       - complex to manage, search into the data, etc.
+     - Only 1 table with all the columns and views to show only the subset of
+       desired data instead of inheritance
+   - The pictures can be in the tronçon table? And how to manage the fixes
+     points pictures?
+   - Define the temporary measure point as a separate table related 1-1 with the
+     tronçon.
+* Email for Pierre 21-08-2018
+  Ciao Pierre, 
+  sto analizzando i vari dati in mio possesso e ho creato una prima versione del
+  data model. 
+  
+  Ci sono ancora alcuni punti che non sono ancora completamente definiti e
+  necessiteranno probabilmente di ulteriori correzioni:
+  - I campi della tabella ~section~ (relativa ai /tronçons/), da sistemare in in
+    base alle descrizioni della attuale banca dati.
+  - Non è chiaro il significato di alcuni valori contenuti nell'intestazione dei
+    file ASCII ad esempio prunit, gridref, peaktime, lenbins.
 
+  Per il resto, il modello dovrebbe consentire di creare in maniera abbastanza
+  semplice in QGIS gli use case definiti per il progetto e permettere di gestire
+  nativamente tutti i casi speciali. 
