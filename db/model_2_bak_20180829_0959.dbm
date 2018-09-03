@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1-beta1" last-position="16,411" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="comptages" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
+
+<table name="journal_panne">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="220" y="63"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="date_debut" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_fin" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="journal_panne_pk" type="pk-constr" table="comptages.journal_panne">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="automate">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="620" y="46"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="numero_automate" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="serial">
+		<type name="text" length="0"/>
+	</column>
+	<column name="date_achat">
+		<type name="date" length="0"/>
+	</column>
+	<column name="nom_automate">
+		<type name="text" length="0"/>
+	</column>
+	<column name="units">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="automate_pk" type="pk-constr" table="comptages.automate">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="model">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1200" y="380"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="nom_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="nom_formatter">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="model_pk" type="pk-constr" table="comptages.model">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="marque">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1240" y="220"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="nom_marque" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="marque_pk" type="pk-constr" table="comptages.marque">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="classification">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="620" y="403"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="classe" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="classification_pk" type="pk-constr" table="comptages.classification">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="categorie">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="280" y="420"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="nom_classe" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="categorie_pk" type="pk-constr" table="comptages.categorie">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="type_capteur">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="980" y="80"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="nom_capteur" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="type_capteur_pk" type="pk-constr" table="comptages.type_capteur">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="comptage">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1100" y="640"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="date_service_debut">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_service_fin">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_pose">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_depose">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_traitement_debut">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_traitement_fin">
+		<type name="date" length="0"/>
+	</column>
+	<column name="valide">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="dysfonctionnement">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="remarques">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="comptage_pk" type="pk-constr" table="comptages.comptage">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="installation">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="60" y="643"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="permanent">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="nom">
+		<type name="text" length="0"/>
+	</column>
+	<column name="foto">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geometrie">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="0"/>
+	</column>
+	<constraint name="installation_pk" type="pk-constr" table="comptages.installation">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="voie">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="60" y="843"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="numero" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="direction" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="voie_pk" type="pk-constr" table="comptages.voie">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_installation" index="3"/>
+		<object name="id_troncon" index="4"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="installation_fk" index="0"/>
+		<object name="troncon_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="troncon">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="60" y="1043"/>
+	<column name="id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="nom" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="proprietaire">
+		<type name="text" length="0"/>
+	</column>
+	<column name="axe">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sens">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="pr_debut">
+		<type name="date" length="0"/>
+	</column>
+	<column name="pr_fin">
+		<type name="date" length="0"/>
+	</column>
+	<column name="dist_debut">
+		<type name="date" length="0"/>
+	</column>
+	<column name="dist_fin">
+		<type name="text" length="0"/>
+	</column>
+	<column name="nom_lieu">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geometrie" not-null="true">
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="0"/>
+	</column>
+	<constraint name="troncon_pk" type="pk-constr" table="comptages.troncon">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="periode_special">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1180" y="1040"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="date_debut" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="date_fin" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="periode_special_pk" type="pk-constr" table="comptages.periode_special">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="comptage_agrege">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="620" y="920"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="numerotation">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="date_valeur" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="heure_debut" not-null="true">
+		<type name="time" length="0"/>
+	</column>
+	<column name="heure_fin" not-null="true">
+		<type name="time" length="0"/>
+	</column>
+	<constraint name="comptage_agrege_pk" type="pk-constr" table="comptages.comptage_agrege">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="comptage_detail">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="640" y="1180"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="numerotation" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="timestamp" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="comptage_detail_pk" type="pk-constr" table="comptages.comptage_detail">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="automate_has_many_journal_panne" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#85a7f2"
+	 src-table="comptages.automate"
+	 dst-table="comptages.journal_panne"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="model_has_many_automate" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#8878d9"
+	 src-table="comptages.model"
+	 dst-table="comptages.automate"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="marque_has_many_model" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#526af1"
+	 src-table="comptages.marque"
+	 dst-table="comptages.model"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="many_type_capteur_has_many_model" type="relnn"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#16a217"
+	 src-table="comptages.type_capteur"
+	 dst-table="comptages.model"
+	 src-required="false" dst-required="false"
+	 table-name="many_type_capteur_has_many_model"/>
+
+<relationship name="installation_has_many_voie" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#bb9c77"
+	 src-table="comptages.installation"
+	 dst-table="comptages.voie"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="troncon_has_many_voie" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#4c202c"
+	 src-table="comptages.troncon"
+	 dst-table="comptages.voie"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="many_automate_has_many_classification" type="relnn"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#53a204"
+	 src-table="comptages.automate"
+	 dst-table="comptages.classification"
+	 src-required="false" dst-required="false"
+	 table-name="many_automate_has_many_classification"/>
+
+<relationship name="many_classification_has_many_categorie" type="relnn"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#0e2184"
+	 src-table="comptages.classification"
+	 dst-table="comptages.categorie"
+	 src-required="false" dst-required="false"
+	 table-name="many_classification_has_many_categorie"/>
+
+<relationship name="comptage_has_one_installation" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#42b39b"
+	 src-table="comptages.installation"
+	 dst-table="comptages.comptage"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="voie_has_many_comptage_agrege" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#207812"
+	 src-table="comptages.voie"
+	 dst-table="comptages.comptage_agrege"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="voie_has_many_comptage_detail" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f9bffa"
+	 src-table="comptages.voie"
+	 dst-table="comptages.comptage_detail"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="comptage_has_many_comptage_agrege" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#babf1b"
+	 src-table="comptages.comptage"
+	 dst-table="comptages.comptage_agrege"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="comptage_has_many_comptage_detail" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#8241cf"
+	 src-table="comptages.comptage"
+	 dst-table="comptages.comptage_detail"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="model_has_many_comptage" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#de6baf"
+	 src-table="comptages.model"
+	 dst-table="comptages.comptage"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="automate_has_many_comptage" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#be0cbc"
+	 src-table="comptages.automate"
+	 dst-table="comptages.comptage"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
