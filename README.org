@@ -328,6 +328,12 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
 *** Views
 **** Temporary measure place
 **** Permanent measure place
+** Architecture design
+*** Data file parser
+*** GRFormat caller
+*** Configuration file creator
+*** Db manager
+*** GUI
 * deadlines
   - 15.08 Neuchâtel sends info about tables and a dump of the actual postgres db
   - 24.08 We send the database model
@@ -374,18 +380,3 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
      points pictures?
    - Define the temporary measure point as a separate table related 1-1 with the
      tronçon.
-* Email for Pierre 21-08-2018
-  Ciao Pierre, 
-  sto analizzando i vari dati in mio possesso e ho creato una prima versione del
-  data model. 
-  
-  Ci sono ancora alcuni punti che non sono ancora completamente definiti e
-  necessiteranno probabilmente di ulteriori correzioni:
-  - I campi della tabella ~section~ (relativa ai /tronçons/), da sistemare in in
-    base alle descrizioni della attuale banca dati.
-  - Non è chiaro il significato di alcuni valori contenuti nell'intestazione dei
-    file ASCII ad esempio prunit, gridref, peaktime, lenbins.
-
-  Per il resto, il modello dovrebbe consentire di creare in maniera abbastanza
-  semplice in QGIS gli use case definiti per il progetto e permettere di gestire
-  nativamente tutti i casi speciali. 
