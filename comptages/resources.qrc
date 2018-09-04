@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/Comptages" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
