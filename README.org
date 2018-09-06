@@ -5,12 +5,14 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
 ** Project Management
    [[https://github.com/opengisch/comptages/blob/master/docs/project_management.org][Project management documentation]]
 * Tests
-  Functional tests are run inside a Docker container. The Docker container is
-  based on Ubuntu 18.04 with QGIS installed. The ~run_test.sh~ script, will launch
-  QGIS without welcome messages & co. and run into QGIS the ~test.py~ python
-  script contained into the shared volume ~.docker/tests/~. After a wait of 10s, a
-  screenshot of the virtual framebuffer is taken, and stored into the shared
-  volume as ~screenshot.png~, and the docker terminates.  
+  Functional tests are run inside a Docker container. The docker container is
+  based on Ubuntu 18.04 with QGIS installed. The ~run_docker_test.sh~ script, copy
+  the plugin directory into the shared volume ~.docker/tests/~ and launches the
+  ~run_test.sh~ script inside the docker container to run QGIS without welcome
+  messages and execute into QGIS the ~test.py~ python script containing the
+  tests. After a wait of 10s, a screenshot of the virtual framebuffer is taken,
+  and stored into the shared volume as ~screenshot.png~, and the docker
+  terminates.
 
   To run the tests, go to the main directory of the project and do
   #+BEGIN_SRC sh
