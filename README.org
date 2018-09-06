@@ -14,8 +14,10 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
 
   To run the tests, go to the main directory of the project and do
   #+BEGIN_SRC sh
-    docker-compose -f .docker/docker-compose.yml run qgis_tester /run_test.sh
+    scripts/run_docker_test.sh
   #+END_SRC
+
+  #+RESULTS:
 
   To rebuild the docker, e.g. when the run_test.sh script is modified
   #+BEGIN_SRC sh
