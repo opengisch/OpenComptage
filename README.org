@@ -1,9 +1,9 @@
 Canton Neuchâtel's /Comptage/ QGIS plugin
 * Documentation
 ** Engineering
-*** TODO add link to the file
+   [[https://github.com/opengisch/comptages/blob/master/docs/enginnering.org][Engineering documentation]]
 ** Project Management
-*** TODO add link to the file
+   [[https://github.com/opengisch/comptages/blob/master/docs/project_management.org][Project management documentation]]
 * Tests
   Functional tests are run inside a Docker container. The Docker container is
   based on Ubuntu 18.04 with QGIS installed. The ~run_test.sh~ script, will launch
