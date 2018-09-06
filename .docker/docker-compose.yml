@@ -1,0 +1,10 @@
+version: '3'
+services:
+  qgis_tester:
+    build: 
+        context: ..
+        dockerfile: ./.docker/Dockerfile
+    container_name: qgis_tester 
+    tty: true
+    volumes:
+      - ./tests:/tests
