@@ -21,33 +21,19 @@
 *** CI
     Tests on each push, release on each tag
 * Notes
-** Develop the plugin with TDD. 
 ** Is it possible to use SQLAlchemy into the plugin without installing external tools?
    I think yes, because is a simply pip install. For Postgis there is geoalchemy
    https://geoalchemy-2.readthedocs.io/en/latest/
 *** Create ER diagram from sqlalchemy
     https://stackoverflow.com/questions/44981986/sqlalchemy-er-diagram-in-python-3
-** Use Denis's CI integration for QGIS 
+** Use Denis's plugin-CI integration for QGIS 
    Deploy automatically a new QGIS plugin to download for each new tag
 ** Use the strategy design pattern
    To be able to use different algorithms to create configuration files and use
    different algorithms to import data from different sources.
 ** Abstract from the db manager
    So I can use different kind approaches (SQLalchemy, pure SQL, mocked db, ...)
-* Tasks [1/8]
-  - [X] Create plugin skeleton
-  - [ ] Add requirements
-  - [ ] Prepare data model description  
-  - [ ] Modify db model with meeting points
-  - [ ] Prepare translation table
-  - [ ] Create test docker
-  - [ ] Integrate plugin_ci
-  - [ ] Separate README.org on multiple files
-    - README.org with purpose, info on how to install and test, and links to the
-      other documents
-    - requirements.org with the requirements process
-    - 
-
+** Plugin creator notes
 Your QGIS plugin directory is located at:
   /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins 
 What's Next
@@ -63,3 +49,19 @@ You can use the Makefile to compile and deploy when you make changes. This requi
 You can also use pb_tool to compile and deploy your plugin. Tweak the pb_tool.cfg file included with your plugin as you add files. Install pb_tool using pip or easy_install. See http://loc8.cc/pb_tool for more information. 
 For information on writing PyQGIS code, see http://loc8.cc/pyqgis_resources for a list of resources. 
 ©2011-2018 GeoApt LLC - geoapt.com 
+* Tasks [3/8]
+  - [X] Create plugin skeleton
+  - [ ] Add requirements from 20180905 meeting
+  - [ ] Prepare data model description  
+  - [ ] Modify db model with meeting points
+  - [ ] Prepare translation table
+  - [X] Create test docker
+  - [ ] Integrate plugin_ci
+  - [X] Separate README.org on multiple files
+* Libraries
+** db
+   - SQLAlchemy?
+** charts
+   - Plotly?
+** pdf
+   - ReportLab?
