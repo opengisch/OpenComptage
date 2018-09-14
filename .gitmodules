@@ -1,0 +1,3 @@
+[submodule "comptages/qgissettingmanager"]
+	path = comptages/qgissettingmanager
+	url = https://github.com/opengisch/qgissettingmanager.git
