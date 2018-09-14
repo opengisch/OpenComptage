@@ -286,20 +286,25 @@
    [[file:/home/mario/workspace/repos/comptages/db/export_20180822_1437.png]]
 
 *** Tables
-**** journal_panne - 
-**** automate - device
-**** type_capteur - 
-**** model - model
-**** marque - 
-**** classification - 
-**** categorie - category
-**** type_capteur_installation - 
-**** installation - installation
-**** comptage - measurement
-**** voie - lane
-**** tronçon - section
-**** periode_speciale - special_period 
-**** comptage_detail - 
+    | English name   | French name      | Meaning of a record |
+    |----------------+------------------+---------------------|
+    | damage_log     | journal_panne    |                     |
+    | device         | automate         |                     |
+    | model          | model            |                     |
+    | brand          | marque           |                     |
+    | sensor_type    | type_capteur     |                     |
+    | classe         | classification   |                     |
+    | category       | categorie        |                     |
+    | count          | comptage         |                     |
+    | installation   | installation     |                     |
+    | lane           | voie             |                     |
+    | section        | troncon          |                     |
+    | count_detail   | comptage_detail  |                     |
+    | special_period | periode_speciale |                     |
+**** Translation issues
+     - nom_formatter in model?
+     - pr_debut et fin in troncon
+     - dist_debut et fin in troncon
 *** Old - to be removed after review
 **** measurement
      This table contains the info about the imported data into the system. A row
@@ -348,3 +353,29 @@
 *** Configuration file creator
 *** Db manager
 *** GUI
+**** Buttons
+     - Connect to the DB
+       - Check if all the needed layers are loaded into the current project
+         otherwise it load them. If a layer with the same name is loaded but
+         from a different source, display a message.
+     - Create a new campaign
+     - Show the existing measure campaigns (as a button or implicit with the
+       connect DB?)
+     - Select a measure campaign
+       - Edit a measure campaign
+       - Export device configuration file
+       - Create a measure plan
+       - Import measure data
+       - Create report
+     - Import special periods
+     - Settings
+**** Flow
+     - At the beginning all the buttons except "connect to DB" and "settings"
+       are disabled. Once we click on connect to the DB, if the connection in
+       ok, the buttons became enabled.
+       - [X] Create all the buttons
+       - [X] Set the icons of the buttons
+       - [ ] Prepare the settings dialog
+       - [X] Prepare the connection part
+       - [X] Make the button enable/disable depending on the connection
+       - [ ] functional tests 
