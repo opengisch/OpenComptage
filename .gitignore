@@ -1,3 +1,4 @@
 .idea
-__pycache__
+__pycache__/
 .docker/tests/
+.docker/tests/screenshot.png
