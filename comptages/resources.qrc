@@ -1,5 +1,20 @@
 <RCC>
-    <qresource prefix="/plugins/Comptages" >
-        <file>icon.png</file>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/icon.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/settings.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/calendar.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/measure.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/select_edit.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/power.png</file>
     </qresource>
 </RCC>
