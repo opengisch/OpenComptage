@@ -9,11 +9,11 @@ class ComptagesSettings(SettingManager):
         SettingManager.__init__(self, 'comptages')
 
         self.add_setting(
-            String("db_host", Scope.Global, 'localhost'))
+            String("db_host", Scope.Global, 'comptages-db'))
         self.add_setting(
             String("db_name", Scope.Global, 'comptages'))
         self.add_setting(
-            Integer("db_port", Scope.Global, 25432))
+            Integer("db_port", Scope.Global, 5432))
         self.add_setting(
             String("db_username", Scope.Global, 'postgres'))
         self.add_setting(
