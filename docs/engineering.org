@@ -282,9 +282,6 @@
    e.g. adding new vehicle classes and to be as simple as possible and easily
    usable into QGIS. It is flexible enough to support natively all the current
    special cases without write special management code.
-   
-   [[file:/home/mario/workspace/repos/comptages/db/export_20180822_1437.png]]
-
 *** Tables
     | English name   | French name      | Meaning of a record |
     |----------------+------------------+---------------------|
@@ -305,6 +302,25 @@
      - nom_formatter in model?
      - pr_debut et fin in troncon
      - dist_debut et fin in troncon
+**** section
+     This table contains the street sections (/tronçons/). The data are imported
+     from the existing BASE_TJM_OK MapInfo table. 
+     | Field      | Type                       | Origin                  | Remarks                               |
+     |------------+----------------------------+-------------------------+---------------------------------------|
+     | id         | char(20)                   | BASE_TJM_OK.fsection    | id of the section (normally 8 digits) |
+     | name       | text                       | BASE_TJM_OK.nom_rue     | street name                           |
+     | owner      | text                       | BASE_TJM_OK.f_prop      | owner of the road                     |
+     | road       | text                       | BASE_TJM_OK.f_axe       |                                       |
+     | way        | char(1)                    | BASE_TJM_OK.f_sens      | Can be ['+', '-', '=']                |
+     | start_pr   | text                       | BASE_TJM_OK.f_pr_d      |                                       |
+     | end_pr     | text                       | BASE_TJM_OK.f_pr_f      |                                       |
+     | start_dist | numeric(18,3)              | BASE_TJM_OK.f_dist_d    |                                       |
+     | end_dist   | numeric(18,3)              | BASE_TJM_OK.f_dist_f    |                                       |
+     | place_name | text                       | BASE_TJM_OK.lieu_rue    |                                       |
+     | geometry   | geometry(LineString, 2056) | geometry of BASE_TJM_OK | geometry                              |
+**** lane
+     This table contains the lanes of a street section. The data are imported
+     from the existing BASE_TJM_OK MapInfo table.
 *** Old - to be removed after review
 **** measurement
      This table contains the info about the imported data into the system. A row
@@ -327,12 +343,6 @@
 **** campaign
      This table contains the info about the measure campaigns. Each record
      corresponds to a measure campaign.
-**** section
-     This table contains the street sections (/tronçons/). The primary key is the
-     8 digit segment code.  
-
-     Open points:
-     - [ ] meaning and type of road, way, pr, direction_1, direction_2?
 **** measure_place
      This table contains all the measure places, permanents and
      temporaries. This table has a relation 1-to-many (1-to-2 for temporary
@@ -347,6 +357,19 @@
 *** Views
 **** Temporary measure place
 **** Permanent measure place
+*** Import of existing data
+**** BASE_TJM_OK
+     Procedure to import the data from the MapInfo dump of BASE_TJM_OK:
+     (Step from 1 to 6 are needed only if the MapInfo base has changed)
+     1. open the file BASE_TJM_OK.TAB in QGIS
+     2. set the CRS of the layer to 2056
+     3. create a temporary transfer table (~base_tjm_ok.base_tjm_ok~) into the
+        postgres db with the script ~../db/base_tjm_ok.sql~ 
+     4. load the created table as layer into QGIS
+     5. manually copy-paste all the features to the new table
+     6. create a sql dump of the new table into ~../db/base_tjm_ok_data.sql~
+     7. run the script ~../db/base_tjm_ok_data_transfer.sql~ to convert and
+        transfer the data to the correct tables
 ** Architecture design
 *** Data file parser
 *** GRFormat caller
