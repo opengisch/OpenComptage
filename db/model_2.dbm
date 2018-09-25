@@ -86,7 +86,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="nom_formatter">
+	<column name="formatter_name">
 		<type name="text" length="0"/>
 	</column>
 	<column name="card_name">
@@ -238,7 +238,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="text" length="0"/>
 	</column>
 	<column name="geometry">
-		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="0"/>
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="21781"/>
 	</column>
 	<column name="active">
 		<type name="boolean" length="0"/>
@@ -295,23 +295,23 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="way">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="pr_debut">
+	<column name="start_pr">
 		<type name="date" length="0"/>
 	</column>
-	<column name="pr_fin">
+	<column name="end_pr">
 		<type name="date" length="0"/>
 	</column>
-	<column name="dist_debut">
+	<column name="start_dist">
 		<type name="date" length="0"/>
 	</column>
-	<column name="dist_fin">
+	<column name="end_dist">
 		<type name="date" length="0"/>
 	</column>
 	<column name="place_name">
 		<type name="text" length="0"/>
 	</column>
 	<column name="geometry" not-null="true">
-		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="0"/>
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="21781"/>
 	</column>
 	<constraint name="section_pk" type="pk-constr" table="comptages.section">
 		<columns names="id" ref-type="src-columns"/>
