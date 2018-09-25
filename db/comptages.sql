@@ -153,7 +153,7 @@ CREATE TABLE comptages.installation(
 	permanent boolean,
 	name text,
 	picture text,
-	geometry geometry(POINT, 21781),
+	geometry geometry(POINT, 2056),
 	active boolean,
 	CONSTRAINT installation_pk PRIMARY KEY (id)
 
@@ -169,7 +169,7 @@ CREATE TABLE comptages.lane(
 	number smallint NOT NULL,
 	direction smallint NOT NULL,
 	id_installation integer,
-	id_section integer NOT NULL,
+	id_section char(20) NOT NULL,
 	CONSTRAINT lane_pk PRIMARY KEY (id)
 
 );
@@ -180,17 +180,17 @@ ALTER TABLE comptages.lane OWNER TO postgres;
 -- object: comptages.section | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.section CASCADE;
 CREATE TABLE comptages.section(
-	id integer NOT NULL,
-	name text NOT NULL,
+	id char(20) NOT NULL,
+	name text,
 	owner text,
 	road text,
-	way smallint,
-	start_pr date,
-	end_pr date,
-	start_dist date,
-	end_dist date,
+	way char(1),
+	start_pr text,
+	end_pr text,
+	start_dist decimal(18,3),
+	end_dist decimal(18,3),
 	place_name text,
-	geometry geometry(LINESTRING, 21781) NOT NULL,
+	geometry geometry(LINESTRING, 2056) NOT NULL,
 	CONSTRAINT section_pk PRIMARY KEY (id)
 
 );
