@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-Xvfb :1 -screen 0 1024x768x16 &
+Xvfb :1 -screen 0 2056x1080x16 &
 DISPLAY=:1.0
 export DISPLAY
 
