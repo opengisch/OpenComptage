@@ -23,45 +23,45 @@ ALTER SCHEMA comptages OWNER TO postgres;
 SET search_path TO pg_catalog,public,comptages;
 -- ddl-end --
 
--- object: comptages.journal_panne | type: TABLE --
--- DROP TABLE IF EXISTS comptages.journal_panne CASCADE;
-CREATE TABLE comptages.journal_panne(
+-- object: comptages.damage_log | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.damage_log CASCADE;
+CREATE TABLE comptages.damage_log(
 	id serial NOT NULL,
-	date_debut date NOT NULL,
-	date_fin date NOT NULL,
+	start_date date NOT NULL,
+	end_date date NOT NULL,
 	description text NOT NULL,
-	id_automate integer NOT NULL,
-	CONSTRAINT journal_panne_pk PRIMARY KEY (id)
+	id_device integer NOT NULL,
+	CONSTRAINT damage_log_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.journal_panne OWNER TO postgres;
+ALTER TABLE comptages.damage_log OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.automate | type: TABLE --
--- DROP TABLE IF EXISTS comptages.automate CASCADE;
-CREATE TABLE comptages.automate(
+-- object: comptages.device | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.device CASCADE;
+CREATE TABLE comptages.device(
 	id serial NOT NULL,
-	numero_automate integer NOT NULL,
+	number integer NOT NULL,
 	serial text,
-	date_achat date,
-	nom_automate text,
+	purchase_date date,
+	name text,
 	id_model integer NOT NULL,
 	CONSTRAINT automate_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.automate OWNER TO postgres;
+ALTER TABLE comptages.device OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.model | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.model CASCADE;
 CREATE TABLE comptages.model(
 	id serial NOT NULL,
-	nom_model text NOT NULL,
-	nom_formatter text,
-	nom_carte text,
-	id_marque integer NOT NULL,
+	name text NOT NULL,
+	formatter_name text,
+	card_name text,
+	id_brand integer NOT NULL,
 	CONSTRAINT model_pk PRIMARY KEY (id)
 
 );
@@ -69,80 +69,81 @@ CREATE TABLE comptages.model(
 ALTER TABLE comptages.model OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.marque | type: TABLE --
--- DROP TABLE IF EXISTS comptages.marque CASCADE;
-CREATE TABLE comptages.marque(
+-- object: comptages.brand | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.brand CASCADE;
+CREATE TABLE comptages.brand(
 	id serial NOT NULL,
-	nom_marque text NOT NULL,
-	CONSTRAINT marque_pk PRIMARY KEY (id)
+	name text NOT NULL,
+	CONSTRAINT brand_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.marque OWNER TO postgres;
+ALTER TABLE comptages.brand OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.classification | type: TABLE --
--- DROP TABLE IF EXISTS comptages.classification CASCADE;
-CREATE TABLE comptages.classification(
+-- object: comptages.class | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.class CASCADE;
+CREATE TABLE comptages.class(
 	id serial NOT NULL,
-	classe text NOT NULL,
+	name text NOT NULL,
 	description text NOT NULL,
 	CONSTRAINT classification_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.classification OWNER TO postgres;
+ALTER TABLE comptages.class OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.categorie | type: TABLE --
--- DROP TABLE IF EXISTS comptages.categorie CASCADE;
-CREATE TABLE comptages.categorie(
+-- object: comptages.category | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.category CASCADE;
+CREATE TABLE comptages.category(
 	id serial NOT NULL,
-	nom_classe text NOT NULL,
-	numero_classe text,
-	CONSTRAINT categorie_pk PRIMARY KEY (id)
+	name text NOT NULL,
+	code text,
+	id_category integer NOT NULL,
+	CONSTRAINT category_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.categorie OWNER TO postgres;
+ALTER TABLE comptages.category OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.type_capteur | type: TABLE --
--- DROP TABLE IF EXISTS comptages.type_capteur CASCADE;
-CREATE TABLE comptages.type_capteur(
+-- object: comptages.sensor_type | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.sensor_type CASCADE;
+CREATE TABLE comptages.sensor_type(
 	id serial NOT NULL,
-	nom_capteur text NOT NULL,
-	fixe boolean,
-	CONSTRAINT type_capteur_pk PRIMARY KEY (id)
+	name text NOT NULL,
+	permanent boolean,
+	CONSTRAINT sensor_type_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.type_capteur OWNER TO postgres;
+ALTER TABLE comptages.sensor_type OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.comptage | type: TABLE --
--- DROP TABLE IF EXISTS comptages.comptage CASCADE;
-CREATE TABLE comptages.comptage(
+-- object: comptages.count | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.count CASCADE;
+CREATE TABLE comptages.count(
 	id serial NOT NULL,
-	date_service_debut date,
-	date_service_fin date,
-	date_pose date,
-	date_depose date,
-	date_traitement_debut date,
-	date_traitement_fin date,
-	valide boolean,
-	dysfonctionnement boolean,
-	remarques text,
+	start_service_date date,
+	end_service_date date,
+	start_put_date date,
+	end_put_date date,
+	start_process_date date,
+	end_process_date date,
+	valid boolean,
+	dysfunction boolean,
+	remarks text,
 	id_model integer NOT NULL,
-	id_automate integer,
-	id_type_capteur integer,
-	id_classification integer,
+	id_device integer,
+	id_sensor_type integer,
+	id_class integer,
 	id_installation integer,
-	CONSTRAINT comptage_pk PRIMARY KEY (id)
+	CONSTRAINT count_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.comptage OWNER TO postgres;
+ALTER TABLE comptages.count OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.installation | type: TABLE --
@@ -150,10 +151,10 @@ ALTER TABLE comptages.comptage OWNER TO postgres;
 CREATE TABLE comptages.installation(
 	id serial NOT NULL,
 	permanent boolean,
-	nom text,
-	foto text,
-	geometrie geometry(POINT, 21781),
-	actif boolean,
+	name text,
+	picture text,
+	geometry geometry(POINT, 21781),
+	active boolean,
 	CONSTRAINT installation_pk PRIMARY KEY (id)
 
 );
@@ -161,118 +162,117 @@ CREATE TABLE comptages.installation(
 ALTER TABLE comptages.installation OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.voie | type: TABLE --
--- DROP TABLE IF EXISTS comptages.voie CASCADE;
-CREATE TABLE comptages.voie(
+-- object: comptages.lane | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.lane CASCADE;
+CREATE TABLE comptages.lane(
 	id serial NOT NULL,
-	numero smallint NOT NULL,
+	number smallint NOT NULL,
 	direction smallint NOT NULL,
 	id_installation integer,
-	id_troncon integer NOT NULL,
-	CONSTRAINT voie_pk PRIMARY KEY (id)
+	id_section integer NOT NULL,
+	CONSTRAINT lane_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.voie OWNER TO postgres;
+ALTER TABLE comptages.lane OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.troncon | type: TABLE --
--- DROP TABLE IF EXISTS comptages.troncon CASCADE;
-CREATE TABLE comptages.troncon(
+-- object: comptages.section | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.section CASCADE;
+CREATE TABLE comptages.section(
 	id integer NOT NULL,
-	nom text NOT NULL,
-	proprietaire text,
-	axe text,
-	sens smallint,
-	pr_debut date,
-	pr_fin date,
-	dist_debut date,
-	dist_fin date,
-	nom_lieu text,
-	geometrie geometry(LINESTRING, 21781) NOT NULL,
-	CONSTRAINT troncon_pk PRIMARY KEY (id)
+	name text NOT NULL,
+	owner text,
+	road text,
+	way smallint,
+	start_pr date,
+	end_pr date,
+	start_dist date,
+	end_dist date,
+	place_name text,
+	geometry geometry(LINESTRING, 21781) NOT NULL,
+	CONSTRAINT section_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.troncon OWNER TO postgres;
+ALTER TABLE comptages.section OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.periode_special | type: TABLE --
--- DROP TABLE IF EXISTS comptages.periode_special CASCADE;
-CREATE TABLE comptages.periode_special(
+-- object: comptages.special_period | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.special_period CASCADE;
+CREATE TABLE comptages.special_period(
 	id serial NOT NULL,
-	date_debut date NOT NULL,
-	date_fin date NOT NULL,
+	start_date date NOT NULL,
+	end_date date NOT NULL,
 	description text NOT NULL,
-	entite text,
+	entity text,
 	influence text,
-	CONSTRAINT periode_special_pk PRIMARY KEY (id)
+	CONSTRAINT special_period_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.periode_special OWNER TO postgres;
+ALTER TABLE comptages.special_period OWNER TO postgres;
 -- ddl-end --
 
--- object: comptages.comptage_detail | type: TABLE --
--- DROP TABLE IF EXISTS comptages.comptage_detail CASCADE;
-CREATE TABLE comptages.comptage_detail(
+-- object: comptages.count_detail | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.count_detail CASCADE;
+CREATE TABLE comptages.count_detail(
 	id serial NOT NULL,
-	numerotation integer NOT NULL,
+	numbering integer NOT NULL,
 	"timestamp" timestamp NOT NULL,
 	distance_front_front numeric(3,1),
-	distance_front_arriere numeric(3,1),
-	vitesse smallint,
-	longueur smallint,
-	class text,
-	hauteur smallint,
-	corrige boolean,
-	contresens boolean,
-	filename text,
-	id_voie integer NOT NULL,
-	id_comptage integer NOT NULL,
-	id_categorie integer NOT NULL,
-	CONSTRAINT comptage_detail_pk PRIMARY KEY (id)
+	distance_front_back numeric(3,1),
+	speed smallint,
+	length smallint,
+	height smallint,
+	fixed boolean,
+	wrong_way boolean,
+	file_name text,
+	id_lane integer NOT NULL,
+	id_count integer NOT NULL,
+	id_category integer NOT NULL,
+	CONSTRAINT count_detail_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
-ALTER TABLE comptages.comptage_detail OWNER TO postgres;
+ALTER TABLE comptages.count_detail OWNER TO postgres;
 -- ddl-end --
 
--- object: automate_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.journal_panne DROP CONSTRAINT IF EXISTS automate_fk CASCADE;
-ALTER TABLE comptages.journal_panne ADD CONSTRAINT automate_fk FOREIGN KEY (id_automate)
-REFERENCES comptages.automate (id) MATCH FULL
+-- object: device_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.damage_log DROP CONSTRAINT IF EXISTS device_fk CASCADE;
+ALTER TABLE comptages.damage_log ADD CONSTRAINT device_fk FOREIGN KEY (id_device)
+REFERENCES comptages.device (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: model_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.automate DROP CONSTRAINT IF EXISTS model_fk CASCADE;
-ALTER TABLE comptages.automate ADD CONSTRAINT model_fk FOREIGN KEY (id_model)
+-- ALTER TABLE comptages.device DROP CONSTRAINT IF EXISTS model_fk CASCADE;
+ALTER TABLE comptages.device ADD CONSTRAINT model_fk FOREIGN KEY (id_model)
 REFERENCES comptages.model (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: marque_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.model DROP CONSTRAINT IF EXISTS marque_fk CASCADE;
-ALTER TABLE comptages.model ADD CONSTRAINT marque_fk FOREIGN KEY (id_marque)
-REFERENCES comptages.marque (id) MATCH FULL
+-- object: brand_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.model DROP CONSTRAINT IF EXISTS brand_fk CASCADE;
+ALTER TABLE comptages.model ADD CONSTRAINT brand_fk FOREIGN KEY (id_brand)
+REFERENCES comptages.brand (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.many_type_capteur_has_many_model | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.many_type_capteur_has_many_model CASCADE;
 CREATE TABLE comptages.many_type_capteur_has_many_model(
-	id_type_capteur integer NOT NULL,
+	id_sensor_type integer NOT NULL,
 	id_model integer NOT NULL,
-	CONSTRAINT many_type_capteur_has_many_model_pk PRIMARY KEY (id_type_capteur,id_model)
+	CONSTRAINT many_type_capteur_has_many_model_pk PRIMARY KEY (id_sensor_type,id_model)
 
 );
 -- ddl-end --
 
--- object: type_capteur_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_type_capteur_has_many_model DROP CONSTRAINT IF EXISTS type_capteur_fk CASCADE;
-ALTER TABLE comptages.many_type_capteur_has_many_model ADD CONSTRAINT type_capteur_fk FOREIGN KEY (id_type_capteur)
-REFERENCES comptages.type_capteur (id) MATCH FULL
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_type_capteur_has_many_model DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.many_type_capteur_has_many_model ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -284,106 +284,106 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: installation_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.voie DROP CONSTRAINT IF EXISTS installation_fk CASCADE;
-ALTER TABLE comptages.voie ADD CONSTRAINT installation_fk FOREIGN KEY (id_installation)
+-- ALTER TABLE comptages.lane DROP CONSTRAINT IF EXISTS installation_fk CASCADE;
+ALTER TABLE comptages.lane ADD CONSTRAINT installation_fk FOREIGN KEY (id_installation)
 REFERENCES comptages.installation (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: troncon_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.voie DROP CONSTRAINT IF EXISTS troncon_fk CASCADE;
-ALTER TABLE comptages.voie ADD CONSTRAINT troncon_fk FOREIGN KEY (id_troncon)
-REFERENCES comptages.troncon (id) MATCH FULL
+-- object: section_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.lane DROP CONSTRAINT IF EXISTS section_fk CASCADE;
+ALTER TABLE comptages.lane ADD CONSTRAINT section_fk FOREIGN KEY (id_section)
+REFERENCES comptages.section (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.many_classification_has_many_categorie | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.many_classification_has_many_categorie CASCADE;
 CREATE TABLE comptages.many_classification_has_many_categorie(
-	id_classification integer NOT NULL,
-	id_categorie integer NOT NULL,
-	CONSTRAINT many_classification_has_many_categorie_pk PRIMARY KEY (id_classification,id_categorie)
+	id_class integer NOT NULL,
+	id_category integer NOT NULL,
+	CONSTRAINT many_classification_has_many_categorie_pk PRIMARY KEY (id_class,id_category)
 
 );
 -- ddl-end --
 
--- object: classification_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_classification_has_many_categorie DROP CONSTRAINT IF EXISTS classification_fk CASCADE;
-ALTER TABLE comptages.many_classification_has_many_categorie ADD CONSTRAINT classification_fk FOREIGN KEY (id_classification)
-REFERENCES comptages.classification (id) MATCH FULL
+-- object: class_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_classification_has_many_categorie DROP CONSTRAINT IF EXISTS class_fk CASCADE;
+ALTER TABLE comptages.many_classification_has_many_categorie ADD CONSTRAINT class_fk FOREIGN KEY (id_class)
+REFERENCES comptages.class (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: categorie_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_classification_has_many_categorie DROP CONSTRAINT IF EXISTS categorie_fk CASCADE;
-ALTER TABLE comptages.many_classification_has_many_categorie ADD CONSTRAINT categorie_fk FOREIGN KEY (id_categorie)
-REFERENCES comptages.categorie (id) MATCH FULL
+-- object: category_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_classification_has_many_categorie DROP CONSTRAINT IF EXISTS category_fk CASCADE;
+ALTER TABLE comptages.many_classification_has_many_categorie ADD CONSTRAINT category_fk FOREIGN KEY (id_category)
+REFERENCES comptages.category (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: voie_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage_detail DROP CONSTRAINT IF EXISTS voie_fk CASCADE;
-ALTER TABLE comptages.comptage_detail ADD CONSTRAINT voie_fk FOREIGN KEY (id_voie)
-REFERENCES comptages.voie (id) MATCH FULL
+-- object: lane_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count_detail DROP CONSTRAINT IF EXISTS lane_fk CASCADE;
+ALTER TABLE comptages.count_detail ADD CONSTRAINT lane_fk FOREIGN KEY (id_lane)
+REFERENCES comptages.lane (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: comptage_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage_detail DROP CONSTRAINT IF EXISTS comptage_fk CASCADE;
-ALTER TABLE comptages.comptage_detail ADD CONSTRAINT comptage_fk FOREIGN KEY (id_comptage)
-REFERENCES comptages.comptage (id) MATCH FULL
+-- object: count_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count_detail DROP CONSTRAINT IF EXISTS count_fk CASCADE;
+ALTER TABLE comptages.count_detail ADD CONSTRAINT count_fk FOREIGN KEY (id_count)
+REFERENCES comptages.count (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: model_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage DROP CONSTRAINT IF EXISTS model_fk CASCADE;
-ALTER TABLE comptages.comptage ADD CONSTRAINT model_fk FOREIGN KEY (id_model)
+-- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS model_fk CASCADE;
+ALTER TABLE comptages.count ADD CONSTRAINT model_fk FOREIGN KEY (id_model)
 REFERENCES comptages.model (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: automate_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage DROP CONSTRAINT IF EXISTS automate_fk CASCADE;
-ALTER TABLE comptages.comptage ADD CONSTRAINT automate_fk FOREIGN KEY (id_automate)
-REFERENCES comptages.automate (id) MATCH FULL
+-- object: device_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS device_fk CASCADE;
+ALTER TABLE comptages.count ADD CONSTRAINT device_fk FOREIGN KEY (id_device)
+REFERENCES comptages.device (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: categorie_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage_detail DROP CONSTRAINT IF EXISTS categorie_fk CASCADE;
-ALTER TABLE comptages.comptage_detail ADD CONSTRAINT categorie_fk FOREIGN KEY (id_categorie)
-REFERENCES comptages.categorie (id) MATCH FULL
+-- object: category_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count_detail DROP CONSTRAINT IF EXISTS category_fk CASCADE;
+ALTER TABLE comptages.count_detail ADD CONSTRAINT category_fk FOREIGN KEY (id_category)
+REFERENCES comptages.category (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: type_capteur_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage DROP CONSTRAINT IF EXISTS type_capteur_fk CASCADE;
-ALTER TABLE comptages.comptage ADD CONSTRAINT type_capteur_fk FOREIGN KEY (id_type_capteur)
-REFERENCES comptages.type_capteur (id) MATCH FULL
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.count ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: classification_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage DROP CONSTRAINT IF EXISTS classification_fk CASCADE;
-ALTER TABLE comptages.comptage ADD CONSTRAINT classification_fk FOREIGN KEY (id_classification)
-REFERENCES comptages.classification (id) MATCH FULL
+-- object: class_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS class_fk CASCADE;
+ALTER TABLE comptages.count ADD CONSTRAINT class_fk FOREIGN KEY (id_class)
+REFERENCES comptages.class (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.many_type_capteur_has_many_installation | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.many_type_capteur_has_many_installation CASCADE;
 CREATE TABLE comptages.many_type_capteur_has_many_installation(
-	id_type_capteur integer NOT NULL,
+	id_sensor_type integer NOT NULL,
 	id_installation integer NOT NULL,
-	CONSTRAINT many_type_capteur_has_many_installation_pk PRIMARY KEY (id_type_capteur,id_installation)
+	CONSTRAINT many_type_capteur_has_many_installation_pk PRIMARY KEY (id_sensor_type,id_installation)
 
 );
 -- ddl-end --
 
--- object: type_capteur_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_type_capteur_has_many_installation DROP CONSTRAINT IF EXISTS type_capteur_fk CASCADE;
-ALTER TABLE comptages.many_type_capteur_has_many_installation ADD CONSTRAINT type_capteur_fk FOREIGN KEY (id_type_capteur)
-REFERENCES comptages.type_capteur (id) MATCH FULL
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_type_capteur_has_many_installation DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.many_type_capteur_has_many_installation ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -395,8 +395,8 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: installation_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.comptage DROP CONSTRAINT IF EXISTS installation_fk CASCADE;
-ALTER TABLE comptages.comptage ADD CONSTRAINT installation_fk FOREIGN KEY (id_installation)
+-- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS installation_fk CASCADE;
+ALTER TABLE comptages.count ADD CONSTRAINT installation_fk FOREIGN KEY (id_installation)
 REFERENCES comptages.installation (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
@@ -404,24 +404,24 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 -- object: comptages.many_type_capteur_has_many_classification | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.many_type_capteur_has_many_classification CASCADE;
 CREATE TABLE comptages.many_type_capteur_has_many_classification(
-	id_type_capteur integer NOT NULL,
-	id_classification integer NOT NULL,
-	CONSTRAINT many_type_capteur_has_many_classification_pk PRIMARY KEY (id_type_capteur,id_classification)
+	id_sensor_type integer NOT NULL,
+	id_class integer NOT NULL,
+	CONSTRAINT many_type_capteur_has_many_classification_pk PRIMARY KEY (id_sensor_type,id_class)
 
 );
 -- ddl-end --
 
--- object: type_capteur_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_type_capteur_has_many_classification DROP CONSTRAINT IF EXISTS type_capteur_fk CASCADE;
-ALTER TABLE comptages.many_type_capteur_has_many_classification ADD CONSTRAINT type_capteur_fk FOREIGN KEY (id_type_capteur)
-REFERENCES comptages.type_capteur (id) MATCH FULL
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_type_capteur_has_many_classification DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.many_type_capteur_has_many_classification ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: classification_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_type_capteur_has_many_classification DROP CONSTRAINT IF EXISTS classification_fk CASCADE;
-ALTER TABLE comptages.many_type_capteur_has_many_classification ADD CONSTRAINT classification_fk FOREIGN KEY (id_classification)
-REFERENCES comptages.classification (id) MATCH FULL
+-- object: class_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_type_capteur_has_many_classification DROP CONSTRAINT IF EXISTS class_fk CASCADE;
+ALTER TABLE comptages.many_type_capteur_has_many_classification ADD CONSTRAINT class_fk FOREIGN KEY (id_class)
+REFERENCES comptages.class (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -429,8 +429,8 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.many_model_has_many_classification CASCADE;
 CREATE TABLE comptages.many_model_has_many_classification(
 	id_model integer NOT NULL,
-	id_classification integer NOT NULL,
-	CONSTRAINT many_model_has_many_classification_pk PRIMARY KEY (id_model,id_classification)
+	id_class integer NOT NULL,
+	CONSTRAINT many_model_has_many_classification_pk PRIMARY KEY (id_model,id_class)
 
 );
 -- ddl-end --
@@ -442,10 +442,17 @@ REFERENCES comptages.model (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: classification_fk | type: CONSTRAINT --
--- ALTER TABLE comptages.many_model_has_many_classification DROP CONSTRAINT IF EXISTS classification_fk CASCADE;
-ALTER TABLE comptages.many_model_has_many_classification ADD CONSTRAINT classification_fk FOREIGN KEY (id_classification)
-REFERENCES comptages.classification (id) MATCH FULL
+-- object: class_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.many_model_has_many_classification DROP CONSTRAINT IF EXISTS class_fk CASCADE;
+ALTER TABLE comptages.many_model_has_many_classification ADD CONSTRAINT class_fk FOREIGN KEY (id_class)
+REFERENCES comptages.class (id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: category_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.category DROP CONSTRAINT IF EXISTS category_fk CASCADE;
+ALTER TABLE comptages.category ADD CONSTRAINT category_fk FOREIGN KEY (id_category)
+REFERENCES comptages.category (id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
