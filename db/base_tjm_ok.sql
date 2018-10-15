@@ -1,3 +1,5 @@
+
+drop schema if exists base_tjm_ok;
 create schema base_tjm_ok;
 alter schema base_tjm_ok owner to postgres;
 

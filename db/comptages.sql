@@ -14,7 +14,7 @@
 -- 
 
 -- object: comptages | type: SCHEMA --
--- DROP SCHEMA IF EXISTS comptages CASCADE;
+DROP SCHEMA IF EXISTS comptages CASCADE;
 CREATE SCHEMA comptages;
 -- ddl-end --
 ALTER SCHEMA comptages OWNER TO postgres;
