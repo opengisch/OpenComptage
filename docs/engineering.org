@@ -36,8 +36,7 @@
 *** UC1 Visualisation of existing measure campaigns
     The user requests to see the past measure campaigns. He can filter the
     results by date, type of measure and type of device. The campaigns are
-    showed as colored road segments for the temporary measure and as a point for
-    the permanent measures. If the measure campaign was during a special event
+    showed as colored road segments. If the measure campaign was during a special event
     or a holidays, an information is showed.
     * Input:
       * date from
@@ -107,7 +106,7 @@
     - Input:
       - picture, common name of the segment
     - Output:
-      - 
+    - 
 ** Functional requirements
 *** FR1
     The product shall show the recorded measure campaigns on a map.
@@ -402,3 +401,17 @@
        - [X] Prepare the connection part
        - [X] Make the button enable/disable depending on the connection
        - [ ] functional tests 
+** TODOs
+*** TODO add "Create a comptage" Use case
+*** TODO change campaign with "comptage" or "count"
+*** TODO commit changes
+*** TODO update data model with "comptage agregé"
+*** TODO prepare chart examples
+    - vehicles per hours (with one bar per day)
+    - total of vehicles per category
+    - vehicles per speed (10km steps)
+*** TODO add req. for allowing copying data from a comptage to another one
+*** TODO Define meeting with Pierre for data import issues
+*** TODO complete filter
+*** TODO complete import data with progression bar etc.
+*** TODO integrate plotly into comptages
