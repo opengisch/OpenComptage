@@ -17,4 +17,7 @@
     <qresource prefix="/plugins/Comptages/" >
         <file>images/power.png</file>
     </qresource>
+    <qresource prefix="/plugins/Comptages/" >
+        <file>images/filter.png</file>
+    </qresource>    
 </RCC>
