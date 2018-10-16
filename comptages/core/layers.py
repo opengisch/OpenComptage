@@ -1,6 +1,7 @@
 import os
 
 from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
@@ -16,6 +17,8 @@ class Layers(QObject):
         QObject.__init__(self)
         self.iface = iface
         self.layers = {}
+
+        self.highlighted_sections = []
 
     def load_layers(self):
 
@@ -53,6 +56,8 @@ class Layers(QObject):
         self.add_layer_actions()
         self.create_relations()
         self.iface.setActiveLayer(self.layers['section'])
+
+        self.populate_list_of_highlighted_sections()
 
     def apply_qml_styles(self):
         for key in LAYER_DEFINITIONS:
@@ -310,6 +315,38 @@ class Layers(QObject):
 
         # TODO optimize with a cached list of sections or using a faster query
 
-        if not self.get_counts_of_section(section_id):
-            return False
-        return True
+        if section_id in self.highlighted_sections:
+            return True
+        return False
+
+    def populate_list_of_highlighted_sections(self):
+        """Return a list of highlighted sections. Directly on the db
+        for performances"""
+        # TODO add the filter
+
+        self.highlighted_sections = []
+        settings = ComptagesSettings()
+
+        db = QSqlDatabase.addDatabase("QPSQL")
+        db.setHostName(settings.value("db_host"))
+        db.setPort(settings.value("db_port"))
+        db.setDatabaseName(settings.value("db_name"))
+        db.setUserName(settings.value("db_username"))
+        db.setPassword(settings.value("db_password"))
+        db.open()
+
+        query = QSqlQuery(db)
+
+        query.exec_("select distinct l.id_section from comptages.lane as l "
+                    "inner join comptages.installation as i on "
+                    "(l.id_installation = i.id) inner join "
+                    "comptages.count as c on (i.id = c.id_installation);")
+
+        while query.next():
+            self.highlighted_sections.append(str(query.value(0)).strip())
+
+        db.close()
+
+    def apply_filter(self):
+        # TODO
+        self.populate_list_of_highlighted_sections()
