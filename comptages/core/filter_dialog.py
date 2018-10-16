@@ -1,5 +1,5 @@
 from qgis.PyQt.QtWidgets import QDialog
-from .utils import get_ui_class
+from comptages.core.utils import get_ui_class
 
 FORM_CLASS = get_ui_class('filter.ui')
 

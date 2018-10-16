@@ -1,20 +1,12 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
-
 [general]
 name=Comptages
 qgisMinimumVersion=3.0
-description=Canton Neuchâtel's traffic measures
+description=Canton Neuchâtel's traffic measures management
 version=0.1
 author=OPENGIS.ch GmbH
 email=info@opengis.ch
 
-about=Canton Neuchâtel's traffic measures.
+about=Canton Neuchâtel's traffic measures management plugin.
 
 tracker=https://github.com/opengisch/comptages/issues
 repository=https://github.com/opengisch/comptages
@@ -31,6 +23,7 @@ tags=python
 homepage=https://github.com/opengisch/comptages
 category=Plugins
 icon=icon.png
+
 # experimental flag
 experimental=False
 
