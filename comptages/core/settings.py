@@ -1,5 +1,4 @@
 from comptages.qgissettingmanager import SettingManager, Scope
-from comptages.qgissettingmanager.setting_dialog import SettingDialog
 from comptages.qgissettingmanager.types import String, Integer
 
 
@@ -18,5 +17,3 @@ class ComptagesSettings(SettingManager):
             String("db_username", Scope.Global, 'postgres'))
         self.add_setting(
             String("db_password", Scope.Global, 'postgres'))
-
-        
