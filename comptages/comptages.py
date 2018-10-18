@@ -1,12 +1,13 @@
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, Qt
 from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import qgsfunction, plugins
 
 from comptages.core.settings import ComptagesSettings
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
+from comptages.core.chart_dialog import ChartDock
 from comptages.ui.resources import *
 
 
@@ -19,6 +20,7 @@ class Comptages(QObject):
         self.iface = iface
         self.settings = ComptagesSettings()
         self.layers = Layers(self.iface)
+        self.chart_dock = None
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
@@ -152,6 +154,11 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             f'do_generate_chart_action {count_id}',
             'Comptages', Qgis.Info)
+        if not self.chart_dock:
+            self.chart_dock = ChartDock(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
+
+        self.chart_dock.show()
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
