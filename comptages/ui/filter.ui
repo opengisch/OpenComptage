@@ -42,7 +42,7 @@
     <string>Date début</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox">
+  <widget class="QComboBox" name="installation">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -67,7 +67,7 @@
     </property>
    </item>
   </widget>
-  <widget class="QComboBox" name="comboBox_2">
+  <widget class="QComboBox" name="sensor">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -131,7 +131,7 @@
     <string>Capteur</string>
    </property>
   </widget>
-  <widget class="QgsDateTimeEdit" name="mDateTimeEdit">
+  <widget class="QgsDateTimeEdit" name="start_date">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -144,7 +144,7 @@
     <string>dd.MM.yyyy </string>
    </property>
   </widget>
-  <widget class="QgsDateTimeEdit" name="mDateTimeEdit_2">
+  <widget class="QgsDateTimeEdit" name="end_date">
    <property name="geometry">
     <rect>
      <x>150</x>

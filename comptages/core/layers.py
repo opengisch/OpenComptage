@@ -319,10 +319,12 @@ class Layers(QObject):
             return True
         return False
 
-    def populate_list_of_highlighted_sections(self):
+    def populate_list_of_highlighted_sections(
+            self, start_date=None, end_date=None, permanent=None,
+            sensor=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
-        # TODO add the filter
+        # TODO when a section is added, refresh list
 
         self.highlighted_sections = []
         settings = ComptagesSettings()
@@ -337,16 +339,45 @@ class Layers(QObject):
 
         query = QSqlQuery(db)
 
-        query.exec_("select distinct l.id_section from comptages.lane as l "
-                    "inner join comptages.installation as i on "
-                    "(l.id_installation = i.id) inner join "
-                    "comptages.count as c on (i.id = c.id_installation);")
+        wheres = []
+        if start_date:
+            wheres.append(f"c.start_process_date >= '{start_date}'::date")
+        if end_date:
+            wheres.append(f"c.end_process_date <= '{end_date}'::date")
+        if permanent is not None:
+            wheres.append(f"i.permanent = '{permanent}'::bool")
+        if sensor:
+            # TODO
+            pass
+
+        where_str = ''
+        if wheres:
+            where_str = "where " + " and ".join(wheres)
+
+        query_str = ("select distinct l.id_section from comptages.lane as l "
+                     "inner join comptages.installation as i on "
+                     "(l.id_installation = i.id) inner join "
+                     "comptages.count as c on (i.id = c.id_installation) "
+                     f"{where_str};")
+        print(query_str)
+        query.exec_(query_str)
 
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
 
         db.close()
 
-    def apply_filter(self):
+    def apply_filter(self, start_date, end_date, installation, sensor):
+        if installation == 0:
+            permanent = None
+        if installation == 1:
+            permanent = True
+        if installation == 2:
+            permanent = False
+
         # TODO
-        self.populate_list_of_highlighted_sections()
+        sensor = ''
+
+        self.populate_list_of_highlighted_sections(
+            start_date, end_date, permanent, sensor)
+        self.layers['section'].triggerRepaint()

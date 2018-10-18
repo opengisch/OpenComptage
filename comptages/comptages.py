@@ -117,7 +117,12 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_filter_action', 'Comptages', Qgis.Info)
         dlg = FilterDialog(self.iface)
-        dlg.exec_()
+        if dlg.exec_():
+            self.layers.apply_filter(
+                dlg.start_date.dateTime().toString('yyyy-MM-dd'),
+                dlg.end_date.dateTime().toString('yyyy-MM-dd'),
+                dlg.installation.currentIndex(),
+                dlg.sensor.currentIndex())
 
     def do_settings_action(self):
         QgsMessageLog.logMessage(
