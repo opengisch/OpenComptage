@@ -1,9 +1,32 @@
 Canton Neuchâtel's /Comptage/ QGIS plugin
-* Documentation
-** Engineering
-   [[https://github.com/opengisch/comptages/blob/master/docs/engineering.org][Engineering documentation]]
-** Project Management
-   [[https://github.com/opengisch/comptages/blob/master/docs/project_management.org][Project management documentation]]
+* Installation
+** Development version
+   Clone this repository with the submodules
+   #+BEGIN_SRC sh
+     git clone --recurse-submodules git@github.com:opengisch/comptages.git
+   #+END_SRC
+   Go into the =scripts= directory of the repository
+   #+BEGIN_SRC sh
+     cd comptages/scripts
+   #+END_SRC
+   Run the docker with the development database
+   #+BEGIN_SRC sh
+     ./start_docker.sh
+   #+END_SRC
+   Create the database structure (needed to be done only the fist time)
+   #+BEGIN_SRC sh
+     ./create_db.sh
+   #+END_SRC
+   Populate the development database
+   #+BEGIN_SRC sh
+     ./insert_test_data.sh
+   #+END_SRC
+   Link the plugin directory (=comptages= directory inside the repository) to the
+   QGIS plugin directory. E.g.:
+   #+BEGIN_SRC sh
+     ln -s /home/mario/comptages/comptages /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+   #+END_SRC
+   Run QGIS and enable the plugin from the /plugin-manager/
 * Tests
   Functional tests are run inside a Docker container. The docker container is
   based on Ubuntu 18.04 with QGIS installed. The ~run_docker_test.sh~ script, copy
@@ -18,10 +41,12 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
   #+BEGIN_SRC sh
     ./run_docker_test.sh
   #+END_SRC
-
-  #+RESULTS:
-
   To rebuild the docker, e.g. when the run_test.sh script is modified
   #+BEGIN_SRC sh
     docker-compose -f .docker/docker-compose.yml build
   #+END_SRC
+* Other documents
+** Engineering
+   [[https://github.com/opengisch/comptages/blob/master/docs/engineering.org][Engineering documentation]]
+** Project Management
+   [[https://github.com/opengisch/comptages/blob/master/docs/project_management.org][Project management documentation]]
