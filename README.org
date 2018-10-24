@@ -48,5 +48,3 @@
 * Other documents
 ** Engineering
    [[https://github.com/opengisch/comptages/blob/master/docs/engineering.org][Engineering documentation]]
-** Project Management
-   [[https://github.com/opengisch/comptages/blob/master/docs/project_management.org][Project management documentation]]
