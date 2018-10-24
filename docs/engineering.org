@@ -6,32 +6,32 @@
    - import and management of the measure data
    - centralized management of the measure data
 ** Glossary
-   | English           | French                 | Description |
-   |-------------------+------------------------+-------------|
-   | measure           | comptage               |             |
-   | measure campaign  | campagne de comptage   |             |
-   | measure place     | poste de comptage      |             |
-   | device            | machine                |             |
-   |                   | capteurs               |             |
-   |                   | compteur MD            |             |
-   |                   | cas spécial            |             |
-   |                   | canal                  |             |
-   |                   | période de pose        |             |
-   |                   | période de comptage    |             |
-   |                   | fiche de pose          |             |
-   | sections          | tronçon                |             |
-   |                   | voie de circulation    |             |
-   |                   | direction              |             |
-   |                   | fichier de config      |             |
-   |                   | fichier binaire        |             |
-   |                   | ficher ASCII           |             |
-   |                   | ficher rapport (Excel) |             |
-   |                   | fichier rapport (PDF)  |             |
-   |                   | étape de contrôle      |             |
-   |                   | étape de validation    |             |
-   | temporary measure | comptages temporaires  |             |
-   | permanent measure | comptages permanents   |             |
-   |                   | classe de véhicules    |             |
+   | English           | French                 |
+   |-------------------+------------------------|
+   | measure           | comptage               |
+   | measure campaign  | campagne de comptage   |
+   | measure place     | poste de comptage      |
+   | device            | machine                |
+   |                   | capteurs               |
+   |                   | compteur MD            |
+   |                   | cas spécial            |
+   |                   | canal                  |
+   |                   | période de pose        |
+   |                   | période de comptage    |
+   |                   | fiche de pose          |
+   | sections          | tronçon                |
+   |                   | voie de circulation    |
+   |                   | direction              |
+   |                   | fichier de config      |
+   |                   | fichier binaire        |
+   |                   | ficher ASCII           |
+   |                   | ficher rapport (Excel) |
+   |                   | fichier rapport (PDF)  |
+   |                   | étape de contrôle      |
+   |                   | étape de validation    |
+   | temporary measure | comptages temporaires  |
+   | permanent measure | comptages permanents   |
+   |                   | classe de véhicules    |
 ** Use cases
 *** UC1 Visualisation of existing measure campaigns
     The user requests to see the past measure campaigns. He can filter the
@@ -282,21 +282,21 @@
    usable into QGIS. It is flexible enough to support natively all the current
    special cases without write special management code.
 *** Tables
-    | English name   | French name      | Meaning of a record |
-    |----------------+------------------+---------------------|
-    | damage_log     | journal_panne    |                     |
-    | device         | automate         |                     |
-    | model          | model            |                     |
-    | brand          | marque           |                     |
-    | sensor_type    | type_capteur     |                     |
-    | classe         | classification   |                     |
-    | category       | categorie        |                     |
-    | count          | comptage         |                     |
-    | installation   | installation     |                     |
-    | lane           | voie             |                     |
-    | section        | troncon          |                     |
-    | count_detail   | comptage_detail  |                     |
-    | special_period | periode_speciale |                     |
+    | English name   | French name      |
+    |----------------+------------------|
+    | damage_log     | journal_panne    |
+    | device         | automate         |
+    | model          | model            |
+    | brand          | marque           |
+    | sensor_type    | type_capteur     |
+    | classe         | classification   |
+    | category       | categorie        |
+    | count          | comptage         |
+    | installation   | installation     |
+    | lane           | voie             |
+    | section        | troncon          |
+    | count_detail   | comptage_detail  |
+    | special_period | periode_speciale |
 **** Translation issues
      - nom_formatter in model?
      - pr_debut et fin in troncon
@@ -320,42 +320,6 @@
 **** lane
      This table contains the lanes of a street section. The data are imported
      from the existing BASE_TJM_OK MapInfo table.
-*** Old - to be removed after review
-**** measurement
-     This table contains the info about the imported data into the system. A row
-     corresponds to an import from an ASCII file and all the fields come from the
-     ASCII file.
-     
-     Open points:
-     - [ ] what is the meaning of the prunit field
-     - [ ] what is the meaning of the gridref field
-**** data_int_2
-     This table contains the data from the INT-2 ASCII files. Each data row of
-     the ASCII file corresponds to a row of the table.
-     - Type can be LEN, CLS, SPD, DRN
-     
-     Open points:
-     - [ ] fields like peaktime, peakint, lenbins etc, are needed?
-**** data_vbv_1
-     This table contains the data from the VBV-1 ASCII files. Each data row of
-     the ASCII file corresponds to a row of the table.
-**** campaign
-     This table contains the info about the measure campaigns. Each record
-     corresponds to a measure campaign.
-**** measure_place
-     This table contains all the measure places, permanents and
-     temporaries. This table has a relation 1-to-many (1-to-2 for temporary
-     places) with measure_place_configuration table.  The table contains a
-     geometry point filed. This field is used only for the permanent measure places. 
-**** measure_place_configuration
-     This table contains the configurations for the measure place. In fact
-     relates a section direction with a device and a channel. It allows to
-     manage the special cases and the "super-special" case.
-**** special_dates
-     This table contains the dates of holidays, school vacations and similar.
-*** Views
-**** Temporary measure place
-**** Permanent measure place
 *** Import of existing data
 **** BASE_TJM_OK
      Procedure to import the data from the MapInfo dump of BASE_TJM_OK:
@@ -369,49 +333,3 @@
      6. create a sql dump of the new table into ~../db/base_tjm_ok_data.sql~
      7. run the script ~../db/base_tjm_ok_data_transfer.sql~ to convert and
         transfer the data to the correct tables
-** Architecture design
-*** Data file parser
-*** GRFormat caller
-*** Configuration file creator
-*** Db manager
-*** GUI
-**** Buttons
-     - Connect to the DB
-       - Check if all the needed layers are loaded into the current project
-         otherwise it load them. If a layer with the same name is loaded but
-         from a different source, display a message.
-     - Create a new campaign
-     - Show the existing measure campaigns (as a button or implicit with the
-       connect DB?)
-     - Select a measure campaign
-       - Edit a measure campaign
-       - Export device configuration file
-       - Create a measure plan
-       - Import measure data
-       - Create report
-     - Import special periods
-     - Settings
-**** Flow
-     - At the beginning all the buttons except "connect to DB" and "settings"
-       are disabled. Once we click on connect to the DB, if the connection in
-       ok, the buttons became enabled.
-       - [X] Create all the buttons
-       - [X] Set the icons of the buttons
-       - [ ] Prepare the settings dialog
-       - [X] Prepare the connection part
-       - [X] Make the button enable/disable depending on the connection
-       - [ ] functional tests 
-** TODOs
-*** TODO add "Create a comptage" Use case
-*** TODO change campaign with "comptage" or "count"
-*** TODO commit changes
-*** TODO update data model with "comptage agregé"
-*** TODO prepare chart examples
-    - vehicles per hours (with one bar per day)
-    - total of vehicles per category
-    - vehicles per speed (10km steps)
-*** TODO add req. for allowing copying data from a comptage to another one
-*** TODO Define meeting with Pierre for data import issues
-*** TODO complete filter
-*** TODO complete import data with progression bar etc.
-*** TODO integrate plotly into comptages
