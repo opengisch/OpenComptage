@@ -333,3 +333,27 @@
      6. create a sql dump of the new table into ~../db/base_tjm_ok_data.sql~
      7. run the script ~../db/base_tjm_ok_data_transfer.sql~ to convert and
         transfer the data to the correct tables
+** Design
+*** Practices
+**** TDD
+***** Functional tests
+      Funtional tests that cover all functionalities. Are run by the CI tool on
+      each push.
+      Test workflow
+      - run a docker with qgis
+        - install the plugin into qgis
+      - run a docker with pg
+        - create the database
+        - import the test data
+      - run the functional tests into qgis
+***** Unit test
+      That cover all code functions.
+***** CI
+      Tests on each push, release on each tag
+*** Libraries
+**** db
+     - SQLAlchemy?
+**** charts
+     - Plotly
+**** pdf
+     - ReportLab?
