@@ -4,7 +4,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import qgsfunction, plugins
 
-from comptages.core.settings import ComptagesSettings
+from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
@@ -18,7 +18,8 @@ class Comptages(QObject):
         QObject.__init__(self)
 
         self.iface = iface
-        self.settings = ComptagesSettings()
+        self.settings = Settings()
+        self.settings_dialog = SettingsDialog()
         self.layers = Layers(self.iface)
         self.chart_dock = None
 
@@ -129,6 +130,7 @@ class Comptages(QObject):
     def do_settings_action(self):
         QgsMessageLog.logMessage(
             'do_settings_action', 'Comptages', Qgis.Info)
+        self.settings_dialog.exec_()
 
     def do_export_configuration_action(self, count_id):
         QgsMessageLog.logMessage(

@@ -8,7 +8,7 @@ from qgis.core import (
     QgsAction, QgsFeatureRequest)
 
 from comptages.core.definitions import LAYER_DEFINITIONS
-from comptages.core.settings import ComptagesSettings
+from comptages.core.settings import Settings
 
 
 class Layers(QObject):
@@ -165,7 +165,7 @@ class Layers(QObject):
             self, schema, layer_name, geometry, sql, display_name, id_col='',
             epsg=None):
 
-        settings = ComptagesSettings()
+        settings = Settings()
         uri = QgsDataSourceUri()
         uri.setConnection(
             settings.value("db_host"),
