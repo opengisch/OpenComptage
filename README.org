@@ -1,13 +1,13 @@
-Canton Neuchâtel's /Comptage/ QGIS plugin
+*OpenComptage* is a QGIS plugin to manage Canton Neuchâtel's /Comptages/
 * Installation
 ** Development version
    Clone this repository with the submodules
    #+BEGIN_SRC sh
-     git clone --recurse-submodules git@github.com:opengisch/comptages.git
+     git clone --recurse-submodules git@github.com:opengisch/OpenComptage.git
    #+END_SRC
    Go into the =scripts= directory of the repository
    #+BEGIN_SRC sh
-     cd comptages/scripts
+     cd OpenComptage/scripts
    #+END_SRC
    Run the docker with the development database
    #+BEGIN_SRC sh
@@ -24,7 +24,7 @@ Canton Neuchâtel's /Comptage/ QGIS plugin
    Link the plugin directory (=comptages= directory inside the repository) to the
    QGIS plugin directory. E.g.:
    #+BEGIN_SRC sh
-     ln -s /home/mario/comptages/comptages /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+     ln -s /home/mario/OpenComptage/comptages /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins
    #+END_SRC
    Run QGIS and enable the plugin from the /plugin-manager/
 * Tests
