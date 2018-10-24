@@ -27,6 +27,12 @@
      ln -s /home/mario/OpenComptage/comptages /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins
    #+END_SRC
    Run QGIS and enable the plugin from the /plugin-manager/
+
+   To completely reset the docker with all the data
+   #+BEGIN_SRC sh
+     cd .docker
+     docker-compose -f docker-compose_dev_env.yml down --volume
+   #+END_SRC
 * Tests
   Functional tests are run inside a Docker container. The docker container is
   based on Ubuntu 18.04 with QGIS installed. The ~run_docker_test.sh~ script, copy
@@ -37,9 +43,9 @@
   and stored into the shared volume as ~screenshot.png~, and the docker
   terminates.
 
-  To run the tests, go to the ~script~ directory and do
+  To run the tests, go to the ~scripts~ directory and do
   #+BEGIN_SRC sh
-    ./run_docker_test.sh
+    ./run_test_on_docker.sh
   #+END_SRC
   To rebuild the docker, e.g. when the run_test.sh script is modified
   #+BEGIN_SRC sh
