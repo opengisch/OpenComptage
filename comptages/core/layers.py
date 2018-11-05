@@ -9,7 +9,7 @@ from qgis.core import (
 
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
-
+from comptages.core.utils import push_info
 
 class Layers(QObject):
 
@@ -244,10 +244,10 @@ class Layers(QObject):
 
         selected_count = layer.selectedFeatureCount()
         if selected_count == 0:
-            self.pushInfo("Please select a section")
+            push_info("Please select a section")
             return
         elif selected_count > 1:
-            self.pushInfo("Please select only one section")
+            push_info("Please select only one section")
             return
         else:
             selected_feature = next(layer.getSelectedFeatures())
@@ -261,7 +261,7 @@ class Layers(QObject):
     def open_count_attribute_table_and_filter(self, count_ids):
         """Open the attribute table of count filtered on the passed ids"""
         if not count_ids:
-            self.pushInfo("No counts found for this section")
+            push_info("No counts found for this section")
             return
 
         self.iface.showAttributeTable(
@@ -327,7 +327,7 @@ class Layers(QObject):
         # TODO when a section is added, refresh list
 
         self.highlighted_sections = []
-        settings = ComptagesSettings()
+        settings = Settings()
 
         db = QSqlDatabase.addDatabase("QPSQL")
         db.setHostName(settings.value("db_host"))

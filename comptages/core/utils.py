@@ -1,6 +1,7 @@
 import os
 
 from qgis.PyQt.uic import loadUiType
+from qgis.utils import iface
 
 
 def get_ui_class(ui_file):
@@ -19,3 +20,7 @@ def get_ui_class(ui_file):
             )
     )
     return loadUiType(ui_file_path)[0]
+
+
+def push_info(message):
+    iface.messageBar().pushInfo('Comptages', message)
