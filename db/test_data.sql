@@ -22,21 +22,6 @@ INSERT INTO comptages.lane("number", direction, id_installation, id_section) VAL
 INSERT INTO comptages.brand(name) VALUES ('ACME Corporation');
 INSERT INTO comptages.model(name, id_brand) VALUES ('ACME Corporation - Model 1', 1);
 
-INSERT INTO comptages.class(name, description)	VALUES ('SWISS 7', 'SWISS 7');
-INSERT INTO comptages.class(name, description)	VALUES ('SWISS 10', 'SWISS 10');
-
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 1', '1', 1);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 2', '2', 2);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 3', '3', 3);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 4', '4', 4);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 5', '5', 5);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 6', '6', 6);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 7', '7', 7);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 8', '8', 8);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 9', '9', 9);
-INSERT INTO comptages.category(name, code, id_category)	VALUES ('SWISS 10 - cat 10', '10', 10);
-
-
 
 INSERT INTO comptages.sensor_type(name, permanent) VALUES ('Boucle', False);
 INSERT INTO comptages.sensor_type(name, permanent) VALUES ('Tube', False);

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,130" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,195" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -133,7 +133,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="description" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<constraint name="classification_pk" type="pk-constr" table="comptages.class">
+	<constraint name="class_pk" type="pk-constr" table="comptages.class">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -221,7 +221,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<extension name="postgis">
+<extension name="postgis" sql-disabled="true">
 </extension>
 
 <table name="lane">
@@ -286,7 +286,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="place_name">
 		<type name="text" length="0"/>
 	</column>
-	<column name="geometry" not-null="true">
+	<column name="geometry" not-null="true" sql-disabled="true">
 		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="2056"/>
 	</column>
 	<constraint name="section_pk" type="pk-constr" table="comptages.section">
@@ -411,7 +411,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.sensor_type"
 	 dst-table="comptages.model"
 	 src-required="false" dst-required="false"
-	 table-name="many_type_capteur_has_many_model"/>
+	 table-name="sensor_type_model"/>
 
 <table name="installation">
 	<schema name="comptages"/>
@@ -429,7 +429,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="picture">
 		<type name="text" length="0"/>
 	</column>
-	<column name="geometry">
+	<column name="geometry" sql-disabled="true">
 		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="2056"/>
 	</column>
 	<column name="active">
@@ -449,7 +449,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.lane"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="many_classification_has_many_categorie" type="relnn"
+<relationship name="many_class_has_many_category" type="relnn"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -458,7 +458,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.class"
 	 dst-table="comptages.category"
 	 src-required="false" dst-required="false"
-	 table-name="many_classification_has_many_categorie"/>
+	 table-name="class_category"/>
 
 <relationship name="voie_has_many_comptage_detail" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -523,7 +523,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="many_type_capteur_has_many_installation" type="relnn"
+<relationship name="many_sensor_type_has_many_installation" type="relnn"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -532,7 +532,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.sensor_type"
 	 dst-table="comptages.installation"
 	 src-required="false" dst-required="false"
-	 table-name="many_type_capteur_has_many_installation"/>
+	 table-name="sensor_type_installation"/>
 
 <relationship name="installation_has_many_comptage" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -543,7 +543,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="many_type_capteur_has_many_classification" type="relnn"
+<relationship name="many_sensor_type_has_many_class" type="relnn"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -552,7 +552,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.sensor_type"
 	 dst-table="comptages.class"
 	 src-required="false" dst-required="false"
-	 table-name="many_type_capteur_has_many_classification"/>
+	 table-name="sensor_type_class"/>
 
 <relationship name="many_model_has_many_classification" type="relnn"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
@@ -563,7 +563,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.model"
 	 dst-table="comptages.class"
 	 src-required="false" dst-required="false"
-	 table-name="many_model_has_many_classification"/>
+	 table-name="model_class"/>
 
 <relationship name="categorie_has_many_categorie" type="rel1n"
 	 src-col-pattern="{sc}_{st}"

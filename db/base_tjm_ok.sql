@@ -1,5 +1,5 @@
 
-drop schema if exists base_tjm_ok;
+drop schema if exists base_tjm_ok cascade;
 create schema base_tjm_ok;
 alter schema base_tjm_ok owner to postgres;
 
