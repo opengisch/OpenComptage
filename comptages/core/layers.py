@@ -6,19 +6,21 @@ from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
     QgsAction, QgsFeatureRequest)
+from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
 from comptages.core.utils import push_info
 
+
 class Layers(QObject):
 
-    def __init__(self, iface):
+    def __init__(self):
         QObject.__init__(self)
-        self.iface = iface
         self.layers = {}
 
         self.highlighted_sections = []
+        self.db = None
 
     def load_layers(self):
 
@@ -55,7 +57,7 @@ class Layers(QObject):
         self.apply_qml_styles()
         self.add_layer_actions()
         self.create_relations()
-        self.iface.setActiveLayer(self.layers['section'])
+        iface.setActiveLayer(self.layers['section'])
 
         self.populate_list_of_highlighted_sections()
 
@@ -264,7 +266,7 @@ class Layers(QObject):
             push_info("No counts found for this section")
             return
 
-        self.iface.showAttributeTable(
+        iface.showAttributeTable(
             self.layers['count'],
             f'"id" in ({", ".join(map(str, count_ids))})')
 
@@ -381,3 +383,68 @@ class Layers(QObject):
         self.populate_list_of_highlighted_sections(
             start_date, end_date, permanent, sensor)
         self.layers['section'].triggerRepaint()
+
+    def init_db_connection(self):
+
+        if self.db == None:
+
+            settings = Settings()
+
+            self.db = QSqlDatabase.addDatabase("QPSQL")
+            self.db.setHostName(settings.value("db_host"))
+            self.db.setPort(settings.value("db_port"))
+            self.db.setDatabaseName(settings.value("db_name"))
+            self.db.setUserName(settings.value("db_username"))
+            self.db.setPassword(settings.value("db_password"))
+
+    def get_sections_of_count(self, count_id):
+        """Return the sections related to a count"""
+
+        count = self.get_count(count_id)
+        installation_id = count.attribute('id_installation')
+        lanes = self.get_lanes_of_installation(installation_id)
+
+        # Get only distinct section ids
+        section_ids = set()
+        for lane in lanes:
+            section_ids.add(lane.attribute('id_section'))
+
+        sections = []
+        for section_id in section_ids:
+            sections.append(self.get_section(section_id))
+
+        return sections
+
+    def get_count(self, count_id):
+        """Return the count feature"""
+
+        request = QgsFeatureRequest().setFilterExpression(
+            f'"id" = {count_id}'
+        )
+
+        return next(self.layers['count'].getFeatures(request))
+
+    def get_installation(self, installation_id):
+        """Return the installation of a count"""
+
+        request = QgsFeatureRequest().setFilterExpression(
+            f'"id" = {installation_id}'
+        )
+
+        return next(self.layers['installation'].getFeatures(request))
+
+    def get_lanes_of_installation(self, installation_id):
+
+        request = QgsFeatureRequest().setFilterExpression(
+            f'"id_installation" = {installation_id}'
+        )
+
+        return self.layers['lane'].getFeatures(request)
+
+    def get_section(self, section_id):
+        request = QgsFeatureRequest().setFilterExpression(
+            f'"id" = {section_id}'
+        )
+
+        return next(self.layers['section'].getFeatures(request))
+

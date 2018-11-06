@@ -1,5 +1,5 @@
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.PyQt.QtCore import QObject, Qt
 from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import qgsfunction, plugins
@@ -8,6 +8,8 @@ from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
+from comptages.core.utils import push_info
+from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.ui.resources import *
 
 
@@ -20,7 +22,7 @@ class Comptages(QObject):
         self.iface = iface
         self.settings = Settings()
         self.settings_dialog = SettingsDialog()
-        self.layers = Layers(self.iface)
+        self.layers = Layers()
         self.chart_dock = None
 
     def initGui(self):
@@ -136,6 +138,16 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             f'do_export_configuration_action {count_id}',
             'Comptages', Qgis.Info)
+        config_creator = ConfigCreatorCmd(self.layers, count_id)
+        config_creator.set_section_commands()
+
+        file_dialog = QFileDialog()
+        file_dialog.setDefaultSuffix('*.CMD')
+        title = 'Export configuration file'
+        path = '/home/mario/workspace/tmp/comptages/'
+        file = QFileDialog.getSaveFileName(file_dialog, title, path, "Config file (*.CMD)")[0]
+        config_creator.write_file(file)
+        push_info(f'Written config file {file}')
 
     def do_import_data_action(self, count_id):
         QgsMessageLog.logMessage(
@@ -161,6 +173,7 @@ class Comptages(QObject):
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
 
         self.chart_dock.show()
+        self.chart_dock.plot_chart_1()
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
