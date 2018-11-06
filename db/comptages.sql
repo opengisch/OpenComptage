@@ -214,7 +214,7 @@ CREATE TABLE comptages.count_detail(
 	distance_front_back numeric(3,1),
 	speed smallint,
 	length smallint,
-	height char(1),
+	height char(2),
 	fixed boolean,
 	wrong_way boolean,
 	file_name text,
