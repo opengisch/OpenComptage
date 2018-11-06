@@ -10,6 +10,7 @@ from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
 from comptages.config.config_creator import ConfigCreatorCmd
+from comptages.parser.data_parser import DataParserVbv1
 from comptages.ui.resources import *
 
 
@@ -144,7 +145,7 @@ class Comptages(QObject):
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.CMD')
         title = 'Export configuration file'
-        path = '/home/mario/workspace/tmp/comptages/'
+        path = '/home/mario/workspace/tmp/comptages_20181105/'
         file = QFileDialog.getSaveFileName(file_dialog, title, path, "Config file (*.CMD)")[0]
         config_creator.write_file(file)
         push_info(f'Written config file {file}')
@@ -153,6 +154,14 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             f'do_import_data_action {count_id}',
             'Comptages', Qgis.Info)
+
+        file_dialog = QFileDialog()
+        title = 'Import data'
+        path = '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/'
+        file = QFileDialog.getOpenFileName(file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
+        data_parser = DataParserVbv1(self.layers, count_id, file)
+        data_parser.parse_data()
+        push_info(f'Imported data from file {file}')
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(

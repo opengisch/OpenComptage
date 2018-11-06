@@ -386,7 +386,7 @@ class Layers(QObject):
 
     def init_db_connection(self):
 
-        if self.db == None:
+        if self.db is None:
 
             settings = Settings()
 
@@ -396,6 +396,7 @@ class Layers(QObject):
             self.db.setDatabaseName(settings.value("db_name"))
             self.db.setUserName(settings.value("db_username"))
             self.db.setPassword(settings.value("db_password"))
+            self.db.open()
 
     def get_sections_of_count(self, count_id):
         """Return the sections related to a count"""
@@ -448,3 +449,28 @@ class Layers(QObject):
 
         return next(self.layers['section'].getFeatures(request))
 
+    def insert_count_detail_row(self, row, count_id, file_name):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = ("insert into comptages.count_detail ("
+                     "numbering, timestamp, "
+                     "distance_front_front, distance_front_back, "
+                     "speed, length, height, "
+                     "file_name, "
+                     "id_lane, id_count, id_category) values ("
+                     f"{row['numbering']}, "
+                     f"'{row['timestamp']}', "
+                     f"{row['distance_front_front']}, "
+                     f"{row['distance_front_back']}, "
+                     f"{row['speed']}, "
+                     f"{row['length']}, "
+                     f"'{row['height']}', "
+                     f"'{file_name}', "
+                     f"1, "  # TODO
+                     f"{count_id}, "
+                     f"1"  # TODO
+                     ")")
+        #self.db.open()
+        query.exec_(query_str)
+        #self.db.close()
