@@ -459,6 +459,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate CASCADE;
 CREATE TABLE comptages.count_aggregate(
 	id serial NOT NULL,
+	type text,
 	start timestamp,
 	"end" timestamp,
 	file_name text,
@@ -489,7 +490,6 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value CASCADE;
 CREATE TABLE comptages.count_aggregate_value(
 	id serial NOT NULL,
-	type text,
 	total integer,
 	speed_low smallint,
 	speed_high smallint,

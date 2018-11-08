@@ -480,8 +480,9 @@ class Layers(QObject):
         query = QSqlQuery(self.db)
 
         query_str = ("insert into comptages.count_aggregate ("
-                     "\"start\", \"end\", file_name, id_count, id_lane) "
+                     "type, \"start\", \"end\", file_name, id_count, id_lane) "
                      "values ("
+                     f"'{row_type}', "
                      f"'{row['start']}', "
                      f"'{row['end']}', "
                      f"'{file_name}', "
@@ -514,9 +515,8 @@ class Layers(QObject):
                 speed_low = spdbins[i-1]
                 speed_high = spdbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
-                                "type, total, speed_low, speed_high, "
+                                "total, speed_low, speed_high, "
                                 "id_count_aggregate) values ("
-                                "'SPD', "
                                 f"{data}, "
                                 f"{speed_low}, "
                                 f"{speed_high}, "
@@ -533,9 +533,8 @@ class Layers(QObject):
                 length_low = lenbins[i-1]
                 length_high = lenbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
-                                "type, total, length_low, length_high, "
+                                "total, length_low, length_high, "
                                 "id_count_aggregate) values ("
-                                "'LEN', "
                                 f"{data}, "
                                 f"{length_low}, "
                                 f"{length_high}, "
@@ -551,9 +550,8 @@ class Layers(QObject):
             if not data == '':
                 category = catbins[i-1]
                 queries.append(("insert into comptages.count_aggregate_value ("
-                                "type, total, id_category, "
+                                "total, id_category, "
                                 "id_count_aggregate) values ("
-                                "'CLS', "
                                 f"{data}, "
                                 f"{category}, "
                                 "(select currval('comptages.count_aggregate_id_seq'))"                                

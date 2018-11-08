@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,396" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,91" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -587,6 +587,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
+	<column name="type">
+		<type name="text" length="0"/>
+	</column>
 	<column name="start">
 		<type name="timestamp" length="0"/>
 	</column>
@@ -601,8 +604,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_count" index="4"/>
-		<object name="id_lane" index="5"/>
+		<object name="id_count" index="5"/>
+		<object name="id_lane" index="6"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -636,9 +639,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="type">
-		<type name="text" length="0"/>
-	</column>
 	<column name="total">
 		<type name="integer" length="0"/>
 	</column>
@@ -659,8 +659,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_category" index="8"/>
-		<object name="id_count_aggregate" index="7"/>
+		<object name="id_category" index="7"/>
+		<object name="id_count_aggregate" index="6"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
