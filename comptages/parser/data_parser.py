@@ -3,6 +3,8 @@ import os
 
 from datetime import datetime, timedelta
 
+from comptages.core.utils import (
+    create_progress_bar, clear_widgets, push_info)
 
 class DataParser(metaclass=abc.ABCMeta):
 
@@ -35,6 +37,9 @@ class DataParser(metaclass=abc.ABCMeta):
     def get_file_name(self):
         return os.path.basename(self.file)
 
+    def get_number_of_lines(self):
+        return sum(1 for line in open(self.file))
+
     @staticmethod
     def get_format(file):
         data_parser = DataParser(None, None, file)
@@ -48,13 +53,21 @@ class DataParserVbv1(DataParser):
         file_header = self.parse_file_header()
         self.catbins = self.layers.get_category_bins(file_header['CLASS'])
 
+        self.number_of_lines = self.get_number_of_lines()
+
     def parse_data(self):
+        progress_bar = create_progress_bar("Import data")
         with open(self.file) as f:
-            for line in f:
+            for i, line in enumerate(f):
+                progress = int(100 / self.number_of_lines * i)
+                progress_bar.setValue(progress)
+
                 if not line.startswith('* '):
                     self.layers.insert_count_detail_row(self.parse_data_line(line),
                                                         self.count_id,
                                                         self.get_file_name())
+        clear_widgets()
+        push_info(f'Imported data from file {self.file}')
 
     def parse_data_line(self, line):
         parsed_line = dict()
@@ -111,11 +124,16 @@ class DataParserInt2(DataParser):
         # Category bins. CS n is catbins[n-1]
         self.catbins = self.layers.get_category_bins(self.file_header['CLASS'])
 
-    def parse_data(self):
-        with open(self.file) as f:
-            for line in f:
-                if not line.startswith('* '):
+        self.number_of_lines = self.get_number_of_lines()
 
+    def parse_data(self):
+        progress_bar = create_progress_bar("Import data")
+        with open(self.file) as f:
+            for i, line in enumerate(f):
+                progress = int(100 / self.number_of_lines * i)
+                progress_bar.setValue(progress)
+
+                if not line.startswith('* '):
                     parsed_line = self.parse_data_line(line)
                     
                     self.layers.insert_count_aggregate_row(parsed_line,
@@ -125,6 +143,8 @@ class DataParserInt2(DataParser):
                                                            self.spdbins,
                                                            self.lenbins,
                                                            self.catbins)
+        clear_widgets()
+        push_info(f'Imported data from file {self.file}')
 
     def parse_data_line(self, line):
         parsed_line = dict()

@@ -173,8 +173,6 @@ class Comptages(QObject):
             push_info('Format not supported')
             return
 
-        push_info(f'Imported data from file {file}')
-
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
             f'do_generate_report_action {count_id}',
