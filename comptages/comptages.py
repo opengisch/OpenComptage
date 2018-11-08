@@ -114,6 +114,7 @@ class Comptages(QObject):
     def do_create_new_action(self):
         QgsMessageLog.logMessage(
             'do_create_new_action', 'Comptages', Qgis.Info)
+        self.layers.create_count()
 
     def do_select_edit_action(self):
         QgsMessageLog.logMessage(

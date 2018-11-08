@@ -236,6 +236,25 @@ class Layers(QObject):
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
 
+    def create_count(self):
+
+        layer = self.layers['section']
+
+        selected_count = layer.selectedFeatureCount()
+        if selected_count == 0:
+            push_info("Please select a section")
+            return
+        elif selected_count > 1:
+            push_info("Please select only one section")
+            return
+        else:
+            selected_feature = next(layer.getSelectedFeatures())
+
+            # TODO set automatically installation_id
+            self.layers['count'].startEditing()
+            iface.setActiveLayer(self.layers['count'])
+            iface.actionAddFeature().trigger()
+
     def edit_count(self):
         """Open attribute table of count filtered with only the
         features related to the selected section"""
