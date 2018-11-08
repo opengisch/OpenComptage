@@ -471,6 +471,82 @@ class Layers(QObject):
                      f"{count_id}, "
                      f"1"  # TODO
                      ")")
-        #self.db.open()
+
         query.exec_(query_str)
-        #self.db.close()
+
+    def insert_count_aggregate_row(self, row, row_type, count_id, file_name):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = ("insert into comptages.count_aggregate ("
+                     "\"start\", \"end\", file_name, id_count, id_lane) "
+                     "values ("
+                     f"'{row['start']}', "
+                     f"'{row['start']}', "  # TODO calculate end time
+                     f"'{file_name}', "
+                     f"{count_id}, "
+                     f"1 "  # TODO
+                     ")")
+
+        query_str_value = ""
+        if row_type == 'SPD':
+            query_str_value = self._create_query_str_aggregate_speed(row)
+        elif row_type == 'LEN':
+            query_str_value = self._create_query_str_aggregate_length(row)
+        if row_type == 'CLS':
+            query_str_value = self._create_query_str_aggregate_class(row)
+
+        query.exec_(query_str)
+
+        for _ in query_str_value:
+            query.exec_(_)
+
+    def _create_query_str_aggregate_speed(self, row):
+        queries = []
+
+        for i in range(1, 12):
+            data = row[f'data_{i}']
+            if not data == '':
+                queries.append(("insert into comptages.count_aggregate_value ("
+                                "type, total, speed_low, speed_high, "
+                                "id_count_aggregate) values ("
+                                "'SPD', "
+                                f"{data}, "
+                                f"0, "  # TODO
+                                f"100, "  # TODO
+                                "(select currval('comptages.count_aggregate_id_seq'))"
+                                ")"))
+        return queries
+
+    def _create_query_str_aggregate_length(self, row):
+        queries = []
+
+        for i in range(1, 12):
+            data = row[f'data_{i}']
+            if not data == '':
+                queries.append(("insert into comptages.count_aggregate_value ("
+                                "type, total, length_low, length_high, "
+                                "id_count_aggregate) values ("
+                                "'LEN', "
+                                f"{data}, "
+                                f"0, "  # TODO
+                                f"100, "  # TODO
+                                "(select currval('comptages.count_aggregate_id_seq'))"
+                                ")"))
+        return queries
+
+    def _create_query_str_aggregate_class(self, row):
+        queries = []
+
+        for i in range(1, 12):
+            data = row[f'data_{i}']
+            if not data == '':
+                queries.append(("insert into comptages.count_aggregate_value ("
+                                "type, total, id_category, "
+                                "id_count_aggregate) values ("
+                                "'CLS', "
+                                f"{data}, "
+                                f"1, "  # TODO
+                                "(select currval('comptages.count_aggregate_id_seq'))"                                
+                                ")"))
+        return queries
