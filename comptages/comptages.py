@@ -10,7 +10,8 @@ from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
 from comptages.config.config_creator import ConfigCreatorCmd
-from comptages.parser.data_parser import DataParserVbv1
+from comptages.parser.data_parser import (
+    DataParser, DataParserVbv1, DataParserInt2)
 from comptages.ui.resources import *
 
 
@@ -159,8 +160,19 @@ class Comptages(QObject):
         title = 'Import data'
         path = '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/'
         file = QFileDialog.getOpenFileName(file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
-        data_parser = DataParserVbv1(self.layers, count_id, file)
-        data_parser.parse_data()
+
+        format = DataParser.get_format(file)
+
+        if format == 'VBV-1':
+            data_parser = DataParserVbv1(self.layers, count_id, file)
+            data_parser.parse_data()
+        elif format == 'INT-2':
+            data_parser = DataParserInt2(self.layers, count_id, file)
+            data_parser.parse_data()
+        else:
+            push_info('Format not supported')
+            return
+
         push_info(f'Imported data from file {file}')
 
     def do_generate_report_action(self, count_id):

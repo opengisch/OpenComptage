@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,0" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,396" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -587,18 +587,28 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="numbering">
-		<type name="integer" length="0"/>
-	</column>
 	<column name="start">
 		<type name="timestamp" length="0"/>
 	</column>
 	<column name="end">
 		<type name="timestamp" length="0"/>
 	</column>
+	<column name="file_name">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="count_aggregate_pk" type="pk-constr" table="comptages.count_aggregate">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count" index="4"/>
+		<object name="id_lane" index="5"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_fk" index="1"/>
+		<object name="lane_fk" index="2"/>
+	</customidxs>
 </table>
 
 <relationship name="count_has_many_count_aggregate" type="rel1n"
@@ -626,16 +636,31 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
+	<column name="type">
+		<type name="text" length="0"/>
+	</column>
 	<column name="total">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="speed_low">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="speed_high">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="length_low">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="length_high">
+		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_pk" type="pk-constr" table="comptages.count_aggregate_value">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_category" index="3"/>
-		<object name="id_count_aggregate" index="2"/>
+		<object name="id_category" index="8"/>
+		<object name="id_count_aggregate" index="7"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">

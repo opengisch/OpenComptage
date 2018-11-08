@@ -148,8 +148,8 @@ ALTER TABLE comptages.count OWNER TO postgres;
 
 -- object: postgis | type: EXTENSION --
 -- DROP EXTENSION IF EXISTS postgis CASCADE;
---CREATE EXTENSION postgis
---;
+-- CREATE EXTENSION postgis
+-- ;
 -- ddl-end --
 
 -- object: comptages.lane | type: TABLE --
@@ -459,9 +459,9 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate CASCADE;
 CREATE TABLE comptages.count_aggregate(
 	id serial NOT NULL,
-	numbering integer,
 	start timestamp,
 	"end" timestamp,
+	file_name text,
 	id_count integer,
 	id_lane integer,
 	CONSTRAINT count_aggregate_pk PRIMARY KEY (id)
@@ -489,7 +489,12 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value CASCADE;
 CREATE TABLE comptages.count_aggregate_value(
 	id serial NOT NULL,
+	type text,
 	total integer,
+	speed_low smallint,
+	speed_high smallint,
+	length_low smallint,
+	length_high smallint,
 	id_count_aggregate integer,
 	id_category integer,
 	CONSTRAINT count_aggregate_value_pk PRIMARY KEY (id)
