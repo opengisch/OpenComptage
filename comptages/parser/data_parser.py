@@ -43,6 +43,11 @@ class DataParser(metaclass=abc.ABCMeta):
 
 class DataParserVbv1(DataParser):
 
+    def __init__(self, layers, count_id, file):
+        DataParser.__init__(self, layers, count_id, file)
+        file_header = self.parse_file_header()
+        self.catbins = self.layers.get_category_bins(file_header['CLASS'])
+
     def parse_data(self):
         with open(self.file) as f:
             for line in f:
@@ -68,6 +73,7 @@ class DataParserVbv1(DataParser):
             line[52:56], 'length')
         parsed_line['category'] = self._cast_data_to_int(
             line[60:62].strip(), 'category')
+        parsed_line['category_id'] = self.catbins[parsed_line['category']-1]
         parsed_line['height'] = line[63:65].strip()
 
         return parsed_line
@@ -98,9 +104,12 @@ class DataParserInt2(DataParser):
         for i, code in enumerate(file_header['INTSPEC'].split('+')):
             self.intspec['0'+str(i+1)] = code.strip()
 
-        # Speed bins. SP n goes from spdbins[n-1] to spdbins[n]
+        # Speed and length bins. min-max n goes from spdbins[n-1] to spdbins[n]
         self.spdbins = file_header['SPDBINS'].split()
         self.lenbins = file_header['LENBINS'].split()
+
+        # Category bins. CS n is catbins[n-1]
+        self.catbins = self.layers.get_category_bins(file_header['CLASS'])
 
     def parse_data(self):
         with open(self.file) as f:
@@ -114,7 +123,8 @@ class DataParserInt2(DataParser):
                                                            self.count_id,
                                                            self.get_file_name(),
                                                            self.spdbins,
-                                                           self.lenbins)
+                                                           self.lenbins,
+                                                           self.catbins)
 
     def parse_data_line(self, line):
         parsed_line = dict()

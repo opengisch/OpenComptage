@@ -469,13 +469,13 @@ class Layers(QObject):
                      f"'{file_name}', "
                      f"1, "  # TODO
                      f"{count_id}, "
-                     f"1"  # TODO
+                     f"{row['category_id']}"
                      ")")
 
         query.exec_(query_str)
 
     def insert_count_aggregate_row(self, row, row_type, count_id, file_name,
-                                   spdbins, lenbins):
+                                   spdbins, lenbins, catbins):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -497,7 +497,8 @@ class Layers(QObject):
             query_str_value = self._create_query_str_aggregate_length(
                 row, lenbins)
         if row_type == 'CLS':
-            query_str_value = self._create_query_str_aggregate_class(row)
+            query_str_value = self._create_query_str_aggregate_class(
+                row, catbins)
 
         query.exec_(query_str)
 
@@ -542,18 +543,42 @@ class Layers(QObject):
                                 ")"))
         return queries
 
-    def _create_query_str_aggregate_class(self, row):
+    def _create_query_str_aggregate_class(self, row, catbins):
         queries = []
 
         for i in range(1, 13):
             data = row[f'data_{i}']
             if not data == '':
+                category = catbins[i-1]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "type, total, id_category, "
                                 "id_count_aggregate) values ("
                                 "'CLS', "
                                 f"{data}, "
-                                f"1, "  # TODO
+                                f"{category}, "
                                 "(select currval('comptages.count_aggregate_id_seq'))"                                
                                 ")"))
         return queries
+
+    def get_category_bins(self, class_name):
+        """Return an array with the ids of the categories of the
+        passed class"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+        
+        query_str = (
+            f"select cc.id_category from "
+            f"comptages.class_category as cc "
+            f"join comptages.category as cat on cc.id_category = cat.id "
+            f"join comptages.class as cl on cl.id = cc.id_class "
+            f"where cl.name = '{class_name}'")
+
+        print(query_str)
+        query.exec_(query_str)
+
+        catbins = []
+        while query.next():
+            catbins.append(query.value(0))
+
+        return catbins
