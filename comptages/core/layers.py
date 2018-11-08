@@ -474,7 +474,8 @@ class Layers(QObject):
 
         query.exec_(query_str)
 
-    def insert_count_aggregate_row(self, row, row_type, count_id, file_name):
+    def insert_count_aggregate_row(self, row, row_type, count_id, file_name,
+                                   spdbins, lenbins):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -490,9 +491,11 @@ class Layers(QObject):
 
         query_str_value = ""
         if row_type == 'SPD':
-            query_str_value = self._create_query_str_aggregate_speed(row)
+            query_str_value = self._create_query_str_aggregate_speed(
+                row, spdbins)
         elif row_type == 'LEN':
-            query_str_value = self._create_query_str_aggregate_length(row)
+            query_str_value = self._create_query_str_aggregate_length(
+                row, lenbins)
         if row_type == 'CLS':
             query_str_value = self._create_query_str_aggregate_class(row)
 
@@ -501,36 +504,40 @@ class Layers(QObject):
         for _ in query_str_value:
             query.exec_(_)
 
-    def _create_query_str_aggregate_speed(self, row):
+    def _create_query_str_aggregate_speed(self, row, spdbins):
         queries = []
 
-        for i in range(1, 12):
+        for i in range(1, 13):
             data = row[f'data_{i}']
             if not data == '':
+                speed_low = spdbins[i-1]
+                speed_high = spdbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "type, total, speed_low, speed_high, "
                                 "id_count_aggregate) values ("
                                 "'SPD', "
                                 f"{data}, "
-                                f"0, "  # TODO
-                                f"100, "  # TODO
+                                f"{speed_low}, "
+                                f"{speed_high}, "
                                 "(select currval('comptages.count_aggregate_id_seq'))"
                                 ")"))
         return queries
 
-    def _create_query_str_aggregate_length(self, row):
+    def _create_query_str_aggregate_length(self, row, lenbins):
         queries = []
 
-        for i in range(1, 12):
+        for i in range(1, 13):
             data = row[f'data_{i}']
             if not data == '':
+                length_low = lenbins[i-1]
+                length_high = lenbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "type, total, length_low, length_high, "
                                 "id_count_aggregate) values ("
                                 "'LEN', "
                                 f"{data}, "
-                                f"0, "  # TODO
-                                f"100, "  # TODO
+                                f"{length_low}, "
+                                f"{length_high}, "
                                 "(select currval('comptages.count_aggregate_id_seq'))"
                                 ")"))
         return queries
@@ -538,7 +545,7 @@ class Layers(QObject):
     def _create_query_str_aggregate_class(self, row):
         queries = []
 
-        for i in range(1, 12):
+        for i in range(1, 13):
             data = row[f'data_{i}']
             if not data == '':
                 queries.append(("insert into comptages.count_aggregate_value ("

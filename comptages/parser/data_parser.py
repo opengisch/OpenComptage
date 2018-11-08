@@ -97,10 +97,11 @@ class DataParserInt2(DataParser):
         self.intspec = dict()
         for i, code in enumerate(file_header['INTSPEC'].split('+')):
             self.intspec['0'+str(i+1)] = code.strip()
-    
-        # TODO prima di inserire i dati devo creare le categorie per LEN e SPD
-        # leggendo i valori dall'header
-        
+
+        # Speed bins. SP n goes from spdbins[n-1] to spdbins[n]
+        self.spdbins = file_header['SPDBINS'].split()
+        self.lenbins = file_header['LENBINS'].split()
+
     def parse_data(self):
         with open(self.file) as f:
             for line in f:
@@ -111,14 +112,9 @@ class DataParserInt2(DataParser):
                     self.layers.insert_count_aggregate_row(parsed_line,
                                                            self.intspec[parsed_line['info_code']],
                                                            self.count_id,
-                                                           self.get_file_name())
-                    
-                    # if (self.intspec[parsed_line['info_code']] == 'LEN'):
-                    #     self.layers.insert_count_aggregate_length_row()
-                    # elif (self.intspec[parsed_line['info_code']] == 'CLS'):
-                    #     self.layers.insert_count_aggregate_class_row()
-                    # elif (self.intspec[parsed_line['info_code']] == 'SPD'):
-                    #     self.layers.insert_count_aggregate_speed_row()
+                                                           self.get_file_name(),
+                                                           self.spdbins,
+                                                           self.lenbins)
 
     def parse_data_line(self, line):
         parsed_line = dict()
