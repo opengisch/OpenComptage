@@ -483,7 +483,7 @@ class Layers(QObject):
                      "\"start\", \"end\", file_name, id_count, id_lane) "
                      "values ("
                      f"'{row['start']}', "
-                     f"'{row['start']}', "  # TODO calculate end time
+                     f"'{row['end']}', "
                      f"'{file_name}', "
                      f"{count_id}, "
                      f"1 "  # TODO

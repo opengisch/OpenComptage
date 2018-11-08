@@ -1,7 +1,7 @@
 import abc
 import os
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class DataParser(metaclass=abc.ABCMeta):
@@ -99,17 +99,17 @@ class DataParserInt2(DataParser):
     def __init__(self, layers, count_id, file):
         DataParser.__init__(self, layers, count_id, file)
         
-        file_header = self.parse_file_header()
+        self.file_header = self.parse_file_header()
         self.intspec = dict()
-        for i, code in enumerate(file_header['INTSPEC'].split('+')):
+        for i, code in enumerate(self.file_header['INTSPEC'].split('+')):
             self.intspec['0'+str(i+1)] = code.strip()
 
         # Speed and length bins. min-max n goes from spdbins[n-1] to spdbins[n]
-        self.spdbins = file_header['SPDBINS'].split()
-        self.lenbins = file_header['LENBINS'].split()
+        self.spdbins = self.file_header['SPDBINS'].split()
+        self.lenbins = self.file_header['LENBINS'].split()
 
         # Category bins. CS n is catbins[n-1]
-        self.catbins = self.layers.get_category_bins(file_header['CLASS'])
+        self.catbins = self.layers.get_category_bins(self.file_header['CLASS'])
 
     def parse_data(self):
         with open(self.file) as f:
@@ -135,6 +135,8 @@ class DataParserInt2(DataParser):
 
         parsed_line['start'] = datetime.strptime(
             f"{line[0:11]}", "%d%m%y %H%M")
+        parsed_line['end'] = parsed_line['start'] + timedelta(
+            minutes=int(self.file_header['INTERVAL']))
         parsed_line['channel'] = line[12:13]
         parsed_line['reserve_code'] = line[14:16]
         parsed_line['info_code'] = line[17:19]
