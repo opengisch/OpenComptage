@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,91" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,198" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -272,16 +272,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="char" length="1"/>
 	</column>
 	<column name="start_pr">
-		<type name="integer" length="0"/>
+		<type name="text" length="0"/>
 	</column>
 	<column name="end_pr">
-		<type name="integer" length="0"/>
+		<type name="text" length="0"/>
 	</column>
 	<column name="start_dist">
-		<type name="integer" length="0"/>
+		<type name="decimal" length="0"/>
 	</column>
 	<column name="end_dist">
-		<type name="integer" length="0"/>
+		<type name="decimal" length="0"/>
 	</column>
 	<column name="place_name">
 		<type name="text" length="0"/>
@@ -574,7 +574,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="308.035" y="406.495"/>
+		<position x="308.035" y="406.518"/>
 	<position x="308.035" y="369"/>
 	<position x="251.357" y="369"/>
 	</line>
