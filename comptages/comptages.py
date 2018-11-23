@@ -148,7 +148,8 @@ class Comptages(QObject):
         file_dialog.setDefaultSuffix('*.CMD')
         title = 'Export configuration file'
         path = '/home/mario/workspace/tmp/comptages_20181105/'
-        file = QFileDialog.getSaveFileName(file_dialog, title, path, "Config file (*.CMD)")[0]
+        file = QFileDialog.getSaveFileName(
+            file_dialog, title, path, "Config file (*.CMD)")[0]
         config_creator.write_file(file)
         push_info(f'Written config file {file}')
 
@@ -160,7 +161,8 @@ class Comptages(QObject):
         file_dialog = QFileDialog()
         title = 'Import data'
         path = '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/'
-        file = QFileDialog.getOpenFileName(file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
+        file = QFileDialog.getOpenFileName(
+            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
         format = DataParser.get_format(file)
 

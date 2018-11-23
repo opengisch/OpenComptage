@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from comptages.core.utils import (
     create_progress_bar, clear_widgets, push_info)
 
+
 class DataParser(metaclass=abc.ABCMeta):
 
     def __init__(self, layers, count_id, file):
@@ -63,9 +64,10 @@ class DataParserVbv1(DataParser):
                 progress_bar.setValue(progress)
 
                 if not line.startswith('* '):
-                    self.layers.insert_count_detail_row(self.parse_data_line(line),
-                                                        self.count_id,
-                                                        self.get_file_name())
+                    self.layers.insert_count_detail_row(
+                        self.parse_data_line(line),
+                        self.count_id,
+                        self.get_file_name())
         clear_widgets()
         push_info(f'Imported data from file {self.file}')
 
@@ -108,10 +110,9 @@ class DataParserVbv1(DataParser):
 
 class DataParserInt2(DataParser):
 
-
     def __init__(self, layers, count_id, file):
         DataParser.__init__(self, layers, count_id, file)
-        
+
         self.file_header = self.parse_file_header()
         self.intspec = dict()
         for i, code in enumerate(self.file_header['INTSPEC'].split('+')):
@@ -135,14 +136,15 @@ class DataParserInt2(DataParser):
 
                 if not line.startswith('* '):
                     parsed_line = self.parse_data_line(line)
-                    
-                    self.layers.insert_count_aggregate_row(parsed_line,
-                                                           self.intspec[parsed_line['info_code']],
-                                                           self.count_id,
-                                                           self.get_file_name(),
-                                                           self.spdbins,
-                                                           self.lenbins,
-                                                           self.catbins)
+
+                    self.layers.insert_count_aggregate_row(
+                        parsed_line,
+                        self.intspec[parsed_line['info_code']],
+                        self.count_id,
+                        self.get_file_name(),
+                        self.spdbins,
+                        self.lenbins,
+                        self.catbins)
         clear_widgets()
         push_info(f'Imported data from file {self.file}')
 
@@ -151,7 +153,7 @@ class DataParserInt2(DataParser):
 
         # In the data files midnight is 2400 instead of 0000
         if line[7:9] == '24':
-            line = line[:7] + '00' + line[9:] 
+            line = line[:7] + '00' + line[9:]
 
         parsed_line['start'] = datetime.strptime(
             f"{line[0:11]}", "%d%m%y %H%M")
@@ -171,8 +173,9 @@ class DataParserInt2(DataParser):
         parsed_line['data_9'] = line[60:64]
         parsed_line['data_10'] = line[65:69]
         parsed_line['data_11'] = line[70:74]
-        parsed_line['data_12'] = line[75:79]                                                                                       
+        parsed_line['data_12'] = line[75:79]
         return parsed_line
+
 
 if __name__ == '__main__':
     # data_parser = DataParserInt2(
@@ -185,9 +188,4 @@ if __name__ == '__main__':
     # for i, code in enumerate(file_header['INTSPEC'].split('+')):
     #     intspec['0'+str(i+1)] = code.strip()
 
-    
-    
-    # print(intspec)
-
     print(DataParser.get_format('/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/_Int_VbV/00056214.A02'))
-    
