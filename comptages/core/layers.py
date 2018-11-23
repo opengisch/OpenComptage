@@ -486,7 +486,7 @@ class Layers(QObject):
                      f"{row['length']}, "
                      f"'{row['height']}', "
                      f"'{file_name}', "
-                     f"1, "  # TODO
+                     f"{row['channel']}, "
                      f"{count_id}, "
                      f"{row['category_id']}"
                      ")")
@@ -506,7 +506,7 @@ class Layers(QObject):
                      f"'{row['end']}', "
                      f"'{file_name}', "
                      f"{count_id}, "
-                     f"1 "  # TODO
+                     f"{row['channel']}"
                      ")")
 
         query_str_value = ""
