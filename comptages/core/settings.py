@@ -14,15 +14,15 @@ class Settings(SettingManager):
         SettingManager.__init__(self, 'Comptages')
 
         self.add_setting(
-            String("db_host", Scope.Project, 'comptages-db'))
+            String("db_host", Scope.Global, 'comptages-db'))
         self.add_setting(
-            String("db_name", Scope.Project, 'comptages'))
+            String("db_name", Scope.Global, 'comptages'))
         self.add_setting(
-            Integer("db_port", Scope.Project, 5432))
+            Integer("db_port", Scope.Global, 5432))
         self.add_setting(
-            String("db_username", Scope.Project, 'postgres'))
+            String("db_username", Scope.Global, 'postgres'))
         self.add_setting(
-            String("db_password", Scope.Project, 'postgres'))
+            String("db_password", Scope.Global, 'postgres'))
 
 
 class SettingsDialog(QDialog, FORM_CLASS, SettingDialog):
