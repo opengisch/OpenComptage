@@ -67,3 +67,14 @@ INSERT INTO comptages.class_category(id_class, id_category)	VALUES ((select curr
 -- Sensor type
 INSERT INTO comptages.sensor_type(name, permanent) VALUES ('Boucle', True);
 INSERT INTO comptages.sensor_type(name, permanent) VALUES ('Tube', False);
+
+-- Brand
+INSERT INTO comptages.brand(name) VALUES ('GoldenRiver');
+
+-- Model
+INSERT INTO comptages.model(name, formatter_name, card_name, id_brand) VALUES ('M660', '', '8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity)', (select currval('comptages.brand_id_seq')));
+  -- TODO
+  
+-- Device
+INSERT INTO comptages.device(serial, purchase_date, name, id_model) VALUES ('229007', NULL, '1', (select currval('comptages.model_id_seq')));
+  -- TODO
