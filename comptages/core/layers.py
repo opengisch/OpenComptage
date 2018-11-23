@@ -5,7 +5,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
-    QgsAction, QgsFeatureRequest)
+    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils)
 from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
@@ -250,7 +250,16 @@ class Layers(QObject):
         else:
             selected_feature = next(layer.getSelectedFeatures())
 
-            # TODO set automatically installation_id
+            lanes = self.get_lanes_of_section(selected_feature.attribute('id'))
+            installation = self.get_installation_of_lane(
+                next(lanes).attribute('id'))
+
+            # Save the id of the installation related to the selected section
+            # so we can use in the count form to automatically select the
+            # installation in the combobox
+            QgsExpressionContextUtils.setProjectVariable(
+                QgsProject.instance(),
+                'selected_installation', installation.attribute('id'))
             self.layers['count'].startEditing()
             iface.setActiveLayer(self.layers['count'])
             iface.actionAddFeature().trigger()
