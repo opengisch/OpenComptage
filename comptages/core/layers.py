@@ -61,6 +61,8 @@ class Layers(QObject):
 
         self.populate_list_of_highlighted_sections()
 
+        self.layers['count'].featureAdded.connect(self.on_count_added)
+
     def apply_qml_styles(self):
         for key in LAYER_DEFINITIONS:
             current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -264,6 +266,13 @@ class Layers(QObject):
             iface.setActiveLayer(self.layers['count'])
             iface.actionAddFeature().trigger()
 
+    def on_count_added(self):
+        """Called when a count is added to the layer.
+        Refresh the map"""
+
+        self.populate_list_of_highlighted_sections()
+        self.layers['section'].triggerRepaint()
+
     def edit_count(self):
         """Open attribute table of count filtered with only the
         features related to the selected section"""
@@ -354,7 +363,6 @@ class Layers(QObject):
             sensor=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
-        # TODO when a section is added, refresh list
 
         self.highlighted_sections = []
         settings = Settings()
