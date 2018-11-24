@@ -332,7 +332,7 @@ class Layers(QObject):
     def get_installation_of_lane(self, lane_id):
         """Return the installation feature of the passes lane"""
         lane = next(self.layers['lane'].getFeatures(
-            '"id"={}'.format(lane_id))
+            '"id"={}'.format(lane_id)))
         installation_id = lane.attribute('id_installation')
 
         return next(self.layers['installation'].getFeatures(
@@ -497,18 +497,19 @@ class Layers(QObject):
                      "speed, length, height, "
                      "file_name, "
                      "id_lane, id_count, id_category) values ("
-                     "{}, ".format(row['numbering'])
-                     "'{}', ".format(row['timestamp'])
-                     "{}, ".format(row['distance_front_front'])
-                     "{}, ".format(row['distance_front_back'])
-                     "{}, ".format(row['speed'])
-                     "{}, ".format(row['length'])
-                     "'{}', ".format(row['height'])
-                     "'{}', ".format(file_name)
-                     "{}, ".format(row['channel'])
-                     "{}, ".format(count_id)
-                     "{}".format(row['category_id'])
-                     ")")
+                     "{}, '{}', {}, {}, {}, {}, '{}', '{}', {}, {}, "
+                     "{})".format(
+                         row['numbering'],
+                         row['timestamp'],
+                         row['distance_front_front'],
+                         row['distance_front_back'],
+                         row['speed'],
+                         row['length'],
+                         row['height'],
+                         file_name,
+                         row['channel'],
+                         count_id,
+                         row['category_id']))
 
         query.exec_(query_str)
 
@@ -520,13 +521,13 @@ class Layers(QObject):
         query_str = ("insert into comptages.count_aggregate ("
                      "type, \"start\", \"end\", file_name, id_count, id_lane) "
                      "values ("
-                     "'{}', ".format(row_type)
-                     "'{}', ".format(row['start'])
-                     "'{}', ".format(row['end'])
-                     "'{}', ".format(file_name)
-                     "{}, ".format(count_id)
-                     "{}".format(row['channel'])
-                     ")")
+                     "'{}', '{}', '{}', '{}', {}, {})".format(
+                         row_type,
+                         row['start'],
+                         row['end'],
+                         file_name,
+                         count_id,
+                         row['channel']))
 
         query_str_value = ""
         if row_type == 'SPD':
@@ -555,11 +556,12 @@ class Layers(QObject):
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, speed_low, speed_high, "
                                 "id_count_aggregate) values ("
-                                "{}, ".format(data)
-                                "{}, ".format(speed_low)
-                                "{}, ".format(speed_high)
+                                "{}, {}, {}"
                                 "(select currval('comptages.count_aggregate_id_seq'))"
-                                ")"))
+                                ")".format(
+                                    data,
+                                    speed_low,
+                                    speed_high)))
         return queries
 
     def _create_query_str_aggregate_length(self, row, lenbins):
@@ -573,11 +575,13 @@ class Layers(QObject):
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, length_low, length_high, "
                                 "id_count_aggregate) values ("
-                                "{}, ".format(data)
-                                "{}, ".format(length_low)
-                                "{}, ".format(length_high)
+                                "{}, {}, {}, "
                                 "(select currval('comptages.count_aggregate_id_seq'))"
-                                ")"))
+                                ")".format(
+                                    data,
+                                    length_low,
+                                    length_high)))
+
         return queries
 
     def _create_query_str_aggregate_class(self, row, catbins):
@@ -590,10 +594,11 @@ class Layers(QObject):
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, id_category, "
                                 "id_count_aggregate) values ("
-                                "{}, ".format(data)
-                                "{}, ".format(category)
-                                "(select currval('comptages.count_aggregate_id_seq'))"                                
-                                ")"))
+                                "{}, {}, "
+                                "(select currval('comptages.count_aggregate_id_seq'))"            
+                                ")".format(
+                                    data,
+                                    category)))
         return queries
 
     def get_category_bins(self, class_name):
@@ -602,7 +607,7 @@ class Layers(QObject):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
-        
+
         query_str = (
             "select cc.id_category from "
             "comptages.class_category as cc "

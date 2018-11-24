@@ -27,4 +27,4 @@ class ConfigCreatorCmd(ConfigCreator):
     def write_file(self, file):
         with open(file, 'w') as f:
             for command in self.commands.keys():
-                f.write('{} = {}\n'.format(command, self.commands[command])
+                f.write('{} = {}\n'.format(command, self.commands[command]))
