@@ -52,7 +52,7 @@ class Layers(QObject):
 
                 self.layers[key] = layer
 
-                print("loaded_layer: ".format(layer_definition['display_name'])
+                print("loaded_layer: ".format(layer_definition['display_name']))
 
         self.apply_qml_styles()
         self.add_layer_actions()
