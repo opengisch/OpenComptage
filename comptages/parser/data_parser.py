@@ -69,14 +69,14 @@ class DataParserVbv1(DataParser):
                         self.count_id,
                         self.get_file_name())
         clear_widgets()
-        push_info(f'Imported data from file {self.file}')
+        push_info('Imported data from file {}'.format(self.file))
 
     def parse_data_line(self, line):
         parsed_line = dict()
 
         parsed_line['numbering'] = line[0:6]
         parsed_line['timestamp'] = datetime.strptime(
-            f"{line[7:24]}0000", "%d%m%y %H%M %S %f")
+            "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f")
         parsed_line['reserve_code'] = line[25:31]
         parsed_line['lane'] = self._cast_data_to_int(line[32:34], 'lane')
         parsed_line['direction'] = self._cast_data_to_int(
@@ -105,7 +105,8 @@ class DataParserVbv1(DataParser):
             if name == 'category':
                 return 0
 
-            raise ValueError(f'{name} has an invalid value: {data}')
+            raise ValueError(
+                '{} has an invalid value: {}'.format(name, data))
 
 
 class DataParserInt2(DataParser):
@@ -146,7 +147,8 @@ class DataParserInt2(DataParser):
                         self.lenbins,
                         self.catbins)
         clear_widgets()
-        push_info(f'Imported data from file {self.file}')
+        push_info(
+            'Imported data from file {}'.format(self.file))
 
     def parse_data_line(self, line):
         parsed_line = dict()
@@ -156,7 +158,7 @@ class DataParserInt2(DataParser):
             line = line[:7] + '00' + line[9:]
 
         parsed_line['start'] = datetime.strptime(
-            f"{line[0:11]}", "%d%m%y %H%M")
+            "{}".format(line[0:11]), "%d%m%y %H%M")
         parsed_line['end'] = parsed_line['start'] + timedelta(
             minutes=int(self.file_header['INTERVAL']))
         parsed_line['channel'] = line[12:13]

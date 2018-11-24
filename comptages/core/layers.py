@@ -52,7 +52,7 @@ class Layers(QObject):
 
                 self.layers[key] = layer
 
-                print(f"loaded_layer: {layer_definition['display_name']}")
+                print("loaded_layer: ".format(layer_definition['display_name'])
 
         self.apply_qml_styles()
         self.add_layer_actions()
@@ -67,7 +67,7 @@ class Layers(QObject):
         for key in LAYER_DEFINITIONS:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             qml_file_path = os.path.join(
-                current_dir, os.pardir, 'qml', f'{key}.qml')
+                current_dir, os.pardir, 'qml', '{}.qml'.format(key))
             self.layers[key].loadNamedStyle(qml_file_path)
 
     def create_relations(self):
@@ -305,7 +305,7 @@ class Layers(QObject):
 
         iface.showAttributeTable(
             self.layers['count'],
-            f'"id" in ({", ".join(map(str, count_ids))})')
+            '"id" in ({})'.format(", ".join(map(str, count_ids))))
 
     def get_counts_of_section(self, section_id):
         """Return a list of all count features related with the passed
@@ -324,18 +324,19 @@ class Layers(QObject):
     def get_lanes_of_section(self, section_id):
         """Return a list of the lane features of the passed section"""
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id_section" = \'{section_id}\''
+            '"id_section" = \'{}\''.format(section_id)
         )
 
         return self.layers['lane'].getFeatures(request)
 
     def get_installation_of_lane(self, lane_id):
         """Return the installation feature of the passes lane"""
-        lane = next(self.layers['lane'].getFeatures(f'"id"={lane_id}'))
+        lane = next(self.layers['lane'].getFeatures(
+            '"id"={}'.format(lane_id))
         installation_id = lane.attribute('id_installation')
 
         return next(self.layers['installation'].getFeatures(
-            f'"id"={installation_id}'))
+            '"id"={}'.format(installation_id)))
 
     def get_counts_of_installation(self, installation_id):
         """Return a list of count features related with the passsed
@@ -343,7 +344,7 @@ class Layers(QObject):
         # TODO verify if more than one layer is returned
 
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id_installation" = {installation_id}'
+            '"id_installation" = {}'.format(installation_id)
         )
 
         return self.layers['count'].getFeatures(request)
@@ -379,11 +380,12 @@ class Layers(QObject):
 
         wheres = []
         if start_date:
-            wheres.append(f"c.start_process_date >= '{start_date}'::date")
+            wheres.append(
+                "c.start_process_date >= '{}'::date".format(start_date))
         if end_date:
-            wheres.append(f"c.end_process_date <= '{end_date}'::date")
+            wheres.append("c.end_process_date <= '{}'::date".format(end_date))
         if permanent is not None:
-            wheres.append(f"i.permanent = '{permanent}'::bool")
+                    wheres.append("i.permanent = '{}'::bool".format(permanent))
         if sensor:
             # TODO
             pass
@@ -396,7 +398,7 @@ class Layers(QObject):
                      "inner join comptages.installation as i on "
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
-                     f"{where_str};")
+                     "{};".format(where_str))
         print(query_str)
         query.exec_(query_str)
 
@@ -456,7 +458,7 @@ class Layers(QObject):
         """Return the count feature"""
 
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id" = {count_id}'
+            '"id" = {}'.format(count_id)
         )
 
         return next(self.layers['count'].getFeatures(request))
@@ -465,7 +467,7 @@ class Layers(QObject):
         """Return the installation of a count"""
 
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id" = {installation_id}'
+            '"id" = {}'.format(installation_id)
         )
 
         return next(self.layers['installation'].getFeatures(request))
@@ -473,14 +475,14 @@ class Layers(QObject):
     def get_lanes_of_installation(self, installation_id):
 
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id_installation" = {installation_id}'
+            '"id_installation" = {}'.format(installation_id)
         )
 
         return self.layers['lane'].getFeatures(request)
 
     def get_section(self, section_id):
         request = QgsFeatureRequest().setFilterExpression(
-            f'"id" = {section_id}'
+            '"id" = {}'.format(section_id)
         )
 
         return next(self.layers['section'].getFeatures(request))
@@ -495,17 +497,17 @@ class Layers(QObject):
                      "speed, length, height, "
                      "file_name, "
                      "id_lane, id_count, id_category) values ("
-                     f"{row['numbering']}, "
-                     f"'{row['timestamp']}', "
-                     f"{row['distance_front_front']}, "
-                     f"{row['distance_front_back']}, "
-                     f"{row['speed']}, "
-                     f"{row['length']}, "
-                     f"'{row['height']}', "
-                     f"'{file_name}', "
-                     f"{row['channel']}, "
-                     f"{count_id}, "
-                     f"{row['category_id']}"
+                     "{}, ".format(row['numbering'])
+                     "'{}', ".format(row['timestamp'])
+                     "{}, ".format(row['distance_front_front'])
+                     "{}, ".format(row['distance_front_back'])
+                     "{}, ".format(row['speed'])
+                     "{}, ".format(row['length'])
+                     "'{}', ".format(row['height'])
+                     "'{}', ".format(file_name)
+                     "{}, ".format(row['channel'])
+                     "{}, ".format(count_id)
+                     "{}".format(row['category_id'])
                      ")")
 
         query.exec_(query_str)
@@ -518,12 +520,12 @@ class Layers(QObject):
         query_str = ("insert into comptages.count_aggregate ("
                      "type, \"start\", \"end\", file_name, id_count, id_lane) "
                      "values ("
-                     f"'{row_type}', "
-                     f"'{row['start']}', "
-                     f"'{row['end']}', "
-                     f"'{file_name}', "
-                     f"{count_id}, "
-                     f"{row['channel']}"
+                     "'{}', ".format(row_type)
+                     "'{}', ".format(row['start'])
+                     "'{}', ".format(row['end'])
+                     "'{}', ".format(file_name)
+                     "{}, ".format(count_id)
+                     "{}".format(row['channel'])
                      ")")
 
         query_str_value = ""
@@ -546,16 +548,16 @@ class Layers(QObject):
         queries = []
 
         for i in range(1, 13):
-            data = row[f'data_{i}']
+            data = row['data_{}'.format(i)]
             if not data == '':
                 speed_low = spdbins[i-1]
                 speed_high = spdbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, speed_low, speed_high, "
                                 "id_count_aggregate) values ("
-                                f"{data}, "
-                                f"{speed_low}, "
-                                f"{speed_high}, "
+                                "{}, ".format(data)
+                                "{}, ".format(speed_low)
+                                "{}, ".format(speed_high)
                                 "(select currval('comptages.count_aggregate_id_seq'))"
                                 ")"))
         return queries
@@ -564,16 +566,16 @@ class Layers(QObject):
         queries = []
 
         for i in range(1, 13):
-            data = row[f'data_{i}']
+            data = row['data_{}'.format(i)]
             if not data == '':
                 length_low = lenbins[i-1]
                 length_high = lenbins[i]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, length_low, length_high, "
                                 "id_count_aggregate) values ("
-                                f"{data}, "
-                                f"{length_low}, "
-                                f"{length_high}, "
+                                "{}, ".format(data)
+                                "{}, ".format(length_low)
+                                "{}, ".format(length_high)
                                 "(select currval('comptages.count_aggregate_id_seq'))"
                                 ")"))
         return queries
@@ -582,14 +584,14 @@ class Layers(QObject):
         queries = []
 
         for i in range(1, 13):
-            data = row[f'data_{i}']
+            data = row['data_{}'.format(i)]
             if not data == '':
                 category = catbins[i-1]
                 queries.append(("insert into comptages.count_aggregate_value ("
                                 "total, id_category, "
                                 "id_count_aggregate) values ("
-                                f"{data}, "
-                                f"{category}, "
+                                "{}, ".format(data)
+                                "{}, ".format(category)
                                 "(select currval('comptages.count_aggregate_id_seq'))"                                
                                 ")"))
         return queries
@@ -602,11 +604,11 @@ class Layers(QObject):
         query = QSqlQuery(self.db)
         
         query_str = (
-            f"select cc.id_category from "
-            f"comptages.class_category as cc "
-            f"join comptages.category as cat on cc.id_category = cat.id "
-            f"join comptages.class as cl on cl.id = cc.id_class "
-            f"where cl.name = '{class_name}'")
+            "select cc.id_category from "
+            "comptages.class_category as cc "
+            "join comptages.category as cat on cc.id_category = cat.id "
+            "join comptages.class as cl on cl.id = cc.id_class "
+            "where cl.name = '{}'".format(class_name))
 
         print(query_str)
         query.exec_(query_str)

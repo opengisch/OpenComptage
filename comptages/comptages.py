@@ -139,7 +139,7 @@ class Comptages(QObject):
 
     def do_export_configuration_action(self, count_id):
         QgsMessageLog.logMessage(
-            f'do_export_configuration_action {count_id}',
+            'do_export_configuration_action {}'.format(count_id),
             'Comptages', Qgis.Info)
         config_creator = ConfigCreatorCmd(self.layers, count_id)
         config_creator.set_section_commands()
@@ -151,11 +151,11 @@ class Comptages(QObject):
         file = QFileDialog.getSaveFileName(
             file_dialog, title, path, "Config file (*.CMD)")[0]
         config_creator.write_file(file)
-        push_info(f'Written config file {file}')
+        push_info('Written config file {}'.format(file))
 
     def do_import_data_action(self, count_id):
         QgsMessageLog.logMessage(
-            f'do_import_data_action {count_id}',
+            'do_import_data_action {}'.format(count_id),
             'Comptages', Qgis.Info)
 
         file_dialog = QFileDialog()
@@ -178,17 +178,17 @@ class Comptages(QObject):
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
-            f'do_generate_report_action {count_id}',
+            'do_generate_report_action {}'.format(count_id),
             'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
         QgsMessageLog.logMessage(
-            f'do_export_plan_action {count_id}',
+            'do_export_plan_action {}'.format(count_id),
             'Comptages', Qgis.Info)
 
     def do_generate_chart_action(self, count_id):
         QgsMessageLog.logMessage(
-            f'do_generate_chart_action {count_id}',
+            'do_generate_chart_action {}'.format(count_id),
             'Comptages', Qgis.Info)
         if not self.chart_dock:
             self.chart_dock = ChartDock(self.iface)
