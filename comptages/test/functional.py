@@ -3,6 +3,7 @@
 from qgis.PyQt.QtWidgets import QToolBar
 
 import unittest
+import os
 from qgis.utils import iface, active_plugins, startPlugin, loadPlugin
 
 
@@ -23,9 +24,9 @@ class TestFunc(unittest.TestCase):
         self.assertTrue(TestFunc.get_comptages_toolbar())
         self.assertTrue(TestFunc.is_action_enabled("Connect DB"))
         self.assertTrue(TestFunc.is_action_enabled("Settings"))
-        self.assertFalse(TestFunc.is_action_enabled("Create new campaign"))
-        self.assertFalse(TestFunc.is_action_enabled("Select/edit campaign"))
-        self.assertFalse(TestFunc.is_action_enabled("Import special periods"))
+        #self.assertFalse(TestFunc.is_action_enabled("Create new measure"))
+        #self.assertFalse(TestFunc.is_action_enabled("Edit measure"))
+        #self.assertFalse(TestFunc.is_action_enabled("Filter"))
 
         # Julie presses on the start button of the plugin
         TestFunc.trigger_action("Connect DB")
@@ -39,9 +40,9 @@ class TestFunc(unittest.TestCase):
         # And all the buttons are enabled
         self.assertTrue(TestFunc.is_action_enabled("Connect DB"))
         self.assertTrue(TestFunc.is_action_enabled("Settings"))
-        self.assertTrue(TestFunc.is_action_enabled("Create new campaign"))
-        self.assertTrue(TestFunc.is_action_enabled("Select/edit campaign"))
-        self.assertTrue(TestFunc.is_action_enabled("Import special periods"))
+        self.assertTrue(TestFunc.is_action_enabled("Create new measure"))
+        self.assertTrue(TestFunc.is_action_enabled("Edit measure"))
+        self.assertTrue(TestFunc.is_action_enabled("Filter"))
 
     @staticmethod
     def trigger_action(text):
@@ -73,5 +74,20 @@ class TestFunc(unittest.TestCase):
         return False
 
 
-if __name__ == "__main__":
-    unittest.main(exit=False)
+if __name__ == "__main__" or __name__ == "__console__":
+    print("--- Functional tests ---")
+    iface.openMessageLog()
+    result = unittest.result.TestResult()
+    test_loader = unittest.TestLoader()
+    test_loader.loadTestsFromTestCase(TestFunc).run(result)
+    print(result)
+    exit_code = 0
+    for _ in result.failures:
+        exit_code = 1
+        print(_)
+
+    for _ in result.errors:
+        exit_code = 1
+        print(_)
+
+    os._exit(exit_code)
