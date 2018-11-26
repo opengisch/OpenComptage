@@ -14,6 +14,7 @@ class DataParser(metaclass=abc.ABCMeta):
         self.count_id = count_id
         self.file = file
         self.file_header = dict()
+        self.data_header = []
 
     def parse_file_header(self):
         with open(self.file) as f:
@@ -30,7 +31,16 @@ class DataParser(metaclass=abc.ABCMeta):
         with open(self.file) as f:
             for line in f:
                 if line.startswith('* HEAD '):
-                    print(line)
+                    start_char = 20
+                    i = 0
+                    while True:
+                        if line[start_char:start_char+4] != '':
+                            i += 1
+                            start_char += 5
+                        else:
+                            self.data_header.append(i)
+                            break
+        return self.data_header
 
     def parse_data(self):
         pass
@@ -115,18 +125,30 @@ class DataParserInt2(DataParser):
         DataParser.__init__(self, layers, count_id, file)
 
         self.file_header = self.parse_file_header()
-        self.intspec = dict()
-        for i, code in enumerate(self.file_header['INTSPEC'].split('+')):
-            self.intspec['0'+str(i+1)] = code.strip()
-
-        # Speed and length bins. min-max n goes from spdbins[n-1] to spdbins[n]
-        self.spdbins = self.file_header['SPDBINS'].split()
-        self.lenbins = self.file_header['LENBINS'].split()
-
-        # Category bins. CS n is catbins[n-1]
-        self.catbins = self.layers.get_category_bins(self.file_header['CLASS'])
+        self.intspec = self.get_intspec()
 
         self.number_of_lines = self.get_number_of_lines()
+
+    def get_intspec(self):
+        self.file_header = self.parse_file_header()
+        intspec = []
+        for i, code in enumerate(self.file_header['INTSPEC'].split('+')):
+            # the key corrpespond to the value in the data row
+            intspec.append(code.strip())
+        return intspec
+
+    def get_bins(self, code):
+        """Returns an array with the bins if they exist, or the number of columns
+        of this data type"""
+        values = []
+        if code == 'SPD':
+            values = self.file_header['SPDBINS'].split()
+        elif code == 'LEN':
+            values = self.file_header['LENBINS'].split()
+        else:
+            data_header = self.parse_data_header()
+            values = data_header[self.intspec.index(code)]
+        return values
 
     def parse_data(self):
         progress_bar = create_progress_bar("Import data")
@@ -137,15 +159,13 @@ class DataParserInt2(DataParser):
 
                 if not line.startswith('* '):
                     parsed_line = self.parse_data_line(line)
-
+                    row_type = self.intspec[int(parsed_line['info_code'])-1]
                     self.layers.insert_count_aggregate_row(
                         parsed_line,
-                        self.intspec[parsed_line['info_code']],
+                        row_type,
                         self.count_id,
                         self.get_file_name(),
-                        self.spdbins,
-                        self.lenbins,
-                        self.catbins)
+                        self.get_bins(row_type))
         clear_widgets()
         push_info(
             'Imported data from file {}'.format(self.file))
@@ -164,30 +184,18 @@ class DataParserInt2(DataParser):
         parsed_line['channel'] = line[12:13]
         parsed_line['reserve_code'] = line[14:16]
         parsed_line['info_code'] = line[17:19]
-        parsed_line['data_1'] = line[20:24]
-        parsed_line['data_2'] = line[25:29]
-        parsed_line['data_3'] = line[30:34]
-        parsed_line['data_4'] = line[35:39]
-        parsed_line['data_5'] = line[40:44]
-        parsed_line['data_6'] = line[45:49]
-        parsed_line['data_7'] = line[50:54]
-        parsed_line['data_8'] = line[55:59]
-        parsed_line['data_9'] = line[60:64]
-        parsed_line['data_10'] = line[65:69]
-        parsed_line['data_11'] = line[70:74]
-        parsed_line['data_12'] = line[75:79]
+
+        start_char = 20
+        i = 1
+        while True:
+            print(start_char)
+            if line[start_char:start_char+4] != '':
+                print(start_char)
+                parsed_line['data_{}'.format(i)] = \
+                    line[start_char:start_char+4]
+                i += 1
+                start_char += 5
+            else:
+                break
+
         return parsed_line
-
-
-if __name__ == '__main__':
-    # data_parser = DataParserInt2(
-    #     None, 1, '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/_Int_VbV/00056214.A02')
-
-    # data_parser.parse_data()
-
-    # file_header = data_parser.parse_file_header()
-    # intspec = dict()
-    # for i, code in enumerate(file_header['INTSPEC'].split('+')):
-    #     intspec['0'+str(i+1)] = code.strip()
-
-    print(DataParser.get_format('/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/_Int_VbV/00056214.A02'))

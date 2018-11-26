@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,0" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,577" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -321,7 +321,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="count_detail">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="480" y="740"/>
+	<position x="440" y="700"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -571,7 +571,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="308.035" y="406.518"/>
+		<position x="308.035" y="406.523"/>
 	<position x="308.035" y="369"/>
 	<position x="251.357" y="369"/>
 	</line>
@@ -580,7 +580,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="count_aggregate">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="760" y="960"/>
+	<position x="780" y="880"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -629,35 +629,23 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_aggregate"
 	 src-required="false" dst-required="false"/>
 
-<table name="count_aggregate_value">
+<table name="count_aggregate_value_cls">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="400" y="1020"/>
+	<position x="380" y="960"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="total">
+	<column name="value">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="speed_low">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="speed_high">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="length_low">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="length_high">
-		<type name="smallint" length="0"/>
-	</column>
-	<constraint name="count_aggregate_value_pk" type="pk-constr" table="comptages.count_aggregate_value">
+	<constraint name="count_aggregate_value_cls_pk" type="pk-constr" table="comptages.count_aggregate_value_cls">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_category" index="7"/>
-		<object name="id_count_aggregate" index="6"/>
+		<object name="id_category" index="3"/>
+		<object name="id_count_aggregate" index="2"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -672,7 +660,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#8b9633"
 	 src-table="comptages.count_aggregate"
-	 dst-table="comptages.count_aggregate_value"
+	 dst-table="comptages.count_aggregate_value_cls"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="category_has_many_count_aggregate_value" type="rel1n"
@@ -681,7 +669,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#c5bd25"
 	 src-table="comptages.category"
-	 dst-table="comptages.count_aggregate_value"
+	 dst-table="comptages.count_aggregate_value_cls"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="installation_has_many_voie" type="rel1n"
@@ -691,6 +679,144 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#bb9c77"
 	 src-table="comptages.installation"
 	 dst-table="comptages.lane"
+	 src-required="false" dst-required="false"/>
+
+<table name="count_aggregate_value_cnt">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="380" y="1060"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="value">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="interval">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="count_aggregate_value_cnt_pk" type="pk-constr" table="comptages.count_aggregate_value_cnt">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count_aggregate" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_aggregate_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="count_aggregate_has_many_count_aggregate_value_cnt" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#6539a9"
+	 src-table="comptages.count_aggregate"
+	 dst-table="comptages.count_aggregate_value_cnt"
+	 src-required="false" dst-required="false"/>
+
+<table name="count_aggregate_value_drn">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="380" y="1140"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="value">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="direction">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="count_aggregate_value_drn_pk" type="pk-constr" table="comptages.count_aggregate_value_drn">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count_aggregate" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_aggregate_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="count_aggregate_has_many_count_aggregate_value_drn" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#ee253c"
+	 src-table="comptages.count_aggregate"
+	 dst-table="comptages.count_aggregate_value_drn"
+	 src-required="false" dst-required="false"/>
+
+<table name="count_aggregate_value_len">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="380" y="1220"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="value">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="low">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="high">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="count_aggregate_value_len_pk" type="pk-constr" table="comptages.count_aggregate_value_len">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="count_aggregate_has_many_count_aggregate_value_len" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#7a39c2"
+	 src-table="comptages.count_aggregate"
+	 dst-table="comptages.count_aggregate_value_len"
+	 src-required="false" dst-required="false"/>
+
+<table name="count_aggregate_value_spd">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="380" y="1320"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="value">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="low">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="high">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="count_aggregate_value_spd_pk" type="pk-constr" table="comptages.count_aggregate_value_spd">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count_aggregate" index="4"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_aggregate_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="count_aggregate_has_many_count_aggregate_spd" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#3b6e63"
+	 src-table="comptages.count_aggregate"
+	 dst-table="comptages.count_aggregate_value_spd"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
