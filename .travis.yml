@@ -23,6 +23,7 @@ before_install:
   - sudo gpg --export --armor CAEB3DC3BDF7FB45 | sudo apt-key add -
   - sudo apt-get update -q
   - sudo apt-get -y install qgis python-qgis qgis-plugin-grass
+  - export LANG=en_US.UTF-8
 
 install:
   - psql -c "CREATE DATABASE comptages;" -U postgres
