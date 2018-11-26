@@ -19,8 +19,6 @@ then
     echo "before ogr2ogr"
     # Import the base_tjm_ok MapInfo dump into the transfer schema
     psql "service=comptages_dev" --echo-errors -c 'CREATE SCHEMA IF NOT EXISTS transfer;'
-#    export PGCLIENTENCODING=LATIN1
-#    ogr2ogr -f "PostgreSQL" PG:"service=comptages_dev schemas=transfer client_encoding=latin1" -t_srs EPSG:2056 -overwrite ../db/legacy/base_tjm_ok_20180227/BASE_TJM_OK.TAB
     ogr2ogr -f "PostgreSQL" PG:"service=comptages_dev schemas=transfer" -t_srs EPSG:2056 -overwrite ../db/legacy/base_tjm_ok_20180227/BASE_TJM_OK.TAB
     echo "ogr2ogr finished"
     python --version
