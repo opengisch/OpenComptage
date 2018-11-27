@@ -23,10 +23,6 @@
    #+BEGIN_SRC sh
      ./create_db.sh
    #+END_SRC
-   Populate the development database
-   #+BEGIN_SRC sh
-     ./insert_test_data.sh
-   #+END_SRC
    Link the plugin directory (=comptages= directory inside the repository) to the
    QGIS plugin directory. E.g.:
    #+BEGIN_SRC sh
@@ -39,29 +35,15 @@
      cd .docker
      docker-compose -f docker-compose_dev_env.yml down --volume
    #+END_SRC
-* Tests
-  Functional tests are run inside a Docker container. The docker container is
-  based on Ubuntu 18.04 with QGIS installed. The ~run_docker_test.sh~ script, copy
-  the plugin directory into the shared volume ~.docker/tests/~ and launches the
-  ~run_test.sh~ script inside the docker container to run QGIS without welcome
-  messages and execute into QGIS the ~test.py~ python script containing the
-  tests. After a wait of 10s, a screenshot of the virtual framebuffer is taken,
-  and stored into the shared volume as ~screenshot.png~, and the docker
-  terminates.
-
-  To run the tests, go to the ~scripts~ directory and do
-  #+BEGIN_SRC sh
-    ./run_test_on_docker.sh
-  #+END_SRC
-  To rebuild the docker, e.g. when the run_test.sh script is modified
-  #+BEGIN_SRC sh
-    docker-compose -f .docker/docker-compose.yml build
-  #+END_SRC
 * Data model
   The data model has been created to easily allow to add functionality to the product
   e.g. adding new vehicle classes and to be as simple as possible and easily
   usable into QGIS. It is flexible enough to support natively all the current
   special cases without write special management code.
+  
+  The data model is created with ~pgmodeler~ and is exported into an sql script
+  used by ~create_db.sh~ script. To create a new sql from the pgmodeler's model,
+  run the script ~create_data_model_sql_script.sh~.
 ** Tables
    | English name   | French name      |
    |----------------+------------------|
@@ -78,199 +60,3 @@
    | section        | troncon          |
    | count_detail   | comptage_detail  |
    | special_period | periode_speciale |
-*** Translation issues
-    - nom_formatter in model?
-    - pr_debut et fin in troncon
-    - dist_debut et fin in troncon
-*** section
-    This table contains the street sections (/tronçons/). The data are imported
-    from the existing BASE_TJM_OK MapInfo table.
-    | Field      | Type                       | Origin                  | Remarks                               |
-    |------------+----------------------------+-------------------------+---------------------------------------|
-    | id         | char(20)                   | BASE_TJM_OK.fsection    | id of the section (normally 8 digits) |
-    | name       | text                       | BASE_TJM_OK.nom_rue     | street name                           |
-    | owner      | text                       | BASE_TJM_OK.f_prop      | owner of the road                     |
-    | road       | text                       | BASE_TJM_OK.f_axe       |                                       |
-    | way        | char(1)                    | BASE_TJM_OK.f_sens      | Can be ['+', '-', '=']                |
-    | start_pr   | text                       | BASE_TJM_OK.f_pr_d      |                                       |
-    | end_pr     | text                       | BASE_TJM_OK.f_pr_f      |                                       |
-    | start_dist | numeric(18,3)              | BASE_TJM_OK.f_dist_d    |                                       |
-    | end_dist   | numeric(18,3)              | BASE_TJM_OK.f_dist_f    |                                       |
-    | place_name | text                       | BASE_TJM_OK.lieu_rue    |                                       |
-    | geometry   | geometry(LineString, 2056) | geometry of BASE_TJM_OK | geometry                              |
-*** lane
-    This table contains the lanes of a street section. The data are imported
-    from the existing BASE_TJM_OK MapInfo table.
-** Import of existing data
-*** BASE_TJM_OK
-    Import the 
-    Procedure to import the data from the MapInfo dump of BASE_TJM_OK:
-    (Step from 1 to 6 are needed only if the MapInfo base has changed)
-    1. open the file BASE_TJM_OK.TAB in QGIS
-    2. set the CRS of the layer to 2056
-    3. create a temporary transfer table (~base_tjm_ok.base_tjm_ok~) into the
-       postgres db with the script ~../db/base_tjm_ok.sql~
-    4. load the created table as layer into QGIS
-    5. manually copy-paste all the features to the new table
-    6. create a sql dump of the new table into ~../db/base_tjm_ok_data.sql~
-    7. run the script ~../db/base_tjm_ok_data_transfer.sql~ to convert and
-       transfer the data to the correct tables
-** Notes
-   Da emails
-*** Vacanze
-    - tener conto anche di JU, BE, FR, VD e dipartimento francese Doubs
-*** Documenti
-    - 20180821_structTableExist.xlsx -> analisi delle tabelle esistenti nel BD SQLServer
-    - t_troncon.zip -> backup della t_troncos da PG, loro proposta per
-      rimpiazzare base_tjm_ok
-*** Altro da sistemare
-**** email 15 agosto su files esempi ecc
-      -        les fichiers exemples (pour des comptages temporaires réalisés avec nos machines actuelles)
-
-  1.    de configuration du compteur (.CMD)
-
-  2.    binaires résultats du comptage (.I00)
-
-  3.    Ascii, issu de la conversion avec GrFormat (.A00)
-
-  4.    fiche de pose (.PDF)
-
-  5.    rapport (.PDF)
-
- 
-
-  pour nos différents cas :
-
-  a)    Tubes non classificateurs : [13571735]
-
-  b)    Tubes classificateurs (Swiss7) : [64120071]
-
-  c)    Boucles (Swiss10) : [01743230]
-
-  d)    Boucles Cas spécial (Swiss10) : [53109999]
-
-  Dans ce dernier cas, vous trouverez aussi les 4 fichiers Ascii que l’application a reconstruits avant de générer les rapports
-
- 
-
-  -       Concernant les postes permanents :
-
-  Configuration similaire à poste temporaire, mais un fichier ne concerne qu’au maximum un jour entier
-
-  o   Pour un poste temporaire:
-
-  §  BREAK = off
-
-  §  MEMFULL = stop
-
-  o   Pour un poste permanent:
-
-  §  BREAK = Daily
-
-  §  MEMFULL = Overwrite
-
- 
-
-  Livrés :
-
-  o   Exemples de fichiers binaires du mois de juillet pour un compteur (CLC: Crêt-du-Locle Cantonniers sur [13208270] {Oups, il s'appelle aussi parfois CDL ! })
-
-  o   Rapport pour les postes permanents basé sur une année complète, même s’il nécessite des corrections :
-
-  §  les libellés doivent correspondre à ceux du rapport des comptages temporaires
-
-  §  les pages 4 et 5 devraient être rassemblées en une seule grâce à l’abandon des tableaux du bas, en y plaçant 3 graphiques : Courbe de variation annuelle en fonction du TJM, Courbe de variation hebdomadaire en fonction du TJM et Courbe de variation hebdomadaire en fonction du TJMO
-
-  §  la page 9 est supprimée
-
-  §  il faut mettre toutes les valeurs dans le graphique de la page 10
-
- 
-
-  -       Concernant le comptage Véhicule par véhicule
-
-  Nos compteurs actuels, avec la même configuration, peuvent compter soit par intervalles, soit véhicules par véhicules, soit les 2 en même temps.
-
-  Le choix se fait au momemt de démarrage de l'enregistrement (CF p.216 du manuel PDF)
-
- 
-
-  Livré (dossier _Int_VbV):
-
-  o   Pour 3 tronçons différents les binaires pour INT (.Ixy) et VBV (.Vxy), ainsi que leur conversion en ASCII (.Axy et .aVy respectivement)
-
-  o   Une description de ces 2 formats Ascii
-
- 
-
-  -       La livraison contient encore
-
-  o   La liste des cas spéciaux (CasSpeciaux.xlsx)
-
-  o   Le manuel utilisateur de nos machines actuelles (GRPS_GoldenrRver_UserManual_2_2.pdf), pas besoin de le lire en entier J
-
-  o   Exemples de commandes avec GrFormat (GrFormat.TXT)
-
- 
-
-  -       Concernant la base PG actuelle pour les comptages
-
-  Elle en est au stade d’ébauche et ne contient qu’une seule table fort incomplète, à tel point qu’il nous semble inutile de vous en fournir un Dump.
-
-  Par contre nous allons vous fournir d’ici la fin de la semaine quelques explications concernant les tables de la base SQLserver qui est déjà en votre possession.
-
- 
-
-  -       Concernant nos futures machines
-
-  Nous espérons pouvoir vous fournir bientôt
-
-  i)              des exemples de fichiers binaires
-
-  ii)             des exemples de fichiers décodés
-
-  iii)            l’utilitaire permettant ce décodage
-
-  iv)           une procédure de configuration de ces compteurs
-
- 
-
-  Par ailleurs, concernant le point 12 du PV du 10 août, Jonathan précise que si un fichier « Excel » identique au rapport n’est pas forcément nécessaire, il a néanmoins besoins des tableaux de valeurs dans un format plus pratique que du PDF par exemple en CSV.
-**** Classi per i contaggi aggregati
-     Vedi email stampata + immagine modifica proposta db
-**** email 9 novembre su files configurazione e altro
-     1.    les fichiers exemples INT:
-
-o   CNT (RC5Colo.I05 et I06)
-
-o   DRN (13208280.A00 et Test_M660T_2017_S12.A02)
-
-o   SDS (ega80924.i07, ega81107.i00 et ega81107.i01)
-
- 
-
-2.    Les combinaisons possibles (GoldenRiver_GRPS_manual_2_2_IntSpec.pdf)
-
- 
-
-3.    Les fichiers ICS 2014 à 2018 pour Neuchâtel
-
- 
-
-4.    Pour les autres entités FR et CH https://www.feiertagskalender.ch/cal.php?geo=3101&jahr=2018&klasse=0&hl=fr (Arrives-tu à faire quelque chose avec cela, je n’ai pas trouvé d’ICS ?)
-
- 
-
-5.    Des exemples VBV (ega80924.v07, ega81107.v00 et ega81107.v01) ils ont été créés simultanément aux SDS ci-dessus
-**** voies
-     Concernant la liaison entre les voies et les canaux, il faut partir de la table base_tjm_ok :
-
--       Pour les postes à tubes, la voie aller correspond au canal 1
-
--       Pour les postes à boucles, c’est décrit dans le champs boucon :
-
-o   Le nombre de caractères donne le nombre de voies
-
-o   A = aller
-
-o   R = retour
