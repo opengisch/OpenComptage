@@ -23,8 +23,11 @@ class DataParser(metaclass=abc.ABCMeta):
                     line = line[2:]
                     splitted = line.split('=', 1)
                     if len(splitted) > 1:
-                        self.file_header[
-                            splitted[0].strip()] = splitted[1].strip()
+                        key = splitted[0].strip()
+                        value = splitted[1].strip()
+                        if key == 'CLASS' and value == 'SPECIAL10':
+                            value = 'SWISS10'
+                        self.file_header[key] = value
         return self.file_header
 
     def parse_data_header(self):
