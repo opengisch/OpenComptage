@@ -52,7 +52,7 @@ class Layers(QObject):
 
                 self.layers[key] = layer
 
-                print("loaded_layer: ".format(layer_definition['display_name']))
+                print("loaded_layer: {}".format(layer_definition['display_name']))
 
         self.apply_qml_styles()
         self.add_layer_actions()
@@ -514,7 +514,7 @@ class Layers(QObject):
         query.exec_(query_str)
 
     def insert_count_aggregate_row(self, row, row_type, count_id, file_name,
-                                   spdbins, lenbins, catbins):
+                                   bins):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -531,74 +531,118 @@ class Layers(QObject):
 
         query_str_value = ""
         if row_type == 'SPD':
-            query_str_value = self._create_query_str_aggregate_speed(
-                row, spdbins)
+            query_str_value = self._create_query_str_aggregate_spd(
+                row, bins)
         elif row_type == 'LEN':
-            query_str_value = self._create_query_str_aggregate_length(
-                row, lenbins)
-        if row_type == 'CLS':
-            query_str_value = self._create_query_str_aggregate_class(
-                row, catbins)
+            query_str_value = self._create_query_str_aggregate_len(
+                row, bins)
+        elif row_type == 'CLS':
+            query_str_value = self._create_query_str_aggregate_cls(
+                row, bins)
+        elif row_type == 'SDS':
+            pass
+        elif row_type == 'DRN':
+            query_str_value = self._create_query_str_aggregate_drn(
+                row, bins)
+        elif row_type == 'CNT':
+            query_str_value = self._create_query_str_aggregate_cnt(
+                row, bins)
 
         query.exec_(query_str)
 
         for _ in query_str_value:
             query.exec_(_)
 
-    def _create_query_str_aggregate_speed(self, row, spdbins):
+    def _create_query_str_aggregate_spd(self, row, spdbins):
         queries = []
-
-        for i in range(1, 13):
+        for i in range(1, len(spdbins)):
             data = row['data_{}'.format(i)]
             if not data == '':
                 speed_low = spdbins[i-1]
                 speed_high = spdbins[i]
-                queries.append(("insert into comptages.count_aggregate_value ("
-                                "total, speed_low, speed_high, "
-                                "id_count_aggregate) values ("
-                                "{}, {}, {}"
-                                "(select currval('comptages.count_aggregate_id_seq'))"
-                                ")".format(
-                                    data,
-                                    speed_low,
-                                    speed_high)))
+                queries.append(
+                    ("insert into comptages.count_aggregate_value_spd ("
+                     "value, low, high, "
+                     "id_count_aggregate) values ("
+                     "{}, {}, {}, "
+                     "(select currval('comptages.count_aggregate_id_seq'))"
+                     ")".format(
+                         data,
+                         speed_low,
+                         speed_high)))
         return queries
 
-    def _create_query_str_aggregate_length(self, row, lenbins):
+    def _create_query_str_aggregate_len(self, row, lenbins):
         queries = []
 
-        for i in range(1, 13):
+        for i in range(1, len(lenbins)):
             data = row['data_{}'.format(i)]
             if not data == '':
                 length_low = lenbins[i-1]
                 length_high = lenbins[i]
-                queries.append(("insert into comptages.count_aggregate_value ("
-                                "total, length_low, length_high, "
-                                "id_count_aggregate) values ("
-                                "{}, {}, {}, "
-                                "(select currval('comptages.count_aggregate_id_seq'))"
-                                ")".format(
-                                    data,
-                                    length_low,
-                                    length_high)))
+                queries.append(
+                    ("insert into comptages.count_aggregate_value_len ("
+                     "value, low, high, "
+                     "id_count_aggregate) values ("
+                     "{}, {}, {}, "
+                     "(select currval('comptages.count_aggregate_id_seq'))"
+                     ")".format(
+                         data,
+                         length_low,
+                         length_high)))
 
         return queries
 
-    def _create_query_str_aggregate_class(self, row, catbins):
+    def _create_query_str_aggregate_cls(self, row, catbins):
         queries = []
 
-        for i in range(1, 13):
+        for i in range(1, catbins+1):
             data = row['data_{}'.format(i)]
             if not data == '':
-                category = catbins[i-1]
-                queries.append(("insert into comptages.count_aggregate_value ("
-                                "total, id_category, "
-                                "id_count_aggregate) values ("
-                                "{}, {}, "
-                                "(select currval('comptages.count_aggregate_id_seq'))"            
-                                ")".format(
-                                    data,
-                                    category)))
+                category = i
+                queries.append(
+                    ("insert into comptages.count_aggregate_value_cls ("
+                     "value, id_category, "
+                     "id_count_aggregate) values ("
+                     "{}, {}, "
+                     "(select currval('comptages.count_aggregate_id_seq'))"
+                     ")".format(
+                         data,
+                         category)))
+        return queries
+
+    def _create_query_str_aggregate_drn(self, row, dirbins):
+        queries = []
+        for i in range(1, dirbins+1):
+            data = row['data_{}'.format(i)]
+            if not data == '':
+                direction = i
+                queries.append(
+                    ("insert into comptages.count_aggregate_value_drn ("
+                     "value, direction, "
+                     "id_count_aggregate) values ("
+                     "{}, {}, "
+                     "(select currval('comptages.count_aggregate_id_seq'))"
+                     ")".format(
+                         data,
+                         direction)))
+        return queries
+
+    def _create_query_str_aggregate_cnt(self, row, countbins):
+        queries = []
+        for i in range(1, countbins+1):
+            data = row['data_{}'.format(i)]
+            if not data == '':
+                countbin = i
+                queries.append(
+                    ("insert into comptages.count_aggregate_value_cnt ("
+                     "value, interval, "
+                     "id_count_aggregate) values ("
+                     "{}, {}, "
+                     "(select currval('comptages.count_aggregate_id_seq'))"
+                     ")".format(
+                         data,
+                         countbin)))
         return queries
 
     def get_category_bins(self, class_name):
