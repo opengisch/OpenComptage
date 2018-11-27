@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,684" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,470" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -825,8 +825,31 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_aggregate_value_spd"
 	 src-required="false" dst-required="false"/>
 
-<schema name="quarantine" rect-visible="true" fill-color="#e1e1e1">
+<table name="count_aggregate_value_sds">
+	<schema name="comptages"/>
 	<role name="postgres"/>
-</schema>
+	<position x="380" y="1420"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="mean">
+		<type name="real" length="0"/>
+	</column>
+	<column name="deviation">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="count_aggregate_value_sds_pk" type="pk-constr" table="comptages.count_aggregate_value_sds">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="count_aggregate_has_many_count_aggregate_value_sds" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#cbaa51"
+	 src-table="comptages.count_aggregate"
+	 dst-table="comptages.count_aggregate_value_sds"
+	 src-required="false" dst-required="false"/>
 
 </dbmodel>

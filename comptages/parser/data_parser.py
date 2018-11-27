@@ -144,7 +144,7 @@ class DataParserInt2(DataParser):
         """Returns an array with the bins if they exist, or the number of columns
         of this data type"""
         values = []
-        if code == 'SPD':
+        if code == 'SPD' or code == 'SDS':
             values = self.file_header['SPDBINS'].split()
         elif code == 'LEN':
             values = self.file_header['LENBINS'].split()

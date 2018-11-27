@@ -20,14 +20,7 @@ CREATE SCHEMA comptages;
 ALTER SCHEMA comptages OWNER TO postgres;
 -- ddl-end --
 
--- object: quarantine | type: SCHEMA --
--- DROP SCHEMA IF EXISTS quarantine CASCADE;
-CREATE SCHEMA quarantine;
--- ddl-end --
-ALTER SCHEMA quarantine OWNER TO postgres;
--- ddl-end --
-
-SET search_path TO pg_catalog,public,comptages,quarantine;
+SET search_path TO pg_catalog,public,comptages;
 -- ddl-end --
 
 -- object: comptages.damage_log | type: TABLE --
@@ -611,6 +604,27 @@ ALTER TABLE comptages.count_aggregate_value_spd OWNER TO postgres;
 -- object: count_aggregate_fk | type: CONSTRAINT --
 -- ALTER TABLE comptages.count_aggregate_value_spd DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_spd ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
+REFERENCES comptages.count_aggregate (id) MATCH FULL
+ON DELETE SET NULL ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: comptages.count_aggregate_value_sds | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.count_aggregate_value_sds CASCADE;
+CREATE TABLE comptages.count_aggregate_value_sds(
+	id serial NOT NULL,
+	mean real,
+	deviation real,
+	id_count_aggregate integer,
+	CONSTRAINT count_aggregate_value_sds_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE comptages.count_aggregate_value_sds OWNER TO postgres;
+-- ddl-end --
+
+-- object: count_aggregate_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.count_aggregate_value_sds DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
+ALTER TABLE comptages.count_aggregate_value_sds ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --

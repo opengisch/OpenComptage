@@ -545,7 +545,12 @@ class Layers(QObject):
             query_str_value = self._create_query_str_aggregate_cls(
                 row, bins)
         elif row_type == 'SDS':
-            pass
+            # Insert the values in the SPD table and only the
+            # mean and the deviation in the SDS table
+            query_str_value = self._create_query_str_aggregate_spd(
+                row, bins)
+            query_str_value.append(self._create_query_str_aggregate_sds(
+                row, bins))
         elif row_type == 'DRN':
             query_str_value = self._create_query_str_aggregate_drn(
                 row, bins)
@@ -576,6 +581,21 @@ class Layers(QObject):
                          speed_low,
                          speed_high)))
         return queries
+
+    def _create_query_str_aggregate_sds(self, row, spdbins):
+        query = ''
+        speed_data_cols = len(spdbins) - 1
+        mean = int(row['data_{}'.format(speed_data_cols + 1)]) / 10
+        deviation = int(row['data_{}'.format(speed_data_cols + 2)]) / 10
+        query = ("insert into comptages.count_aggregate_value_sds ("
+                 "mean, deviation, "
+                 "id_count_aggregate) values ("
+                 "{}, {}, "
+                 "(select currval('comptages.count_aggregate_id_seq'))"
+                 ")".format(
+                     mean,
+                     deviation))
+        return query
 
     def _create_query_str_aggregate_len(self, row, lenbins):
         queries = []
