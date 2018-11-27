@@ -40,7 +40,7 @@ install:
 
 script:
   - qgis --version-migration --nologo --code $(pwd)/comptages/test/functional.py
-  - qgis python -m unittest comptages/test/test_parser.py
+  - python -m unittest comptages/test/test_parser.py
 
 notifications:
   email: false
