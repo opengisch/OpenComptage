@@ -5,7 +5,7 @@ from comptages.parser.data_parser import (
 from comptages.core.layers import Layers
 
 
-# run from main repo directory `python -m unittest test/test_parser.py`
+# run from main repo directory `python -m unittest comptages/test/test_parser.py`
 class TestDataParser(unittest.TestCase):
 
     def setUp(self):
