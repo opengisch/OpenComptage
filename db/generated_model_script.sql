@@ -20,7 +20,14 @@ CREATE SCHEMA comptages;
 ALTER SCHEMA comptages OWNER TO postgres;
 -- ddl-end --
 
-SET search_path TO pg_catalog,public,comptages;
+-- object: quarantine | type: SCHEMA --
+-- DROP SCHEMA IF EXISTS quarantine CASCADE;
+CREATE SCHEMA quarantine;
+-- ddl-end --
+ALTER SCHEMA quarantine OWNER TO postgres;
+-- ddl-end --
+
+SET search_path TO pg_catalog,public,comptages,quarantine;
 -- ddl-end --
 
 -- object: comptages.damage_log | type: TABLE --
@@ -217,6 +224,7 @@ CREATE TABLE comptages.count_detail(
 	fixed boolean,
 	wrong_way boolean,
 	file_name text,
+	import_status smallint,
 	id_lane integer NOT NULL,
 	id_count integer NOT NULL,
 	id_category integer NOT NULL,
@@ -462,6 +470,7 @@ CREATE TABLE comptages.count_aggregate(
 	start timestamp,
 	"end" timestamp,
 	file_name text,
+	import_status smallint,
 	id_count integer,
 	id_lane integer,
 	CONSTRAINT count_aggregate_pk PRIMARY KEY (id)

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,577" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,684" last-zoom="1.2"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -355,14 +355,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="file_name">
 		<type name="text" length="0"/>
 	</column>
+	<column name="import_status">
+		<type name="smallint" length="0"/>
+	</column>
 	<constraint name="count_detail_pk" type="pk-constr" table="comptages.count_detail">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_category" index="13"/>
-		<object name="id_count" index="12"/>
-		<object name="id_lane" index="11"/>
+		<object name="id_category" index="14"/>
+		<object name="id_count" index="13"/>
+		<object name="id_lane" index="12"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -596,13 +599,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="file_name">
 		<type name="text" length="0"/>
 	</column>
+	<column name="import_status">
+		<type name="smallint" length="0"/>
+	</column>
 	<constraint name="count_aggregate_pk" type="pk-constr" table="comptages.count_aggregate">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_count" index="5"/>
-		<object name="id_lane" index="6"/>
+		<object name="id_count" index="6"/>
+		<object name="id_lane" index="7"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -818,5 +824,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_spd"
 	 src-required="false" dst-required="false"/>
+
+<schema name="quarantine" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+</schema>
 
 </dbmodel>

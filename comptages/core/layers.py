@@ -14,6 +14,8 @@ from comptages.core.utils import push_info
 
 
 class Layers(QObject):
+    IMPORT_STATUS_QUARANTINE = 1
+    IMPORT_STATUS_DEFINITIVE = 0
 
     def __init__(self):
         QObject.__init__(self)
@@ -495,10 +497,10 @@ class Layers(QObject):
                      "numbering, timestamp, "
                      "distance_front_front, distance_front_back, "
                      "speed, length, height, "
-                     "file_name, "
+                     "file_name, import_status, "
                      "id_lane, id_count, id_category) values ("
                      "{}, '{}', {}, {}, {}, {}, '{}', '{}', {}, {}, "
-                     "{})".format(
+                     "{}, {})".format(
                          row['numbering'],
                          row['timestamp'],
                          row['distance_front_front'],
@@ -507,7 +509,8 @@ class Layers(QObject):
                          row['length'],
                          row['height'],
                          file_name,
-                         row['channel'],
+                         self.IMPORT_STATUS_QUARANTINE,
+                         row['lane'],
                          count_id,
                          row['category_id']))
 
@@ -519,13 +522,15 @@ class Layers(QObject):
         query = QSqlQuery(self.db)
 
         query_str = ("insert into comptages.count_aggregate ("
-                     "type, \"start\", \"end\", file_name, id_count, id_lane) "
+                     "type, \"start\", \"end\", file_name, import_status, "
+                     "id_count, id_lane) "
                      "values ("
-                     "'{}', '{}', '{}', '{}', {}, {})".format(
+                     "'{}', '{}', '{}', '{}', {}, {}, {})".format(
                          row_type,
                          row['start'],
                          row['end'],
                          file_name,
+                         self.IMPORT_STATUS_QUARANTINE,
                          count_id,
                          row['channel']))
 
