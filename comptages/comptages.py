@@ -164,17 +164,20 @@ class Comptages(QObject):
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
-        format = DataParser.get_format(file)
+        file_format = DataParser.get_format(file)
 
-        if format == 'VBV-1':
-            data_parser = DataParserVbv1(self.layers, count_id, file)
+        try:
+            if file_format == 'VBV-1':
+                data_parser = DataParserVbv1(self.layers, count_id, file)
+            elif file_format == 'INT-2':
+                data_parser = DataParserInt2(self.layers, count_id, file)
+            else:
+                push_info('Format {} not supported'.format(file_format))
+                return
+
             data_parser.parse_data()
-        elif format == 'INT-2':
-            data_parser = DataParserInt2(self.layers, count_id, file)
-            data_parser.parse_data()
-        else:
-            push_info('Format not supported')
-            return
+        except Exception as e:
+            push_info('Error during data parsing: {}'.format(str(e)))
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
