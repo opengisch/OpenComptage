@@ -1,0 +1,26 @@
+* BEGIN
+* FORMAT = INT-1
+* FORMATTER = GRFORMAT Release = 3.4.1
+* INSTRUMENT = M680 Serial = 701643 Release = 2.9
+* FILENAME = RC5Colo
+* SITE = 00056270
+* LOCATION = Longueville-Chezard
+* GRIDREF = 
+* HEADINGS =         
+* STARTREC = 00:00 28/10/18
+* STOPREC  = 00:00 29/10/18
+* BATTERY = 6.40 6.40 
+* SENSORS = LL LL NONE NONE NONE NONE NONE NONE 
+* DATEFORM = DD/MM/YY
+* UNITS = Metric
+* INTERVAL = 60 
+* PEAKTIME = 00:00 00:00 00:00 00:00 00:00 00:00
+* PEAKINT = 15 
+* CHANNELS = 1 2 
+* INTSPEC = CNT
+* HEAD HHMM C ...0 ...1 ...2 ...3 ...4 ...5 ...6 ...7 ...8 ...9 ..10 ..11
+281018 0100 1   13    8    5    3    3    4    6   24   45   78   99  115
+281018 0100 2   15    7    2    7    3    6   10   18   45   58   83  124
+281018 1300 1   62   77  104   94   99   85   76   37   35   24   15    4
+281018 1300 2   80   92  111  103  116  103  125   47   30   30   12    7
+* END 26 FFFF

@@ -23,10 +23,6 @@
    #+BEGIN_SRC sh
      ./create_db.sh
    #+END_SRC
-   Populate the development database
-   #+BEGIN_SRC sh
-     ./insert_test_data.sh
-   #+END_SRC
    Link the plugin directory (=comptages= directory inside the repository) to the
    QGIS plugin directory. E.g.:
    #+BEGIN_SRC sh
@@ -39,29 +35,15 @@
      cd .docker
      docker-compose -f docker-compose_dev_env.yml down --volume
    #+END_SRC
-* Tests
-  Functional tests are run inside a Docker container. The docker container is
-  based on Ubuntu 18.04 with QGIS installed. The ~run_docker_test.sh~ script, copy
-  the plugin directory into the shared volume ~.docker/tests/~ and launches the
-  ~run_test.sh~ script inside the docker container to run QGIS without welcome
-  messages and execute into QGIS the ~test.py~ python script containing the
-  tests. After a wait of 10s, a screenshot of the virtual framebuffer is taken,
-  and stored into the shared volume as ~screenshot.png~, and the docker
-  terminates.
-
-  To run the tests, go to the ~scripts~ directory and do
-  #+BEGIN_SRC sh
-    ./run_test_on_docker.sh
-  #+END_SRC
-  To rebuild the docker, e.g. when the run_test.sh script is modified
-  #+BEGIN_SRC sh
-    docker-compose -f .docker/docker-compose.yml build
-  #+END_SRC
 * Data model
   The data model has been created to easily allow to add functionality to the product
   e.g. adding new vehicle classes and to be as simple as possible and easily
   usable into QGIS. It is flexible enough to support natively all the current
   special cases without write special management code.
+  
+  The data model is created with ~pgmodeler~ and is exported into an sql script
+  used by ~create_db.sh~ script. To create a new sql from the pgmodeler's model,
+  run the script ~create_data_model_sql_script.sh~.
 ** Tables
    | English name   | French name      |
    |----------------+------------------|
@@ -78,39 +60,3 @@
    | section        | troncon          |
    | count_detail   | comptage_detail  |
    | special_period | periode_speciale |
-*** Translation issues
-    - nom_formatter in model?
-    - pr_debut et fin in troncon
-    - dist_debut et fin in troncon
-*** section
-    This table contains the street sections (/tronçons/). The data are imported
-    from the existing BASE_TJM_OK MapInfo table.
-    | Field      | Type                       | Origin                  | Remarks                               |
-    |------------+----------------------------+-------------------------+---------------------------------------|
-    | id         | char(20)                   | BASE_TJM_OK.fsection    | id of the section (normally 8 digits) |
-    | name       | text                       | BASE_TJM_OK.nom_rue     | street name                           |
-    | owner      | text                       | BASE_TJM_OK.f_prop      | owner of the road                     |
-    | road       | text                       | BASE_TJM_OK.f_axe       |                                       |
-    | way        | char(1)                    | BASE_TJM_OK.f_sens      | Can be ['+', '-', '=']                |
-    | start_pr   | text                       | BASE_TJM_OK.f_pr_d      |                                       |
-    | end_pr     | text                       | BASE_TJM_OK.f_pr_f      |                                       |
-    | start_dist | numeric(18,3)              | BASE_TJM_OK.f_dist_d    |                                       |
-    | end_dist   | numeric(18,3)              | BASE_TJM_OK.f_dist_f    |                                       |
-    | place_name | text                       | BASE_TJM_OK.lieu_rue    |                                       |
-    | geometry   | geometry(LineString, 2056) | geometry of BASE_TJM_OK | geometry                              |
-*** lane
-    This table contains the lanes of a street section. The data are imported
-    from the existing BASE_TJM_OK MapInfo table.
-** Import of existing data
-*** BASE_TJM_OK
-    Procedure to import the data from the MapInfo dump of BASE_TJM_OK:
-    (Step from 1 to 6 are needed only if the MapInfo base has changed)
-    1. open the file BASE_TJM_OK.TAB in QGIS
-    2. set the CRS of the layer to 2056
-    3. create a temporary transfer table (~base_tjm_ok.base_tjm_ok~) into the
-       postgres db with the script ~../db/base_tjm_ok.sql~
-    4. load the created table as layer into QGIS
-    5. manually copy-paste all the features to the new table
-    6. create a sql dump of the new table into ~../db/base_tjm_ok_data.sql~
-    7. run the script ~../db/base_tjm_ok_data_transfer.sql~ to convert and
-       transfer the data to the correct tables
