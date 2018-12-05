@@ -176,12 +176,18 @@ class DataParserInt2(DataParser):
     def parse_data_line(self, line):
         parsed_line = dict()
 
-        # In the data files midnight is 2400 instead of 0000
+        # In the data files midnight is 2400 of the current day
+        # instead of 0000 of the next day
         if line[7:9] == '24':
             line = line[:7] + '00' + line[9:]
+            start = datetime.strptime(
+                "{}".format(line[0:11]), "%d%m%y %H%M")
+            start += timedelta(days=1)
+        else:
+            start = datetime.strptime(
+                "{}".format(line[0:11]), "%d%m%y %H%M")
 
-        parsed_line['start'] = datetime.strptime(
-            "{}".format(line[0:11]), "%d%m%y %H%M")
+        parsed_line['start'] = start
         parsed_line['end'] = parsed_line['start'] + timedelta(
             minutes=int(self.file_header['INTERVAL']))
         parsed_line['channel'] = line[12:13]
