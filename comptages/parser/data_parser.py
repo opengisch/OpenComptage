@@ -148,6 +148,9 @@ class DataParserInt2(DataParser):
             values = self.file_header['SPDBINS'].split()
         elif code == 'LEN':
             values = self.file_header['LENBINS'].split()
+        elif code == 'CLS':
+            values = self.layers.get_category_bins(
+                self.file_header['CLASS'])
         else:
             data_header = self.parse_data_header()
             values = data_header[self.intspec.index(code)]

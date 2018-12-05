@@ -621,10 +621,10 @@ class Layers(QObject):
     def _create_query_str_aggregate_cls(self, row, catbins):
         queries = []
 
-        for i in range(1, catbins+1):
+        for i in range(1, len(catbins)+1):
             data = row['data_{}'.format(i)]
             if not data == '':
-                category = i
+                category = catbins[i-1]
                 queries.append(
                     ("insert into comptages.count_aggregate_value_cls ("
                      "value, id_category, "
