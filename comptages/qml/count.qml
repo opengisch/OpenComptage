@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis maxScale="0" minScale="1e+08" hasScaleBasedVisibilityFlag="0" version="3.2.3-Bonn" readOnly="0">
+<qgis version="3.2.3-Bonn" readOnly="0" minScale="1e+08" hasScaleBasedVisibilityFlag="0" maxScale="0">
   <fieldConfiguration>
     <field name="id">
       <editWidget type="Hidden">
@@ -124,7 +124,7 @@
             <Option type="bool" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="id"/>
-            <Option type="QString" name="Layer" value="model_b53128ed_8b7a_47df_a852_04d1e2ecf896"/>
+            <Option type="QString" name="Layer" value="model_cfdf7370_1fa1_4013_81c8_510c4bfee920"/>
             <Option type="bool" name="OrderByValue" value="false"/>
             <Option type="bool" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="name"/>
@@ -140,7 +140,7 @@
             <Option type="bool" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="id"/>
-            <Option type="QString" name="Layer" value="automate_c362d4f9_adcd_47ae_9d86_90c33ed4e3fd"/>
+            <Option type="QString" name="Layer" value="automate_883001d3_b5e2_40e7_8803_d5ffc6a5bfd1"/>
             <Option type="bool" name="OrderByValue" value="false"/>
             <Option type="bool" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="name"/>
@@ -156,7 +156,7 @@
             <Option type="bool" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="id"/>
-            <Option type="QString" name="Layer" value="type_capteur_cdc741e9_cd3d_41b4_b48f_266260c0b816"/>
+            <Option type="QString" name="Layer" value="type_capteur_31ea7157_02dc_4c41_a7a9_faaf866a4d72"/>
             <Option type="bool" name="OrderByValue" value="false"/>
             <Option type="bool" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="name"/>
@@ -172,7 +172,7 @@
             <Option type="bool" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="id"/>
-            <Option type="QString" name="Layer" value="classification_d1914a6f_de56_4f55_b327_be84d5debc1b"/>
+            <Option type="QString" name="Layer" value="classification_e202f34e_f5f8_432c_9fa3_c7a97f138b9e"/>
             <Option type="bool" name="OrderByValue" value="false"/>
             <Option type="bool" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="name"/>
@@ -188,8 +188,7 @@
             <Option type="bool" name="AllowNull" value="false"/>
             <Option type="QString" name="FilterExpression" value=""/>
             <Option type="QString" name="Key" value="id"/>
-            <Option type="QString" name="Layer" value="installation_fdd20315_81d0_49f3_90f4_0b896d1260e1"/>
-            <Option type="int" name="NofColumns" value="1"/>
+            <Option type="QString" name="Layer" value="installation_9fb595b0_2d45_4184_816b_d289ceb978ab"/>
             <Option type="bool" name="OrderByValue" value="false"/>
             <Option type="bool" name="UseCompleter" value="false"/>
             <Option type="QString" name="Value" value="name"/>
@@ -199,111 +198,111 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" name="" field="id"/>
-    <alias index="1" name="Début service" field="start_service_date"/>
-    <alias index="2" name="Fin service" field="end_service_date"/>
-    <alias index="3" name="Début pose" field="start_put_date"/>
-    <alias index="4" name="Fin pose" field="end_put_date"/>
-    <alias index="5" name="Début traitement" field="start_process_date"/>
-    <alias index="6" name="Fin traitement" field="end_process_date"/>
-    <alias index="7" name="Valide" field="valid"/>
-    <alias index="8" name="Dysfonctionnement" field="dysfunction"/>
-    <alias index="9" name="Remarques" field="remarks"/>
-    <alias index="10" name="Model" field="id_model"/>
-    <alias index="11" name="Automate" field="id_device"/>
-    <alias index="12" name="Type capteur" field="id_sensor_type"/>
-    <alias index="13" name="Classification" field="id_class"/>
-    <alias index="14" name="Installation" field="id_installation"/>
+    <alias field="id" index="0" name=""/>
+    <alias field="start_service_date" index="1" name="Début service"/>
+    <alias field="end_service_date" index="2" name="Fin service"/>
+    <alias field="start_put_date" index="3" name="Début pose"/>
+    <alias field="end_put_date" index="4" name="Fin pose"/>
+    <alias field="start_process_date" index="5" name="Début traitement"/>
+    <alias field="end_process_date" index="6" name="Fin traitement"/>
+    <alias field="valid" index="7" name="Valide"/>
+    <alias field="dysfunction" index="8" name="Dysfonctionnement"/>
+    <alias field="remarks" index="9" name="Remarques"/>
+    <alias field="id_model" index="10" name="Model"/>
+    <alias field="id_device" index="11" name="Automate"/>
+    <alias field="id_sensor_type" index="12" name="Type capteur"/>
+    <alias field="id_class" index="13" name="Classification"/>
+    <alias field="id_installation" index="14" name="Installation"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
   <defaults>
-    <default applyOnUpdate="0" field="id" expression=""/>
-    <default applyOnUpdate="0" field="start_service_date" expression=""/>
-    <default applyOnUpdate="0" field="end_service_date" expression=""/>
-    <default applyOnUpdate="0" field="start_put_date" expression=""/>
-    <default applyOnUpdate="0" field="end_put_date" expression=""/>
-    <default applyOnUpdate="0" field="start_process_date" expression=""/>
-    <default applyOnUpdate="0" field="end_process_date" expression=""/>
-    <default applyOnUpdate="0" field="valid" expression=""/>
-    <default applyOnUpdate="0" field="dysfunction" expression=""/>
-    <default applyOnUpdate="0" field="remarks" expression=""/>
-    <default applyOnUpdate="0" field="id_model" expression=""/>
-    <default applyOnUpdate="0" field="id_device" expression=""/>
-    <default applyOnUpdate="0" field="id_sensor_type" expression=""/>
-    <default applyOnUpdate="0" field="id_class" expression=""/>
-    <default applyOnUpdate="0" field="id_installation" expression="@selected_installation"/>
+    <default expression="" field="id" applyOnUpdate="0"/>
+    <default expression="" field="start_service_date" applyOnUpdate="0"/>
+    <default expression="" field="end_service_date" applyOnUpdate="0"/>
+    <default expression="" field="start_put_date" applyOnUpdate="0"/>
+    <default expression="" field="end_put_date" applyOnUpdate="0"/>
+    <default expression="" field="start_process_date" applyOnUpdate="0"/>
+    <default expression="" field="end_process_date" applyOnUpdate="0"/>
+    <default expression="" field="valid" applyOnUpdate="0"/>
+    <default expression="" field="dysfunction" applyOnUpdate="0"/>
+    <default expression="" field="remarks" applyOnUpdate="0"/>
+    <default expression="" field="id_model" applyOnUpdate="0"/>
+    <default expression="" field="id_device" applyOnUpdate="0"/>
+    <default expression="" field="id_sensor_type" applyOnUpdate="0"/>
+    <default expression="" field="id_class" applyOnUpdate="0"/>
+    <default expression="@selected_installation" field="id_installation" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint notnull_strength="1" unique_strength="1" constraints="3" exp_strength="0" field="id"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="start_service_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="end_service_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="start_put_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="end_put_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="start_process_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="end_process_date"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="valid"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="dysfunction"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="remarks"/>
-    <constraint notnull_strength="1" unique_strength="0" constraints="1" exp_strength="0" field="id_model"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="id_device"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="id_sensor_type"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="id_class"/>
-    <constraint notnull_strength="0" unique_strength="0" constraints="0" exp_strength="0" field="id_installation"/>
+    <constraint field="id" exp_strength="0" unique_strength="1" constraints="3" notnull_strength="1"/>
+    <constraint field="start_service_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="end_service_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="start_put_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="end_put_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="start_process_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="end_process_date" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="valid" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="dysfunction" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="remarks" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="id_model" exp_strength="0" unique_strength="0" constraints="1" notnull_strength="1"/>
+    <constraint field="id_device" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="id_sensor_type" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="id_class" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="id_installation" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="id" exp="" desc=""/>
-    <constraint field="start_service_date" exp="" desc=""/>
-    <constraint field="end_service_date" exp="" desc=""/>
-    <constraint field="start_put_date" exp="" desc=""/>
-    <constraint field="end_put_date" exp="" desc=""/>
-    <constraint field="start_process_date" exp="" desc=""/>
-    <constraint field="end_process_date" exp="" desc=""/>
-    <constraint field="valid" exp="" desc=""/>
-    <constraint field="dysfunction" exp="" desc=""/>
-    <constraint field="remarks" exp="" desc=""/>
-    <constraint field="id_model" exp="" desc=""/>
-    <constraint field="id_device" exp="" desc=""/>
-    <constraint field="id_sensor_type" exp="" desc=""/>
-    <constraint field="id_class" exp="" desc=""/>
-    <constraint field="id_installation" exp="" desc=""/>
+    <constraint exp="" field="id" desc=""/>
+    <constraint exp="" field="start_service_date" desc=""/>
+    <constraint exp="" field="end_service_date" desc=""/>
+    <constraint exp="" field="start_put_date" desc=""/>
+    <constraint exp="" field="end_put_date" desc=""/>
+    <constraint exp="" field="start_process_date" desc=""/>
+    <constraint exp="" field="end_process_date" desc=""/>
+    <constraint exp="" field="valid" desc=""/>
+    <constraint exp="" field="dysfunction" desc=""/>
+    <constraint exp="" field="remarks" desc=""/>
+    <constraint exp="" field="id_model" desc=""/>
+    <constraint exp="" field="id_device" desc=""/>
+    <constraint exp="" field="id_sensor_type" desc=""/>
+    <constraint exp="" field="id_class" desc=""/>
+    <constraint exp="" field="id_installation" desc=""/>
   </constraintExpressions>
   <attributeactions>
     <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
-    <actionsetting type="1" capture="0" isEnabledOnlyWhenEditable="0" name="Export configuration" icon="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_configuration_action([% $id %])" notificationMessage="" shortTitle="" id="{7abdab30-c552-4815-a0f1-8eeb7b974e9e}">
+    <actionsetting icon="" id="{cb2213e7-9e08-4030-8919-b04df157a611}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_configuration_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Export configuration" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting type="1" capture="0" isEnabledOnlyWhenEditable="0" name="Import data" icon="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_data_action([% $id %])" notificationMessage="" shortTitle="" id="{19757617-0afd-4820-ac60-51edb63389f3}">
+    <actionsetting icon="" id="{f9f8e89a-ea0c-4da8-bf4a-e528901309fd}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_data_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Import data" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting type="1" capture="0" isEnabledOnlyWhenEditable="0" name="Create report" icon="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_report_action([% $id %])" notificationMessage="" shortTitle="" id="{5ae5ee58-201f-4a75-8267-ef4d960d9a45}">
+    <actionsetting icon="" id="{c3d66c77-d09f-487f-b0d5-312884bbb8c6}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_report_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Create report" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting type="1" capture="0" isEnabledOnlyWhenEditable="0" name="Export plan" icon="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_plan_action([% $id %])" notificationMessage="" shortTitle="" id="{10aa19b5-13d2-4f57-af88-bb2177c43d37}">
+    <actionsetting icon="" id="{9d7724b4-baa4-49b5-aef8-9df31680a673}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_plan_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Export plan" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting type="1" capture="0" isEnabledOnlyWhenEditable="0" name="Generate chart" icon="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_chart_action([% $id %])" notificationMessage="" shortTitle="" id="{09366f33-2f99-4d99-a1de-0009d7d4f14a}">
+    <actionsetting icon="" id="{f716b958-0464-422d-b21e-0b80a2da3a3a}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_chart_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Generate chart" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
     <columns>
-      <column type="field" hidden="0" name="id" width="-1"/>
-      <column type="field" hidden="0" name="start_service_date" width="-1"/>
-      <column type="field" hidden="0" name="end_service_date" width="-1"/>
-      <column type="field" hidden="0" name="start_put_date" width="-1"/>
-      <column type="field" hidden="0" name="end_put_date" width="-1"/>
-      <column type="field" hidden="0" name="start_process_date" width="-1"/>
-      <column type="field" hidden="0" name="end_process_date" width="-1"/>
-      <column type="field" hidden="0" name="valid" width="-1"/>
-      <column type="field" hidden="0" name="dysfunction" width="-1"/>
-      <column type="field" hidden="0" name="remarks" width="-1"/>
-      <column type="field" hidden="0" name="id_model" width="-1"/>
-      <column type="field" hidden="0" name="id_device" width="-1"/>
-      <column type="field" hidden="0" name="id_sensor_type" width="-1"/>
-      <column type="field" hidden="0" name="id_class" width="-1"/>
-      <column type="field" hidden="0" name="id_installation" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column type="field" name="id" hidden="0" width="-1"/>
+      <column type="field" name="start_service_date" hidden="0" width="-1"/>
+      <column type="field" name="end_service_date" hidden="0" width="-1"/>
+      <column type="field" name="start_put_date" hidden="0" width="-1"/>
+      <column type="field" name="end_put_date" hidden="0" width="-1"/>
+      <column type="field" name="start_process_date" hidden="0" width="-1"/>
+      <column type="field" name="end_process_date" hidden="0" width="-1"/>
+      <column type="field" name="valid" hidden="0" width="-1"/>
+      <column type="field" name="dysfunction" hidden="0" width="-1"/>
+      <column type="field" name="remarks" hidden="0" width="-1"/>
+      <column type="field" name="id_model" hidden="0" width="-1"/>
+      <column type="field" name="id_device" hidden="0" width="-1"/>
+      <column type="field" name="id_sensor_type" hidden="0" width="-1"/>
+      <column type="field" name="id_class" hidden="0" width="-1"/>
+      <column type="field" name="id_installation" hidden="0" width="-1"/>
+      <column type="actions" hidden="0" width="-1"/>
     </columns>
   </attributetableconfig>
   <editform tolerant="1"></editform>
@@ -330,21 +329,21 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>generatedlayout</editorlayout>
   <editable>
-    <field name="dysfunction" editable="1"/>
-    <field name="end_process_date" editable="1"/>
-    <field name="end_put_date" editable="1"/>
-    <field name="end_service_date" editable="1"/>
-    <field name="id" editable="1"/>
-    <field name="id_class" editable="1"/>
-    <field name="id_device" editable="1"/>
-    <field name="id_installation" editable="0"/>
-    <field name="id_model" editable="1"/>
-    <field name="id_sensor_type" editable="1"/>
-    <field name="remarks" editable="1"/>
-    <field name="start_process_date" editable="1"/>
-    <field name="start_put_date" editable="1"/>
-    <field name="start_service_date" editable="1"/>
-    <field name="valid" editable="1"/>
+    <field editable="1" name="dysfunction"/>
+    <field editable="1" name="end_process_date"/>
+    <field editable="1" name="end_put_date"/>
+    <field editable="1" name="end_service_date"/>
+    <field editable="1" name="id"/>
+    <field editable="1" name="id_class"/>
+    <field editable="1" name="id_device"/>
+    <field editable="0" name="id_installation"/>
+    <field editable="1" name="id_model"/>
+    <field editable="1" name="id_sensor_type"/>
+    <field editable="1" name="remarks"/>
+    <field editable="1" name="start_process_date"/>
+    <field editable="1" name="start_put_date"/>
+    <field editable="1" name="start_service_date"/>
+    <field editable="1" name="valid"/>
   </editable>
   <labelOnTop>
     <field name="dysfunction" labelOnTop="0"/>
