@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>51</width>
+      <width>101</width>
       <height>581</height>
      </rect>
     </property>
@@ -27,9 +27,9 @@
    <widget class="QWebView" name="webView">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>120</x>
       <y>10</y>
-      <width>1301</width>
+      <width>1251</width>
       <height>581</height>
      </rect>
     </property>

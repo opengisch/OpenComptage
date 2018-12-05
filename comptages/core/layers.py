@@ -54,8 +54,6 @@ class Layers(QObject):
 
                 self.layers[key] = layer
 
-                print("loaded_layer: {}".format(layer_definition['display_name']))
-
         self.apply_qml_styles()
         self.add_layer_actions()
         self.create_relations()
@@ -743,7 +741,7 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_days_of_dataset(self, count_id):
+    def get_days_of_aggregate_dataset(self, count_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -764,7 +762,7 @@ class Layers(QObject):
         xs = []
         ys = []
 
-        days = self.get_days_of_dataset(count_id)
+        days = self.get_days_of_aggregate_dataset(count_id)
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day(count_id, day)
             xs.append(x)
@@ -781,10 +779,147 @@ class Layers(QObject):
             "comptages.count_aggregate as agg "
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
-            "where agg.id_count = 2 and agg.type = 'CLS' "
+            "where agg.id_count = {} and agg.type = 'CLS' "
             "and date_trunc('day', agg.start) = '{}'"
             "group by agg.start, agg.end "
-            "order by agg.start".format(day)
+            "order by agg.start".format(count_id, day)
+        )
+
+        query.exec_(query_str)
+        x = []
+        y = []
+
+        while query.next():
+            x.append("{}h-{}h)".format(
+                str(query.value(0)),
+                str(query.value(1))))
+            y.append(query.value(2))
+
+        return x, y
+
+    def get_detail_category_chart_data(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select cat.code, cat.name, count(det.id_category) from "
+            "comptages.count_detail as det "
+            "join comptages.category as cat "
+            "on det.id_category = cat.id "
+            "where det.id_count = {} "
+            "group by det.id_category, cat.code, cat.name "
+            "order by cat.code;".format(count_id))
+
+        query.exec_(query_str)
+        labels = []
+        values = []
+        while query.next():
+            labels.append("{} ({})".format(
+                str(query.value(1)),
+                str(query.value(0))))
+            values.append(query.value(2))
+
+        return labels, values
+
+    def get_detail_speed_chart_data(self, count_id):
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select * from ("
+            "select 0 as low, 10, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 0 and 10 union "
+            "select 10, 20, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 10 and 20 union "
+            "select 20, 30, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 20 and 30 union "
+            "select 30, 40, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 30 and 40 union "
+            "select 40, 50, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 40 and 50 union "
+            "select 50, 60, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 50 and 60 union "
+            "select 60, 70, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 60 and 70 union "
+            "select 70, 80, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 70 and 80 union "
+            "select 80, 90, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 80 and 90 union "
+            "select 90, 100, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 90 and 100 union "
+            "select 100, 110, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 100 and 110 union "
+            "select 110, 120, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 110 and 120 union "
+            "select 120, 999, count(*) from "
+            "comptages.count_detail where id_count = {0} and speed "
+            "between 120 and 999"
+            ") as foo order by low".format(count_id))
+
+        query.exec_(query_str)
+        x = []
+        y = []
+        while query.next():
+            x.append("{}-{} km/h".format(
+                str(query.value(0)),
+                str(query.value(1))))
+            y.append(query.value(2))
+
+        return x, y
+
+    def get_days_of_detail_dataset(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct date_trunc('day', timestamp) as day "
+            "from comptages.count_detail where id_count = {} "
+            "order by day;".format(count_id))
+
+        query.exec_(query_str)
+        days = []
+        while query.next():
+            days.append(query.value(0).toString('yyyy-MM-dd hh:mm:ss'))
+
+        return days
+
+    def get_detail_time_chart_data(self, count_id):
+
+        xs = []
+        ys = []
+
+        days = self.get_days_of_detail_dataset(count_id)
+        for day in days:
+            x, y = self.get_detail_time_chart_data_day(count_id, day)
+            xs.append(x)
+            ys.append(y)
+        return xs, ys
+
+    def get_detail_time_chart_data_day(self, count_id, day):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select date_part('hour', timestamp), "
+            "date_part('hour', timestamp) + 1, "
+            "count(date_part('hour', timestamp)) "
+            "from comptages.count_detail "
+            "where id_count = {} and "
+            "date_trunc('day', timestamp) = '{}' "
+            "group by date_part('hour', timestamp);".format(count_id, day)
         )
 
         query.exec_(query_str)
