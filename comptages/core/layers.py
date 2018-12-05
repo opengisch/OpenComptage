@@ -401,7 +401,7 @@ class Layers(QObject):
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
                      "{};".format(where_str))
-        print(query_str)
+
         query.exec_(query_str)
 
         while query.next():
@@ -684,7 +684,6 @@ class Layers(QObject):
             "join comptages.class as cl on cl.id = cc.id_class "
             "where cl.name = '{}'".format(class_name))
 
-        print(query_str)
         query.exec_(query_str)
 
         catbins = []
@@ -692,3 +691,110 @@ class Layers(QObject):
             catbins.append(query.value(0))
 
         return catbins
+
+    def get_aggregate_speed_chart_data(self, count_id):
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select sum(spd.value), spd.low, spd.high from "
+            "comptages.count_aggregate as agg "
+            "join comptages.count_aggregate_value_spd as spd "
+            "on	agg.id = spd.id_count_aggregate "
+            "where agg.id_count = {} and agg.type = 'SPD'"
+            "group by spd.low, spd.high "
+            "order by spd.low;".format(count_id))
+
+        query.exec_(query_str)
+        x = []
+        y = []
+        while query.next():
+            x.append("{}-{} km/h".format(
+                str(query.value(1)),
+                str(query.value(2))))
+            y.append(query.value(0))
+
+        return x, y
+
+    def get_aggregate_category_chart_data(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select sum(cls.value), cat.code, cat.name from "
+            "comptages.count_aggregate as agg "
+            "join comptages.count_aggregate_value_cls as cls "
+            "on agg.id = cls.id_count_aggregate "
+            "join comptages.category as cat "
+            "on cls.id_category = cat.id "
+            "where agg.id_count = {} and agg.type = 'CLS' "
+            "group by cat.code, cat.name "
+            "order by cat.code;".format(count_id))
+
+        query.exec_(query_str)
+        labels = []
+        values = []
+        while query.next():
+            labels.append("{} ({})".format(
+                str(query.value(2)),
+                str(query.value(1))))
+            values.append(query.value(0))
+
+        return labels, values
+
+    def get_days_of_dataset(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct date_trunc('day', start) as day from "
+            "comptages.count_aggregate where id_count = {} "
+            "order by day;".format(count_id))
+
+        query.exec_(query_str)
+        days = []
+        while query.next():
+            days.append(query.value(0).toString('yyyy-MM-dd hh:mm:ss'))
+
+        return days
+
+    def get_aggregate_time_chart_data(self, count_id):
+
+        xs = []
+        ys = []
+
+        days = self.get_days_of_dataset(count_id)
+        for day in days:
+            x, y = self.get_aggregate_time_chart_data_day(count_id, day)
+            xs.append(x)
+            ys.append(y)
+        return xs, ys
+
+    def get_aggregate_time_chart_data_day(self, count_id, day):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select date_part('hour', agg.start), "
+            "date_part('hour', agg.end), sum(cls.value) from "
+            "comptages.count_aggregate as agg "
+            "join comptages.count_aggregate_value_cls as cls "
+            "on agg.id = cls.id_count_aggregate "
+            "where agg.id_count = 2 and agg.type = 'CLS' "
+            "and date_trunc('day', agg.start) = '{}'"
+            "group by agg.start, agg.end "
+            "order by agg.start".format(day)
+        )
+
+        query.exec_(query_str)
+        x = []
+        y = []
+
+        while query.next():
+            x.append("{}h-{}h)".format(
+                str(query.value(0)),
+                str(query.value(1))))
+            y.append(query.value(2))
+
+        return x, y

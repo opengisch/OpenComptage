@@ -194,11 +194,13 @@ class Comptages(QObject):
             'do_generate_chart_action {}'.format(count_id),
             'Comptages', Qgis.Info)
         if not self.chart_dock:
-            self.chart_dock = ChartDock(self.iface)
+            self.chart_dock = ChartDock(self.iface, self.layers, count_id)
+        else:
+            self.chart_dock.set_count_id(count_id)
+
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
 
         self.chart_dock.show()
-        self.chart_dock.plot_chart_1()
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
