@@ -81,7 +81,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             )
 
         layout = go.Layout(
-            title='Véhicules par heure',
+            title='Véhicules par heure (comptage {})'.format(self.count_id),
             xaxis=dict(tickangle=-45),
             barmode='group'
         )
@@ -94,7 +94,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def plot_chart_speed(self, x, y):
         bar = go.Bar(x=x, y=y)
 
-        layout = go.Layout(title='Véhicules groupés par vitesse')
+        layout = go.Layout(
+            title='Véhicules groupés par vitesse (comptage {})'.format(
+                self.count_id))
         fig = go.Figure(data=[bar], layout=layout)
         div = plotly.offline.plot(fig, output_type='div')
 
@@ -103,7 +105,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def plot_chart_category(self, labels, values):
         pie = go.Pie(labels=labels, values=values)
 
-        layout = go.Layout(title="Véhicules groupés par catégorie")
+        layout = go.Layout(
+            title="Véhicules groupés par catégorie (comptage {})".format(
+                self.count_id))
         fig = go.Figure(data=[pie], layout=layout)
         div = plotly.offline.plot(fig, output_type='div')
 
