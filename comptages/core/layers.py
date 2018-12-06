@@ -933,3 +933,29 @@ class Layers(QObject):
             y.append(query.value(2))
 
         return x, y
+
+    def is_data_aggregate(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select id from comptages.count_aggregate "
+            "where id_count = {}".format(count_id))
+
+        query.exec_(query_str)
+        if query.next():
+            return True
+        return False
+
+    def is_data_detail(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select id from comptages.count_detail "
+            "where id_count = {}".format(count_id))
+
+        query.exec_(query_str)
+        if query.next():
+            return True
+        return False

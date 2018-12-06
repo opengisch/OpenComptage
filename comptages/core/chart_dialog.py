@@ -17,12 +17,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.layers = layers
         self.count_id = count_id
 
-        self.chartList.addItem(QListWidgetItem('Par heure A'))
-        self.chartList.addItem(QListWidgetItem('Par catégorie A'))
-        self.chartList.addItem(QListWidgetItem('Par vitesse A'))
-        self.chartList.addItem(QListWidgetItem('Par heure D'))
-        self.chartList.addItem(QListWidgetItem('Par catégorie D'))
-        self.chartList.addItem(QListWidgetItem('Par vitesse D'))
+        self.chartList.addItem(QListWidgetItem('Par heure'))
+        self.chartList.addItem(QListWidgetItem('Par catégorie'))
+        self.chartList.addItem(QListWidgetItem('Par vitesse'))
 
         self.chartList.currentRowChanged.connect(self.chart_list_changed)
         self.chartList.setCurrentRow(0)
@@ -35,25 +32,37 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.chartList.setCurrentRow(0)
 
     def chart_list_changed(self, row):
+        is_aggregate = self.layers.is_data_aggregate(self.count_id)
+        is_detail = self.layers.is_data_detail(self.count_id)
         if row == 0:
-            xs, ys = self.layers.get_aggregate_time_chart_data(self.count_id)
+            if is_aggregate:
+                xs, ys = self.layers.get_aggregate_time_chart_data(
+                    self.count_id)
+            elif is_detail:
+                xs, ys = self.layers.get_detail_time_chart_data(self.count_id)
+            else:
+                # TODO error message "no data found"
+                return
             self.plot_chart_time(xs, ys)
         elif row == 1:
-            labels, values = self.layers.get_aggregate_category_chart_data(
-                self.count_id)
+            if is_aggregate:
+                labels, values = self.layers.get_aggregate_category_chart_data(
+                    self.count_id)
+            elif is_detail:
+                labels, values = self.layers.get_detail_category_chart_data(
+                    self.count_id)
+            else:
+                # TODO
+                return
             self.plot_chart_category(labels, values)
         elif row == 2:
-            x, y = self.layers.get_aggregate_speed_chart_data(self.count_id)
-            self.plot_chart_speed(x, y)
-        elif row == 3:
-            xs, ys = self.layers.get_detail_time_chart_data(self.count_id)
-            self.plot_chart_time(xs, ys)
-        elif row == 4:
-            labels, values = self.layers.get_detail_category_chart_data(
-                self.count_id)
-            self.plot_chart_category(labels, values)
-        elif row == 5:
-            x, y = self.layers.get_detail_speed_chart_data(self.count_id)
+            if is_aggregate:
+                x, y = self.layers.get_aggregate_speed_chart_data(self.count_id)
+            elif is_detail:
+                x, y = self.layers.get_detail_speed_chart_data(self.count_id)
+            else:
+                # TODO
+                return
             self.plot_chart_speed(x, y)
 
     def plot_chart_time(self, xs, ys):
