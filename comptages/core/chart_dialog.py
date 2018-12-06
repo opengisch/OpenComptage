@@ -57,7 +57,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.plot_chart_category(labels, values)
         elif row == 2:
             if is_aggregate:
-                x, y = self.layers.get_aggregate_speed_chart_data(self.count_id)
+                x, y = self.layers.get_aggregate_speed_chart_data(
+                    self.count_id)
             elif is_detail:
                 x, y = self.layers.get_detail_speed_chart_data(self.count_id)
             else:
