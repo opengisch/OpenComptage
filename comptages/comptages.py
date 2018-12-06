@@ -198,7 +198,7 @@ class Comptages(QObject):
         else:
             self.chart_dock.set_count_id(count_id)
 
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
 
         self.chart_dock.show()
 
