@@ -790,9 +790,9 @@ class Layers(QObject):
         y = []
 
         while query.next():
-            x.append("{}h-{}h)".format(
-                str(query.value(0)),
-                str(query.value(1))))
+            x.append("{}h-{}h".format(
+                int(query.value(0)),
+                int(query.value(1))))
             y.append(query.value(2))
 
         return x, y
@@ -927,9 +927,9 @@ class Layers(QObject):
         y = []
 
         while query.next():
-            x.append("{}h-{}h)".format(
-                str(query.value(0)),
-                str(query.value(1))))
+            x.append("{}h-{}h".format(
+                int(query.value(0)),
+                int(query.value(1))))
             y.append(query.value(2))
 
         return x, y
