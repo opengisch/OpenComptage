@@ -48,6 +48,12 @@ class Comptages(QObject):
             None
         )
 
+        self.import_files_action = QAction(
+            QIcon(':/plugins/Comptages/images/import.png'),
+            'Import',
+            None
+        )
+
         self.filter_action = QAction(
             QIcon(':/plugins/Comptages/images/filter.png'),
             'Filter',
@@ -69,6 +75,9 @@ class Comptages(QObject):
         self.select_edit_action.triggered.connect(
             self.do_select_edit_action)
 
+        self.import_files_action.triggered.connect(
+            self.do_import_files_action)
+
         self.filter_action.triggered.connect(
             self.do_filter_action)
 
@@ -78,6 +87,7 @@ class Comptages(QObject):
         self.iface.addPluginToMenu('Comptages', self.connect_db_action)
         self.iface.addPluginToMenu('Comptages', self.create_new_action)
         self.iface.addPluginToMenu('Comptages', self.select_edit_action)
+        self.iface.addPluginToMenu('Comptages', self.import_files_action)
         self.iface.addPluginToMenu('Comptages', self.filter_action)
         self.iface.addPluginToMenu('Comptages', self.settings_action)
 
@@ -88,6 +98,7 @@ class Comptages(QObject):
         self.toolbar.addAction(self.connect_db_action)
         self.toolbar.addAction(self.create_new_action)
         self.toolbar.addAction(self.select_edit_action)
+        self.toolbar.addAction(self.import_files_action)
         self.toolbar.addAction(self.filter_action)
         self.toolbar.addAction(self.settings_action)
 
@@ -120,6 +131,10 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_select_edit_action', 'Comptages', Qgis.Info)
         self.layers.edit_count()
+
+    def do_import_files_action(self):
+        QgsMessageLog.logMessage(
+            'do_import_files_action', 'Comptages', Qgis.Info)
 
     def do_filter_action(self):
         QgsMessageLog.logMessage(
