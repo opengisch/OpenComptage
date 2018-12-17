@@ -26,7 +26,8 @@ class Comptages(QObject):
         self.settings = Settings()
         self.settings_dialog = SettingsDialog()
         self.layers = Layers()
-        self.chart_dock = None
+        self.chart_dock = ChartDock(self.iface, self.layers)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
@@ -136,7 +137,7 @@ class Comptages(QObject):
     def do_import_files_action(self):
         QgsMessageLog.logMessage(
             'do_import_files_action', 'Comptages', Qgis.Info)
-        fi = FileImporter(self.layers)
+        FileImporter(self.layers, self.chart_dock)
 
     def do_filter_action(self):
         QgsMessageLog.logMessage(
@@ -210,12 +211,7 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_generate_chart_action {}'.format(count_id),
             'Comptages', Qgis.Info)
-        if not self.chart_dock:
-            self.chart_dock = ChartDock(self.iface, self.layers, count_id)
-        else:
-            self.chart_dock.set_count_id(count_id)
-
-        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
+        self.chart_dock.set_attributes(count_id)
 
         self.chart_dock.show()
 

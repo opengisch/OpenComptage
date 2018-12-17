@@ -1,5 +1,3 @@
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem
 from comptages.core.utils import get_ui_class
 from comptages.ui.resources import *
@@ -11,25 +9,34 @@ FORM_CLASS = get_ui_class('chart_dock.ui')
 
 
 class ChartDock(QDockWidget, FORM_CLASS):
-    def __init__(self, iface, layers, count_id, parent=None):
+    def __init__(self, iface, layers, parent=None):
         QDockWidget.__init__(self, parent)
         self.setupUi(self)
         self.layers = layers
-        self.count_id = count_id
+        self.count_id = None
 
         self.chartList.addItem(QListWidgetItem('Par heure'))
         self.chartList.addItem(QListWidgetItem('Par catégorie'))
         self.chartList.addItem(QListWidgetItem('Par vitesse'))
 
         self.chartList.currentRowChanged.connect(self.chart_list_changed)
-        self.chartList.setCurrentRow(0)
+        self.buttonValidate.clicked.connect(self.validate_count)
+        self.buttonRefuse.clicked.connect(self.refuse_count)
 
-    def set_count_id(self, count_id):
+    def set_attributes(self, count_id, approval_process=False):
         self.count_id = count_id
+        self.layers.select_and_zoom_on_section_of_count(count_id)
         if self.chartList.currentRow() == 0:
             self.chart_list_changed(0)
         else:
             self.chartList.setCurrentRow(0)
+
+        if not approval_process:
+            self.buttonValidate.hide()
+            self.buttonRefuse.hide()
+        else:
+            self.buttonValidate.show()
+            self.buttonRefuse.show()
 
     def chart_list_changed(self, row):
         is_aggregate = self.layers.is_data_aggregate(self.count_id)
@@ -41,7 +48,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
             elif is_detail:
                 xs, ys = self.layers.get_detail_time_chart_data(self.count_id)
             else:
-                # TODO error message "no data found"
                 return
             self.plot_chart_time(xs, ys)
         elif row == 1:
@@ -52,7 +58,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 labels, values = self.layers.get_detail_category_chart_data(
                     self.count_id)
             else:
-                # TODO
                 return
             self.plot_chart_category(labels, values)
         elif row == 2:
@@ -62,7 +67,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
             elif is_detail:
                 x, y = self.layers.get_detail_speed_chart_data(self.count_id)
             else:
-                # TODO
                 return
             self.plot_chart_speed(x, y)
 
@@ -112,3 +116,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
         div = plotly.offline.plot(fig, output_type='div')
 
         self.webView.setHtml(div)
+
+    def validate_count(self):
+        self.layers.change_status_of_count_data(
+            self.count_id, self.layers.IMPORT_STATUS_DEFINITIVE)
+
+    def refuse_count(self):
+        self.layers.delete_count_data(self.count_id)

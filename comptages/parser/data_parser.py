@@ -213,9 +213,7 @@ class DataParserInt2(DataParser):
         start_char = 20
         i = 1
         while True:
-            print(start_char)
             if line[start_char:start_char+4] != '':
-                print(start_char)
                 parsed_line['data_{}'.format(i)] = \
                     line[start_char:start_char+4]
                 i += 1

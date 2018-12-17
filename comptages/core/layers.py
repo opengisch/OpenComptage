@@ -978,3 +978,62 @@ class Layers(QObject):
         if query.next():
             return query.value(0)
         return None
+
+    def get_quarantined_counts(self):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct(agg.id_count) from "
+            "comptages.count_aggregate as agg where agg.import_status = {0} "
+            "union select distinct(det.id_count) from comptages.count_detail "
+            "as det where det.import_status = {0};".format(
+                self.IMPORT_STATUS_QUARANTINE))
+
+        result = []
+        query.exec_(query_str)
+        while query.next():
+            result.append(query.value(0))
+        return result
+
+    def select_and_zoom_on_section_of_count(self, count_id):
+        sections = self.get_sections_of_count(count_id)
+        layer = self.layers['section']
+        layer.selectByIds([x.id() for x in sections])
+        iface.setActiveLayer(layer)
+        iface.actionZoomToSelected().trigger()
+
+    def change_status_of_count_data(self, count_id, new_status):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_strs = []
+
+        query_strs.append(
+            "update comptages.count_aggregate set import_status = {} "
+            "where id_count = {}".format(new_status, count_id))
+
+        query_strs.append(
+            "update comptages.count_detail set import_status = {} "
+            "where id_count = {}".format(new_status, count_id))
+
+        print(query_strs)
+        for _ in query_strs:
+            query.exec_(_)
+
+    def delete_count_data(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_strs = []
+
+        query_strs.append(
+            "delete from comptages.count_aggregate where id_count = "
+            "{}".format(count_id))
+
+        query_strs.append(
+            "delete from comptages.count_detail where id_count = "
+            "{}".format(count_id))
+
+        for _ in query_strs:
+            query.exec_(_)

@@ -8,9 +8,11 @@ from comptages.core.utils import push_info
 
 class FileImporter():
 
-    def __init__(self, layers):
+    def __init__(self, layers, chart_dock):
         self.layers = layers
+        self.chart_dock = chart_dock
         self.ask_for_files()
+        self.show_charts()
 
     def ask_for_files(self):
         file_dialog = QFileDialog()
@@ -57,4 +59,11 @@ class FileImporter():
         pass
 
     def show_charts(self):
-        pass
+        # get all counts con import status non definitivo e mostrali uno alla volta
+        # chiedendo di approvare o cancellare i dati
+        quarantined_counts = self.layers.get_quarantined_counts()
+        if not quarantined_counts:
+            return
+
+        self.chart_dock.set_attributes(quarantined_counts[0], True)
+        self.chart_dock.show()
