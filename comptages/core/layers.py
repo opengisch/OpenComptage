@@ -959,3 +959,22 @@ class Layers(QObject):
         if query.next():
             return True
         return False
+
+    def guess_count_id(self, site, start_rec, stop_rec):
+        """Try to identify the count related to an imported file"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select cou.id from comptages.installation as ins "
+            "join comptages.count as cou on ins.id = cou.id_installation "
+            "where ins.name = '{}' and ins.active = true "
+            "and cou.start_service_date <= '{}' "
+            "and cou.end_service_date >= '{}';".format(
+                site, start_rec, stop_rec))
+
+        query.exec_(query_str)
+        if query.next():
+            return query.value(0)
+        return None

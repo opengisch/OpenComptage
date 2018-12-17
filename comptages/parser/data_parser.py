@@ -9,14 +9,14 @@ from comptages.core.utils import (
 
 class DataParser(metaclass=abc.ABCMeta):
 
-    def __init__(self, layers, count_id, file):
+    def __init__(self, layers, file):
         self.layers = layers
-        self.count_id = count_id
         self.file = file
-        self.file_header = dict()
+        self.file_header = self.parse_file_header()
         self.data_header = []
 
     def parse_file_header(self):
+        file_header = dict()
         with open(self.file) as f:
             for line in f:
                 if line.startswith('* ') and not line.startswith('* HEAD '):
@@ -27,8 +27,8 @@ class DataParser(metaclass=abc.ABCMeta):
                         value = splitted[1].strip()
                         if key == 'CLASS' and value == 'SPECIAL10':
                             value = 'SWISS10'
-                        self.file_header[key] = value
-        return self.file_header
+                        file_header[key] = value
+        return file_header
 
     def parse_data_header(self):
         with open(self.file) as f:
@@ -45,7 +45,7 @@ class DataParser(metaclass=abc.ABCMeta):
                             break
         return self.data_header
 
-    def parse_data(self):
+    def parse_and_import_data(self, count_id):
         pass
 
     def get_file_name(self):
@@ -54,23 +54,37 @@ class DataParser(metaclass=abc.ABCMeta):
     def get_number_of_lines(self):
         return sum(1 for line in open(self.file))
 
+    def get_site(self):
+        return self.file_header['SITE']
+
+    def get_start_rec(self):
+        return datetime.strptime(
+            self.file_header['STARTREC'], "%H:%M %d/%m/%y")
+
+    def get_stop_rec(self):
+        return datetime.strptime(
+            self.file_header['STOPREC'], "%H:%M %d/%m/%y")
+
+    def get_format(self):
+        return self.file_header['FORMAT']
+
     @staticmethod
-    def get_format(file):
-        data_parser = DataParser(None, None, file)
-        return data_parser.parse_file_header()['FORMAT']
+    def get_file_format(file):
+        data_parser = DataParser(None, file)
+        return data_parser.get_format()
 
 
 class DataParserVbv1(DataParser):
 
-    def __init__(self, layers, count_id, file):
-        DataParser.__init__(self, layers, count_id, file)
-        file_header = self.parse_file_header()
-        self.catbins = self.layers.get_category_bins(file_header['CLASS'])
+    def __init__(self, layers, file):
+        DataParser.__init__(self, layers, file)
+        self.catbins = self.layers.get_category_bins(self.file_header['CLASS'])
 
         self.number_of_lines = self.get_number_of_lines()
 
-    def parse_data(self):
-        progress_bar = create_progress_bar("Import data")
+    def parse_and_import_data(self, count_id):
+        progress_bar = create_progress_bar(
+            "Import file: {}".format(self.get_file_name()))
         with open(self.file) as f:
             for i, line in enumerate(f):
                 progress = int(100 / self.number_of_lines * i)
@@ -79,7 +93,7 @@ class DataParserVbv1(DataParser):
                 if not line.startswith('* '):
                     self.layers.insert_count_detail_row(
                         self.parse_data_line(line),
-                        self.count_id,
+                        count_id,
                         self.get_file_name())
         clear_widgets()
         push_info('Imported data from file {}'.format(self.file))
@@ -124,10 +138,8 @@ class DataParserVbv1(DataParser):
 
 class DataParserInt2(DataParser):
 
-    def __init__(self, layers, count_id, file):
-        DataParser.__init__(self, layers, count_id, file)
-
-        self.file_header = self.parse_file_header()
+    def __init__(self, layers, file):
+        DataParser.__init__(self, layers, file)
         self.intspec = self.get_intspec()
 
         self.number_of_lines = self.get_number_of_lines()
@@ -156,8 +168,9 @@ class DataParserInt2(DataParser):
             values = data_header[self.intspec.index(code)]
         return values
 
-    def parse_data(self):
-        progress_bar = create_progress_bar("Import data")
+    def parse_and_import_data(self, count_id):
+        progress_bar = create_progress_bar(
+            "Import file: {}".format(self.get_file_name()))
         with open(self.file) as f:
             for i, line in enumerate(f):
                 progress = int(100 / self.number_of_lines * i)
@@ -169,7 +182,7 @@ class DataParserInt2(DataParser):
                     self.layers.insert_count_aggregate_row(
                         parsed_line,
                         row_type,
-                        self.count_id,
+                        count_id,
                         self.get_file_name(),
                         self.get_bins(row_type))
         clear_widgets()

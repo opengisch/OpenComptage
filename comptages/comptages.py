@@ -9,6 +9,7 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
+from comptages.core.import_files import FileImporter
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
@@ -135,6 +136,7 @@ class Comptages(QObject):
     def do_import_files_action(self):
         QgsMessageLog.logMessage(
             'do_import_files_action', 'Comptages', Qgis.Info)
+        fi = FileImporter(self.layers)
 
     def do_filter_action(self):
         QgsMessageLog.logMessage(
@@ -179,18 +181,18 @@ class Comptages(QObject):
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
-        file_format = DataParser.get_format(file)
+        file_format = DataParser.get_file_format(file)
 
         try:
             if file_format == 'VBV-1':
-                data_parser = DataParserVbv1(self.layers, count_id, file)
+                data_parser = DataParserVbv1(self.layers, file)
             elif file_format == 'INT-2':
-                data_parser = DataParserInt2(self.layers, count_id, file)
+                data_parser = DataParserInt2(self.layers, file)
             else:
                 push_info('Format {} not supported'.format(file_format))
                 return
 
-            data_parser.parse_data()
+            data_parser.parse_data(count_id)
         except Exception as e:
             push_info('Error during data parsing: {}'.format(str(e)))
 
