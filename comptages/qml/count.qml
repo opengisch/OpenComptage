@@ -272,7 +272,7 @@
     <actionsetting icon="" id="{cb2213e7-9e08-4030-8919-b04df157a611}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_configuration_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Export configuration" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting icon="" id="{f9f8e89a-ea0c-4da8-bf4a-e528901309fd}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_data_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Import data" capture="0" isEnabledOnlyWhenEditable="0">
+    <actionsetting icon="" id="{f9f8e89a-ea0c-4da8-bf4a-e528901309fd}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_single_file_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Import data" capture="0" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
     <actionsetting icon="" id="{c3d66c77-d09f-487f-b0d5-312884bbb8c6}" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_report_action([% $id %])" notificationMessage="" shortTitle="" type="1" name="Create report" capture="0" isEnabledOnlyWhenEditable="0">

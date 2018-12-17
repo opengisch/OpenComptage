@@ -153,9 +153,9 @@ class Comptages(QObject):
         config_creator.write_file(file)
         push_info('Written config file {}'.format(file))
 
-    def do_import_data_action(self, count_id):
+    def do_import_single_file_action(self, count_id):
         QgsMessageLog.logMessage(
-            'do_import_data_action {}'.format(count_id),
+            'do_import_single_file_action {}'.format(count_id),
             'Comptages', Qgis.Info)
 
         file_dialog = QFileDialog()

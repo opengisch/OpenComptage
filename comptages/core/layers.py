@@ -206,7 +206,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Import data',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_import_data_action([% $id %])")
+             "plugins['comptages'].do_import_single_file_action([% $id %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
