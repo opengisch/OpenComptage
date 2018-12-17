@@ -331,7 +331,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE comptages.count_detail DROP CONSTRAINT IF EXISTS count_fk CASCADE;
 ALTER TABLE comptages.count_detail ADD CONSTRAINT count_fk FOREIGN KEY (id_count)
 REFERENCES comptages.count (id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: model_fk | type: CONSTRAINT --
@@ -477,7 +477,7 @@ ALTER TABLE comptages.count_aggregate OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate DROP CONSTRAINT IF EXISTS count_fk CASCADE;
 ALTER TABLE comptages.count_aggregate ADD CONSTRAINT count_fk FOREIGN KEY (id_count)
 REFERENCES comptages.count (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: lane_fk | type: CONSTRAINT --
@@ -505,7 +505,7 @@ ALTER TABLE comptages.count_aggregate_value_cls OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_cls DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_cls ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: category_fk | type: CONSTRAINT --
@@ -540,7 +540,7 @@ ALTER TABLE comptages.count_aggregate_value_cnt OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_cnt DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_cnt ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.count_aggregate_value_drn | type: TABLE --
@@ -561,7 +561,7 @@ ALTER TABLE comptages.count_aggregate_value_drn OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_drn DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_drn ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.count_aggregate_value_len | type: TABLE --
@@ -583,7 +583,7 @@ ALTER TABLE comptages.count_aggregate_value_len OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_len DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_len ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.count_aggregate_value_spd | type: TABLE --
@@ -605,7 +605,7 @@ ALTER TABLE comptages.count_aggregate_value_spd OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_spd DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_spd ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.count_aggregate_value_sds | type: TABLE --
@@ -626,7 +626,7 @@ ALTER TABLE comptages.count_aggregate_value_sds OWNER TO postgres;
 -- ALTER TABLE comptages.count_aggregate_value_sds DROP CONSTRAINT IF EXISTS count_aggregate_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_sds ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 
