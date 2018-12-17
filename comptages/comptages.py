@@ -192,7 +192,7 @@ class Comptages(QObject):
                 push_info('Format {} not supported'.format(file_format))
                 return
 
-            data_parser.parse_data(count_id)
+            data_parser.parse_and_import_data(count_id)
         except Exception as e:
             push_info('Error during data parsing: {}'.format(str(e)))
 
