@@ -1,9 +1,11 @@
+import plotly
+import plotly.graph_objs as go
+from datetime import datetime
+
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem
 from comptages.core.utils import get_ui_class
 from comptages.ui.resources import *
 
-import plotly
-import plotly.graph_objs as go
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
 
@@ -47,15 +49,15 @@ class ChartDock(QDockWidget, FORM_CLASS):
         is_detail = self.layers.is_data_detail(self.count_id)
         if row == 0:
             if is_aggregate:
-                xs, ys = self.layers.get_aggregate_time_chart_data(
+                xs, ys, days = self.layers.get_aggregate_time_chart_data(
                     self.count_id, self.status)
             elif is_detail:
-                xs, ys = self.layers.get_detail_time_chart_data(
+                xs, ys, days = self.layers.get_detail_time_chart_data(
                     self.count_id, self.status)
             else:
                 xs = []
                 ys = []
-            self.plot_chart_time(xs, ys)
+            self.plot_chart_time(xs, ys, days)
         elif row == 1:
             if is_aggregate:
                 labels, values = self.layers.get_aggregate_category_chart_data(
@@ -79,17 +81,19 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 y = []
             self.plot_chart_speed(x, y)
 
-    def plot_chart_time(self, xs, ys):
+    def plot_chart_time(self, xs, ys, days):
         data = []
-
         # In reverse order so if the first day is not complete, the
         # missing hours are added at the beginning of the chart
         for i in range(len(xs)-1, -1, -1):
+            day = datetime.strptime(
+                days[i], '%Y-%m-%d %H:%M:%S').strftime('%a %d.%m.%Y')
             data.append(
                 go.Scatter(
                     x=xs[i],
                     y=ys[i],
-                    name="Jour {}".format(i+1),
+                    name=day
+                    #name="Jour {}".format(i+1),
                 )
             )
 

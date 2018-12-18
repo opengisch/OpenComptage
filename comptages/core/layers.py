@@ -772,7 +772,7 @@ class Layers(QObject):
                 count_id, day, status)
             xs.append(x)
             ys.append(y)
-        return xs, ys
+        return xs, ys, days
 
     def get_aggregate_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
@@ -913,7 +913,7 @@ class Layers(QObject):
             x, y = self.get_detail_time_chart_data_day(count_id, day, status)
             xs.append(x)
             ys.append(y)
-        return xs, ys
+        return xs, ys, days
 
     def get_detail_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
