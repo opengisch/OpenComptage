@@ -95,6 +95,12 @@ class Comptages(QObject):
         self.settings_action.triggered.connect(
             self.do_settings_action)
 
+        self.create_new_action.setEnabled(False)
+        self.select_edit_action.setEnabled(False)
+        self.import_files_action.setEnabled(False)
+        self.validate_imported_files.setEnabled(False)
+        self.filter_action.setEnabled(False)
+
         self.iface.addPluginToMenu('Comptages', self.connect_db_action)
         self.iface.addPluginToMenu('Comptages', self.create_new_action)
         self.iface.addPluginToMenu('Comptages', self.select_edit_action)
@@ -134,6 +140,7 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_connect_db_action', 'Comptages', Qgis.Info)
         self.layers.load_layers()
+        self.enable_actions_if_needed()
 
     def do_create_new_action(self):
         QgsMessageLog.logMessage(
@@ -234,11 +241,12 @@ class Comptages(QObject):
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
         otherwise disable them"""
-        pass
+        self.create_new_action.setEnabled(True)
+        self.select_edit_action.setEnabled(True)
+        self.import_files_action.setEnabled(True)
+        self.validate_imported_files.setEnabled(True)
+        self.filter_action.setEnabled(True)
 
-    def is_connected(self):
-        """Return if the plugin is connected to the database"""
-        pass
 
     def is_section_highlighted(self, section_id):
         return self.layers.is_section_highlighted(section_id)

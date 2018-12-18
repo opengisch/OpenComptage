@@ -422,6 +422,12 @@ class Layers(QObject):
             start_date, end_date, permanent, sensor)
         self.layers['section'].triggerRepaint()
 
+    def is_connected(self):
+        """Return if the plugin is connected to the database"""
+        if self.db is None:
+            return False
+        return True
+
     def init_db_connection(self):
 
         if self.db is None:
@@ -464,7 +470,6 @@ class Layers(QObject):
         return next(self.layers['count'].getFeatures(request))
 
     def get_installation(self, installation_id):
-        """Return the installation of a count"""
 
         request = QgsFeatureRequest().setFilterExpression(
             '"id" = {}'.format(installation_id)
