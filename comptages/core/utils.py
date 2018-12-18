@@ -28,6 +28,14 @@ def push_info(message):
     iface.messageBar().pushInfo('Comptages', message)
 
 
+def push_warning(message):
+    iface.messageBar().pushWarning('Comptages', message)
+
+
+def push_error(message):
+    iface.messageBar().pushCritical('Comptages', message)
+
+
 def create_progress_bar(message):
 
     progress_widget = QProgressBar()

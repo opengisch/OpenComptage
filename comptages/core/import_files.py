@@ -3,7 +3,7 @@ from qgis.PyQt.QtWidgets import QFileDialog
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
 
-from comptages.core.utils import push_info
+from comptages.core.utils import push_info, push_warning
 
 
 class FileImporter():
@@ -35,7 +35,7 @@ class FileImporter():
             elif file_format == 'INT-2':
                 data_parser = DataParserInt2(self.layers, file)
             else:
-                push_info('Format {} not supported'.format(file_format))
+                push_warning('Format {} not supported'.format(file_format))
                 return
 
             count_id = self.layers.guess_count_id(
@@ -43,7 +43,7 @@ class FileImporter():
                 data_parser.get_stop_rec())
 
             if not count_id:
-                push_info('Could not guess count_id')
+                push_warning('Could not find the related count')
                 # Exception?
                 return
 
