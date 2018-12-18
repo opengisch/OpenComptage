@@ -28,7 +28,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
     def set_attributes(self, count_id, approval_process=False):
         self.count_id = count_id
-        self.setWindowTitle("Comptage {}".format(count_id))
+        self.setWindowTitle("Comptage: {}, installation: {}".format(
+            count_id, self.layers.get_installation_name_of_count(count_id)))
         if approval_process:
             self.buttonValidate.show()
             self.buttonRefuse.show()
@@ -93,12 +94,11 @@ class ChartDock(QDockWidget, FORM_CLASS):
                     x=xs[i],
                     y=ys[i],
                     name=day
-                    #name="Jour {}".format(i+1),
                 )
             )
 
         layout = go.Layout(
-            title='Véhicules par heure (comptage {})'.format(self.count_id),
+            title='Véhicules par heure',
             xaxis=dict(tickangle=-45),
             barmode='group'
         )
@@ -111,9 +111,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def plot_chart_speed(self, x, y):
         bar = go.Bar(x=x, y=y)
 
-        layout = go.Layout(
-            title='Véhicules groupés par vitesse (comptage {})'.format(
-                self.count_id))
+        layout = go.Layout(title='Véhicules groupés par vitesse')
         fig = go.Figure(data=[bar], layout=layout)
         div = plotly.offline.plot(fig, output_type='div')
 
@@ -122,9 +120,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def plot_chart_category(self, labels, values):
         pie = go.Pie(labels=labels, values=values)
 
-        layout = go.Layout(
-            title="Véhicules groupés par catégorie (comptage {})".format(
-                self.count_id))
+        layout = go.Layout(title="Véhicules groupés par catégorie")
         fig = go.Figure(data=[pie], layout=layout)
         div = plotly.offline.plot(fig, output_type='div')
 
