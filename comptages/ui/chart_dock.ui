@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string>Graphiques comptage</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <widget class="QListWidget" name="chartList">

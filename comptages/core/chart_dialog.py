@@ -26,6 +26,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
     def set_attributes(self, count_id, approval_process=False):
         self.count_id = count_id
+        self.setWindowTitle("Comptage {}".format(count_id))
         if approval_process:
             self.buttonValidate.show()
             self.buttonRefuse.show()
