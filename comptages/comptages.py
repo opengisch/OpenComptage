@@ -56,6 +56,12 @@ class Comptages(QObject):
             None
         )
 
+        self.validate_imported_files = QAction(
+            QIcon(':/plugins/Comptages/images/validate.png'),
+            'Import',
+            None
+        )
+
         self.filter_action = QAction(
             QIcon(':/plugins/Comptages/images/filter.png'),
             'Filter',
@@ -80,6 +86,9 @@ class Comptages(QObject):
         self.import_files_action.triggered.connect(
             self.do_import_files_action)
 
+        self.validate_imported_files.triggered.connect(
+            self.do_validate_imported_files_action)
+
         self.filter_action.triggered.connect(
             self.do_filter_action)
 
@@ -90,6 +99,7 @@ class Comptages(QObject):
         self.iface.addPluginToMenu('Comptages', self.create_new_action)
         self.iface.addPluginToMenu('Comptages', self.select_edit_action)
         self.iface.addPluginToMenu('Comptages', self.import_files_action)
+        self.iface.addPluginToMenu('Comptages', self.validate_imported_files)
         self.iface.addPluginToMenu('Comptages', self.filter_action)
         self.iface.addPluginToMenu('Comptages', self.settings_action)
 
@@ -101,6 +111,7 @@ class Comptages(QObject):
         self.toolbar.addAction(self.create_new_action)
         self.toolbar.addAction(self.select_edit_action)
         self.toolbar.addAction(self.import_files_action)
+        self.toolbar.addAction(self.validate_imported_files)
         self.toolbar.addAction(self.filter_action)
         self.toolbar.addAction(self.settings_action)
 
@@ -138,6 +149,11 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_import_files_action', 'Comptages', Qgis.Info)
         FileImporter(self.layers, self.chart_dock)
+
+    def do_validate_imported_files_action(self):
+        QgsMessageLog.logMessage(
+            'do_validate_imported_files_action', 'Comptages', Qgis.Info)
+        self.chart_dock.show_next_quarantined_chart()
 
     def do_filter_action(self):
         QgsMessageLog.logMessage(
