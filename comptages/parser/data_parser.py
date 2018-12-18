@@ -45,7 +45,7 @@ class DataParser(metaclass=abc.ABCMeta):
                             break
         return self.data_header
 
-    def parse_and_import_data(self, count_id):
+    def parse_and_import_data(self, count_id, message=''):
         pass
 
     def get_file_name(self):
@@ -82,9 +82,8 @@ class DataParserVbv1(DataParser):
 
         self.number_of_lines = self.get_number_of_lines()
 
-    def parse_and_import_data(self, count_id):
-        progress_bar = create_progress_bar(
-            "Import file: {}".format(self.get_file_name()))
+    def parse_and_import_data(self, count_id, message='Import file'):
+        progress_bar = create_progress_bar(message)
         with open(self.file) as f:
             for i, line in enumerate(f):
                 progress = int(100 / self.number_of_lines * i)
@@ -168,9 +167,8 @@ class DataParserInt2(DataParser):
             values = data_header[self.intspec.index(code)]
         return values
 
-    def parse_and_import_data(self, count_id):
-        progress_bar = create_progress_bar(
-            "Import file: {}".format(self.get_file_name()))
+    def parse_and_import_data(self, count_id, message='Import file'):
+        progress_bar = create_progress_bar(message)
         with open(self.file) as f:
             for i, line in enumerate(f):
                 progress = int(100 / self.number_of_lines * i)
@@ -186,8 +184,6 @@ class DataParserInt2(DataParser):
                         self.get_file_name(),
                         self.get_bins(row_type))
         clear_widgets()
-        push_info(
-            'Imported data from file {}'.format(self.file))
 
     def parse_data_line(self, line):
         parsed_line = dict()

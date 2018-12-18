@@ -1,3 +1,4 @@
+import os
 from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt.QtWidgets import QFileDialog
 from comptages.parser.data_parser import (
@@ -21,12 +22,14 @@ class FileImporter():
         files = QFileDialog.getOpenFileNames(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
-        for file in files:
+        for i, file in enumerate(files):
             QgsMessageLog.logMessage(
                 'import file: {}'.format(file), 'Comptages', Qgis.Info)
-            self.import_file(file)
+            message = "Importation fichier: {}, ({} de {})".format(
+                os.path.basename(file), i+1, len(files))
+            self.import_file(file, message)
 
-    def import_file(self, file):
+    def import_file(self, file, message=''):
         file_format = DataParser.get_file_format(file)
 
         try:
@@ -35,7 +38,10 @@ class FileImporter():
             elif file_format == 'INT-2':
                 data_parser = DataParserInt2(self.layers, file)
             else:
-                push_warning('Format {} not supported'.format(file_format))
+                push_warning('Format {} non supporté'.format(file_format))
+                QgsMessageLog.logMessage(
+                    'Format {} not supported'.format(file_format),
+                    'Comptages', Qgis.Warning)
                 return
 
             count_id = self.layers.guess_count_id(
@@ -43,13 +49,22 @@ class FileImporter():
                 data_parser.get_stop_rec())
 
             if not count_id:
-                push_warning('Could not find the related count')
-                # Exception?
+                push_warning('Impossible de trouver le comptage associé')
+                QgsMessageLog.logMessage(
+                    'Could not find the related count',
+                    'Comptages', Qgis.Warning)
                 return
 
-            data_parser.parse_and_import_data(count_id)
+            data_parser.parse_and_import_data(count_id, message)
+            push_info('Importation terminée')
+            QgsMessageLog.logMessage(
+                'Import finished', 'Comptages', Qgis.Info)
         except Exception as e:
-            push_info('Error during data parsing: {}'.format(str(e)))
+            push_info('Erreur lors de la lecture des données: {}'.format(
+                str(e)))
+            QgsMessageLog.logMessage(
+                'Error during data parsing: {}'.format(str(e)),
+                'Comptages', Qgis.Critical)
             raise e
 
     def show_charts(self):

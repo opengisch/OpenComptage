@@ -34,43 +34,43 @@ class Comptages(QObject):
 
         self.connect_db_action = QAction(
             QIcon(':/plugins/Comptages/images/power.png'),
-            'Connect DB',
+            'Connection DB',
             self.iface.mainWindow()
         )
 
         self.create_new_action = QAction(
             QIcon(':/plugins/Comptages/images/measure.png'),
-            'Create new measure',
+            'Créer un nouveau comptage',
             None
         )
 
         self.select_edit_action = QAction(
             QIcon(':/plugins/Comptages/images/select_edit.png'),
-            'Edit measure',
+            'Modifier comptage',
             None
         )
 
         self.import_files_action = QAction(
             QIcon(':/plugins/Comptages/images/import.png'),
-            'Import',
+            'Importation',
             None
         )
 
         self.validate_imported_files = QAction(
             QIcon(':/plugins/Comptages/images/validate.png'),
-            'Import',
+            'Validation',
             None
         )
 
         self.filter_action = QAction(
             QIcon(':/plugins/Comptages/images/filter.png'),
-            'Filter',
+            'Filtrer',
             None
         )
 
         self.settings_action = QAction(
             QIcon(':/plugins/Comptages/images/settings.png'),
-            'Settings',
+            'Réglages',
             None
         )
 
