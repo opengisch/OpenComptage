@@ -26,9 +26,6 @@ class FileImporter():
                 'import file: {}'.format(file), 'Comptages', Qgis.Info)
             self.import_file(file)
 
-    def ask_for_file(self):
-        pass
-
     def import_file(self, file):
         file_format = DataParser.get_file_format(file)
 
@@ -55,12 +52,7 @@ class FileImporter():
             push_info('Error during data parsing: {}'.format(str(e)))
             raise e
 
-    def import_files(self):
-        pass
-
     def show_charts(self):
-        # get all counts con import status non definitivo e mostrali uno alla volta
-        # chiedendo di approvare o cancellare i dati
         quarantined_counts = self.layers.get_quarantined_counts()
         if not quarantined_counts:
             return
