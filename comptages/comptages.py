@@ -205,6 +205,9 @@ class Comptages(QObject):
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
+        if not file:
+            return
+
         file_format = DataParser.get_file_format(file)
 
         try:
