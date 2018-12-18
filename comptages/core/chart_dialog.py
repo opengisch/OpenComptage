@@ -120,6 +120,17 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def validate_count(self):
         self.layers.change_status_of_count_data(
             self.count_id, self.layers.IMPORT_STATUS_DEFINITIVE)
+        self.show_next_quarantined_chart()
 
     def refuse_count(self):
         self.layers.delete_count_data(self.count_id)
+        self.show_next_quarantined_chart()
+
+    def show_next_quarantined_chart(self):
+        quarantined_counts = self.layers.get_quarantined_counts()
+        if not quarantined_counts:
+            self.hide()
+            return
+
+        self.set_attributes(quarantined_counts[0], True)
+        self.show()
