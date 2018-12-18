@@ -195,7 +195,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Export configuration',
+            'Exporter la configuration',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_export_configuration_action([% $id %])")
         )
@@ -204,7 +204,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Import data',
+            'Importation',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_import_single_file_action([% $id %])")
         )
@@ -213,7 +213,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Create report',
+            'Creer un rapport',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_generate_report_action([% $id %])")
         )
@@ -222,7 +222,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Export plan',
+            'Creer un plan',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_export_plan_action([% $id %])")
         )
@@ -231,7 +231,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Generate chart',
+            'Générer les graphiques',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_generate_chart_action([% $id %])")
         )
@@ -244,10 +244,10 @@ class Layers(QObject):
 
         selected_count = layer.selectedFeatureCount()
         if selected_count == 0:
-            push_info("Please select a section")
+            push_info("Veuillez sélectionner un tronçon")
             return
         elif selected_count > 1:
-            push_info("Please select only one section")
+            push_info("Veuillez ne sélectionner qu'un tronçon")
             return
         else:
             selected_feature = next(layer.getSelectedFeatures())
