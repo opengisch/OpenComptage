@@ -48,7 +48,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
             elif is_detail:
                 xs, ys = self.layers.get_detail_time_chart_data(self.count_id)
             else:
-                return
+                xs = []
+                ys = []
             self.plot_chart_time(xs, ys)
         elif row == 1:
             if is_aggregate:
@@ -58,7 +59,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 labels, values = self.layers.get_detail_category_chart_data(
                     self.count_id)
             else:
-                return
+                labels = []
+                values = []
             self.plot_chart_category(labels, values)
         elif row == 2:
             if is_aggregate:
@@ -67,7 +69,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
             elif is_detail:
                 x, y = self.layers.get_detail_speed_chart_data(self.count_id)
             else:
-                return
+                x = []
+                y = []
             self.plot_chart_speed(x, y)
 
     def plot_chart_time(self, xs, ys):
