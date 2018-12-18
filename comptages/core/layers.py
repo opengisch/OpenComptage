@@ -695,7 +695,8 @@ class Layers(QObject):
 
         return catbins
 
-    def get_aggregate_speed_chart_data(self, count_id):
+    def get_aggregate_speed_chart_data(
+            self, count_id, status):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
@@ -705,9 +706,10 @@ class Layers(QObject):
             "comptages.count_aggregate as agg "
             "join comptages.count_aggregate_value_spd as spd "
             "on	agg.id = spd.id_count_aggregate "
-            "where agg.id_count = {} and agg.type = 'SPD'"
+            "where agg.id_count = {} and agg.type = 'SPD' "
+            "and agg.import_status = {} "
             "group by spd.low, spd.high "
-            "order by spd.low;".format(count_id))
+            "order by spd.low;".format(count_id, status))
 
         query.exec_(query_str)
         x = []
@@ -720,7 +722,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_aggregate_category_chart_data(self, count_id):
+    def get_aggregate_category_chart_data(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -732,8 +734,9 @@ class Layers(QObject):
             "join comptages.category as cat "
             "on cls.id_category = cat.id "
             "where agg.id_count = {} and agg.type = 'CLS' "
+            "and agg.import_status = {} "
             "group by cat.code, cat.name "
-            "order by cat.code;".format(count_id))
+            "order by cat.code;".format(count_id, status))
 
         query.exec_(query_str)
         labels = []
@@ -746,14 +749,15 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_days_of_aggregate_dataset(self, count_id):
+    def get_days_of_aggregate_dataset(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
         query_str = (
             "select distinct date_trunc('day', start) as day from "
             "comptages.count_aggregate where id_count = {} "
-            "order by day;".format(count_id))
+            "and import_status = {} "
+            "order by day;".format(count_id, status))
 
         query.exec_(query_str)
         days = []
@@ -762,19 +766,20 @@ class Layers(QObject):
 
         return days
 
-    def get_aggregate_time_chart_data(self, count_id):
+    def get_aggregate_time_chart_data(self, count_id, status):
 
         xs = []
         ys = []
 
-        days = self.get_days_of_aggregate_dataset(count_id)
+        days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
-            x, y = self.get_aggregate_time_chart_data_day(count_id, day)
+            x, y = self.get_aggregate_time_chart_data_day(
+                count_id, day, status)
             xs.append(x)
             ys.append(y)
         return xs, ys
 
-    def get_aggregate_time_chart_data_day(self, count_id, day):
+    def get_aggregate_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -785,9 +790,10 @@ class Layers(QObject):
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
             "where agg.id_count = {} and agg.type = 'CLS' "
-            "and date_trunc('day', agg.start) = '{}'"
+            "and date_trunc('day', agg.start) = '{}' "
+            "and agg.import_status = {} "
             "group by agg.start, agg.end "
-            "order by agg.start".format(count_id, day)
+            "order by agg.start".format(count_id, day, status)
         )
 
         query.exec_(query_str)
@@ -802,7 +808,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_detail_category_chart_data(self, count_id):
+    def get_detail_category_chart_data(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -812,8 +818,9 @@ class Layers(QObject):
             "join comptages.category as cat "
             "on det.id_category = cat.id "
             "where det.id_count = {} "
+            "and det.import_status = {} "
             "group by det.id_category, cat.code, cat.name "
-            "order by cat.code;".format(count_id))
+            "order by cat.code;".format(count_id, status))
 
         query.exec_(query_str)
         labels = []
@@ -826,7 +833,7 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_detail_speed_chart_data(self, count_id):
+    def get_detail_speed_chart_data(self, count_id, status):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
@@ -835,44 +842,44 @@ class Layers(QObject):
             "select * from ("
             "select 0 as low, 10, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 0 and 10 union "
+            "between 0 and 10 and import_status = {1} union "
             "select 10, 20, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 10 and 20 union "
+            "between 10 and 20 and import_status = {1} union "
             "select 20, 30, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 20 and 30 union "
+            "between 20 and 30 and import_status = {1} union "
             "select 30, 40, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 30 and 40 union "
+            "between 30 and 40 and import_status = {1} union "
             "select 40, 50, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 40 and 50 union "
+            "between 40 and 50 and import_status = {1} union "
             "select 50, 60, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 50 and 60 union "
+            "between 50 and 60 and import_status = {1} union "
             "select 60, 70, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 60 and 70 union "
+            "between 60 and 70 and import_status = {1} union "
             "select 70, 80, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 70 and 80 union "
+            "between 70 and 80 and import_status = {1} union "
             "select 80, 90, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 80 and 90 union "
+            "between 80 and 90 and import_status = {1} union "
             "select 90, 100, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 90 and 100 union "
+            "between 90 and 100 and import_status = {1} union "
             "select 100, 110, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 100 and 110 union "
+            "between 100 and 110 and import_status = {1} union "
             "select 110, 120, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 110 and 120 union "
+            "between 110 and 120 and import_status = {1} union "
             "select 120, 999, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 120 and 999"
-            ") as foo order by low".format(count_id))
+            "between 120 and 999 and import_status = {1}"
+            ") as foo order by low".format(count_id, status))
 
         query.exec_(query_str)
         x = []
@@ -901,19 +908,19 @@ class Layers(QObject):
 
         return days
 
-    def get_detail_time_chart_data(self, count_id):
+    def get_detail_time_chart_data(self, count_id, status):
 
         xs = []
         ys = []
 
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
-            x, y = self.get_detail_time_chart_data_day(count_id, day)
+            x, y = self.get_detail_time_chart_data_day(count_id, day, status)
             xs.append(x)
             ys.append(y)
         return xs, ys
 
-    def get_detail_time_chart_data_day(self, count_id, day):
+    def get_detail_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -924,7 +931,9 @@ class Layers(QObject):
             "from comptages.count_detail "
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
-            "group by date_part('hour', timestamp);".format(count_id, day)
+            "and import_status = {} "
+            "group by date_part('hour', timestamp);".format(
+                count_id, day, status)
         )
 
         query.exec_(query_str)

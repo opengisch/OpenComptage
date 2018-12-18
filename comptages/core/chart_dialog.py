@@ -14,6 +14,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.layers = layers
         self.count_id = None
+        self.status = self.layers.IMPORT_STATUS_DEFINITIVE
 
         self.chartList.addItem(QListWidgetItem('Par heure'))
         self.chartList.addItem(QListWidgetItem('Par catégorie'))
@@ -25,18 +26,20 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
     def set_attributes(self, count_id, approval_process=False):
         self.count_id = count_id
+        if approval_process:
+            self.buttonValidate.show()
+            self.buttonRefuse.show()
+            self.status = self.layers.IMPORT_STATUS_QUARANTINE
+        else:
+            self.buttonValidate.hide()
+            self.buttonRefuse.hide()
+            self.status = self.layers.IMPORT_STATUS_DEFINITIVE
+
         self.layers.select_and_zoom_on_section_of_count(count_id)
         if self.chartList.currentRow() == 0:
             self.chart_list_changed(0)
         else:
             self.chartList.setCurrentRow(0)
-
-        if not approval_process:
-            self.buttonValidate.hide()
-            self.buttonRefuse.hide()
-        else:
-            self.buttonValidate.show()
-            self.buttonRefuse.show()
 
     def chart_list_changed(self, row):
         is_aggregate = self.layers.is_data_aggregate(self.count_id)
@@ -44,9 +47,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
         if row == 0:
             if is_aggregate:
                 xs, ys = self.layers.get_aggregate_time_chart_data(
-                    self.count_id)
+                    self.count_id, self.status)
             elif is_detail:
-                xs, ys = self.layers.get_detail_time_chart_data(self.count_id)
+                xs, ys = self.layers.get_detail_time_chart_data(
+                    self.count_id, self.status)
             else:
                 xs = []
                 ys = []
@@ -54,10 +58,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
         elif row == 1:
             if is_aggregate:
                 labels, values = self.layers.get_aggregate_category_chart_data(
-                    self.count_id)
+                    self.count_id, self.status)
             elif is_detail:
                 labels, values = self.layers.get_detail_category_chart_data(
-                    self.count_id)
+                    self.count_id, self.status)
             else:
                 labels = []
                 values = []
@@ -65,9 +69,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
         elif row == 2:
             if is_aggregate:
                 x, y = self.layers.get_aggregate_speed_chart_data(
-                    self.count_id)
+                    self.count_id, self.status)
             elif is_detail:
-                x, y = self.layers.get_detail_speed_chart_data(self.count_id)
+                x, y = self.layers.get_detail_speed_chart_data(
+                    self.count_id, self.status)
             else:
                 x = []
                 y = []
