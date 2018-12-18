@@ -366,17 +366,9 @@ class Layers(QObject):
         for performances"""
 
         self.highlighted_sections = []
-        settings = Settings()
+        self.init_db_connection()
 
-        db = QSqlDatabase.addDatabase("QPSQL")
-        db.setHostName(settings.value("db_host"))
-        db.setPort(settings.value("db_port"))
-        db.setDatabaseName(settings.value("db_name"))
-        db.setUserName(settings.value("db_username"))
-        db.setPassword(settings.value("db_password"))
-        db.open()
-
-        query = QSqlQuery(db)
+        query = QSqlQuery(self.db)
 
         wheres = []
         if start_date:
@@ -404,8 +396,6 @@ class Layers(QObject):
 
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
-
-        db.close()
 
     def apply_filter(self, start_date, end_date, installation, sensor):
         if installation == 0:
@@ -441,6 +431,11 @@ class Layers(QObject):
             self.db.setUserName(settings.value("db_username"))
             self.db.setPassword(settings.value("db_password"))
             self.db.open()
+
+    def close_db_connection(self):
+        if self.db is not None:
+            self.db.close()
+            self.db = None
 
     def get_sections_of_count(self, count_id):
         """Return the sections related to a count"""
