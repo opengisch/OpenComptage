@@ -58,6 +58,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             else:
                 xs = []
                 ys = []
+                days = []
             self.plot_chart_time(xs, ys, days)
         elif row == 1:
             if is_aggregate:
