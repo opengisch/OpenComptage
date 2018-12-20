@@ -1,7 +1,7 @@
 from qgis.PyQt.QtWidgets import QDialog
 
 from comptages.qgissettingmanager import SettingManager, Scope
-from comptages.qgissettingmanager.types import String, Integer
+from comptages.qgissettingmanager.types import String, Integer, Bool
 from comptages.qgissettingmanager.setting_dialog import SettingDialog
 
 from comptages.core.utils import get_ui_class
@@ -23,6 +23,8 @@ class Settings(SettingManager):
             String("db_username", Scope.Global, 'postgres'))
         self.add_setting(
             String("db_password", Scope.Global, 'postgres'))
+        self.add_setting(
+            Bool("extra_layers", Scope.Global, False))
 
 
 class SettingsDialog(QDialog, FORM_CLASS, SettingDialog):

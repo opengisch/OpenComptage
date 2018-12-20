@@ -25,13 +25,19 @@ class Layers(QObject):
         self.db = None
 
     def load_layers(self):
+        settings = Settings()
 
         group_comptages = QgsProject.instance().layerTreeRoot().findGroup(
             'Comptages')
+        group_extra = QgsProject.instance().layerTreeRoot().findGroup(
+            'Extra')
 
         if group_comptages is None:
             group_comptages = QgsProject.instance().layerTreeRoot().addGroup(
                 'Comptages')
+
+        if group_extra is None and settings.value("extra_layers"):
+            group_extra = group_comptages.addGroup('Extra')
 
         for key in LAYER_DEFINITIONS:
             layer_definition = LAYER_DEFINITIONS[key]
@@ -51,6 +57,8 @@ class Layers(QObject):
 
                 if layer_definition['legend']:
                     group_comptages.addLayer(layer)
+                elif settings.value("extra_layers"):
+                    group_extra.addLayer(layer)
 
                 self.layers[key] = layer
 

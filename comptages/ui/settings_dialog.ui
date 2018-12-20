@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>360</height>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>DB Name</string>
+      <string>Nom DB</string>
      </property>
     </widget>
    </item>
@@ -37,7 +37,7 @@
    <item>
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Port</string>
+      <string>Porte</string>
      </property>
     </widget>
    </item>
@@ -47,7 +47,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Username</string>
+      <string>Nom d'utilisateur</string>
      </property>
     </widget>
    </item>
@@ -57,7 +57,7 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Password</string>
+      <string>Mot de passe</string>
      </property>
     </widget>
    </item>
@@ -65,6 +65,13 @@
     <widget class="QLineEdit" name="db_password">
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="extra_layers">
+     <property name="text">
+      <string>montrer les couches supplémentaires</string>
      </property>
     </widget>
    </item>
