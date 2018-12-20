@@ -2,3 +2,4 @@
 __pycache__/
 .docker/tests/
 .docker/tests/screenshot.png
+.env

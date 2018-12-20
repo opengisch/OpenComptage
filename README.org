@@ -35,6 +35,25 @@
      cd .docker
      docker-compose -f docker-compose_dev_env.yml down --volume
    #+END_SRC
+** Windows deployment
+   Clone this repository with the submodules
+   #+BEGIN_SRC powershell
+     git clone --recurse-submodules git@github.com:opengisch/OpenComptage.git
+   #+END_SRC
+   Create a database and a user with CREATE rights on it. Create a pg_service.conf file in your %USERPROFILE%.
+   Go into the =scripts\windows= directory of the repository
+   #+BEGIN_SRC powershell
+     cd .\scripts\windows
+   #+END_SRC
+   Adapt =create_db.ps1= with the name of your pg_service.
+   Create the database structure (need to be done when model is modified, data will be reset):
+   #+BEGIN_SRC powershell
+     .\create_db.ps1
+   #+END_SRC
+   Deploy to your custom repository
+   #+BEGIN_SRC powershell
+     .\deploy.ps1
+   #+END_SRC
 * Data model
   The data model has been created to easily allow to add functionality to the product
   e.g. adding new vehicle classes and to be as simple as possible and easily

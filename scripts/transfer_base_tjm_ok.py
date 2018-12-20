@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import psycopg2
+import sys
 
 
 class TransferBaseTjmOk(object):
@@ -284,7 +285,7 @@ class TransferBaseTjmOk(object):
 
 # if __name__ == '__main__':
 
-    # TODO read args
-transfer_base_tjm_ok = TransferBaseTjmOk('comptages_dev')
+pg_service = str(sys.argv[1]) if len(sys.argv) > 1 else 'comptages_dev'
+transfer_base_tjm_ok = TransferBaseTjmOk(pg_service)
 transfer_base_tjm_ok.read_from_base_tjm_ok()
 transfer_base_tjm_ok.write_special_cases()
