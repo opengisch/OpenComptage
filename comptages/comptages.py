@@ -114,11 +114,13 @@ class Comptages(QObject):
         self.toolbar.setToolTip('Comptages toolbar')
 
         self.toolbar.addAction(self.connect_db_action)
+        self.toolbar.addSeparator()
         self.toolbar.addAction(self.create_new_action)
         self.toolbar.addAction(self.select_edit_action)
         self.toolbar.addAction(self.import_files_action)
         self.toolbar.addAction(self.validate_imported_files)
         self.toolbar.addAction(self.filter_action)
+        self.toolbar.addSeparator()
         self.toolbar.addAction(self.settings_action)
 
     def unload(self):
