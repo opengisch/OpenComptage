@@ -1,23 +1,29 @@
 <RCC>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/icon.png</file>
+        <file>../images/icon.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/settings.png</file>
+        <file>../images/settings.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/calendar.png</file>
+        <file>../images/calendar.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/measure.png</file>
+        <file>../images/measure.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/select_edit.png</file>
+        <file>../images/select_edit.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/power.png</file>
+        <file>../images/power.png</file>
     </qresource>
     <qresource prefix="/plugins/Comptages/" >
-        <file>images/filter.png</file>
+        <file>../images/filter.png</file>
+    </qresource>    
+    <qresource prefix="/plugins/Comptages/" >
+        <file>../images/import.png</file>
+    </qresource>    
+    <qresource prefix="/plugins/Comptages/" >
+        <file>../images/validate.png</file>
     </qresource>    
 </RCC>

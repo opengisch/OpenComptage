@@ -195,7 +195,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Export configuration',
+            'Exporter la configuration',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_export_configuration_action([% $id %])")
         )
@@ -204,16 +204,16 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Import data',
+            'Importation',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_import_data_action([% $id %])")
+             "plugins['comptages'].do_import_single_file_action([% $id %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Create report',
+            'Creer un rapport',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_generate_report_action([% $id %])")
         )
@@ -222,7 +222,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Export plan',
+            'Creer un plan',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_export_plan_action([% $id %])")
         )
@@ -231,7 +231,7 @@ class Layers(QObject):
 
         action = QgsAction(
             QgsAction.GenericPython,
-            'Generate chart',
+            'Générer les graphiques',
             ("from qgis.utils import plugins\n"
              "plugins['comptages'].do_generate_chart_action([% $id %])")
         )
@@ -244,10 +244,10 @@ class Layers(QObject):
 
         selected_count = layer.selectedFeatureCount()
         if selected_count == 0:
-            push_info("Please select a section")
+            push_info("Veuillez sélectionner un tronçon")
             return
         elif selected_count > 1:
-            push_info("Please select only one section")
+            push_info("Veuillez ne sélectionner qu'un tronçon")
             return
         else:
             selected_feature = next(layer.getSelectedFeatures())
@@ -366,17 +366,9 @@ class Layers(QObject):
         for performances"""
 
         self.highlighted_sections = []
-        settings = Settings()
+        self.init_db_connection()
 
-        db = QSqlDatabase.addDatabase("QPSQL")
-        db.setHostName(settings.value("db_host"))
-        db.setPort(settings.value("db_port"))
-        db.setDatabaseName(settings.value("db_name"))
-        db.setUserName(settings.value("db_username"))
-        db.setPassword(settings.value("db_password"))
-        db.open()
-
-        query = QSqlQuery(db)
+        query = QSqlQuery(self.db)
 
         wheres = []
         if start_date:
@@ -405,8 +397,6 @@ class Layers(QObject):
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
 
-        db.close()
-
     def apply_filter(self, start_date, end_date, installation, sensor):
         if installation == 0:
             permanent = None
@@ -422,6 +412,12 @@ class Layers(QObject):
             start_date, end_date, permanent, sensor)
         self.layers['section'].triggerRepaint()
 
+    def is_connected(self):
+        """Return if the plugin is connected to the database"""
+        if self.db is None:
+            return False
+        return True
+
     def init_db_connection(self):
 
         if self.db is None:
@@ -435,6 +431,17 @@ class Layers(QObject):
             self.db.setUserName(settings.value("db_username"))
             self.db.setPassword(settings.value("db_password"))
             self.db.open()
+
+    def close_db_connection(self):
+        if self.db is not None:
+            self.db.close()
+            self.db = None
+
+    def get_installation_name_of_count(self, count_id):
+        count = self.get_count(count_id)
+        installation = self.get_installation(
+            count.attribute('id_installation'))
+        return installation.attribute('name')
 
     def get_sections_of_count(self, count_id):
         """Return the sections related to a count"""
@@ -464,7 +471,6 @@ class Layers(QObject):
         return next(self.layers['count'].getFeatures(request))
 
     def get_installation(self, installation_id):
-        """Return the installation of a count"""
 
         request = QgsFeatureRequest().setFilterExpression(
             '"id" = {}'.format(installation_id)
@@ -690,7 +696,8 @@ class Layers(QObject):
 
         return catbins
 
-    def get_aggregate_speed_chart_data(self, count_id):
+    def get_aggregate_speed_chart_data(
+            self, count_id, status):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
@@ -700,9 +707,10 @@ class Layers(QObject):
             "comptages.count_aggregate as agg "
             "join comptages.count_aggregate_value_spd as spd "
             "on	agg.id = spd.id_count_aggregate "
-            "where agg.id_count = {} and agg.type = 'SPD'"
+            "where agg.id_count = {} and agg.type = 'SPD' "
+            "and agg.import_status = {} "
             "group by spd.low, spd.high "
-            "order by spd.low;".format(count_id))
+            "order by spd.low;".format(count_id, status))
 
         query.exec_(query_str)
         x = []
@@ -715,7 +723,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_aggregate_category_chart_data(self, count_id):
+    def get_aggregate_category_chart_data(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -727,8 +735,9 @@ class Layers(QObject):
             "join comptages.category as cat "
             "on cls.id_category = cat.id "
             "where agg.id_count = {} and agg.type = 'CLS' "
+            "and agg.import_status = {} "
             "group by cat.code, cat.name "
-            "order by cat.code;".format(count_id))
+            "order by cat.code;".format(count_id, status))
 
         query.exec_(query_str)
         labels = []
@@ -741,14 +750,15 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_days_of_aggregate_dataset(self, count_id):
+    def get_days_of_aggregate_dataset(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
         query_str = (
             "select distinct date_trunc('day', start) as day from "
             "comptages.count_aggregate where id_count = {} "
-            "order by day;".format(count_id))
+            "and import_status = {} "
+            "order by day;".format(count_id, status))
 
         query.exec_(query_str)
         days = []
@@ -757,19 +767,20 @@ class Layers(QObject):
 
         return days
 
-    def get_aggregate_time_chart_data(self, count_id):
+    def get_aggregate_time_chart_data(self, count_id, status):
 
         xs = []
         ys = []
 
-        days = self.get_days_of_aggregate_dataset(count_id)
+        days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
-            x, y = self.get_aggregate_time_chart_data_day(count_id, day)
+            x, y = self.get_aggregate_time_chart_data_day(
+                count_id, day, status)
             xs.append(x)
             ys.append(y)
-        return xs, ys
+        return xs, ys, days
 
-    def get_aggregate_time_chart_data_day(self, count_id, day):
+    def get_aggregate_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -780,9 +791,10 @@ class Layers(QObject):
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
             "where agg.id_count = {} and agg.type = 'CLS' "
-            "and date_trunc('day', agg.start) = '{}'"
+            "and date_trunc('day', agg.start) = '{}' "
+            "and agg.import_status = {} "
             "group by agg.start, agg.end "
-            "order by agg.start".format(count_id, day)
+            "order by agg.start".format(count_id, day, status)
         )
 
         query.exec_(query_str)
@@ -797,7 +809,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_detail_category_chart_data(self, count_id):
+    def get_detail_category_chart_data(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -807,8 +819,9 @@ class Layers(QObject):
             "join comptages.category as cat "
             "on det.id_category = cat.id "
             "where det.id_count = {} "
+            "and det.import_status = {} "
             "group by det.id_category, cat.code, cat.name "
-            "order by cat.code;".format(count_id))
+            "order by cat.code;".format(count_id, status))
 
         query.exec_(query_str)
         labels = []
@@ -821,7 +834,7 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_detail_speed_chart_data(self, count_id):
+    def get_detail_speed_chart_data(self, count_id, status):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
@@ -830,44 +843,44 @@ class Layers(QObject):
             "select * from ("
             "select 0 as low, 10, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 0 and 10 union "
+            "between 0 and 10 and import_status = {1} union "
             "select 10, 20, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 10 and 20 union "
+            "between 10 and 20 and import_status = {1} union "
             "select 20, 30, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 20 and 30 union "
+            "between 20 and 30 and import_status = {1} union "
             "select 30, 40, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 30 and 40 union "
+            "between 30 and 40 and import_status = {1} union "
             "select 40, 50, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 40 and 50 union "
+            "between 40 and 50 and import_status = {1} union "
             "select 50, 60, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 50 and 60 union "
+            "between 50 and 60 and import_status = {1} union "
             "select 60, 70, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 60 and 70 union "
+            "between 60 and 70 and import_status = {1} union "
             "select 70, 80, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 70 and 80 union "
+            "between 70 and 80 and import_status = {1} union "
             "select 80, 90, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 80 and 90 union "
+            "between 80 and 90 and import_status = {1} union "
             "select 90, 100, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 90 and 100 union "
+            "between 90 and 100 and import_status = {1} union "
             "select 100, 110, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 100 and 110 union "
+            "between 100 and 110 and import_status = {1} union "
             "select 110, 120, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 110 and 120 union "
+            "between 110 and 120 and import_status = {1} union "
             "select 120, 999, count(*) from "
             "comptages.count_detail where id_count = {0} and speed "
-            "between 120 and 999"
-            ") as foo order by low".format(count_id))
+            "between 120 and 999 and import_status = {1}"
+            ") as foo order by low".format(count_id, status))
 
         query.exec_(query_str)
         x = []
@@ -896,19 +909,19 @@ class Layers(QObject):
 
         return days
 
-    def get_detail_time_chart_data(self, count_id):
+    def get_detail_time_chart_data(self, count_id, status):
 
         xs = []
         ys = []
 
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
-            x, y = self.get_detail_time_chart_data_day(count_id, day)
+            x, y = self.get_detail_time_chart_data_day(count_id, day, status)
             xs.append(x)
             ys.append(y)
-        return xs, ys
+        return xs, ys, days
 
-    def get_detail_time_chart_data_day(self, count_id, day):
+    def get_detail_time_chart_data_day(self, count_id, day, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -919,7 +932,9 @@ class Layers(QObject):
             "from comptages.count_detail "
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
-            "group by date_part('hour', timestamp);".format(count_id, day)
+            "and import_status = {} "
+            "group by date_part('hour', timestamp);".format(
+                count_id, day, status)
         )
 
         query.exec_(query_str)
@@ -959,3 +974,81 @@ class Layers(QObject):
         if query.next():
             return True
         return False
+
+    def guess_count_id(self, site, start_rec, stop_rec):
+        """Try to identify the count related to an imported file"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select cou.id from comptages.installation as ins "
+            "join comptages.count as cou on ins.id = cou.id_installation "
+            "where ins.name = '{}' and ins.active = true "
+            "and cou.start_service_date <= '{}' "
+            "and cou.end_service_date >= '{}';".format(
+                site, start_rec, stop_rec))
+
+        query.exec_(query_str)
+        if query.next():
+            return query.value(0)
+        return None
+
+    def get_quarantined_counts(self):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct(agg.id_count) from "
+            "comptages.count_aggregate as agg where agg.import_status = {0} "
+            "union select distinct(det.id_count) from comptages.count_detail "
+            "as det where det.import_status = {0};".format(
+                self.IMPORT_STATUS_QUARANTINE))
+
+        result = []
+        query.exec_(query_str)
+        while query.next():
+            result.append(query.value(0))
+        return result
+
+    def select_and_zoom_on_section_of_count(self, count_id):
+        sections = self.get_sections_of_count(count_id)
+        layer = self.layers['section']
+        layer.selectByIds([x.id() for x in sections])
+        iface.setActiveLayer(layer)
+        iface.actionZoomToSelected().trigger()
+
+    def change_status_of_count_data(self, count_id, new_status):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_strs = []
+
+        query_strs.append(
+            "update comptages.count_aggregate set import_status = {} "
+            "where id_count = {}".format(new_status, count_id))
+
+        query_strs.append(
+            "update comptages.count_detail set import_status = {} "
+            "where id_count = {}".format(new_status, count_id))
+
+        print(query_strs)
+        for _ in query_strs:
+            query.exec_(_)
+
+    def delete_count_data(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_strs = []
+
+        query_strs.append(
+            "delete from comptages.count_aggregate where id_count = "
+            "{}".format(count_id))
+
+        query_strs.append(
+            "delete from comptages.count_detail where id_count = "
+            "{}".format(count_id))
+
+        for _ in query_strs:
+            query.exec_(_)

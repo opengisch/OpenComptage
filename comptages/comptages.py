@@ -9,6 +9,7 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
+from comptages.core.import_files import FileImporter
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
@@ -25,38 +26,51 @@ class Comptages(QObject):
         self.settings = Settings()
         self.settings_dialog = SettingsDialog()
         self.layers = Layers()
-        self.chart_dock = None
+        self.chart_dock = ChartDock(self.iface, self.layers)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
 
         self.connect_db_action = QAction(
             QIcon(':/plugins/Comptages/images/power.png'),
-            'Connect DB',
+            'Connection DB',
             self.iface.mainWindow()
         )
 
         self.create_new_action = QAction(
             QIcon(':/plugins/Comptages/images/measure.png'),
-            'Create new measure',
+            'Créer un nouveau comptage',
             None
         )
 
         self.select_edit_action = QAction(
             QIcon(':/plugins/Comptages/images/select_edit.png'),
-            'Edit measure',
+            'Modifier comptage',
+            None
+        )
+
+        self.import_files_action = QAction(
+            QIcon(':/plugins/Comptages/images/import.png'),
+            'Importation',
+            None
+        )
+
+        self.validate_imported_files = QAction(
+            QIcon(':/plugins/Comptages/images/validate.png'),
+            'Validation',
             None
         )
 
         self.filter_action = QAction(
             QIcon(':/plugins/Comptages/images/filter.png'),
-            'Filter',
+            'Filtrer',
             None
         )
 
         self.settings_action = QAction(
             QIcon(':/plugins/Comptages/images/settings.png'),
-            'Settings',
+            'Réglages',
             None
         )
 
@@ -69,15 +83,29 @@ class Comptages(QObject):
         self.select_edit_action.triggered.connect(
             self.do_select_edit_action)
 
+        self.import_files_action.triggered.connect(
+            self.do_import_files_action)
+
+        self.validate_imported_files.triggered.connect(
+            self.do_validate_imported_files_action)
+
         self.filter_action.triggered.connect(
             self.do_filter_action)
 
         self.settings_action.triggered.connect(
             self.do_settings_action)
 
+        self.create_new_action.setEnabled(False)
+        self.select_edit_action.setEnabled(False)
+        self.import_files_action.setEnabled(False)
+        self.validate_imported_files.setEnabled(False)
+        self.filter_action.setEnabled(False)
+
         self.iface.addPluginToMenu('Comptages', self.connect_db_action)
         self.iface.addPluginToMenu('Comptages', self.create_new_action)
         self.iface.addPluginToMenu('Comptages', self.select_edit_action)
+        self.iface.addPluginToMenu('Comptages', self.import_files_action)
+        self.iface.addPluginToMenu('Comptages', self.validate_imported_files)
         self.iface.addPluginToMenu('Comptages', self.filter_action)
         self.iface.addPluginToMenu('Comptages', self.settings_action)
 
@@ -88,6 +116,8 @@ class Comptages(QObject):
         self.toolbar.addAction(self.connect_db_action)
         self.toolbar.addAction(self.create_new_action)
         self.toolbar.addAction(self.select_edit_action)
+        self.toolbar.addAction(self.import_files_action)
+        self.toolbar.addAction(self.validate_imported_files)
         self.toolbar.addAction(self.filter_action)
         self.toolbar.addAction(self.settings_action)
 
@@ -110,6 +140,7 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_connect_db_action', 'Comptages', Qgis.Info)
         self.layers.load_layers()
+        self.enable_actions_if_needed()
 
     def do_create_new_action(self):
         QgsMessageLog.logMessage(
@@ -120,6 +151,16 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_select_edit_action', 'Comptages', Qgis.Info)
         self.layers.edit_count()
+
+    def do_import_files_action(self):
+        QgsMessageLog.logMessage(
+            'do_import_files_action', 'Comptages', Qgis.Info)
+        FileImporter(self.layers, self.chart_dock)
+
+    def do_validate_imported_files_action(self):
+        QgsMessageLog.logMessage(
+            'do_validate_imported_files_action', 'Comptages', Qgis.Info)
+        self.chart_dock.show_next_quarantined_chart()
 
     def do_filter_action(self):
         QgsMessageLog.logMessage(
@@ -153,9 +194,9 @@ class Comptages(QObject):
         config_creator.write_file(file)
         push_info('Written config file {}'.format(file))
 
-    def do_import_data_action(self, count_id):
+    def do_import_single_file_action(self, count_id):
         QgsMessageLog.logMessage(
-            'do_import_data_action {}'.format(count_id),
+            'do_import_single_file_action {}'.format(count_id),
             'Comptages', Qgis.Info)
 
         file_dialog = QFileDialog()
@@ -164,18 +205,21 @@ class Comptages(QObject):
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
-        file_format = DataParser.get_format(file)
+        if not file:
+            return
+
+        file_format = DataParser.get_file_format(file)
 
         try:
             if file_format == 'VBV-1':
-                data_parser = DataParserVbv1(self.layers, count_id, file)
+                data_parser = DataParserVbv1(self.layers, file)
             elif file_format == 'INT-2':
-                data_parser = DataParserInt2(self.layers, count_id, file)
+                data_parser = DataParserInt2(self.layers, file)
             else:
                 push_info('Format {} not supported'.format(file_format))
                 return
 
-            data_parser.parse_data()
+            data_parser.parse_and_import_data(count_id)
         except Exception as e:
             push_info('Error during data parsing: {}'.format(str(e)))
 
@@ -193,23 +237,19 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_generate_chart_action {}'.format(count_id),
             'Comptages', Qgis.Info)
-        if not self.chart_dock:
-            self.chart_dock = ChartDock(self.iface, self.layers, count_id)
-        else:
-            self.chart_dock.set_count_id(count_id)
-
-        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
+        self.chart_dock.set_attributes(count_id)
 
         self.chart_dock.show()
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
         otherwise disable them"""
-        pass
+        self.create_new_action.setEnabled(True)
+        self.select_edit_action.setEnabled(True)
+        self.import_files_action.setEnabled(True)
+        self.validate_imported_files.setEnabled(True)
+        self.filter_action.setEnabled(True)
 
-    def is_connected(self):
-        """Return if the plugin is connected to the database"""
-        pass
 
     def is_section_highlighted(self, section_id):
         return self.layers.is_section_highlighted(section_id)

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,470" last-zoom="1.2"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="24,297" last-zoom="1"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -321,7 +321,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="count_detail">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="440" y="700"/>
+	<position x="440" y="660"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -476,7 +476,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#8241cf"
 	 src-table="comptages.count"
 	 dst-table="comptages.count_detail"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE"/>
 
 <relationship name="model_has_many_comptage" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -574,16 +575,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="308.035" y="406.523"/>
-	<position x="308.035" y="369"/>
-	<position x="251.357" y="369"/>
+		<position x="418.223" y="423.514"/>
+	<position x="418.223" y="369"/>
+	<position x="324.816" y="369"/>
 	</line>
 </relationship>
 
 <table name="count_aggregate">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="780" y="880"/>
+	<position x="780" y="1000"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -624,7 +625,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#398b8a"
 	 src-table="comptages.count"
 	 dst-table="comptages.count_aggregate"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <relationship name="lane_has_many_count_aggregate" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -638,7 +640,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="count_aggregate_value_cls">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="960"/>
+	<position x="320" y="1280"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -667,7 +669,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#8b9633"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_cls"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <relationship name="category_has_many_count_aggregate_value" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -690,7 +693,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="count_aggregate_value_cnt">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="1060"/>
+	<position x="320" y="1460"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -720,12 +723,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#6539a9"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_cnt"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <table name="count_aggregate_value_drn">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="1140"/>
+	<position x="320" y="1620"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -755,12 +759,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#ee253c"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_drn"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <table name="count_aggregate_value_len">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="1220"/>
+	<position x="760" y="1320"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -785,12 +790,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#7a39c2"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_len"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <table name="count_aggregate_value_spd">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="1320"/>
+	<position x="760" y="1480"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -823,12 +829,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#3b6e63"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_spd"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 <table name="count_aggregate_value_sds">
 	<schema name="comptages"/>
 	<role name="postgres"/>
-	<position x="380" y="1420"/>
+	<position x="760" y="1640"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -841,6 +848,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="count_aggregate_value_sds_pk" type="pk-constr" table="comptages.count_aggregate_value_sds">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count_aggregate" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_aggregate_fk" index="1"/>
+	</customidxs>
 </table>
 
 <relationship name="count_aggregate_has_many_count_aggregate_value_sds" type="rel1n"
@@ -850,6 +865,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#cbaa51"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_sds"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false"
+	del-action="CASCADE"/>
 
 </dbmodel>
