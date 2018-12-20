@@ -806,15 +806,17 @@ class Layers(QObject):
         )
 
         query.exec_(query_str)
-        x = []
-        y = []
+
+        x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
+             "06h-07h", "07h-08h", "08h-09h", "09h-10h", "10h-11h", "11h-12h",
+             "12h-13h", "13h-14h", "14h-15h", "15h-16h", "16h-17h", "17h-18h",
+             "18h-19h", "19h-20h", "20h-21h", "21h-22h", "22h-23h", "23h-00h"]
+        y = [None]*24
 
         while query.next():
-            x.append("{}h-{}h".format(
-                int(query.value(0)),
-                int(query.value(1))))
-            y.append(query.value(2))
+            y[int(query.value(0))] = query.value(2)
 
+        print(y)
         return x, y
 
     def get_detail_category_chart_data(self, count_id, status):
@@ -946,14 +948,15 @@ class Layers(QObject):
         )
 
         query.exec_(query_str)
-        x = []
-        y = []
+
+        x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
+             "06h-07h", "07h-08h", "08h-09h", "09h-10h", "10h-11h", "11h-12h",
+             "12h-13h", "13h-14h", "14h-15h", "15h-16h", "16h-17h", "17h-18h",
+             "18h-19h", "19h-20h", "20h-21h", "21h-22h", "22h-23h", "23h-00h"]
+        y = [None]*24
 
         while query.next():
-            x.append("{}h-{}h".format(
-                int(query.value(0)),
-                int(query.value(1))))
-            y.append(query.value(2))
+            y[int(query.value(0))] = query.value(2)
 
         return x, y
 
