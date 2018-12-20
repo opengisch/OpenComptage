@@ -94,7 +94,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 go.Scatter(
                     x=xs[i],
                     y=ys[i],
-                    name=day
+                    name=day,
+                    showlegend=True
                 )
             )
 
