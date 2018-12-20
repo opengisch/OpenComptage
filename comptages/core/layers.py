@@ -283,10 +283,10 @@ class Layers(QObject):
 
         selected_count = layer.selectedFeatureCount()
         if selected_count == 0:
-            push_info("Please select a section")
+            push_info("Veuillez sélectionner un tronçon")
             return
         elif selected_count > 1:
-            push_info("Please select only one section")
+            push_info("Veuillez ne sélectionner qu'un tronçon")
             return
         else:
             selected_feature = next(layer.getSelectedFeatures())
@@ -1032,9 +1032,10 @@ class Layers(QObject):
             "update comptages.count_detail set import_status = {} "
             "where id_count = {}".format(new_status, count_id))
 
-        print(query_strs)
         for _ in query_strs:
             query.exec_(_)
+
+        push_info("Les données ont été importées")
 
     def delete_count_data(self, count_id):
         self.init_db_connection()
@@ -1052,3 +1053,5 @@ class Layers(QObject):
 
         for _ in query_strs:
             query.exec_(_)
+
+        push_info("Les données ont été supprimées")
