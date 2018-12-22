@@ -59,6 +59,12 @@ class FileImporter():
             push_info('Importation terminée')
             QgsMessageLog.logMessage(
                 'Import finished', 'Comptages', Qgis.Info)
+        except NotImplementedError as nie:
+            push_warning('{} non supporté'.format(str(nie)))
+            QgsMessageLog.logMessage(
+                '{} not supported'.format(str(nie)),
+                'Comptages', Qgis.Warning)
+            return
         except Exception as e:
             push_info('Erreur lors de la lecture des données: {}'.format(
                 str(e)))

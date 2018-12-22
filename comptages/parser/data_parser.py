@@ -147,6 +147,8 @@ class DataParserInt2(DataParser):
         self.file_header = self.parse_file_header()
         intspec = []
         for i, code in enumerate(self.file_header['INTSPEC'].split('+')):
+            if code.strip() not in ['SPD', 'SDS', 'LEN', 'CLS', 'CNT', 'DNR']:
+                raise NotImplementedError('{}'.format(code.strip()))
             # the key corrpespond to the value in the data row
             intspec.append(code.strip())
         return intspec
