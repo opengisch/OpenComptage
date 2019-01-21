@@ -18,8 +18,16 @@ class ConfigCreatorCmd(ConfigCreator):
     def set_section_commands(self):
         sections = self.layers.get_sections_of_count(self.count_id)
 
-        self.set_command('SITE', sections[0].attribute('id'))
+        self.set_command(
+            'SITE',
+            self.layers.get_installation_name_of_count(self.count_id))
         self.set_command('LOCATION', sections[0].attribute('name'))
+        self.set_command(
+            'FILENAME',
+            self.layers.get_installation_name_of_count(self.count_id))
+        self.set_command(
+            'CLASS',
+            self.layers.get_class_name_of_count(self.count_id))
 
     def set_command(self, command, value):
         self.commands[command] = value

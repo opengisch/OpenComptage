@@ -1078,3 +1078,15 @@ class Layers(QObject):
             '"id" = {}'.format(model_id))
 
         return next(self.layers['model'].getFeatures(request))
+
+    def get_class_name_of_count(self, count_id):
+        count = self.get_count(count_id)
+        clazz = self.get_class(count.attribute('id_class'))
+
+        return clazz.attribute('name')
+
+    def get_class(self, class_id):
+        request = QgsFeatureRequest().setFilterExpression(
+            '"id" = {}'.format(class_id))
+
+        return next(self.layers['class'].getFeatures(request))
