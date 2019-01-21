@@ -194,8 +194,9 @@ class Comptages(QObject):
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.CMD')
         title = 'Export configuration file'
-        directory = '/home/mario/workspace/tmp/comptages_20181105/'
-        path = os.path.join(directory, "{}.CMD".format(installation_name))
+        path = os.path.join(
+            self.settings.value('config_export_directory'),
+            "{}.CMD".format(installation_name))
         file = QFileDialog.getSaveFileName(
             file_dialog, title, path, "Config file (*.CMD)")[0]
 

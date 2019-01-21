@@ -25,6 +25,8 @@ class Settings(SettingManager):
             String("db_password", Scope.Global, 'postgres'))
         self.add_setting(
             Bool("extra_layers", Scope.Global, False))
+        self.add_setting(
+            String("config_export_directory", Scope.Global, '/'))
 
 
 class SettingsDialog(QDialog, FORM_CLASS, SettingDialog):

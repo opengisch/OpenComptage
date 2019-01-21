@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>382</height>
+    <width>449</width>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,6 +74,16 @@
       <string>montrer les couches supplémentaires</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Répertoire des fichiers de configuration par défaut</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="config_export_directory"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
