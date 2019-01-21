@@ -193,6 +193,10 @@ class Comptages(QObject):
         path = '/home/mario/workspace/tmp/comptages_20181105/'
         file = QFileDialog.getSaveFileName(
             file_dialog, title, path, "Config file (*.CMD)")[0]
+
+        if not file:
+            return
+
         config_creator.write_file(file)
         push_info('Written config file {}'.format(file))
 
