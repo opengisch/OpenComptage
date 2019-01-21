@@ -25,7 +25,6 @@ install:
   - yes | ./create_db.sh
 
 script:
-  - cd scripts
   - ./run_functional_tests.sh
 
 notifications:
