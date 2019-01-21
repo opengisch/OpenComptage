@@ -3,19 +3,19 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="24,297" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.2-alpha1" last-position="0,0" last-zoom="1" max-obj-count="33"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
 
-<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<schema name="comptages" rect-visible="true" fill-color="#e1e1e1">
+<schema name="comptages" layer="0" rect-visible="true" fill-color="#e1e1e1">
 	<role name="postgres"/>
 </schema>
 
-<table name="damage_log">
+<table name="damage_log" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="220" y="60"/>
@@ -44,7 +44,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="device">
+<table name="device" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="620" y="40"/>
@@ -73,7 +73,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="model">
+<table name="model" layer="0" collapse-mode="2" max-obj-count="7">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1140" y="200"/>
@@ -89,12 +89,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="card_name">
 		<type name="text" length="0"/>
 	</column>
+	<column name="configuration">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="model_pk" type="pk-constr" table="comptages.model">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_brand" index="4"/>
+		<object name="id_brand" index="5"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -102,7 +105,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="brand">
+<table name="brand" layer="0" collapse-mode="2" max-obj-count="2">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1200" y="60"/>
@@ -117,7 +120,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="class">
+<table name="class" layer="0" collapse-mode="2" max-obj-count="3">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="620" y="400"/>
@@ -135,7 +138,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="category">
+<table name="category" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="160" y="380"/>
@@ -161,7 +164,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="sensor_type">
+<table name="sensor_type" layer="0" collapse-mode="2" max-obj-count="3">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1100" y="440"/>
@@ -179,7 +182,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="count">
+<table name="count" layer="0" collapse-mode="2" max-obj-count="18">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1100" y="640"/>
@@ -221,7 +224,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <extension name="postgis">
 </extension>
 
-<table name="lane">
+<table name="lane" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="60" y="840"/>
@@ -249,7 +252,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="section">
+<table name="section" layer="0" collapse-mode="2" max-obj-count="13">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="60" y="1040"/>
@@ -291,7 +294,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="special_period">
+<table name="special_period" layer="0" collapse-mode="2" max-obj-count="7">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1140" y="1060"/>
@@ -318,7 +321,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="count_detail">
+<table name="count_detail" layer="0" collapse-mode="2" max-obj-count="18">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="440" y="660"/>
@@ -375,7 +378,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="automate_has_many_journal_panne" type="rel1n"
+<relationship name="automate_has_many_journal_panne" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -384,7 +387,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.damage_log"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="model_has_many_automate" type="rel1n"
+<relationship name="model_has_many_automate" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -393,7 +396,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.device"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="marque_has_many_model" type="rel1n"
+<relationship name="marque_has_many_model" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -402,7 +405,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.model"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="many_type_capteur_has_many_model" type="relnn"
+<relationship name="many_type_capteur_has_many_model" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -413,7 +416,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="sensor_type_model"/>
 
-<table name="installation">
+<table name="installation" layer="0" collapse-mode="2" max-obj-count="7">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="60" y="640"/>
@@ -440,7 +443,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<relationship name="troncon_has_many_voie" type="rel1n"
+<relationship name="troncon_has_many_voie" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -449,7 +452,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.lane"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="many_class_has_many_category" type="relnn"
+<relationship name="many_class_has_many_category" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -460,7 +463,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="class_category"/>
 
-<relationship name="voie_has_many_comptage_detail" type="rel1n"
+<relationship name="voie_has_many_comptage_detail" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -469,7 +472,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_detail"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="comptage_has_many_comptage_detail" type="rel1n"
+<relationship name="comptage_has_many_comptage_detail" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -479,7 +482,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="true" dst-required="false"
 	del-action="CASCADE"/>
 
-<relationship name="model_has_many_comptage" type="rel1n"
+<relationship name="model_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -488,7 +491,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="automate_has_many_comptage" type="rel1n"
+<relationship name="automate_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -497,7 +500,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="categorie_has_many_comptage_detail" type="rel1n"
+<relationship name="categorie_has_many_comptage_detail" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -506,7 +509,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_detail"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="type_capteur_has_many_comptage" type="rel1n"
+<relationship name="type_capteur_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -515,7 +518,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="classification_has_many_comptage" type="rel1n"
+<relationship name="classification_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -524,7 +527,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="many_sensor_type_has_many_installation" type="relnn"
+<relationship name="many_sensor_type_has_many_installation" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -535,7 +538,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="sensor_type_installation"/>
 
-<relationship name="installation_has_many_comptage" type="rel1n"
+<relationship name="installation_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -544,7 +547,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="many_sensor_type_has_many_class" type="relnn"
+<relationship name="many_sensor_type_has_many_class" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -555,7 +558,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="sensor_type_class"/>
 
-<relationship name="many_model_has_many_classification" type="relnn"
+<relationship name="many_model_has_many_classification" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
@@ -566,7 +569,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	 table-name="model_class"/>
 
-<relationship name="categorie_has_many_categorie" type="rel1n"
+<relationship name="categorie_has_many_categorie" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -575,13 +578,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="418.223" y="423.514"/>
-	<position x="418.223" y="369"/>
-	<position x="324.816" y="369"/>
+		<position x="393.227" y="428.628"/>
+	<position x="393.227" y="369"/>
+	<position x="308.151" y="369"/>
 	</line>
 </relationship>
 
-<table name="count_aggregate">
+<table name="count_aggregate" layer="0" collapse-mode="2" max-obj-count="9">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="780" y="1000"/>
@@ -618,7 +621,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_has_many_count_aggregate" type="rel1n"
+<relationship name="count_has_many_count_aggregate" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -628,7 +631,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<relationship name="lane_has_many_count_aggregate" type="rel1n"
+<relationship name="lane_has_many_count_aggregate" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -637,7 +640,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_aggregate"
 	 src-required="false" dst-required="false"/>
 
-<table name="count_aggregate_value_cls">
+<table name="count_aggregate_value_cls" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="320" y="1280"/>
@@ -662,7 +665,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_value" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_value" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -672,7 +675,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<relationship name="category_has_many_count_aggregate_value" type="rel1n"
+<relationship name="category_has_many_count_aggregate_value" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -681,7 +684,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.count_aggregate_value_cls"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="installation_has_many_voie" type="rel1n"
+<relationship name="installation_has_many_voie" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -690,7 +693,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.lane"
 	 src-required="false" dst-required="false"/>
 
-<table name="count_aggregate_value_cnt">
+<table name="count_aggregate_value_cnt" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="320" y="1460"/>
@@ -716,7 +719,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_value_cnt" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_value_cnt" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -726,7 +729,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<table name="count_aggregate_value_drn">
+<table name="count_aggregate_value_drn" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="320" y="1620"/>
@@ -752,7 +755,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_value_drn" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_value_drn" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -762,7 +765,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<table name="count_aggregate_value_len">
+<table name="count_aggregate_value_len" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="760" y="1320"/>
@@ -783,7 +786,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_value_len" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_value_len" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -793,7 +796,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<table name="count_aggregate_value_spd">
+<table name="count_aggregate_value_spd" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="760" y="1480"/>
@@ -822,7 +825,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_spd" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_spd" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -832,7 +835,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="false" dst-required="false"
 	del-action="CASCADE"/>
 
-<table name="count_aggregate_value_sds">
+<table name="count_aggregate_value_sds" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="760" y="1640"/>
@@ -858,7 +861,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<relationship name="count_aggregate_has_many_count_aggregate_value_sds" type="rel1n"
+<relationship name="count_aggregate_has_many_count_aggregate_value_sds" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"

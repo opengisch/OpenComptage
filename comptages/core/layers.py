@@ -1066,3 +1066,15 @@ class Layers(QObject):
             query.exec_(_)
 
         push_info("Les données ont été supprimées")
+
+    def get_predefined_config_from_count(self, count_id):
+        count = self.get_count(count_id)
+        model = self.get_model(count.attribute('id_model'))
+
+        return model.attribute('configuration')
+
+    def get_model(self, model_id):
+        request = QgsFeatureRequest().setFilterExpression(
+            '"id" = {}'.format(model_id))
+
+        return next(self.layers['model'].getFeatures(request))

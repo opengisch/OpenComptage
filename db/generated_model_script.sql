@@ -1,6 +1,6 @@
 -- Database generated with pgModeler (PostgreSQL Database Modeler).
--- pgModeler  version: 0.9.2-alpha
--- PostgreSQL version: 10.0
+-- pgModeler  version: 0.9.2-alpha1
+-- PostgreSQL version: 11.0
 -- Project Site: pgmodeler.io
 -- Model Author: ---
 
@@ -25,7 +25,7 @@ SET search_path TO pg_catalog,public,comptages;
 
 -- object: comptages.damage_log | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.damage_log CASCADE;
-CREATE TABLE comptages.damage_log(
+CREATE TABLE comptages.damage_log (
 	id serial NOT NULL,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
@@ -40,7 +40,7 @@ ALTER TABLE comptages.damage_log OWNER TO postgres;
 
 -- object: comptages.device | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.device CASCADE;
-CREATE TABLE comptages.device(
+CREATE TABLE comptages.device (
 	id serial NOT NULL,
 	serial text,
 	purchase_date date,
@@ -55,11 +55,12 @@ ALTER TABLE comptages.device OWNER TO postgres;
 
 -- object: comptages.model | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.model CASCADE;
-CREATE TABLE comptages.model(
+CREATE TABLE comptages.model (
 	id serial NOT NULL,
 	name text NOT NULL,
 	formatter_name text,
 	card_name text,
+	configuration text,
 	id_brand integer NOT NULL,
 	CONSTRAINT model_pk PRIMARY KEY (id)
 
@@ -70,7 +71,7 @@ ALTER TABLE comptages.model OWNER TO postgres;
 
 -- object: comptages.brand | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.brand CASCADE;
-CREATE TABLE comptages.brand(
+CREATE TABLE comptages.brand (
 	id serial NOT NULL,
 	name text NOT NULL,
 	CONSTRAINT brand_pk PRIMARY KEY (id)
@@ -82,7 +83,7 @@ ALTER TABLE comptages.brand OWNER TO postgres;
 
 -- object: comptages.class | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.class CASCADE;
-CREATE TABLE comptages.class(
+CREATE TABLE comptages.class (
 	id serial NOT NULL,
 	name text NOT NULL,
 	description text NOT NULL,
@@ -95,7 +96,7 @@ ALTER TABLE comptages.class OWNER TO postgres;
 
 -- object: comptages.category | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.category CASCADE;
-CREATE TABLE comptages.category(
+CREATE TABLE comptages.category (
 	id serial NOT NULL,
 	name text NOT NULL,
 	code text,
@@ -109,7 +110,7 @@ ALTER TABLE comptages.category OWNER TO postgres;
 
 -- object: comptages.sensor_type | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.sensor_type CASCADE;
-CREATE TABLE comptages.sensor_type(
+CREATE TABLE comptages.sensor_type (
 	id serial NOT NULL,
 	name text NOT NULL,
 	permanent boolean,
@@ -122,7 +123,7 @@ ALTER TABLE comptages.sensor_type OWNER TO postgres;
 
 -- object: comptages.count | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count CASCADE;
-CREATE TABLE comptages.count(
+CREATE TABLE comptages.count (
 	id serial NOT NULL,
 	start_service_date date,
 	end_service_date date,
@@ -153,7 +154,7 @@ CREATE EXTENSION IF NOT EXISTS postgis
 
 -- object: comptages.lane | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.lane CASCADE;
-CREATE TABLE comptages.lane(
+CREATE TABLE comptages.lane (
 	id serial NOT NULL,
 	number smallint NOT NULL,
 	direction smallint NOT NULL,
@@ -168,7 +169,7 @@ ALTER TABLE comptages.lane OWNER TO postgres;
 
 -- object: comptages.section | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.section CASCADE;
-CREATE TABLE comptages.section(
+CREATE TABLE comptages.section (
 	id char(20) NOT NULL,
 	name text NOT NULL,
 	owner text,
@@ -189,7 +190,7 @@ ALTER TABLE comptages.section OWNER TO postgres;
 
 -- object: comptages.special_period | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.special_period CASCADE;
-CREATE TABLE comptages.special_period(
+CREATE TABLE comptages.special_period (
 	id serial NOT NULL,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
@@ -205,7 +206,7 @@ ALTER TABLE comptages.special_period OWNER TO postgres;
 
 -- object: comptages.count_detail | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_detail CASCADE;
-CREATE TABLE comptages.count_detail(
+CREATE TABLE comptages.count_detail (
 	id serial NOT NULL,
 	numbering integer NOT NULL,
 	"timestamp" timestamp NOT NULL,
@@ -251,7 +252,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: comptages.sensor_type_model | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.sensor_type_model CASCADE;
-CREATE TABLE comptages.sensor_type_model(
+CREATE TABLE comptages.sensor_type_model (
 	id_sensor_type integer NOT NULL,
 	id_model integer NOT NULL,
 	CONSTRAINT sensor_type_model_pk PRIMARY KEY (id_sensor_type,id_model)
@@ -275,7 +276,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: comptages.installation | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.installation CASCADE;
-CREATE TABLE comptages.installation(
+CREATE TABLE comptages.installation (
 	id serial NOT NULL,
 	permanent boolean,
 	name text,
@@ -298,7 +299,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: comptages.class_category | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.class_category CASCADE;
-CREATE TABLE comptages.class_category(
+CREATE TABLE comptages.class_category (
 	id_class integer NOT NULL,
 	id_category integer NOT NULL,
 	CONSTRAINT class_category_pk PRIMARY KEY (id_class,id_category)
@@ -371,7 +372,7 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- object: comptages.sensor_type_installation | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.sensor_type_installation CASCADE;
-CREATE TABLE comptages.sensor_type_installation(
+CREATE TABLE comptages.sensor_type_installation (
 	id_sensor_type integer NOT NULL,
 	id_installation integer NOT NULL,
 	CONSTRAINT sensor_type_installation_pk PRIMARY KEY (id_sensor_type,id_installation)
@@ -402,7 +403,7 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- object: comptages.sensor_type_class | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.sensor_type_class CASCADE;
-CREATE TABLE comptages.sensor_type_class(
+CREATE TABLE comptages.sensor_type_class (
 	id_sensor_type integer NOT NULL,
 	id_class integer NOT NULL,
 	CONSTRAINT sensor_type_class_pk PRIMARY KEY (id_sensor_type,id_class)
@@ -426,7 +427,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: comptages.model_class | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.model_class CASCADE;
-CREATE TABLE comptages.model_class(
+CREATE TABLE comptages.model_class (
 	id_model integer NOT NULL,
 	id_class integer NOT NULL,
 	CONSTRAINT model_class_pk PRIMARY KEY (id_model,id_class)
@@ -457,7 +458,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate CASCADE;
-CREATE TABLE comptages.count_aggregate(
+CREATE TABLE comptages.count_aggregate (
 	id serial NOT NULL,
 	type text,
 	start timestamp,
@@ -489,7 +490,7 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_cls | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_cls CASCADE;
-CREATE TABLE comptages.count_aggregate_value_cls(
+CREATE TABLE comptages.count_aggregate_value_cls (
 	id serial NOT NULL,
 	value integer,
 	id_count_aggregate integer,
@@ -524,7 +525,7 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_cnt | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_cnt CASCADE;
-CREATE TABLE comptages.count_aggregate_value_cnt(
+CREATE TABLE comptages.count_aggregate_value_cnt (
 	id serial NOT NULL,
 	value smallint,
 	"interval" smallint,
@@ -545,7 +546,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_drn | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_drn CASCADE;
-CREATE TABLE comptages.count_aggregate_value_drn(
+CREATE TABLE comptages.count_aggregate_value_drn (
 	id serial NOT NULL,
 	value smallint,
 	direction smallint,
@@ -566,7 +567,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_len | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_len CASCADE;
-CREATE TABLE comptages.count_aggregate_value_len(
+CREATE TABLE comptages.count_aggregate_value_len (
 	id serial NOT NULL,
 	value smallint,
 	low smallint,
@@ -588,7 +589,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_spd | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_spd CASCADE;
-CREATE TABLE comptages.count_aggregate_value_spd(
+CREATE TABLE comptages.count_aggregate_value_spd (
 	id serial NOT NULL,
 	value smallint,
 	low smallint,
@@ -610,7 +611,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- object: comptages.count_aggregate_value_sds | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_sds CASCADE;
-CREATE TABLE comptages.count_aggregate_value_sds(
+CREATE TABLE comptages.count_aggregate_value_sds (
 	id serial NOT NULL,
 	mean real,
 	deviation real,

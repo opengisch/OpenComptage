@@ -24,7 +24,11 @@ class ConfigCreatorCmd(ConfigCreator):
     def set_command(self, command, value):
         self.commands[command] = value
 
+    def set_predefined_config(self):
+        return self.layers.get_predefined_config_from_count(self.count_id)
+
     def write_file(self, file):
         with open(file, 'w') as f:
+            f.write('{}\n'.format(self.set_predefined_config()))
             for command in self.commands.keys():
                 f.write('{} = {}\n'.format(command, self.commands[command]))
