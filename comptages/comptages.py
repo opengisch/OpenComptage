@@ -1,3 +1,4 @@
+import os
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.PyQt.QtCore import QObject, Qt
@@ -187,10 +188,14 @@ class Comptages(QObject):
         config_creator = ConfigCreatorCmd(self.layers, count_id)
         config_creator.set_section_commands()
 
+        installation_name = self.layers.get_installation_name_of_count(
+            count_id)
+
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.CMD')
         title = 'Export configuration file'
-        path = '/home/mario/workspace/tmp/comptages_20181105/'
+        directory = '/home/mario/workspace/tmp/comptages_20181105/'
+        path = os.path.join(directory, "{}.CMD".format(installation_name))
         file = QFileDialog.getSaveFileName(
             file_dialog, title, path, "Config file (*.CMD)")[0]
 
