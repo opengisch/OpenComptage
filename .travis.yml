@@ -5,11 +5,6 @@ python:
 
 addons:
   postgresql: "10"
-  apt:
-    packages:
-    - postgresql-10-postgis-2.4
-    - gdal-bin
-    - sshpass
   hosts:
     - comptages-db
 
@@ -18,10 +13,8 @@ before_install:
   - export PGCLIENTENCODING=LATIN1
 
 install:
-  - psql -c "CREATE DATABASE comptages;" -U postgres
-  - printf "[comptages_dev]\nhost=localhost\ndbname=comptages\nuser=postgres\n" >> ~/.pg_service.conf
-  - psql "service=comptages_dev" -U postgres -c "create extension postgis"
   - cd scripts
+  - ./start_docker.sh
   - yes | ./create_db.sh
 
 script:
