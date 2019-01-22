@@ -18,6 +18,7 @@ before_install:
 install:
   - cd scripts
   - ./start_docker.sh
+  - sleep 10
   - yes | ./create_db.sh
 
 script:
