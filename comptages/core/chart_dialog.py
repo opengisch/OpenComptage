@@ -111,9 +111,19 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.webView.setHtml(div)
 
     def plot_chart_speed(self, x, y):
-        bar = go.Bar(x=x, y=y)
 
-        layout = go.Layout(title='Véhicules groupés par vitesse')
+        total_y = sum(y)
+        percent_y = ['{}%'.format(round((i / total_y) * 100, 2)) for i in y]
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            text=percent_y,
+            textposition='auto'
+        )
+
+        layout = go.Layout(
+            title='Véhicules groupés par vitesse')
         fig = go.Figure(data=[bar], layout=layout)
         div = plotly.offline.plot(fig, output_type='div')
 
