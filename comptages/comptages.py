@@ -14,6 +14,7 @@ from comptages.core.import_files import FileImporter
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
+from comptages.plan.plan_creator import PlanCreator
 from comptages.ui.resources import *
 
 
@@ -244,6 +245,21 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_export_plan_action {}'.format(count_id),
             'Comptages', Qgis.Info)
+
+        plan_creator = PlanCreator(self.layers)
+        file_dialog = QFileDialog()
+        file_dialog.setDefaultSuffix('*.PDF')
+        title = 'Export configuration file'
+        path = os.path.join(
+            self.settings.value('config_export_directory'),
+            "{}.pdf".format("plan_de_pose"))
+        file = QFileDialog.getSaveFileName(
+            file_dialog, title, path, "Config file (*.PDF)")[0]
+
+        if not file:
+            return
+
+        plan_creator.export_pdf(count_id, file)
 
     def do_generate_chart_action(self, count_id):
         QgsMessageLog.logMessage(
