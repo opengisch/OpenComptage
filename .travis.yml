@@ -7,8 +7,6 @@ addons:
   apt:
     packages:
       - gdal-bin
-  hosts:
-    - comptages-db
 
 before_install:
   - pip install -r requirements.txt
@@ -17,8 +15,8 @@ before_install:
 
 install:
   - cd scripts
-  - ./start_docker.sh
-  - sleep 10
+  - ./start_docker_test.sh
+  - sleep 20
   - yes | ./create_db.sh
 
 script:

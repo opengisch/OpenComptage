@@ -2,10 +2,10 @@
 
 set -e
 
-docker run -d --name qgis -v /tmp/.X11-unix:/tmp/.X11-unix \
- -v `pwd`/../.:/tests_directory \
- -e DISPLAY=:99 \
- qgis/qgis:latest
+# docker run -d --name qgis -v /tmp/.X11-unix:/tmp/.X11-unix \
+# -v `pwd`/../.:/tests_directory \
+# -e DISPLAY=:99 \
+# qgis/qgis:latest
 
 docker exec -it qgis sh -c "apt install -y python3-plotly"
 
