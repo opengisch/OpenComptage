@@ -446,10 +446,13 @@ class Layers(QObject):
             self.db = None
 
     def get_installation_name_of_count(self, count_id):
+        return self.get_installation_of_count(count_id).attribute('name')
+
+    def get_installation_of_count(self, count_id):
         count = self.get_count(count_id)
         installation = self.get_installation(
             count.attribute('id_installation'))
-        return installation.attribute('name')
+        return installation
 
     def get_sections_of_count(self, count_id):
         """Return the sections related to a count"""
