@@ -4,13 +4,16 @@ python:
   - 3.6
 
 addons:
+  apt:
+    packages:
+      - gdal-bin
   hosts:
     - comptages-db
 
 before_install:
   - pip install -r requirements.txt
   - export PGCLIENTENCODING=LATIN1
-  - printf "[comptages_dev]\nhost=localhost\ndbname=comptages\nuser=postgres\n" >> ~/.pg_service.conf
+  - printf "[comptages_dev]\nhost=localhost\ndbname=comptages\nport=5432\nuser=postgres\npassword=postgres" >> ~/.pg_service.conf
 
 install:
   - cd scripts
