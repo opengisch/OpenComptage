@@ -4,17 +4,19 @@ from qgis.core import (
     QgsLayoutExporter)
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
+from comptages.core.settings import Settings
 
 
 class PlanCreator():
     def __init__(self, layers):
         self.layers = layers
+        self.settings = Settings()
 
     def export_pdf(self, count_id, file_name):
 
-        # FIXME path
         self.layout = PlanCreator.create_layout_from_template(
-            '/home/mario/workspace/repos/OpenComptage/comptages/qml/plan.qpt')
+            os.path.join(self.settings.value(
+                'plan_export_directory', 'plan.qpt')))
 
         self.set_fields(count_id)
 

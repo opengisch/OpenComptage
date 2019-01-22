@@ -5,6 +5,7 @@ from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
 
 from comptages.core.utils import push_info, push_warning
+from comptages.core.settings import Settings
 
 
 class FileImporter():
@@ -12,13 +13,14 @@ class FileImporter():
     def __init__(self, layers, chart_dock):
         self.layers = layers
         self.chart_dock = chart_dock
+        self.settings = Settings()
         self.ask_for_files()
         self.show_charts()
 
     def ask_for_files(self):
         file_dialog = QFileDialog()
         title = 'Import data'
-        path = '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/'
+        path = self.settings.value('data_import_directory')
         files = QFileDialog.getOpenFileNames(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 

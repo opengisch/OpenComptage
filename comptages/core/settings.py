@@ -27,6 +27,10 @@ class Settings(SettingManager):
             Bool("extra_layers", Scope.Global, False))
         self.add_setting(
             String("config_export_directory", Scope.Global, '/'))
+        self.add_setting(
+            String("plan_export_directory", Scope.Global, '/'))
+        self.add_setting(
+            String("data_import_directory", Scope.Global, '/'))
 
 
 class SettingsDialog(QDialog, FORM_CLASS, SettingDialog):

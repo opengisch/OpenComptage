@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
-    <height>435</height>
+    <width>447</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,6 +84,26 @@
    </item>
    <item>
     <widget class="QLineEdit" name="config_export_directory"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Répertoire des plans de pose par défaut</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="plan_export_directory"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Répertoire des données par défaut</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="data_import_directory"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

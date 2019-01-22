@@ -214,7 +214,7 @@ class Comptages(QObject):
 
         file_dialog = QFileDialog()
         title = 'Import data'
-        path = '/home/mario/workspace/repos/OpenComptage/comptages/test/test_data/'
+        path = self.settings.value('data_import_directory')
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
