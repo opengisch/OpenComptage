@@ -19,6 +19,7 @@ services:
     
   qgis:
     image: qgis/qgis:latest
+    container_name: qgis
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ../.:/tests_directory \
