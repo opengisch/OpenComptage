@@ -2,11 +2,10 @@
 
 from qgis.PyQt.QtWidgets import QToolBar
 
-import os
 import sys
 from qgis.testing import unittest
 from qgis.core import QgsProject
-from qgis.utils import iface, active_plugins, startPlugin, loadPlugin
+from qgis.utils import iface, active_plugins
 
 
 def run_all():
@@ -18,11 +17,6 @@ def run_all():
 
 
 class TestFunc(unittest.TestCase):
-
-    # @classmethod
-    # def setUpClass(cls):
-    #     loadPlugin('comptages')
-    #     startPlugin('comptages')
 
     def test_plugin_is_active(self):
         self.assertIn('comptages', active_plugins)
@@ -42,20 +36,27 @@ class TestFunc(unittest.TestCase):
         self.assertFalse(TestFunc.is_action_enabled("Filtrer"))
 
         # Julie presses on the start button of the plugin
-        TestFunc.trigger_action("Connect DB")
+        TestFunc.trigger_action("Connection DB")
 
         # She sees that the layers are loaded
         self.assertTrue(
             TestFunc.layer_is_loaded("installation"))
-    #     self.assertTrue(
-    #         TestFunc.layer_is_loaded("troncon"))
+        self.assertTrue(
+            TestFunc.layer_is_loaded("troncon"))
 
-    #     # And all the buttons are enabled
-    #     self.assertTrue(TestFunc.is_action_enabled("Connect DB"))
-    #     self.assertTrue(TestFunc.is_action_enabled("Settings"))
-    #     self.assertTrue(TestFunc.is_action_enabled("Create new measure"))
-    #     self.assertTrue(TestFunc.is_action_enabled("Edit measure"))
-    #     self.assertTrue(TestFunc.is_action_enabled("Filter"))
+        # And all the buttons are enabled
+        self.assertTrue(TestFunc.is_action_enabled("Connection DB"))
+        self.assertTrue(TestFunc.is_action_enabled("Réglages"))
+        self.assertTrue(
+            TestFunc.is_action_enabled("Créer un nouveau comptage"))
+        self.assertTrue(TestFunc.is_action_enabled("Modifier comptage"))
+        self.assertTrue(TestFunc.is_action_enabled("Importation"))
+        self.assertTrue(TestFunc.is_action_enabled("Validation"))
+        self.assertTrue(TestFunc.is_action_enabled("Filtrer"))
+
+        # The features of the section layer are around 8000
+        self.assertGreater(TestFunc.get_layer("troncon").featureCount(), 7500)
+        self.assertLess(TestFunc.get_layer("troncon").featureCount(), 9000)
 
     @staticmethod
     def trigger_action(text):
@@ -85,3 +86,9 @@ class TestFunc(unittest.TestCase):
         for layer in QgsProject.instance().mapLayersByName(name):
             return True
         return False
+
+    @staticmethod
+    def get_layer(name):
+        for layer in QgsProject.instance().mapLayersByName(name):
+            return layer
+        return None
