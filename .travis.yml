@@ -4,43 +4,23 @@ python:
   - 3.6
 
 addons:
-  postgresql: "10"
   apt:
     packages:
-    - postgresql-10-postgis-2.4
-    - gdal-bin
-    - sshpass
-  hosts:
-    - comptages-db
+      - gdal-bin
 
 before_install:
   - pip install -r requirements.txt
-  - sudo sh -c 'echo "deb https://qgis.org/ubuntugis xenial main" >> /etc/apt/sources.list'
-  - sudo sh -c 'echo "deb-src https://qgis.org/ubuntugis xenial main" >> /etc/apt/sources.list'
-  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-  - wget -O - https://qgis.org/downloads/qgis-2017.gpg.key | gpg --import
-  - sudo gpg --fingerprint CAEB3DC3BDF7FB45
-  - sudo gpg --export --armor CAEB3DC3BDF7FB45 | sudo apt-key add -
-  - sudo apt-get update -q
-  - sudo apt-get -y install qgis python-qgis qgis-plugin-grass
   - export PGCLIENTENCODING=LATIN1
+  - printf "[comptages_dev]\nhost=localhost\ndbname=comptages\nport=5432\nuser=postgres\npassword=postgres" >> ~/.pg_service.conf
 
 install:
-  - psql -c "CREATE DATABASE comptages;" -U postgres
-  - printf "[comptages_dev]\nhost=localhost\ndbname=comptages\nuser=postgres\n" >> ~/.pg_service.conf
-  - psql "service=comptages_dev" -U postgres -c "create extension postgis"
   - cd scripts
+  - ./start_docker_test.sh
+  - sleep 20
   - yes | ./create_db.sh
-  - Xvfb :1 -screen 0 3840x2160x16 &
-  - DISPLAY=:1.0
-  - export DISPLAY
-  - cd ..
-  - mkdir -p /home/travis/.local/share/QGIS/QGIS3/profiles/default/python/plugins
-  - sudo ln -s $(pwd)/comptages /home/travis/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages
 
 script:
-  - qgis --version-migration --nologo --code $(pwd)/comptages/test/functional.py
-  - python -m unittest comptages/test/test_parser.py
+  - ./run_functional_tests.sh
 
 notifications:
   email: false
