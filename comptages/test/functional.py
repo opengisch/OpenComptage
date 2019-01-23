@@ -3,9 +3,13 @@
 from qgis.PyQt.QtWidgets import QToolBar
 
 import sys
+import os
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.testing import unittest
 from qgis.core import QgsProject
-from qgis.utils import iface, active_plugins
+from qgis.utils import iface, active_plugins, plugins
+from comptages.core.settings import Settings
+from comptages.parser.data_parser import DataParserInt2
 
 
 def run_all():
@@ -17,6 +21,22 @@ def run_all():
 
 
 class TestFunc(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        self.settings = Settings()
+        self.layers = plugins['comptages'].layers
+
+        self.db = QSqlDatabase.addDatabase("QPSQL")
+        self.db.setHostName(self.settings.value("db_host"))
+        self.db.setPort(self.settings.value("db_port"))
+        self.db.setDatabaseName(self.settings.value("db_name"))
+        self.db.setUserName(self.settings.value("db_username"))
+        self.db.setPassword(self.settings.value("db_password"))
+
+        self.test_data_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'test_data/')
 
     def test_plugin_is_active(self):
         self.assertIn('comptages', active_plugins)
@@ -54,9 +74,45 @@ class TestFunc(unittest.TestCase):
         self.assertTrue(TestFunc.is_action_enabled("Validation"))
         self.assertTrue(TestFunc.is_action_enabled("Filtrer"))
 
-        # The features of the section layer are around 8000
-        self.assertGreater(TestFunc.get_layer("troncon").featureCount(), 7500)
+        # The features of the section layer are around 8800
+        self.assertGreater(TestFunc.get_layer("troncon").featureCount(), 8000)
         self.assertLess(TestFunc.get_layer("troncon").featureCount(), 9000)
+
+    def test_simple_import_aggregate_data(self):
+        TestFunc.trigger_action("Connection DB")
+
+        self.db.open()
+        query = QSqlQuery(self.db)
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', 1, 2468);")
+        # 2468 -> 64080011
+
+        query.exec_(query_str)
+
+        data_parser = DataParserInt2(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate.i00'))
+        data_parser.parse_and_import_data(3)
+
+        query.exec_(
+            "SELECT * FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate.i00'")
+
+        self.assertEqual(1, query.size())
+
+        query.next()
+
+        self.assertEqual('CLS', query.value(1))
+        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(5))
+
+        # FIXME
+        # self.assertEqual(4911, query.value(7))  # lane_id
+
+        self.db.close()
 
     @staticmethod
     def trigger_action(text):

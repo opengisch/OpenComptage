@@ -7,7 +7,7 @@ set -e
 # -e DISPLAY=:99 \
 # qgis/qgis:latest
 
-docker exec -it qgis sh -c "apt install -y python3-plotly"
+docker exec -it qgis sh -c "apt install -y python3-plotly libqt5sql5-psql"
 
 docker exec -it qgis sh -c "qgis_setup.sh comptages"
 
