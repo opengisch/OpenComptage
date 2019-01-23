@@ -778,7 +778,8 @@ class Layers(QObject):
 
         return days
 
-    def get_aggregate_time_chart_data(self, count_id, status):
+    def get_aggregate_time_chart_data(
+            self, count_id, status, lane_or_direction):
 
         xs = []
         ys = []
@@ -786,14 +787,19 @@ class Layers(QObject):
         days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day(
-                count_id, day, status)
+                count_id, day, status, lane_or_direction)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
-    def get_aggregate_time_chart_data_day(self, count_id, day, status):
+    def get_aggregate_time_chart_data_day(
+            self, count_id, day, status, lane_or_direction):
         self.init_db_connection()
         query = QSqlQuery(self.db)
+
+        # TODO verify if lane or direction
+        lane_or_direction_str = "and agg.id_lane = {}".format(
+            lane_or_direction)
 
         query_str = (
             "select date_part('hour', agg.start), "
@@ -802,12 +808,14 @@ class Layers(QObject):
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
             "where agg.id_count = {} and agg.type = 'CLS' "
+            " {} "
             "and date_trunc('day', agg.start) = '{}' "
             "and agg.import_status = {} "
             "group by agg.start, agg.end "
-            "order by agg.start".format(count_id, day, status)
+            "order by agg.start".format(
+                count_id, lane_or_direction_str, day, status)
         )
-
+        print(query_str)
         query.exec_(query_str)
 
         x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
@@ -819,7 +827,6 @@ class Layers(QObject):
         while query.next():
             y[int(query.value(0))] = query.value(2)
 
-        print(y)
         return x, y
 
     def get_detail_category_chart_data(self, count_id, status):
@@ -1093,3 +1100,8 @@ class Layers(QObject):
             '"id" = {}'.format(class_id))
 
         return next(self.layers['class'].getFeatures(request))
+
+    def get_lanes_of_count(self, count_id):
+
+        return self.get_lanes_of_installation(
+            self.get_installation_of_count(count_id).attribute('id'))

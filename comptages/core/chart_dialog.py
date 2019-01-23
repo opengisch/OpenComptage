@@ -11,22 +11,41 @@ FORM_CLASS = get_ui_class('chart_dock.ui')
 
 
 class ChartDock(QDockWidget, FORM_CLASS):
+
+    CHART_TYPE_TIME = 0
+    CHART_TYPE_CATEGORY = 1
+    CHART_TYPE_SPEED = 2
+
     def __init__(self, iface, layers, parent=None):
         QDockWidget.__init__(self, parent)
         self.setupUi(self)
         self.layers = layers
         self.count_id = None
         self.status = self.layers.IMPORT_STATUS_DEFINITIVE
-
-        self.chartList.addItem(QListWidgetItem('Par heure'))
-        self.chartList.addItem(QListWidgetItem('Par catégorie'))
-        self.chartList.addItem(QListWidgetItem('Par vitesse'))
-
         self.chartList.currentRowChanged.connect(self.chart_list_changed)
         self.buttonValidate.clicked.connect(self.validate_count)
         self.buttonRefuse.clicked.connect(self.refuse_count)
 
     def set_attributes(self, count_id, approval_process=False):
+        self.rows = []  # List of tuples chart type, index
+
+        # Remove previous items
+        self.chartList.currentRowChanged.disconnect(self.chart_list_changed)
+        for i in range(self.chartList.count()):
+            self.chartList.takeItem(0)
+        self.chartList.currentRowChanged.connect(self.chart_list_changed)
+
+        # TODO build hours chart items based on the lanes and directions.
+        lanes = self.layers.get_lanes_of_count(count_id)
+        for i, lane in enumerate(lanes):
+            self.chartList.addItem(QListWidgetItem('Par heure, {}'.format(i)))
+            self.rows.append((self.CHART_TYPE_TIME, lane.attribute('id')))
+
+        self.chartList.addItem(QListWidgetItem('Par catégorie'))
+        self.rows.append((self.CHART_TYPE_CATEGORY, 0))
+        self.chartList.addItem(QListWidgetItem('Par vitesse'))
+        self.rows.append((self.CHART_TYPE_SPEED, 0))
+
         self.count_id = count_id
         self.setWindowTitle("Comptage: {}, installation: {}".format(
             count_id, self.layers.get_installation_name_of_count(count_id)))
@@ -46,12 +65,15 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.chartList.setCurrentRow(0)
 
     def chart_list_changed(self, row):
+        print('row: {}'.format(row))
+        print('rows[row]: {}'.format(self.rows[row]))
         is_aggregate = self.layers.is_data_aggregate(self.count_id)
         is_detail = self.layers.is_data_detail(self.count_id)
-        if row == 0:
+        if self.rows[row][0] == self.CHART_TYPE_TIME:
+            lane_or_direction = self.rows[row][1]
             if is_aggregate:
                 xs, ys, days = self.layers.get_aggregate_time_chart_data(
-                    self.count_id, self.status)
+                    self.count_id, self.status, lane_or_direction)
             elif is_detail:
                 xs, ys, days = self.layers.get_detail_time_chart_data(
                     self.count_id, self.status)
@@ -60,7 +82,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 ys = []
                 days = []
             self.plot_chart_time(xs, ys, days)
-        elif row == 1:
+        elif self.rows[row][0] == self.CHART_TYPE_CATEGORY:
             if is_aggregate:
                 labels, values = self.layers.get_aggregate_category_chart_data(
                     self.count_id, self.status)
@@ -71,7 +93,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 labels = []
                 values = []
             self.plot_chart_category(labels, values)
-        elif row == 2:
+        elif self.rows[row][0] == self.CHART_TYPE_SPEED:
             if is_aggregate:
                 x, y = self.layers.get_aggregate_speed_chart_data(
                     self.count_id, self.status)
