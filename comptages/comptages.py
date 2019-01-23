@@ -278,7 +278,6 @@ class Comptages(QObject):
         self.validate_imported_files.setEnabled(True)
         self.filter_action.setEnabled(True)
 
-
     def is_section_highlighted(self, section_id):
         return self.layers.is_section_highlighted(section_id)
 
@@ -287,6 +286,6 @@ class Comptages(QObject):
         """Used by section layer to apply a style to the sections related to a
         count"""
 
-        # Call the class method of the current instance of the plugin
+        # Call the method of the current instance of the plugin
         return plugins['comptages'].is_section_highlighted(
             feature.attribute('id'))
