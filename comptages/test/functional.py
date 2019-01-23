@@ -83,12 +83,22 @@ class TestFunc(unittest.TestCase):
 
         self.db.open()
         query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
             "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', 1, 2468);")
-        # 2468 -> 64080011
-
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
+                model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -96,11 +106,11 @@ class TestFunc(unittest.TestCase):
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate.i00'))
-        data_parser.parse_and_import_data(3)
+        data_parser.parse_and_import_data(1)
 
         query.exec_(
             "SELECT * FROM comptages.count_aggregate WHERE file_name = \
-            'simple_aggregate.i00'")
+            'simple_aggregate.i00';")
 
         self.assertEqual(1, query.size())
 
