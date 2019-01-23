@@ -1,5 +1,6 @@
 import os
 
+from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.PyQt.QtCore import Qt
@@ -33,7 +34,8 @@ def push_warning(message):
 
 
 def push_error(message):
-    iface.messageBar().pushCritical('Comptages', message)
+    # iface.messageBar().pushCritical('Comptages', message)
+    iface.messageBar().pushMessage('Comptages', message, Qgis.Critical, 0)
 
 
 def create_progress_bar(message):

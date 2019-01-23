@@ -4,7 +4,7 @@ from qgis.PyQt.QtWidgets import QFileDialog
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
 
-from comptages.core.utils import push_info, push_warning
+from comptages.core.utils import push_info, push_error
 from comptages.core.settings import Settings
 
 
@@ -40,10 +40,10 @@ class FileImporter():
             elif file_format == 'INT-2':
                 data_parser = DataParserInt2(self.layers, file)
             else:
-                push_warning('Format {} non supporté'.format(file_format))
+                push_error('Format {} non supporté'.format(file_format))
                 QgsMessageLog.logMessage(
                     'Format {} not supported'.format(file_format),
-                    'Comptages', Qgis.Warning)
+                    'Comptages', Qgis.Critical)
                 return
 
             count_id = self.layers.guess_count_id(
@@ -51,10 +51,10 @@ class FileImporter():
                 data_parser.get_stop_rec())
 
             if not count_id:
-                push_warning('Impossible de trouver le comptage associé')
+                push_error('Impossible de trouver le comptage associé')
                 QgsMessageLog.logMessage(
                     'Could not find the related count',
-                    'Comptages', Qgis.Warning)
+                    'Comptages', Qgis.Critical)
                 return
 
             data_parser.parse_and_import_data(count_id, message)
@@ -62,10 +62,10 @@ class FileImporter():
             QgsMessageLog.logMessage(
                 'Import finished', 'Comptages', Qgis.Info)
         except NotImplementedError as nie:
-            push_warning('{} non supporté'.format(str(nie)))
+            push_error('{} non supporté'.format(str(nie)))
             QgsMessageLog.logMessage(
                 '{} not supported'.format(str(nie)),
-                'Comptages', Qgis.Warning)
+                'Comptages', Qgis.Critical)
             return
         except Exception as e:
             push_info('Erreur lors de la lecture des données: {}'.format(
