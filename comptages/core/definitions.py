@@ -72,14 +72,49 @@ LAYER_DEFINITIONS = {
         'epsg':         2056,
         'legend':       False
     },
-    'count_detail': {
-        'table':        'count_detail',
-        'display_name': 'comptage_detail',
+ #   'count_detail': {
+ #       'table':        'count_detail',
+ #       'display_name': 'comptage_detail',
+ #       'geometry':     None,
+ #       'sql':          '',
+ #       'id':           'id',
+ #       'epsg':         2056,
+ #       'legend':       False
+ #   },
+    'damage_log': {
+        'table':        'damage_log',
+        'display_name': 'journal_panne',
         'geometry':     None,
         'sql':          '',
         'id':           'id',
         'epsg':         2056,
         'legend':       False
     },
-
+    'brand': {
+        'table':        'brand',
+        'display_name': 'marque',
+        'geometry':     None,
+        'sql':          '',
+        'id':           'id',
+        'epsg':         2056,
+        'legend':       False
+    },
+    'category': {
+        'table':        'category',
+        'display_name': 'categorie',
+        'geometry':     None,
+        'sql':          '',
+        'id':           'id',
+        'epsg':         2056,
+        'legend':       False
+    },
+    'special_period': {
+        'table':        'special_period',
+        'display_name': 'periode_speciale',
+        'geometry':     None,
+        'sql':          '',
+        'id':           'id',
+        'epsg':         2056,
+        'legend':       False
+    },
 }
