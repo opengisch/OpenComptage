@@ -23,6 +23,7 @@ class Layers(QObject):
 
         self.highlighted_sections = []
         self.db = None
+        self.lanes_cache = dict()
 
     def load_layers(self):
         settings = Settings()
@@ -505,6 +506,8 @@ class Layers(QObject):
         return next(self.layers['section'].getFeatures(request))
 
     def insert_count_detail_row(self, row, count_id, file_name):
+        lanes = self.get_lanes_dict(count_id)
+
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -525,7 +528,7 @@ class Layers(QObject):
                          row['height'],
                          file_name,
                          self.IMPORT_STATUS_QUARANTINE,
-                         row['lane'],
+                         lanes[int(row['lane'])],
                          count_id,
                          row['category_id']))
 
@@ -533,10 +536,10 @@ class Layers(QObject):
 
     def insert_count_aggregate_row(self, row, row_type, count_id, file_name,
                                    bins):
+        lanes = self.get_lanes_dict(count_id)
+
         self.init_db_connection()
         query = QSqlQuery(self.db)
-
-        lanes = {1: 2345, 2: 2346}
 
         query_str = ("insert into comptages.count_aggregate ("
                      "type, \"start\", \"end\", file_name, import_status, "
@@ -549,7 +552,7 @@ class Layers(QObject):
                          file_name,
                          self.IMPORT_STATUS_QUARANTINE,
                          count_id,
-                         lanes[row['channel']]))
+                         lanes[int(row['channel'])]))
 
         query_str_value = ""
         if row_type == 'SPD':
@@ -1107,3 +1110,22 @@ class Layers(QObject):
 
         return self.get_lanes_of_installation(
             self.get_installation_of_count(count_id).attribute('id'))
+
+    def get_lanes_dict(self, count_id):
+
+        # Cached values
+        if count_id in self.lanes_cache:
+            return self.lanes_cache[count_id]
+
+        lanes = self.get_lanes_of_count(count_id)
+
+        result = dict()
+        for lane in lanes:
+            result[lane.attribute('number')] = lane.attribute('id')
+
+        self.lanes_cache[count_id] = result
+        return result
+
+    def invalidate_lanes_cache(self):
+        """ To be called after an import is finished"""
+        self.lanes_cache = dict()

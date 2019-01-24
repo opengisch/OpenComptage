@@ -95,6 +95,7 @@ class DataParserVbv1(DataParser):
                         count_id,
                         self.get_file_name())
         clear_widgets()
+        self.layers.invalidate_lanes_cache()
         push_info('Imported data from file {}'.format(self.file))
 
     def parse_data_line(self, line):
@@ -185,6 +186,7 @@ class DataParserInt2(DataParser):
                         count_id,
                         self.get_file_name(),
                         self.get_bins(row_type))
+        self.layers.invalidate_lanes_cache()
         clear_widgets()
 
     def parse_data_line(self, line):
