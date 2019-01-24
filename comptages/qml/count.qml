@@ -337,7 +337,6 @@ def on_form_open(dialog, layer, feature):
 	dialog.widgetValueChanged.connect(partial(on_dialog_changed, dialog))
 	
 def on_dialog_changed(dialog, attribute, value, attributeChanged):
-	print(dialog)
 	if attributeChanged:
 		if attribute == 'start_service_date':
 			dialog.changeAttribute('end_service_date', value.addDays(14), '')

@@ -820,7 +820,6 @@ class Layers(QObject):
             "order by agg.start".format(
                 count_id, lane_or_direction_str, day, status)
         )
-        print(query_str)
         query.exec_(query_str)
 
         x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",

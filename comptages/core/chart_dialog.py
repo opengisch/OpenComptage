@@ -67,8 +67,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.chartList.setCurrentRow(0)
 
     def chart_list_changed(self, row):
-        print('row: {}'.format(row))
-        print('rows[row]: {}'.format(self.rows[row]))
         is_aggregate = self.layers.is_data_aggregate(self.count_id)
         is_detail = self.layers.is_data_detail(self.count_id)
         if self.rows[row][0] == self.CHART_TYPE_TIME:
