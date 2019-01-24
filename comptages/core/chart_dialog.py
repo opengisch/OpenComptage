@@ -27,7 +27,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.buttonRefuse.clicked.connect(self.refuse_count)
 
     def set_attributes(self, count_id, approval_process=False):
-        self.rows = []  # List of tuples chart type, index
+        self.rows = []  # List of tuples chart type, lane_id, lane_number
 
         # Remove previous items
         self.chartList.currentRowChanged.disconnect(self.chart_list_changed)
@@ -38,8 +38,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
         # TODO build hours chart items based on the lanes and directions.
         lanes = self.layers.get_lanes_of_count(count_id)
         for i, lane in enumerate(lanes):
-            self.chartList.addItem(QListWidgetItem('Par heure, {}'.format(i)))
-            self.rows.append((self.CHART_TYPE_TIME, lane.attribute('id')))
+            self.chartList.addItem(QListWidgetItem('Par heure, voie {}'.format(
+                lane.attribute('number'))))
+            self.rows.append((self.CHART_TYPE_TIME, lane.attribute('id'),
+                              lane.attribute('number')))
 
         self.chartList.addItem(QListWidgetItem('Par catégorie'))
         self.rows.append((self.CHART_TYPE_CATEGORY, 0))
@@ -81,7 +83,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 xs = []
                 ys = []
                 days = []
-            self.plot_chart_time(xs, ys, days)
+            self.plot_chart_time(xs, ys, days, self.rows[row][2])
         elif self.rows[row][0] == self.CHART_TYPE_CATEGORY:
             if is_aggregate:
                 labels, values = self.layers.get_aggregate_category_chart_data(
@@ -105,7 +107,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 y = []
             self.plot_chart_speed(x, y)
 
-    def plot_chart_time(self, xs, ys, days):
+    def plot_chart_time(self, xs, ys, days, lane_number):
         data = []
         # In reverse order so if the first day is not complete, the
         # missing hours are added at the beginning of the chart
@@ -122,7 +124,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             )
 
         layout = go.Layout(
-            title='Véhicules par heure',
+            title='Véhicules par heure, voie {}'.format(lane_number),
             xaxis=dict(tickangle=-45),
             barmode='group'
         )
