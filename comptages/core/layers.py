@@ -536,6 +536,8 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
+        lanes = {1: 2345, 2: 2346}
+
         query_str = ("insert into comptages.count_aggregate ("
                      "type, \"start\", \"end\", file_name, import_status, "
                      "id_count, id_lane) "
@@ -547,7 +549,7 @@ class Layers(QObject):
                          file_name,
                          self.IMPORT_STATUS_QUARANTINE,
                          count_id,
-                         row['channel']))
+                         lanes[row['channel']]))
 
         query_str_value = ""
         if row_type == 'SPD':
