@@ -22,7 +22,7 @@ class PlanCreator():
 
         self.set_fields(count_id)
 
-        self.layers.select_and_zoom_on_section_of_count(count_id)
+        # self.layers.select_and_zoom_on_section_of_count(count_id)
         canvas = iface.mapCanvas()
 
         map_item = self.layout.itemById('map')
@@ -68,9 +68,26 @@ class PlanCreator():
         self.set_text_item('f_14', '')
         self.set_text_item('f_15', '')
         self.set_text_item('f_16', '')
+        self.set_text_item('f_17', '')
+        self.set_text_item('f_18', '')
+        self.set_text_item('f_19', '')
+        self.set_text_item('f_20', '')
+        self.set_text_item('f_21', '')
+        self.set_text_item('f_22', '')
+        self.set_text_item('f_23', '')
+
+        self.set_picture_item('picture_1', installation.attribute('picture'))
 
     def set_text_item(self, name, text):
         self.layout.itemById(name).setText(text)
+
+    def set_picture_item(self, name, file_name):
+        if not file_name:
+            return
+
+        picture_path = os.path.join(
+            self.settings.value('picture_directory'), file_name)
+        self.layout.itemById(name).setPicturePath(picture_path)
 
     @staticmethod
     def create_layout_from_template(template_filename):

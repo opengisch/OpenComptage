@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>447</width>
-    <height>482</height>
+    <width>471</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -104,6 +104,16 @@
    </item>
    <item>
     <widget class="QLineEdit" name="data_import_directory"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Répertoire des photos</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="picture_directory"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
