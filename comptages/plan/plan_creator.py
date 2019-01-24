@@ -14,9 +14,11 @@ class PlanCreator():
 
     def export_pdf(self, count_id, file_name):
 
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        qpt_file_path = os.path.join(
+            current_dir, os.pardir, 'qml', 'plan.qpt')
         self.layout = PlanCreator.create_layout_from_template(
-            os.path.join(self.settings.value(
-                'plan_export_directory', 'plan.qpt')))
+            qpt_file_path)
 
         self.set_fields(count_id)
 
