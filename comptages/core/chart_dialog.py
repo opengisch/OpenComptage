@@ -76,7 +76,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                     self.count_id, self.status, lane_or_direction)
             elif is_detail:
                 xs, ys, days = self.layers.get_detail_time_chart_data(
-                    self.count_id, self.status)
+                    self.count_id, self.status, lane_or_direction)
             else:
                 xs = []
                 ys = []

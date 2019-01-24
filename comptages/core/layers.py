@@ -934,21 +934,27 @@ class Layers(QObject):
 
         return days
 
-    def get_detail_time_chart_data(self, count_id, status):
+    def get_detail_time_chart_data(self, count_id, status, lane_or_direction):
 
         xs = []
         ys = []
 
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
-            x, y = self.get_detail_time_chart_data_day(count_id, day, status)
+            x, y = self.get_detail_time_chart_data_day(
+                count_id, day, status, lane_or_direction)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
-    def get_detail_time_chart_data_day(self, count_id, day, status):
+    def get_detail_time_chart_data_day(
+            self, count_id, day, status, lane_or_direction):
         self.init_db_connection()
         query = QSqlQuery(self.db)
+
+        # TODO verify if lane or direction
+        lane_or_direction_str = "and id_lane = {}".format(
+            lane_or_direction)
 
         query_str = (
             "select date_part('hour', timestamp), "
@@ -958,8 +964,9 @@ class Layers(QObject):
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
             "and import_status = {} "
+            " {} "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status)
+                count_id, day, status, lane_or_direction_str)
         )
 
         query.exec_(query_str)
