@@ -68,11 +68,19 @@ class PlanCreator():
         self.set_text_item('f_14', '')
         self.set_text_item('f_15', '')
         self.set_text_item('f_16', '')
-        self.set_text_item('f_17', '')
-        self.set_text_item('f_18', '')
-        self.set_text_item('f_19', '')
-        self.set_text_item('f_20', '')
-        self.set_text_item('f_21', '')
+
+        # Page 2
+        self.set_text_item('f_17', 'Campagne de comptage')
+        self.set_text_item(
+            'f_18',
+            'Pose {}'.format(count.attribute('start_put_date').toString(
+                'dddd dd.MM.yyyy')))
+        self.set_text_item(
+            'f_19',
+            'Dépose {}'.format(count.attribute('end_put_date').toString(
+                'dddd dd.MM.yyyy')))
+        self.set_text_item('f_20', sections[0].attribute('place_name'))
+        self.set_text_item('f_21', installation.attribute('name'))
         self.set_text_item('f_22', '')
         self.set_text_item('f_23', '')
 
