@@ -951,9 +951,14 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        # TODO verify if lane or direction
-        lane_or_direction_str = "and id_lane = {}".format(
-            lane_or_direction)
+        sensor_type = self.get_sensor_type_of_count(count_id)
+
+        if(sensor_type.attribute('name') == 'Boucle'):
+            lane_or_direction_str = "and id_lane = {}".format(
+                lane_or_direction)
+        else:
+            # FIXME: Manage data by direction
+            pass
 
         query_str = (
             "select date_part('hour', timestamp), "
@@ -967,7 +972,6 @@ class Layers(QObject):
             "group by date_part('hour', timestamp);".format(
                 count_id, day, status, lane_or_direction_str)
         )
-
         query.exec_(query_str)
 
         x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
@@ -1135,3 +1139,15 @@ class Layers(QObject):
     def invalidate_lanes_cache(self):
         """ To be called after an import is finished"""
         self.lanes_cache = dict()
+
+    def get_sensor_type_of_count(self, count_id):
+        sensor_type_id = self.get_count(count_id).attribute('id_sensor_type')
+        return self.get_sensor_type(sensor_type_id)
+
+    def get_sensor_type(self, sensor_type_id):
+        """Return the sensor_type feature"""
+
+        request = QgsFeatureRequest().setFilterExpression(
+            '"id" = {}'.format(sensor_type_id)
+        )
+        return next(self.layers['sensor_type'].getFeatures(request))
