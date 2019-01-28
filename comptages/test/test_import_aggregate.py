@@ -737,3 +737,61 @@ class TestImportAggregate(unittest.TestCase):
         self.assertEqual(lane_2_id, query.value(7))
 
         self.db.close()
+
+    def test_simple_import_aggregate_multi_spec(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.lane \
+                    WHERE id_installation = {} AND number = 1;".format(
+                        installation_id))
+        query.next()
+        lane_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
+                model_id, installation_id))
+        query.exec_(query_str)
+
+        data_parser = DataParserInt2(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_multi_spec.i00'))
+        data_parser.parse_and_import_data(1)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_multi_spec.i00';")
+
+        self.assertEqual(3, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_len;")
+        self.assertEqual(4, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_cls;")
+        self.assertEqual(10, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_spd;")
+        self.assertEqual(12, query.size())
+
+        self.db.close()
