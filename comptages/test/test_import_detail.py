@@ -33,7 +33,7 @@ class TestImportDetail(unittest.TestCase):
         query.exec_("DELETE FROM comptages.count_detail;")
         self.db.close()
 
-    def test_simple_import_detail_data_multi_channel(self):
+    def test_simple_import_detail_data_multi_lane(self):
         self.db.open()
         query = QSqlQuery(self.db)
 
@@ -55,6 +55,16 @@ class TestImportDetail(unittest.TestCase):
         query.next()
         lane_2_id = query.value(0)
 
+        query.exec_("SELECT id FROM comptages.category \
+                    WHERE code = '3'")
+        query.next()
+        category_id_1 = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.category \
+                    WHERE code = '4'")
+        query.next()
+        category_id_2 = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
             "start_process_date, end_process_date, id_model, id_installation) "
@@ -70,17 +80,48 @@ class TestImportDetail(unittest.TestCase):
         data_parser.parse_and_import_data(1)
 
         query.exec_(
-            "SELECT import_status, id_lane FROM comptages.count_detail \
+            "SELECT numbering, timestamp, distance_front_front, \
+            distance_front_back, speed, length, height, fixed, wrong_way, \
+            file_name, import_status, id_lane, id_count, id_category \
+            FROM comptages.count_detail \
             WHERE file_name = 'simple_detail_multi_lane.V01' ORDER BY id;")
 
         self.assertEqual(2, query.size())
 
         query.next()
-        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(0))
-        self.assertEqual(lane_1_id, query.value(1))
+        self.assertEqual(1, query.value(0))
+        self.assertEqual(
+            '240918 1545 49 800',
+            query.value(1).toString('ddMMyy HHmm ss zzz'))
+        self.assertEqual(12.3, query.value(2))
+        self.assertEqual(99.9, query.value(3))
+        self.assertEqual(50, query.value(4))
+        self.assertEqual(428, query.value(5))
+        self.assertEqual('L', query.value(6).strip())
+        self.assertNotEqual(True, query.value(7))
+        self.assertNotEqual(True, query.value(8))
+        self.assertEqual('simple_detail_multi_lane.V01', query.value(9))
+        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(10))
+        self.assertEqual(lane_1_id, query.value(11))
+        self.assertEqual(1, query.value(12))
+        self.assertEqual(category_id_1, query.value(13))
 
         query.next()
-        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(0))
-        self.assertEqual(lane_2_id, query.value(1))
+        self.assertEqual(2, query.value(0))
+        self.assertEqual(
+            '240918 1545 50 900',
+            query.value(1).toString('ddMMyy HHmm ss zzz'))
+        self.assertEqual(3.8, query.value(2))
+        self.assertEqual(1.4, query.value(3))
+        self.assertEqual(51, query.value(4))
+        self.assertEqual(416, query.value(5))
+        self.assertEqual('VL', query.value(6).strip())
+        self.assertNotEqual(True, query.value(7))
+        self.assertNotEqual(True, query.value(8))
+        self.assertEqual('simple_detail_multi_lane.V01', query.value(9))
+        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(10))
+        self.assertEqual(lane_2_id, query.value(11))
+        self.assertEqual(1, query.value(12))
+        self.assertEqual(category_id_2, query.value(13))
 
         self.db.close()
