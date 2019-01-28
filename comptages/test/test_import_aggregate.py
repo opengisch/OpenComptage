@@ -42,7 +42,7 @@ class TestImportAggregate(unittest.TestCase):
         query.exec_("DELETE FROM comptages.count_aggregate_value_sds;")
         self.db.close()
 
-    def test_simple_import_aggregate_data(self):
+    def test_simple_import_aggregate_data_cls(self):
         self.db.open()
         query = QSqlQuery(self.db)
 
@@ -62,6 +62,17 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select cat.id from comptages.class as cls \
+                     join comptages.class_category as cls_cat \
+                     on cls_cat.id_class = cls.id \
+                     join comptages.category as cat on \
+                     cls_cat.id_category = cat.id \
+                     where cls.name = 'SWISS10'")
+
+        categories_id = []
+        while query.next():
+            categories_id.append(query.value(0))
+
         query_str = (
             "INSERT INTO comptages.count(id, "
             "start_process_date, end_process_date, id_model, id_installation) "
@@ -73,20 +84,76 @@ class TestImportAggregate(unittest.TestCase):
             self.layers,
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate.i00'))
+                'simple_aggregate_cls.i00'))
         data_parser.parse_and_import_data(1)
 
         query.exec_(
-            "SELECT * FROM comptages.count_aggregate WHERE file_name = \
-            'simple_aggregate.i00';")
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_cls.i00';")
 
         self.assertEqual(1, query.size())
 
         query.next()
+        self.assertEqual('CLS', query.value(0))
+        self.assertEqual(
+            '240918 0800',
+            query.value(1).toString('ddMMyy HHmm'))
+        self.assertEqual(
+            '240918 0900',
+            query.value(2).toString('ddMMyy HHmm'))
+        self.assertEqual('simple_aggregate_cls.i00', query.value(3))
+        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
+        self.assertEqual(1, query.value(5))
+        self.assertEqual(lane_id, query.value(6))
+        id_count_aggregate = query.value(7)
 
-        self.assertEqual('CLS', query.value(1))
-        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(5))
-        self.assertEqual(lane_id, query.value(7))
+        query.exec_(
+            "SELECT value, id_count_aggregate, id_category \
+            FROM comptages.count_aggregate_value_cls ORDER BY id;")
+
+        self.assertEqual(10, query.size())
+
+        query.next()
+        self.assertEqual(1, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[0], query.value(2))
+        query.next()
+        self.assertEqual(2, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[1], query.value(2))
+        query.next()
+        self.assertEqual(3, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[2], query.value(2))
+        query.next()
+        self.assertEqual(4, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[3], query.value(2))
+        query.next()
+        self.assertEqual(5, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[4], query.value(2))
+        query.next()
+        self.assertEqual(6, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[5], query.value(2))
+        query.next()
+        self.assertEqual(7, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[6], query.value(2))
+        query.next()
+        self.assertEqual(8, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[7], query.value(2))
+        query.next()
+        self.assertEqual(9, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[8], query.value(2))
+        query.next()
+        self.assertEqual(10, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(categories_id[9], query.value(2))
 
         self.db.close()
 
