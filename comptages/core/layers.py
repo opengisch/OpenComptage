@@ -802,7 +802,7 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        # TODO verify if lane or direction
+        # TODO: verify if lane or direction
         lane_or_direction_str = "and agg.id_lane = {}".format(
             lane_or_direction)
 
