@@ -117,3 +117,81 @@ class TestChartData(unittest.TestCase):
                           '120-999 km/h'], x)
 
         self.assertEqual([1, 0, 3, 0, 0, 4, 0, 0, 1, 0, 0, 0, 2], y)
+
+    def test_category_chart_aggregate(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
+                model_id, installation_id))
+        query.exec_(query_str)
+
+        data_parser = DataParserInt2(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'category_chart_aggregate.i00'))
+        data_parser.parse_and_import_data(1)
+
+        label, values = self.layers.get_aggregate_category_chart_data(
+            1, self.layers.IMPORT_STATUS_QUARANTINE)
+
+        self.assertEqual(label.index('CAR (1)'), values.index(10))
+        self.assertEqual(label.index('MR (2)'), values.index(20))
+        self.assertEqual(label.index('PW (3)'), values.index(30))
+        self.assertEqual(label.index('PW+ANH (4)'), values.index(40))
+        self.assertEqual(label.index('LIE (5)'), values.index(50))
+        self.assertEqual(label.index('LIE+ANH (6)'), values.index(60))
+        self.assertEqual(label.index('LIE+AUFL (7)'), values.index(70))
+        self.assertEqual(label.index('LW (8)'), values.index(80))
+        self.assertEqual(label.index('LZ (9)'), values.index(90))
+        self.assertEqual(label.index('SZ (10)'), values.index(100))
+
+    def test_category_chart_detail(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
+                model_id, installation_id))
+        query.exec_(query_str)
+
+        data_parser = DataParserVbv1(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'category_chart_detail.V01'))
+        data_parser.parse_and_import_data(1)
+
+        label, values = self.layers.get_detail_category_chart_data(
+            1, self.layers.IMPORT_STATUS_QUARANTINE)
+
+        self.assertEqual(label.index('CAR (1)'), values.index(3))
+        self.assertEqual(label.index('MR (2)'), values.index(2))
+        self.assertEqual(label.index('PW (3)'), values.index(5))
+        self.assertEqual(label.index('SZ (10)'), values.index(1))
