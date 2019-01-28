@@ -287,10 +287,84 @@ class TestChartData(unittest.TestCase):
             ys[1])
 
     def test_time_chart_by_direction_aggregate(self):
+        # TODO: Implement
         pass
 
     def test_time_chart_by_lane_detail(self):
-        pass
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.lane \
+                    WHERE id_installation = {};".format(
+                        installation_id))
+        lanes_id = []
+        while query.next():
+            lanes_id.append(query.value(0))
+
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Boucle'")
+        query.next()
+        sensor_boucle_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation, "
+            "id_sensor_type) "
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {}, {});".format(
+                model_id, installation_id, sensor_boucle_id))
+        query.exec_(query_str)
+
+        data_parser = DataParserVbv1(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'time_chart_detail.V01'))
+        data_parser.parse_and_import_data(1)
+
+        xs, ys, days = self.layers.get_detail_time_chart_data(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0])
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, 1,
+             1, 1, None, None, 1, 1,
+             1, None, None, 1, None, None],
+            ys[0])
+
+        xs, ys, days = self.layers.get_detail_time_chart_data(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1])
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, None,
+             None, None, 1, 1, None, None,
+             None, 1, 1, None, None, None],
+            ys[0])
 
     def test_time_chart_by_direction_detail(self):
+        # TODO: Implement
         pass
