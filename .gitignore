@@ -1,5 +1,6 @@
 .idea
 __pycache__/
+comptages/__pycache__/
 .docker/tests/
 .docker/tests/screenshot.png
 .env
