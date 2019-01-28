@@ -229,6 +229,90 @@ class TestImportAggregate(unittest.TestCase):
 
         self.db.close()
 
+    def test_simple_import_aggregate_data_len(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '64080011';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.lane \
+                    WHERE id_installation = {} AND number = 1;".format(
+                        installation_id))
+        query.next()
+        lane_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
+                model_id, installation_id))
+        query.exec_(query_str)
+
+        data_parser = DataParserInt2(
+            self.layers,
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_len.i00'))
+        data_parser.parse_and_import_data(1)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_len.i00';")
+
+        self.assertEqual(1, query.size())
+
+        query.next()
+        self.assertEqual('LEN', query.value(0))
+        self.assertEqual(
+            '240918 0800',
+            query.value(1).toString('ddMMyy HHmm'))
+        self.assertEqual(
+            '240918 0900',
+            query.value(2).toString('ddMMyy HHmm'))
+        self.assertEqual('simple_aggregate_len.i00', query.value(3))
+        self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
+        self.assertEqual(1, query.value(5))
+        self.assertEqual(lane_id, query.value(6))
+        id_count_aggregate = query.value(7)
+
+        query.exec_(
+            "SELECT value, id_count_aggregate, low, high \
+            FROM comptages.count_aggregate_value_len ORDER BY id;")
+
+        self.assertEqual(4, query.size())
+
+        query.next()
+        self.assertEqual(113, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(0, query.value(2))
+        self.assertEqual(270, query.value(3))
+        query.next()
+        self.assertEqual(33, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(270, query.value(2))
+        self.assertEqual(700, query.value(3))
+        query.next()
+        self.assertEqual(6, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(700, query.value(2))
+        self.assertEqual(1300, query.value(3))
+        query.next()
+        self.assertEqual(4, query.value(0))
+        self.assertEqual(id_count_aggregate, query.value(1))
+        self.assertEqual(1300, query.value(2))
+        self.assertEqual(2500, query.value(3))
+
+        self.db.close()
+
     def test_simple_import_aggregate_data_multi_channel(self):
         self.db.open()
         query = QSqlQuery(self.db)
