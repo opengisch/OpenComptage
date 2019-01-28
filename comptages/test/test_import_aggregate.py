@@ -1,6 +1,3 @@
-from qgis.PyQt.QtWidgets import QToolBar
-
-
 import os
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.testing import unittest
