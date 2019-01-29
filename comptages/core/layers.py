@@ -783,28 +783,27 @@ class Layers(QObject):
 
         return days
 
-    def get_aggregate_time_chart_data(
-            self, count_id, status, lane_or_direction):
+    def get_aggregate_time_chart_data_by_lane(
+            self, count_id, status, lane):
 
         xs = []
         ys = []
 
         days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
-            x, y = self.get_aggregate_time_chart_data_day(
-                count_id, day, status, lane_or_direction)
+            x, y = self.get_aggregate_time_chart_data_day_by_lane(
+                count_id, day, status, lane)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
-    def get_aggregate_time_chart_data_day(
-            self, count_id, day, status, lane_or_direction):
+    def get_aggregate_time_chart_data_day_by_lane(
+            self, count_id, day, status, lane):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        # TODO: verify if lane or direction
-        lane_or_direction_str = "and agg.id_lane = {}".format(
-            lane_or_direction)
+        lane_str = "and agg.id_lane = {}".format(
+            lane)
 
         query_str = (
             "select date_part('hour', agg.start), "
@@ -818,7 +817,58 @@ class Layers(QObject):
             "and agg.import_status = {} "
             "group by agg.start, agg.end "
             "order by agg.start".format(
-                count_id, lane_or_direction_str, day, status)
+                count_id, lane_str, day, status)
+        )
+        query.exec_(query_str)
+
+        x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
+             "06h-07h", "07h-08h", "08h-09h", "09h-10h", "10h-11h", "11h-12h",
+             "12h-13h", "13h-14h", "14h-15h", "15h-16h", "16h-17h", "17h-18h",
+             "18h-19h", "19h-20h", "20h-21h", "21h-22h", "22h-23h", "23h-00h"]
+        y = [None]*24
+
+        while query.next():
+            y[int(query.value(0))] = query.value(2)
+
+        return x, y
+
+    def get_aggregate_time_chart_data_by_direction(
+            self, count_id, status, direction):
+
+        xs = []
+        ys = []
+
+        days = self.get_days_of_aggregate_dataset(count_id, status)
+        for day in days:
+            x, y = self.get_aggregate_time_chart_data_day_by_direction(
+                count_id, day, status, direction)
+            xs.append(x)
+            ys.append(y)
+        return xs, ys, days
+
+    def get_aggregate_time_chart_data_day_by_direction(
+            self, count_id, day, status, direction):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        lane_str = "and lan.direction = {}".format(
+            direction)
+
+        query_str = (
+            "select date_part('hour', agg.start), "
+            "date_part('hour', agg.end), sum(cls.value) from "
+            "comptages.count_aggregate as agg "
+            "join comptages.count_aggregate_value_cls as cls "
+            "on agg.id = cls.id_count_aggregate "
+            "join comptages.lane as lan on "
+            "agg.id_lane = lan.id "
+            "where agg.id_count = {} and agg.type = 'CLS' "
+            " {} "
+            "and date_trunc('day', agg.start) = '{}' "
+            "and agg.import_status = {} "
+            "group by agg.start, agg.end, lan.direction "
+            "order by agg.start".format(
+                count_id, lane_str, day, status)
         )
         query.exec_(query_str)
 
@@ -933,32 +983,25 @@ class Layers(QObject):
 
         return days
 
-    def get_detail_time_chart_data(self, count_id, status, lane_or_direction):
+    def get_detail_time_chart_data_by_lane(self, count_id, status, lane):
 
         xs = []
         ys = []
 
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
-            x, y = self.get_detail_time_chart_data_day(
-                count_id, day, status, lane_or_direction)
+            x, y = self.get_detail_time_chart_data_day_by_lane(
+                count_id, day, status, lane)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
-    def get_detail_time_chart_data_day(
-            self, count_id, day, status, lane_or_direction):
+    def get_detail_time_chart_data_day_by_lane(
+            self, count_id, day, status, lane):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        sensor_type = self.get_sensor_type_of_count(count_id)
-
-        if(sensor_type.attribute('name') == 'Boucle'):
-            lane_or_direction_str = "and id_lane = {}".format(
-                lane_or_direction)
-        else:
-            # FIXME: Manage data by direction
-            pass
+        lane_str = "and id_lane = {}".format(lane)
 
         query_str = (
             "select date_part('hour', timestamp), "
@@ -970,7 +1013,55 @@ class Layers(QObject):
             "and import_status = {} "
             " {} "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status, lane_or_direction_str)
+                count_id, day, status, lane_str)
+        )
+        query.exec_(query_str)
+
+        x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
+             "06h-07h", "07h-08h", "08h-09h", "09h-10h", "10h-11h", "11h-12h",
+             "12h-13h", "13h-14h", "14h-15h", "15h-16h", "16h-17h", "17h-18h",
+             "18h-19h", "19h-20h", "20h-21h", "21h-22h", "22h-23h", "23h-00h"]
+        y = [None]*24
+
+        while query.next():
+            y[int(query.value(0))] = query.value(2)
+
+        return x, y
+
+    def get_detail_time_chart_data_by_direction(
+            self, count_id, status, direction):
+
+        xs = []
+        ys = []
+
+        days = self.get_days_of_detail_dataset(count_id)
+        for day in days:
+            x, y = self.get_detail_time_chart_data_day_by_direction(
+                count_id, day, status, direction)
+            xs.append(x)
+            ys.append(y)
+        return xs, ys, days
+
+    def get_detail_time_chart_data_day_by_direction(
+            self, count_id, day, status, direction):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        lane_str = "and lan.direction = {}".format(direction)
+
+        query_str = (
+            "select date_part('hour', timestamp), "
+            "date_part('hour', timestamp) + 1, "
+            "count(date_part('hour', timestamp)) "
+            "from comptages.count_detail as cou "
+            "join comptages.lane as lan on "
+            "cou.id_lane = lan.id "
+            "where id_count = {} and "
+            "date_trunc('day', timestamp) = '{}' "
+            "and import_status = {} "
+            " {} "
+            "group by date_part('hour', timestamp);".format(
+                count_id, day, status, lane_str)
         )
         query.exec_(query_str)
 
@@ -1151,3 +1242,21 @@ class Layers(QObject):
             '"id" = {}'.format(sensor_type_id)
         )
         return next(self.layers['sensor_type'].getFeatures(request))
+
+    def get_directions_of_count(self, count_id):
+        """Return a list of the directions of a count"""
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select lan.direction from comptages.count as cou "
+            "join comptages.lane as lan on "
+            "cou.id_installation = lan.id_installation "
+            "where cou.id = {} group by lan.direction;".format(
+                count_id))
+
+        result = []
+        query.exec_(query_str)
+        while query.next():
+            result.append(int(query.value(0)))
+        return result
