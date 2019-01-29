@@ -802,9 +802,6 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        lane_str = "and agg.id_lane = {}".format(
-            lane)
-
         query_str = (
             "select date_part('hour', agg.start), "
             "date_part('hour', agg.end), sum(cls.value) from "
@@ -812,12 +809,12 @@ class Layers(QObject):
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
             "where agg.id_count = {} and agg.type = 'CLS' "
-            " {} "
+            "and agg.id_lane = {} "
             "and date_trunc('day', agg.start) = '{}' "
             "and agg.import_status = {} "
             "group by agg.start, agg.end "
             "order by agg.start".format(
-                count_id, lane_str, day, status)
+                count_id, lane, day, status)
         )
         query.exec_(query_str)
 
@@ -851,9 +848,6 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        lane_str = "and lan.direction = {}".format(
-            direction)
-
         query_str = (
             "select date_part('hour', agg.start), "
             "date_part('hour', agg.end), sum(cls.value) from "
@@ -863,12 +857,12 @@ class Layers(QObject):
             "join comptages.lane as lan on "
             "agg.id_lane = lan.id "
             "where agg.id_count = {} and agg.type = 'CLS' "
-            " {} "
+            "and lan.direction = {} "
             "and date_trunc('day', agg.start) = '{}' "
             "and agg.import_status = {} "
             "group by agg.start, agg.end, lan.direction "
             "order by agg.start".format(
-                count_id, lane_str, day, status)
+                count_id, direction, day, status)
         )
         query.exec_(query_str)
 
@@ -1001,8 +995,6 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        lane_str = "and id_lane = {}".format(lane)
-
         query_str = (
             "select date_part('hour', timestamp), "
             "date_part('hour', timestamp) + 1, "
@@ -1011,9 +1003,9 @@ class Layers(QObject):
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
             "and import_status = {} "
-            " {} "
+            "and id_lane = {} "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status, lane_str)
+                count_id, day, status, lane)
         )
         query.exec_(query_str)
 
@@ -1047,8 +1039,6 @@ class Layers(QObject):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
-        lane_str = "and lan.direction = {}".format(direction)
-
         query_str = (
             "select date_part('hour', timestamp), "
             "date_part('hour', timestamp) + 1, "
@@ -1059,9 +1049,9 @@ class Layers(QObject):
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
             "and import_status = {} "
-            " {} "
+            "and lan.direction = {} "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status, lane_str)
+                count_id, day, status, direction)
         )
         query.exec_(query_str)
 
