@@ -1273,3 +1273,57 @@ class Layers(QObject):
                          influence))
 
         query.exec_(query_str)
+
+    def get_special_period(self, special_period_id):
+        request = QgsFeatureRequest().setFilterExpression(
+            '"id" = {}'.format(special_period_id))
+
+        return next(self.layers['special_period'].getFeatures(request))
+
+    def get_special_period_overlaps(self, start_date, end_date):
+        """Return the ids of the special periods thats overlaps the
+        passed dates"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select * from comptages.special_period where "
+            "('{0}' >= start_date AND '{0}' < end_date) OR "
+            "('{1}' >= start_date AND '{1}' < end_date) OR "
+            "('{0}' < start_date AND '{1}' >= end_date); ".format(
+                start_date, end_date))
+
+        result = []
+        query.exec_(query_str)
+        while query.next():
+            result.append(int(query.value(0)))
+        return result
+
+    def check_dates(self, start_date, end_date):
+        """Called from the count's QGIS form, return a string to be
+        displayed to the user showing if there is a special period
+        during the count dates"""
+
+        special_periods = self.get_special_period_overlaps(
+            start_date.toString('yyyy-MM-dd'),
+            end_date.toString('yyyy-MM-dd'))
+
+        result = []
+        for special_period_id in special_periods:
+            special_period = self.get_special_period(special_period_id)
+            start = special_period.attribute(
+                'start_date').toString('dd.MM.yyyy')
+            end = special_period.attribute(
+                'end_date').addDays(-1).toString('dd.MM.yyyy')
+
+            if start == end:
+                result.append('{} ({})'.format(
+                    special_period.attribute('description'),
+                    start))
+            else:
+                result.append('{} ({}-{})'.format(
+                    special_period.attribute('description'),
+                    start,
+                    end))
+        return '; '.join(result)
