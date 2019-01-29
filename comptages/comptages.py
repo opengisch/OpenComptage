@@ -16,6 +16,7 @@ from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
+from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
 
@@ -71,6 +72,12 @@ class Comptages(QObject):
             None
         )
 
+        self.import_ics_action = QAction(
+            QIcon(':/plugins/Comptages/images/calendar.png'),
+            'Importer fichier ics',
+            None
+        )
+
         self.settings_action = QAction(
             QIcon(':/plugins/Comptages/images/settings.png'),
             'Réglages',
@@ -95,6 +102,9 @@ class Comptages(QObject):
         self.filter_action.triggered.connect(
             self.do_filter_action)
 
+        self.import_ics_action.triggered.connect(
+            self.do_import_ics_action)
+
         self.settings_action.triggered.connect(
             self.do_settings_action)
 
@@ -103,6 +113,7 @@ class Comptages(QObject):
         self.import_files_action.setEnabled(False)
         self.validate_imported_files.setEnabled(False)
         self.filter_action.setEnabled(False)
+        self.import_ics_action.setEnabled(False)
 
         self.iface.addPluginToMenu('Comptages', self.connect_db_action)
         self.iface.addPluginToMenu('Comptages', self.create_new_action)
@@ -110,6 +121,7 @@ class Comptages(QObject):
         self.iface.addPluginToMenu('Comptages', self.import_files_action)
         self.iface.addPluginToMenu('Comptages', self.validate_imported_files)
         self.iface.addPluginToMenu('Comptages', self.filter_action)
+        self.iface.addPluginToMenu('Comptages', self.import_ics_action)
         self.iface.addPluginToMenu('Comptages', self.settings_action)
 
         self.toolbar = self.iface.addToolBar('Comptages')
@@ -123,6 +135,7 @@ class Comptages(QObject):
         self.toolbar.addAction(self.import_files_action)
         self.toolbar.addAction(self.validate_imported_files)
         self.toolbar.addAction(self.filter_action)
+        self.toolbar.addAction(self.import_ics_action)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.settings_action)
 
@@ -131,12 +144,14 @@ class Comptages(QObject):
         self.iface.removePluginMenu('Comptages', self.create_new_action)
         self.iface.removePluginMenu('Comptages', self.select_edit_action)
         self.iface.removePluginMenu('Comptages', self.filter_action)
+        self.iface.removePluginMenu('Comptages', self.import_ics_action)
         self.iface.removePluginMenu('Comptages', self.settings_action)
 
         del self.connect_db_action
         del self.create_new_action
         del self.select_edit_action
         del self.filter_action
+        del self.import_ics_action
         del self.settings_action
 
         del self.toolbar
@@ -177,6 +192,11 @@ class Comptages(QObject):
                 dlg.end_date.dateTime().toString('yyyy-MM-dd'),
                 dlg.installation.currentIndex(),
                 dlg.sensor.currentIndex())
+
+    def do_import_ics_action(self):
+        QgsMessageLog.logMessage(
+            'do_import_ics_action', 'Comptages', Qgis.Info)
+        IcsImporter(self.layers)
 
     def do_settings_action(self):
         QgsMessageLog.logMessage(
@@ -292,6 +312,7 @@ class Comptages(QObject):
         self.select_edit_action.setEnabled(True)
         self.import_files_action.setEnabled(True)
         self.validate_imported_files.setEnabled(True)
+        self.import_ics_action.setEnabled(True)
         self.filter_action.setEnabled(True)
 
     def is_section_highlighted(self, section_id):

@@ -1250,3 +1250,26 @@ class Layers(QObject):
         while query.next():
             result.append(int(query.value(0)))
         return result
+
+    def write_special_period(
+            self, start_date, end_date, description, entity, influence):
+        """Insert into special_period only if it is not altready present"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = ("INSERT INTO comptages.special_period "
+                     "(start_date, end_date, description, entity, influence) "
+                     "SELECT '{0}', '{1}', '{2}', '{3}', '{4}' "
+                     "WHERE NOT EXISTS ( "
+                     "SELECT id FROM comptages.special_period WHERE "
+                     "start_date = '{0}' AND end_date = '{1}' AND "
+                     "description = '{2}' AND entity = '{3}' AND "
+                     "influence = '{4}');".format(
+                         start_date,
+                         end_date,
+                         description,
+                         entity,
+                         influence))
+
+        query.exec_(query_str)
