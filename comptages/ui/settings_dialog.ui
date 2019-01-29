@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>471</width>
-    <height>539</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,6 +114,16 @@
    </item>
    <item>
     <widget class="QLineEdit" name="picture_directory"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Répertoire des rapports par défaut</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="report_export_directory"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

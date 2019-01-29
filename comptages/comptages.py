@@ -15,6 +15,7 @@ from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
 from comptages.plan.plan_creator import PlanCreator
+from comptages.report.report_creator import ReportCreator
 from comptages.ui.resources import *
 
 
@@ -240,6 +241,21 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_generate_report_action {}'.format(count_id),
             'Comptages', Qgis.Info)
+
+        report_creator = ReportCreator(self.layers)
+        file_dialog = QFileDialog()
+        file_dialog.setDefaultSuffix('*.PDF')
+        title = 'Export report file'
+        path = os.path.join(
+            self.settings.value('report_export_directory'),
+            "{}.pdf".format("report"))
+        file = QFileDialog.getSaveFileName(
+            file_dialog, title, path, "Config file (*.PDF)")[0]
+
+        if not file:
+            return
+
+        report_creator.export_pdf(count_id, file)
 
     def do_export_plan_action(self, count_id):
         QgsMessageLog.logMessage(
