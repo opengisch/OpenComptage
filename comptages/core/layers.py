@@ -433,7 +433,7 @@ class Layers(QObject):
 
             settings = Settings()
 
-            self.db = QSqlDatabase.addDatabase("QPSQL")
+            self.db = QSqlDatabase.addDatabase("QPSQL", "layers_db_connection")
             self.db.setHostName(settings.value("db_host"))
             self.db.setPort(settings.value("db_port"))
             self.db.setDatabaseName(settings.value("db_name"))

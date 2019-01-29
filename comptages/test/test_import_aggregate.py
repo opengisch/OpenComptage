@@ -14,7 +14,8 @@ class TestImportAggregate(unittest.TestCase):
         self.layers = plugins['comptages'].layers
         self.layers.load_layers()
 
-        self.db = QSqlDatabase.addDatabase("QPSQL")
+        self.db = QSqlDatabase.addDatabase(
+            "QPSQL", "test_import_aggregate_connection")
         self.db.setHostName(self.settings.value("db_host"))
         self.db.setPort(self.settings.value("db_port"))
         self.db.setDatabaseName(self.settings.value("db_name"))
