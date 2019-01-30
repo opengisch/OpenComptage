@@ -24,4 +24,7 @@ then
     python --version
     # Import data from base_tjm to the correct tables
     ./transfer_base_tjm_ok.py
+
+    # Set the log properties
+    psql "service=comptages_dev" --echo-errors -f ../db/audit.sql
 fi
