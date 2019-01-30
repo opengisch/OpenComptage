@@ -286,8 +286,6 @@ class Layers(QObject):
         """Open attribute table of count filtered with only the
         features related to the selected section"""
 
-        # TODO manage error if nothing is to be showed
-        # TODO display messages with the correct bar
         layer = self.layers['section']
 
         selected_count = layer.selectedFeatureCount()
@@ -350,7 +348,6 @@ class Layers(QObject):
     def get_counts_of_installation(self, installation_id):
         """Return a list of count features related with the passsed
         installation"""
-        # TODO verify if more than one layer is returned
 
         request = QgsFeatureRequest().setFilterExpression(
             '"id_installation" = {}'.format(installation_id)
@@ -361,8 +358,6 @@ class Layers(QObject):
     def is_section_highlighted(self, section_id):
         """Return if the passed section has related counts with the current
         filter settings"""
-
-        # TODO optimize with a cached list of sections or using a faster query
 
         if section_id in self.highlighted_sections:
             return True

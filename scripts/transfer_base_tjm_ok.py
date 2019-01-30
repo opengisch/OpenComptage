@@ -148,7 +148,7 @@ class TransferBaseTjmOk(object):
                     query,
                     (f"{(True if permanent == 'Oui' or permanent == True else False)}",
                      f"{name}",
-                     f"True"))  # TODO all active?
+                     f"True"))
 
                 return cursor.fetchone()[0]
 

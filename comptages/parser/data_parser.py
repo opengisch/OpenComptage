@@ -128,7 +128,6 @@ class DataParserVbv1(DataParser):
                 return 0
             if name == 'length':
                 return 0
-            # TODO
             if name == 'category':
                 return 0
 

@@ -73,8 +73,8 @@ INSERT INTO comptages.brand(name) VALUES ('GoldenRiver');
 
 -- Model
 INSERT INTO comptages.model(name, formatter_name, card_name, id_brand) VALUES ('M660', '', '8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity)', (select currval('comptages.brand_id_seq')));
-  -- TODO
+  -- TODO: Add models
   
 -- Device
 INSERT INTO comptages.device(serial, purchase_date, name, id_model) VALUES ('229007', NULL, '1', (select currval('comptages.model_id_seq')));
-  -- TODO
+  -- TODO: Add devices
