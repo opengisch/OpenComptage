@@ -44,7 +44,7 @@ CREATE TABLE comptages.device (
 	id serial NOT NULL,
 	serial text,
 	purchase_date date,
-	name text,
+	name text NOT NULL,
 	id_model integer NOT NULL,
 	CONSTRAINT automate_pk PRIMARY KEY (id)
 
@@ -125,20 +125,20 @@ ALTER TABLE comptages.sensor_type OWNER TO postgres;
 -- DROP TABLE IF EXISTS comptages.count CASCADE;
 CREATE TABLE comptages.count (
 	id serial NOT NULL,
-	start_service_date date,
-	end_service_date date,
+	start_service_date date NOT NULL,
+	end_service_date date NOT NULL,
 	start_put_date date,
 	end_put_date date,
-	start_process_date date,
-	end_process_date date,
+	start_process_date date NOT NULL,
+	end_process_date date NOT NULL,
 	valid boolean,
 	dysfunction boolean,
 	remarks text,
 	id_model integer NOT NULL,
 	id_device integer,
-	id_sensor_type integer,
+	id_sensor_type integer NOT NULL,
 	id_class integer,
-	id_installation integer,
+	id_installation integer NOT NULL,
 	CONSTRAINT count_pk PRIMARY KEY (id)
 
 );
@@ -217,8 +217,8 @@ CREATE TABLE comptages.count_detail (
 	height char(2),
 	fixed boolean,
 	wrong_way boolean,
-	file_name text,
-	import_status smallint,
+	file_name text NOT NULL,
+	import_status smallint NOT NULL,
 	id_lane integer NOT NULL,
 	id_count integer NOT NULL,
 	id_category integer NOT NULL,
@@ -278,11 +278,11 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.installation CASCADE;
 CREATE TABLE comptages.installation (
 	id serial NOT NULL,
-	permanent boolean,
-	name text,
+	permanent boolean NOT NULL,
+	name text NOT NULL,
 	picture text,
 	geometry geometry(POINT, 2056),
-	active boolean,
+	active boolean NOT NULL,
 	CONSTRAINT installation_pk PRIMARY KEY (id)
 
 );
@@ -360,7 +360,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
 ALTER TABLE comptages.count ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
 REFERENCES comptages.sensor_type (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: class_fk | type: CONSTRAINT --
@@ -398,7 +398,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE comptages.count DROP CONSTRAINT IF EXISTS installation_fk CASCADE;
 ALTER TABLE comptages.count ADD CONSTRAINT installation_fk FOREIGN KEY (id_installation)
 REFERENCES comptages.installation (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.sensor_type_class | type: TABLE --
@@ -460,13 +460,13 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate CASCADE;
 CREATE TABLE comptages.count_aggregate (
 	id serial NOT NULL,
-	type text,
-	start timestamp,
-	"end" timestamp,
-	file_name text,
-	import_status smallint,
-	id_count integer,
-	id_lane integer,
+	type text NOT NULL,
+	start timestamp NOT NULL,
+	"end" timestamp NOT NULL,
+	file_name text NOT NULL,
+	import_status smallint NOT NULL,
+	id_count integer NOT NULL,
+	id_lane integer NOT NULL,
 	CONSTRAINT count_aggregate_pk PRIMARY KEY (id)
 
 );
@@ -485,16 +485,16 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- ALTER TABLE comptages.count_aggregate DROP CONSTRAINT IF EXISTS lane_fk CASCADE;
 ALTER TABLE comptages.count_aggregate ADD CONSTRAINT lane_fk FOREIGN KEY (id_lane)
 REFERENCES comptages.lane (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: comptages.count_aggregate_value_cls | type: TABLE --
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_cls CASCADE;
 CREATE TABLE comptages.count_aggregate_value_cls (
 	id serial NOT NULL,
-	value integer,
-	id_count_aggregate integer,
-	id_category integer,
+	value integer NOT NULL,
+	id_count_aggregate integer NOT NULL,
+	id_category integer NOT NULL,
 	CONSTRAINT count_aggregate_value_cls_pk PRIMARY KEY (id)
 
 );
@@ -513,7 +513,7 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- ALTER TABLE comptages.count_aggregate_value_cls DROP CONSTRAINT IF EXISTS category_fk CASCADE;
 ALTER TABLE comptages.count_aggregate_value_cls ADD CONSTRAINT category_fk FOREIGN KEY (id_category)
 REFERENCES comptages.category (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: installation_fk | type: CONSTRAINT --
@@ -527,9 +527,9 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_cnt CASCADE;
 CREATE TABLE comptages.count_aggregate_value_cnt (
 	id serial NOT NULL,
-	value smallint,
-	"interval" smallint,
-	id_count_aggregate integer,
+	value smallint NOT NULL,
+	"interval" smallint NOT NULL,
+	id_count_aggregate integer NOT NULL,
 	CONSTRAINT count_aggregate_value_cnt_pk PRIMARY KEY (id)
 
 );
@@ -548,9 +548,9 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_drn CASCADE;
 CREATE TABLE comptages.count_aggregate_value_drn (
 	id serial NOT NULL,
-	value smallint,
-	direction smallint,
-	id_count_aggregate integer,
+	value smallint NOT NULL,
+	direction smallint NOT NULL,
+	id_count_aggregate integer NOT NULL,
 	CONSTRAINT count_aggregate_value_drn_pk PRIMARY KEY (id)
 
 );
@@ -569,10 +569,10 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_len CASCADE;
 CREATE TABLE comptages.count_aggregate_value_len (
 	id serial NOT NULL,
-	value smallint,
-	low smallint,
-	high smallint,
-	id_count_aggregate integer,
+	value smallint NOT NULL,
+	low smallint NOT NULL,
+	high smallint NOT NULL,
+	id_count_aggregate integer NOT NULL,
 	CONSTRAINT count_aggregate_value_len_pk PRIMARY KEY (id)
 
 );
@@ -591,10 +591,10 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_spd CASCADE;
 CREATE TABLE comptages.count_aggregate_value_spd (
 	id serial NOT NULL,
-	value smallint,
-	low smallint,
-	high smallint,
-	id_count_aggregate integer,
+	value smallint NOT NULL,
+	low smallint NOT NULL,
+	high smallint NOT NULL,
+	id_count_aggregate integer NOT NULL,
 	CONSTRAINT count_aggregate_value_spd_pk PRIMARY KEY (id)
 
 );
@@ -613,9 +613,9 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS comptages.count_aggregate_value_sds CASCADE;
 CREATE TABLE comptages.count_aggregate_value_sds (
 	id serial NOT NULL,
-	mean real,
-	deviation real,
-	id_count_aggregate integer,
+	mean real NOT NULL,
+	deviation real NOT NULL,
+	id_count_aggregate integer NOT NULL,
 	CONSTRAINT count_aggregate_value_sds_pk PRIMARY KEY (id)
 
 );

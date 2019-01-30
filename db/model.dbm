@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha1" last-position="0,0" last-zoom="1" max-obj-count="33"
+<dbmodel pgmodeler-ver="0.9.2-alpha1" last-position="0,585" last-zoom="1" max-obj-count="33"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -57,7 +57,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="purchase_date">
 		<type name="date" length="0"/>
 	</column>
-	<column name="name">
+	<column name="name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="automate_pk" type="pk-constr" table="comptages.device">
@@ -189,10 +189,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="start_service_date">
+	<column name="start_service_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
-	<column name="end_service_date">
+	<column name="end_service_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
 	<column name="start_put_date">
@@ -201,10 +201,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="end_put_date">
 		<type name="date" length="0"/>
 	</column>
-	<column name="start_process_date">
+	<column name="start_process_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
-	<column name="end_process_date">
+	<column name="end_process_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
 	<column name="valid">
@@ -219,6 +219,22 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="count_pk" type="pk-constr" table="comptages.count">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_class" index="13"/>
+		<object name="id_device" index="11"/>
+		<object name="id_installation" index="14"/>
+		<object name="id_model" index="10"/>
+		<object name="id_sensor_type" index="12"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="class_fk" index="4"/>
+		<object name="device_fk" index="2"/>
+		<object name="installation_fk" index="5"/>
+		<object name="model_fk" index="1"/>
+		<object name="sensor_type_fk" index="3"/>
+	</customidxs>
 </table>
 
 <extension name="postgis">
@@ -355,10 +371,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="wrong_way">
 		<type name="boolean" length="0"/>
 	</column>
-	<column name="file_name">
+	<column name="file_name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="import_status">
+	<column name="import_status" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_detail_pk" type="pk-constr" table="comptages.count_detail">
@@ -423,10 +439,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="permanent">
+	<column name="permanent" not-null="true">
 		<type name="boolean" length="0"/>
 	</column>
-	<column name="name">
+	<column name="name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="picture">
@@ -435,7 +451,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="geometry">
 		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="2056"/>
 	</column>
-	<column name="active">
+	<column name="active" not-null="true">
 		<type name="boolean" length="0"/>
 	</column>
 	<constraint name="installation_pk" type="pk-constr" table="comptages.installation">
@@ -516,7 +532,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#2b8690"
 	 src-table="comptages.sensor_type"
 	 dst-table="comptages.count"
-	 src-required="false" dst-required="false"/>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="classification_has_many_comptage" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
@@ -545,7 +561,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#c51116"
 	 src-table="comptages.installation"
 	 dst-table="comptages.count"
-	 src-required="false" dst-required="false"/>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="many_sensor_type_has_many_class" type="relnn" layer="0"
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
@@ -578,9 +594,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="393.227" y="428.628"/>
-	<position x="393.227" y="369"/>
-	<position x="308.151" y="369"/>
+		<position x="393.298" y="428.654"/>
+	<position x="393.298" y="369"/>
+	<position x="308.198" y="369"/>
 	</line>
 </relationship>
 
@@ -591,19 +607,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="type">
+	<column name="type" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="start">
+	<column name="start" not-null="true">
 		<type name="timestamp" length="0"/>
 	</column>
-	<column name="end">
+	<column name="end" not-null="true">
 		<type name="timestamp" length="0"/>
 	</column>
-	<column name="file_name">
+	<column name="file_name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="import_status">
+	<column name="import_status" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_pk" type="pk-constr" table="comptages.count_aggregate">
@@ -628,7 +644,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#398b8a"
 	 src-table="comptages.count"
 	 dst-table="comptages.count_aggregate"
-	 src-required="false" dst-required="false"
+	 src-required="true" dst-required="false"
 	del-action="CASCADE"/>
 
 <relationship name="lane_has_many_count_aggregate" type="rel1n" layer="0"
@@ -638,7 +654,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#2a0b27"
 	 src-table="comptages.lane"
 	 dst-table="comptages.count_aggregate"
-	 src-required="false" dst-required="false"/>
+	 src-required="true" dst-required="false"/>
 
 <table name="count_aggregate_value_cls" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
@@ -647,7 +663,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="value">
+	<column name="value" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_cls_pk" type="pk-constr" table="comptages.count_aggregate_value_cls">
@@ -672,8 +688,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#8b9633"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_cls"
-	 src-required="false" dst-required="false"
-	del-action="CASCADE"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="category_has_many_count_aggregate_value" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
@@ -682,7 +702,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#c5bd25"
 	 src-table="comptages.category"
 	 dst-table="comptages.count_aggregate_value_cls"
-	 src-required="false" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="installation_has_many_voie" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
@@ -700,10 +724,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="value">
+	<column name="value" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="interval">
+	<column name="interval" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_cnt_pk" type="pk-constr" table="comptages.count_aggregate_value_cnt">
@@ -726,8 +750,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#6539a9"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_cnt"
-	 src-required="false" dst-required="false"
-	del-action="CASCADE"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <table name="count_aggregate_value_drn" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
@@ -736,10 +764,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="value">
+	<column name="value" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="direction">
+	<column name="direction" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_drn_pk" type="pk-constr" table="comptages.count_aggregate_value_drn">
@@ -762,7 +790,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#ee253c"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_drn"
-	 src-required="false" dst-required="false"
+	 src-required="true" dst-required="false"
 	del-action="CASCADE"/>
 
 <table name="count_aggregate_value_len" layer="0" collapse-mode="2" max-obj-count="6">
@@ -772,18 +800,26 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="value">
+	<column name="value" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="low">
+	<column name="low" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="high">
+	<column name="high" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_len_pk" type="pk-constr" table="comptages.count_aggregate_value_len">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_count_aggregate" index="4"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="count_aggregate_fk" index="1"/>
+	</customidxs>
 </table>
 
 <relationship name="count_aggregate_has_many_count_aggregate_value_len" type="rel1n" layer="0"
@@ -793,8 +829,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#7a39c2"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_len"
-	 src-required="false" dst-required="false"
-	del-action="CASCADE"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <table name="count_aggregate_value_spd" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
@@ -803,13 +843,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="value">
+	<column name="value" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="low">
+	<column name="low" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="high">
+	<column name="high" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_spd_pk" type="pk-constr" table="comptages.count_aggregate_value_spd">
@@ -832,8 +872,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#3b6e63"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_spd"
-	 src-required="false" dst-required="false"
-	del-action="CASCADE"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <table name="count_aggregate_value_sds" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="comptages"/>
@@ -842,10 +886,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="mean">
+	<column name="mean" not-null="true">
 		<type name="real" length="0"/>
 	</column>
-	<column name="deviation">
+	<column name="deviation" not-null="true">
 		<type name="real" length="0"/>
 	</column>
 	<constraint name="count_aggregate_value_sds_pk" type="pk-constr" table="comptages.count_aggregate_value_sds">
@@ -868,7 +912,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#cbaa51"
 	 src-table="comptages.count_aggregate"
 	 dst-table="comptages.count_aggregate_value_sds"
-	 src-required="false" dst-required="false"
-	del-action="CASCADE"/>
+	 src-required="true" dst-required="false"
+	del-action="CASCADE">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 </dbmodel>

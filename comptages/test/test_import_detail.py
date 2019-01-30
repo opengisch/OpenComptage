@@ -66,11 +66,18 @@ class TestImportDetail(unittest.TestCase):
         query.next()
         category_id_2 = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-09-23', '2018-09-26', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-09-23', '2018-09-26', '2018-09-23', "
+            "'2018-09-26', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserVbv1(

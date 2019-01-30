@@ -55,11 +55,18 @@ class TestChartData(unittest.TestCase):
         query.next()
         model_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -94,11 +101,18 @@ class TestChartData(unittest.TestCase):
         query.next()
         model_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserVbv1(
@@ -133,11 +147,18 @@ class TestChartData(unittest.TestCase):
         query.next()
         model_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -175,11 +196,18 @@ class TestChartData(unittest.TestCase):
         query.next()
         model_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserVbv1(
@@ -226,10 +254,11 @@ class TestChartData(unittest.TestCase):
 
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation, "
-            "id_sensor_type) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {}, {});".format(
-                model_id, installation_id, sensor_type_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -314,10 +343,11 @@ class TestChartData(unittest.TestCase):
 
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation, "
-            "id_sensor_type) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {}, {});".format(
-                model_id, installation_id, sensor_type_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -386,13 +416,13 @@ class TestChartData(unittest.TestCase):
                     where name = 'Boucle'")
         query.next()
         sensor_type_id = query.value(0)
-
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation, "
-            "id_sensor_type) "
-            "VALUES (1, '2018-09-23', '2018-09-29', {}, {}, {});".format(
-                model_id, installation_id, sensor_type_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-09-23', '2018-09-29', '2018-09-23', "
+            "'2018-09-29', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserVbv1(
@@ -457,10 +487,11 @@ class TestChartData(unittest.TestCase):
 
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation, "
-            "id_sensor_type) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {}, {});".format(
-                model_id, installation_id, sensor_type_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserVbv1(

@@ -71,11 +71,18 @@ class TestImportAggregate(unittest.TestCase):
         while query.next():
             categories_id.append(query.value(0))
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -175,11 +182,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -247,11 +261,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -331,11 +352,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -455,11 +483,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -590,11 +625,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -704,11 +746,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_2_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
@@ -756,11 +805,18 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         lane_id = query.value(0)
 
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Tube'")
+        query.next()
+        sensor_type_id = query.value(0)
+
         query_str = (
             "INSERT INTO comptages.count(id, "
-            "start_process_date, end_process_date, id_model, id_installation) "
-            "VALUES (1, '2018-12-18', '2018-12-20', {}, {});".format(
-                model_id, installation_id))
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2018-12-18', '2018-12-20', '2018-12-18', "
+            "'2018-12-20', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
         data_parser = DataParserInt2(
