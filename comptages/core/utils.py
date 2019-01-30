@@ -30,7 +30,7 @@ def push_info(message):
 
 
 def push_warning(message):
-    iface.messageBar().pushWarning('Comptages', message)
+    iface.messageBar().pushMessage('Comptages', message, Qgis.Warning, 0)
 
 
 def push_error(message):

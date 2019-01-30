@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 from datetime import datetime
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem
-from comptages.core.utils import get_ui_class
+from comptages.core.utils import get_ui_class, push_warning
 from comptages.ui.resources import *
 
 
@@ -72,6 +72,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.buttonValidate.show()
             self.buttonRefuse.show()
             self.status = self.layers.IMPORT_STATUS_QUARANTINE
+            # Show message if data for this count already exists in the db
+            if self.layers.count_contains_data(count_id):
+                push_warning(('La base de données contient déjà des données '
+                              'pour ce comptage.'))
         else:
             self.buttonValidate.hide()
             self.buttonRefuse.hide()

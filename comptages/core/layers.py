@@ -1333,3 +1333,19 @@ class Layers(QObject):
                     start,
                     end))
         return '; '.join(result)
+
+    def count_contains_data(self, count_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select id from comptages.count_aggregate where id_count = {0} "
+            "and import_status = {1} "
+            "union select id from comptages.count_detail where id_count = {0} "
+            "and import_status = {1}; ".format(
+                count_id, self.IMPORT_STATUS_DEFINITIVE))
+        print(query_str)
+        query.exec_(query_str)
+        if query.next():
+            return True
+        return False
