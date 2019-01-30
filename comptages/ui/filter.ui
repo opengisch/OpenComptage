@@ -140,6 +140,9 @@
      <height>27</height>
     </rect>
    </property>
+   <property name="locale">
+    <locale language="French" country="France"/>
+   </property>
    <property name="displayFormat">
     <string>dd.MM.yyyy </string>
    </property>

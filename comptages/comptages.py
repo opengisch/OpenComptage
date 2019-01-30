@@ -1,7 +1,7 @@
 import os
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
-from qgis.PyQt.QtCore import QObject, Qt
+from qgis.PyQt.QtCore import QObject, Qt, QDateTime
 from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import qgsfunction, plugins
 
@@ -32,6 +32,10 @@ class Comptages(QObject):
         self.layers = Layers()
         self.chart_dock = ChartDock(self.iface, self.layers)
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.chart_dock)
+        self.filter_start_date = None
+        self.filter_end_date = None
+        self.filter_installation = None
+        self.filter_sensor = None
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
@@ -186,7 +190,27 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             'do_filter_action', 'Comptages', Qgis.Info)
         dlg = FilterDialog(self.iface)
+
+        # Set last values in the filter
+        if self.filter_start_date:
+            dlg.start_date.setDateTime(self.filter_start_date)
+        else:
+            dlg.start_date.setDateTime(QDateTime())
+        if self.filter_end_date:
+            dlg.end_date.setDateTime(self.filter_end_date)
+        else:
+            dlg.end_date.setDateTime(QDateTime())
+        if self.filter_installation:
+            dlg.installation.setCurrentIndex(self.filter_installation)
+        if self.filter_sensor:
+            dlg.sensor.setCurrentIndex(self.filter_sensor)
+
         if dlg.exec_():
+            self.filter_start_date = dlg.start_date.dateTime()
+            self.filter_end_date = dlg.end_date.dateTime()
+            self.filter_installation = dlg.installation.currentIndex()
+            self.filter_sensor = dlg.sensor.currentIndex()
+
             self.layers.apply_filter(
                 dlg.start_date.dateTime().toString('yyyy-MM-dd'),
                 dlg.end_date.dateTime().toString('yyyy-MM-dd'),
