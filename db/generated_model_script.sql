@@ -181,6 +181,8 @@ CREATE TABLE comptages.section (
 	end_dist decimal,
 	place_name text,
 	geometry geometry(LINESTRING, 2056) NOT NULL,
+	start_validity date,
+	end_validity date,
 	CONSTRAINT section_pk PRIMARY KEY (id)
 
 );
