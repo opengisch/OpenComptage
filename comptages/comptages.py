@@ -326,3 +326,13 @@ class Comptages(QObject):
         # Call the method of the current instance of the plugin
         return plugins['comptages'].is_section_highlighted(
             feature.attribute('id'))
+
+    @qgsfunction(args="auto", group="Comptages")
+    def check_dates(feature, parent):
+        """Used by count layer to show if a count was during a special
+        period"""
+
+        return plugins['comptages'].layers.check_dates(
+            feature.attribute('start_process_date'),
+            feature.attribute('end_process_date')
+        )
