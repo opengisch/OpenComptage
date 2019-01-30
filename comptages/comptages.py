@@ -239,7 +239,7 @@ class Comptages(QObject):
 
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.CMD')
-        title = 'Export configuration file'
+        title = 'Exporter la configuration'
         path = os.path.join(
             self.settings.value('config_export_directory'),
             "{}.CMD".format(installation_name))
@@ -258,7 +258,7 @@ class Comptages(QObject):
             'Comptages', Qgis.Info)
 
         file_dialog = QFileDialog()
-        title = 'Import data'
+        title = 'Importation'
         path = self.settings.value('data_import_directory')
         file = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
@@ -289,7 +289,7 @@ class Comptages(QObject):
         report_creator = ReportCreator(self.layers)
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
-        title = 'Export report file'
+        title = 'Exporter un rapport'
         path = os.path.join(
             self.settings.value('report_export_directory'),
             "{}.pdf".format("report"))
@@ -309,7 +309,7 @@ class Comptages(QObject):
         plan_creator = PlanCreator(self.layers)
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
-        title = 'Export configuration file'
+        title = 'Exporter plan de pose'
         path = os.path.join(
             self.settings.value('config_export_directory'),
             "{}.pdf".format("plan_de_pose"))

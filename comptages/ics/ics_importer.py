@@ -12,7 +12,7 @@ class IcsImporter():
 
     def ask_for_file(self):
         file_dialog = QFileDialog()
-        title = 'Import ics file'
+        title = 'Importer fichier ics'
         path = '/'
         file_path = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.ICS *.ics)")[0]

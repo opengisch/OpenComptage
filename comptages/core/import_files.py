@@ -19,7 +19,7 @@ class FileImporter():
 
     def ask_for_files(self):
         file_dialog = QFileDialog()
-        title = 'Import data'
+        title = 'Importer'
         path = self.settings.value('data_import_directory')
         files = QFileDialog.getOpenFileNames(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
