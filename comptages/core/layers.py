@@ -370,7 +370,7 @@ class Layers(QObject):
 
     def populate_list_of_highlighted_sections(
             self, start_date=None, end_date=None, permanent=None,
-            sensor=None):
+            sensor_type_id=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
 
@@ -387,9 +387,8 @@ class Layers(QObject):
             wheres.append("c.end_process_date <= '{}'::date".format(end_date))
         if permanent is not None:
                     wheres.append("i.permanent = '{}'::bool".format(permanent))
-        if sensor:
-            # TODO
-            pass
+        if sensor_type_id:
+            wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
 
         where_str = ''
         if wheres:
@@ -406,19 +405,24 @@ class Layers(QObject):
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
 
-    def apply_filter(self, start_date, end_date, installation, sensor):
-        if installation == 0:
+    def apply_filter(
+            self, start_date, end_date, installation_choice, sensor_choice):
+        if installation_choice == 0:
             permanent = None
-        if installation == 1:
+        elif installation_choice == 1:
             permanent = True
-        if installation == 2:
+        elif installation_choice == 2:
             permanent = False
 
-        # TODO
-        sensor = ''
+        if sensor_choice == 0:
+            sensor_type_id = None
+        elif sensor_choice == 1:
+            sensor_type_id = self.get_sensor_type_id('Tube')
+        elif sensor_choice == 2:
+            sensor_type_id = self.get_sensor_type_id('Boucle')
 
         self.populate_list_of_highlighted_sections(
-            start_date, end_date, permanent, sensor)
+            start_date, end_date, permanent, sensor_type_id)
         self.layers['section'].triggerRepaint()
 
     def is_connected(self):
@@ -1232,6 +1236,13 @@ class Layers(QObject):
             '"id" = {}'.format(sensor_type_id)
         )
         return next(self.layers['sensor_type'].getFeatures(request))
+
+    def get_sensor_type_id(self, sensor_type):
+        request = QgsFeatureRequest().setFilterExpression(
+            '"name" = \'{}\''.format(sensor_type)
+        )
+        return next(self.layers['sensor_type'].getFeatures(
+            request)).attribute('id')
 
     def get_directions_of_count(self, count_id):
         """Return a list of the directions of a count"""
