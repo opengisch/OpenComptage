@@ -37,7 +37,8 @@ class DataImporterInt2(DataImporter):
                 'Comptages', Qgis.Info)
         else:
             QgsMessageLog.logMessage(
-                'Importation terminée {}: {}'.format(self.basename, self.exception),
+                'Importation terminée {}: {}'.format(
+                    self.basename, self.exception),
                 'Comptages', Qgis.Critical)
 
         # TODO: Print errors to the QgsMessageLog
@@ -60,8 +61,8 @@ class DataImporterInt2(DataImporter):
         return intspec
 
     def get_bins(self, code):
-        """Returns an array with the bins if they exist, or the number of columns
-        of this data type"""
+        """Returns an array with the bins if they exist, or the number of
+        columns of this data type"""
         values = []
         if code == 'SPD' or code == 'SDS':
             values = self.file_header['SPDBINS'].split()
@@ -70,10 +71,6 @@ class DataImporterInt2(DataImporter):
         elif code == 'CLS':
             for i in range(1, len(self.categories)+1):
                 values.append(self.categories[i])
-            # FIXME: self.categories
-            #values = self.layers.get_category_bins(
-            #    self.file_header['CLASS'])
-            pass
         else:
             values = self.data_header[self.intspec.index(code)]
         return values
