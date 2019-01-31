@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.core import QgsMessageLog, Qgis
 
-
+from comptages.core.layers import Layers
 from comptages.data.data_importer import DataImporter
 
 
@@ -125,7 +125,7 @@ class DataImporterInt2(DataImporter):
                          row['start'],
                          row['end'],
                          self.basename,
-                         1,  # FIXME: self.IMPORT_STATUS_QUARANTINE,
+                         Layers.IMPORT_STATUS_QUARANTINE,
                          self.count_id,
                          self.lanes[int(row['channel'])]))
 

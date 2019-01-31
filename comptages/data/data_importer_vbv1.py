@@ -3,6 +3,7 @@ from datetime import datetime
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.core import QgsMessageLog, Qgis
 
+from comptages.core.layers import Layers
 from comptages.data.data_importer import DataImporter
 
 
@@ -65,7 +66,7 @@ class DataImporterVbv1(DataImporter):
                          row['length'],
                          row['height'],
                          self.basename,
-                         1,  # FIXME: self.IMPORT_STATUS_QUARANTINE,
+                         Layers.IMPORT_STATUS_QUARANTINE,
                          self.lanes[int(row['lane'])],
                          self.count_id,
                          row['category_id']))
