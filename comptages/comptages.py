@@ -39,6 +39,7 @@ class Comptages(QObject):
         self.filter_installation = None
         self.filter_sensor = None
         self.tm = QgsApplication.taskManager()
+        self.tm.allTasksFinished.connect(self.task_finished)
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
@@ -224,6 +225,10 @@ class Comptages(QObject):
 
         self.tm.addTask(task)
         return task
+
+    def task_finished(self):
+        push_info(('Toutes les tâches sont terminées. Consultez le journal '
+                   'pour plus de détails.'))
 
     def do_validate_imported_files_action(self):
         QgsMessageLog.logMessage(
