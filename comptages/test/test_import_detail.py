@@ -76,10 +76,9 @@ class TestImportDetail(unittest.TestCase):
         query_str = (
             "INSERT INTO comptages.count(id, "
             "start_process_date, end_process_date, start_service_date, "
-            "end_service_date, id_sensor_type, id_model, id_installation, "
-            "id_class) "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
             "VALUES (1, '2018-09-23', '2018-09-26', '2018-09-23', "
-            "'2018-09-26', {}, {}, {}, 6);".format(  # FIXME: id_class
+            "'2018-09-26', {}, {}, {});".format(
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
