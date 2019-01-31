@@ -166,12 +166,24 @@ class Comptages(QObject):
         self.enable_actions_if_needed()
 
     def do_create_new_action(self):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         self.layers.create_count()
 
     def do_select_edit_action(self):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         self.layers.edit_count()
 
     def do_import_files_action(self):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         file_dialog = QFileDialog()
         title = 'Importer'
         path = self.settings.value('data_import_directory')
@@ -182,7 +194,6 @@ class Comptages(QObject):
             self.import_file(file_path)
 
     def import_file(self, file_path, count_id=None):
-
         file_header = DataImporter.parse_file_header(file_path)
         if not count_id:
             count_id = self.layers.guess_count_id(
@@ -219,6 +230,10 @@ class Comptages(QObject):
                    'pour plus de détails.'))
 
     def do_validate_imported_files_action(self):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         self.chart_dock.show_next_quarantined_chart()
 
     def do_filter_action(self):
@@ -291,6 +306,10 @@ class Comptages(QObject):
         self.import_file(file_path, count_id)
 
     def do_generate_report_action(self, count_id):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         report_creator = ReportCreator(self.layers)
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
@@ -323,6 +342,10 @@ class Comptages(QObject):
         plan_creator.export_pdf(count_id, file)
 
     def do_generate_chart_action(self, count_id):
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
         self.chart_dock.set_attributes(count_id)
 
         self.chart_dock.show()
