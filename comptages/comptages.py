@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.PyQt.QtCore import QObject, Qt, QDateTime
@@ -192,15 +194,24 @@ class Comptages(QObject):
 
     def import_file(self, file_path, count_id=None):
 
+        file_header = DataImporter.parse_file_header(file_path)
         if not count_id:
-            # TODO: guess count_id
-            count_id=1
-            pass
+            count_id = self.layers.guess_count_id(
+                file_header['SITE'],
+                datetime.strptime(file_header['STARTREC'], "%H:%M %d/%m/%y"),
+                datetime.strptime(file_header['STOPREC'], "%H:%M %d/%m/%y"))
+
+        if not count_id:
+            QgsMessageLog.logMessage(
+                'Impossible de trouver le comptage associé {}'.format(
+                    file_path),
+                'Comptages', Qgis.Critical)
+            return
 
         QgsMessageLog.logMessage(
             'Importation {}'.format(file_path), 'Comptages', Qgis.Info)
 
-        file_format = DataImporter.parse_file_header(file_path)['FORMAT']
+        file_format = file_header['FORMAT']
 
         if file_format == 'VBV-1':
             task = DataImporterVbv1(file_path, count_id)
