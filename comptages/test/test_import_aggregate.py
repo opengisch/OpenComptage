@@ -89,7 +89,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_cls.i00'))
+                'simple_aggregate_cls.i00'),
+            1)
 
         task.waitForFinished()
         time.sleep(2)
@@ -201,7 +202,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_drn.i00'))
+                'simple_aggregate_drn.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -282,7 +284,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_len.i00'))
+                'simple_aggregate_len.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -375,7 +378,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_spd.i00'))
+                'simple_aggregate_spd.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -508,7 +512,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_sds.i00'))
+                'simple_aggregate_sds.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -652,7 +657,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_cnt.i00'))
+                'simple_aggregate_cnt.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -775,7 +781,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_multi_channel.i00'))
+                'simple_aggregate_multi_channel.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -836,7 +843,8 @@ class TestImportAggregate(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'simple_aggregate_multi_spec.i00'))
+                'simple_aggregate_multi_spec.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing

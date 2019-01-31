@@ -73,7 +73,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'speed_chart_aggregate.i00'))
+                'speed_chart_aggregate.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -121,7 +122,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'speed_chart_detail.V01'))
+                'speed_chart_detail.V01'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -169,7 +171,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'category_chart_aggregate.i00'))
+                'category_chart_aggregate.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -220,7 +223,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'category_chart_detail.V01'))
+                'category_chart_detail.V01'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -273,7 +277,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'time_chart_aggregate.i00'))
+                'time_chart_aggregate.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -364,7 +369,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'time_chart_aggregate_direction.i00'))
+                'time_chart_aggregate_direction.i00'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -441,7 +447,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'time_chart_detail.V01'))
+                'time_chart_detail.V01'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
@@ -512,7 +519,8 @@ class TestChartData(unittest.TestCase):
         task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
-                'time_chart_detail_direction.V01'))
+                'time_chart_detail_direction.V01'),
+            1)
 
         task.waitForFinished()
         # Let the time to the db to finish the writing
