@@ -2,7 +2,7 @@ import os
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.PyQt.QtCore import QObject, Qt, QDateTime
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import QgsMessageLog, Qgis, QgsApplication
 from qgis.utils import qgsfunction, plugins
 
 from comptages.core.settings import Settings, SettingsDialog
@@ -10,7 +10,9 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
-from comptages.core.import_files import FileImporter
+from comptages.data.data_importer import DataImporter
+from comptages.data.data_importer_vbv1 import DataImporterVbv1
+from comptages.data.data_importer_int2 import DataImporterInt2
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.parser.data_parser import (
     DataParser, DataParserVbv1, DataParserInt2)
@@ -36,6 +38,7 @@ class Comptages(QObject):
         self.filter_end_date = None
         self.filter_installation = None
         self.filter_sensor = None
+        self.tm = QgsApplication.taskManager()
 
     def initGui(self):
         QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
@@ -179,7 +182,39 @@ class Comptages(QObject):
     def do_import_files_action(self):
         QgsMessageLog.logMessage(
             'do_import_files_action', 'Comptages', Qgis.Info)
-        FileImporter(self.layers, self.chart_dock)
+
+        file_dialog = QFileDialog()
+        title = 'Importer'
+        path = self.settings.value('data_import_directory')
+        files = QFileDialog.getOpenFileNames(
+            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
+
+        for file_path in files:
+            self.import_file(file_path)
+
+    def import_file(self, file_path, count_id=None):
+
+        if not count_id:
+            # TODO: guess count_id
+            count_id=1
+            pass
+
+        QgsMessageLog.logMessage(
+            'Importation {}'.format(file_path), 'Comptages', Qgis.Info)
+
+        file_format = DataImporter.parse_file_header(file_path)['FORMAT']
+
+        if file_format == 'VBV-1':
+            task = DataImporterVbv1(file_path, count_id)
+        elif file_format == 'INT-2':
+            task = DataImporterInt2(file_path, count_id)
+        else:
+            push_info('Format {} of {} not supported'.format(
+                file_format, file_path))
+            return
+
+        self.tm.addTask(task)
+        return task
 
     def do_validate_imported_files_action(self):
         QgsMessageLog.logMessage(
