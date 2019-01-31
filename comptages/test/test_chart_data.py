@@ -1,9 +1,9 @@
 import os
+import time
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.testing import unittest
 from qgis.utils import plugins
 from comptages.core.settings import Settings
-from comptages.parser.data_parser import DataParserVbv1, DataParserInt2
 
 
 class TestChartData(unittest.TestCase):
@@ -13,6 +13,7 @@ class TestChartData(unittest.TestCase):
         self.settings = Settings()
         self.layers = plugins['comptages'].layers
         self.layers.load_layers()
+        self.comptages = plugins['comptages']
 
         self.db = QSqlDatabase.addDatabase(
             "QPSQL", "test_chart_data_connection")
@@ -69,12 +70,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'speed_chart_aggregate.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         x, y = self.layers.get_aggregate_speed_chart_data(
             1, self.layers.IMPORT_STATUS_QUARANTINE)
@@ -115,12 +118,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserVbv1(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'speed_chart_detail.V01'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         x, y = self.layers.get_detail_speed_chart_data(
             1, self.layers.IMPORT_STATUS_QUARANTINE)
@@ -161,12 +166,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'category_chart_aggregate.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         label, values = self.layers.get_aggregate_category_chart_data(
             1, self.layers.IMPORT_STATUS_QUARANTINE)
@@ -210,12 +217,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserVbv1(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'category_chart_detail.V01'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         label, values = self.layers.get_detail_category_chart_data(
             1, self.layers.IMPORT_STATUS_QUARANTINE)
@@ -261,12 +270,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'time_chart_aggregate.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
             1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0])
@@ -350,12 +361,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'time_chart_aggregate_direction.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_direction(
             1, self.layers.IMPORT_STATUS_QUARANTINE, 1)
@@ -425,12 +438,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserVbv1(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'time_chart_detail.V01'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_lane(
             1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0])
@@ -494,12 +509,14 @@ class TestChartData(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserVbv1(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'time_chart_detail_direction.V01'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_direction(
             1, self.layers.IMPORT_STATUS_QUARANTINE, 1)

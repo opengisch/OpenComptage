@@ -1,9 +1,9 @@
 import os
+import time
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.testing import unittest
 from qgis.utils import plugins
 from comptages.core.settings import Settings
-from comptages.parser.data_parser import DataParserInt2
 
 
 class TestImportAggregate(unittest.TestCase):
@@ -13,6 +13,7 @@ class TestImportAggregate(unittest.TestCase):
         self.settings = Settings()
         self.layers = plugins['comptages'].layers
         self.layers.load_layers()
+        self.comptages = plugins['comptages']
 
         self.db = QSqlDatabase.addDatabase(
             "QPSQL", "test_import_aggregate_connection")
@@ -85,12 +86,13 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_cls.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        time.sleep(2)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -196,12 +198,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_drn.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -275,12 +279,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_len.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -366,12 +372,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_spd.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -497,12 +505,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_sds.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -639,12 +649,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_cnt.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
@@ -760,12 +772,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_multi_channel.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT * FROM comptages.count_aggregate WHERE file_name = \
@@ -819,12 +833,14 @@ class TestImportAggregate(unittest.TestCase):
                 sensor_type_id, model_id, installation_id))
         query.exec_(query_str)
 
-        data_parser = DataParserInt2(
-            self.layers,
+        task = self.comptages.import_file(
             os.path.join(
                 self.test_data_path,
                 'simple_aggregate_multi_spec.i00'))
-        data_parser.parse_and_import_data(1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
 
         query.exec_(
             "SELECT type, start, \"end\", file_name, import_status, id_count, \
