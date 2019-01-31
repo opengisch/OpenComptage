@@ -25,7 +25,6 @@ from comptages.ui.resources import *
 class Comptages(QObject):
 
     def __init__(self, iface):
-        QgsMessageLog.logMessage('__init__', 'Comptages', Qgis.Info)
         QObject.__init__(self)
 
         self.iface = iface
@@ -42,8 +41,6 @@ class Comptages(QObject):
         self.tm.allTasksFinished.connect(self.task_finished)
 
     def initGui(self):
-        QgsMessageLog.logMessage('initGui', 'Comptages', Qgis.Info)
-
         self.connect_db_action = QAction(
             QIcon(':/plugins/Comptages/images/power.png'),
             'Connection DB',
@@ -165,25 +162,16 @@ class Comptages(QObject):
         del self.toolbar
 
     def do_connect_db_action(self):
-        QgsMessageLog.logMessage(
-            'do_connect_db_action', 'Comptages', Qgis.Info)
         self.layers.load_layers()
         self.enable_actions_if_needed()
 
     def do_create_new_action(self):
-        QgsMessageLog.logMessage(
-            'do_create_new_action', 'Comptages', Qgis.Info)
         self.layers.create_count()
 
     def do_select_edit_action(self):
-        QgsMessageLog.logMessage(
-            'do_select_edit_action', 'Comptages', Qgis.Info)
         self.layers.edit_count()
 
     def do_import_files_action(self):
-        QgsMessageLog.logMessage(
-            'do_import_files_action', 'Comptages', Qgis.Info)
-
         file_dialog = QFileDialog()
         title = 'Importer'
         path = self.settings.value('data_import_directory')
@@ -231,13 +219,9 @@ class Comptages(QObject):
                    'pour plus de détails.'))
 
     def do_validate_imported_files_action(self):
-        QgsMessageLog.logMessage(
-            'do_validate_imported_files_action', 'Comptages', Qgis.Info)
         self.chart_dock.show_next_quarantined_chart()
 
     def do_filter_action(self):
-        QgsMessageLog.logMessage(
-            'do_filter_action', 'Comptages', Qgis.Info)
         dlg = FilterDialog(self.iface)
 
         # Set last values in the filter
@@ -267,19 +251,12 @@ class Comptages(QObject):
                 dlg.sensor.currentIndex())
 
     def do_import_ics_action(self):
-        QgsMessageLog.logMessage(
-            'do_import_ics_action', 'Comptages', Qgis.Info)
         IcsImporter(self.layers)
 
     def do_settings_action(self):
-        QgsMessageLog.logMessage(
-            'do_settings_action', 'Comptages', Qgis.Info)
         self.settings_dialog.exec_()
 
     def do_export_configuration_action(self, count_id):
-        QgsMessageLog.logMessage(
-            'do_export_configuration_action {}'.format(count_id),
-            'Comptages', Qgis.Info)
         config_creator = ConfigCreatorCmd(self.layers, count_id)
         config_creator.set_section_commands()
 
@@ -302,10 +279,6 @@ class Comptages(QObject):
         push_info('Written config file {}'.format(file))
 
     def do_import_single_file_action(self, count_id):
-        QgsMessageLog.logMessage(
-            'do_import_single_file_action {}'.format(count_id),
-            'Comptages', Qgis.Info)
-
         file_dialog = QFileDialog()
         title = 'Importation'
         path = self.settings.value('data_import_directory')
@@ -318,10 +291,6 @@ class Comptages(QObject):
         self.import_file(file_path, count_id)
 
     def do_generate_report_action(self, count_id):
-        QgsMessageLog.logMessage(
-            'do_generate_report_action {}'.format(count_id),
-            'Comptages', Qgis.Info)
-
         report_creator = ReportCreator(self.layers)
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
@@ -338,10 +307,6 @@ class Comptages(QObject):
         report_creator.export_pdf(count_id, file)
 
     def do_export_plan_action(self, count_id):
-        QgsMessageLog.logMessage(
-            'do_export_plan_action {}'.format(count_id),
-            'Comptages', Qgis.Info)
-
         plan_creator = PlanCreator(self.layers)
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
@@ -358,9 +323,6 @@ class Comptages(QObject):
         plan_creator.export_pdf(count_id, file)
 
     def do_generate_chart_action(self, count_id):
-        QgsMessageLog.logMessage(
-            'do_generate_chart_action {}'.format(count_id),
-            'Comptages', Qgis.Info)
         self.chart_dock.set_attributes(count_id)
 
         self.chart_dock.show()
