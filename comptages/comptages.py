@@ -14,8 +14,6 @@ from comptages.data.data_importer import DataImporter
 from comptages.data.data_importer_vbv1 import DataImporterVbv1
 from comptages.data.data_importer_int2 import DataImporterInt2
 from comptages.config.config_creator import ConfigCreatorCmd
-from comptages.parser.data_parser import (
-    DataParser, DataParserVbv1, DataParserInt2)
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
 from comptages.ics.ics_importer import IcsImporter
