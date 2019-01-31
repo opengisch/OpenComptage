@@ -1,9 +1,8 @@
 import os
-import abc
 
 from datetime import datetime
 
-from qgis.core import QgsTask
+from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 from comptages.core.settings import Settings
@@ -24,14 +23,28 @@ class DataImporter(QgsTask):
         self.categories = dict()
         self.populate_category_dict()
         self.data_header = self.parse_data_header()
+        self.exception = None
 
     def run(self):
+        """To be implemented in the subclasses"""
         pass
 
     def finished(self, result):
-        pass
+        if result:
+            QgsMessageLog.logMessage(
+                'Importation terminée {}'.format(self.basename),
+                'Comptages', Qgis.Info)
+        else:
+            QgsMessageLog.logMessage(
+                'Importation terminée avec des erreurs {}: {}'.format(
+                    self.basename, self.exception),
+                'Comptages', Qgis.Critical)
+
+        self.db.close()
+        del self.db
 
     def cancel(self):
+        # TODO: Cancel needed?
         pass
 
     def connect_to_db(self):
@@ -92,18 +105,6 @@ class DataImporter(QgsTask):
                             value = 'SWISS10'
                         file_header[key] = value
         return file_header
-
-    # TODO: Remove?
-    @staticmethod
-    def get_file_format(file_path):
-        with open(file_path) as f:
-            for line in f:
-                if line.startswith('* FORMAT'):
-                    line = line[2:]
-                    splitted = line.split('=', 1)
-                    if len(splitted) > 1:
-                        return splitted[1].strip()
-        return None
 
     def parse_data_header(self):
         data_header = []

@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from qgis.PyQt.QtSql import QSqlQuery
-from qgis.core import QgsMessageLog, Qgis
 
 from comptages.core.layers import Layers
 from comptages.data.data_importer import DataImporter
@@ -11,7 +10,6 @@ class DataImporterVbv1(DataImporter):
 
     def __init__(self, file_path, count_id):
         super().__init__(file_path, count_id)
-        self.exception = None
 
     def run(self):
         try:
@@ -28,22 +26,6 @@ class DataImporterVbv1(DataImporter):
             self.exception = e
             return False
         return True
-
-    def finished(self, result):
-        if result:
-            QgsMessageLog.logMessage(
-                'Importation terminée {}'.format(self.basename),
-                'Comptages', Qgis.Info)
-        else:
-            pass
-        # TODO: Print errors to the QgsMessageLog
-
-        self.db.close()
-        del self.db
-
-    def cancel(self):
-        QgsMessageLog.logMessage(
-            'Importation terminée', 'Comptages', Qgis.Info)
 
     def write_row_into_db(self, line):
         row = self.parse_data_line(line)

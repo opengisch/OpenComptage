@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from qgis.PyQt.QtSql import QSqlQuery
-from qgis.core import QgsMessageLog, Qgis
 
 from comptages.core.layers import Layers
 from comptages.data.data_importer import DataImporter
@@ -12,7 +11,6 @@ class DataImporterInt2(DataImporter):
         super().__init__(file_path, count_id)
         self.intspec = self.get_intspec()
         self.number_of_lines = self.get_number_of_lines()
-        self.exception = None
 
     def run(self):
         try:
@@ -29,26 +27,6 @@ class DataImporterInt2(DataImporter):
             self.exception = e
             return False
         return True
-
-    def finished(self, result):
-        if result:
-            QgsMessageLog.logMessage(
-                'Importation terminée {}'.format(self.basename),
-                'Comptages', Qgis.Info)
-        else:
-            QgsMessageLog.logMessage(
-                'Importation terminée {}: {}'.format(
-                    self.basename, self.exception),
-                'Comptages', Qgis.Critical)
-
-        # TODO: Print errors to the QgsMessageLog
-
-        self.db.close()
-        del self.db
-
-    def cancel(self):
-        QgsMessageLog.logMessage(
-            'Importation terminée', 'Comptages', Qgis.Info)
 
     def get_intspec(self):
         self.file_header = self.parse_file_header(self.file_path)
