@@ -295,26 +295,13 @@ class Comptages(QObject):
         file_dialog = QFileDialog()
         title = 'Importation'
         path = self.settings.value('data_import_directory')
-        file = QFileDialog.getOpenFileName(
+        file_path = QFileDialog.getOpenFileName(
             file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
 
-        if not file:
+        if not file_path:
             return
 
-        file_format = DataParser.get_file_format(file)
-
-        try:
-            if file_format == 'VBV-1':
-                data_parser = DataParserVbv1(self.layers, file)
-            elif file_format == 'INT-2':
-                data_parser = DataParserInt2(self.layers, file)
-            else:
-                push_info('Format {} not supported'.format(file_format))
-                return
-
-            data_parser.parse_and_import_data(count_id)
-        except Exception as e:
-            push_info('Error during data parsing: {}'.format(str(e)))
+        self.import_file(file_path, count_id)
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
