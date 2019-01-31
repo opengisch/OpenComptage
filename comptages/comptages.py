@@ -209,7 +209,8 @@ class Comptages(QObject):
             return
 
         QgsMessageLog.logMessage(
-            'Importation {}'.format(file_path), 'Comptages', Qgis.Info)
+            'Importation {}'.format(os.path.basename(file_path)),
+            'Comptages', Qgis.Info)
 
         file_format = file_header['FORMAT']
 
@@ -219,7 +220,8 @@ class Comptages(QObject):
             task = DataImporterInt2(file_path, count_id)
         else:
             push_info('Format {} of {} not supported'.format(
-                file_format, file_path))
+                file_format,
+                os.path.basename(file_path)))
             return
 
         self.tm.addTask(task)
