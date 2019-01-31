@@ -29,6 +29,8 @@ class DataImporterVbv1(DataImporter):
 
     def write_row_into_db(self, line):
         row = self.parse_data_line(line)
+        if not row:
+            return
 
         query = QSqlQuery(self.db)
 
@@ -56,35 +58,26 @@ class DataImporterVbv1(DataImporter):
         query.exec_(query_str)
 
     def parse_data_line(self, line):
-        parsed_line = dict()
+        parsed_line = None
+        try:
+            parsed_line = dict()
 
-        parsed_line['numbering'] = line[0:6]
-        parsed_line['timestamp'] = datetime.strptime(
-            "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f")
-        parsed_line['reserve_code'] = line[25:31]
-        parsed_line['lane'] = self._cast_data_to_int(line[32:34], 'lane')
-        parsed_line['direction'] = self._cast_data_to_int(
-            line[35:36], 'direction')
-        parsed_line['distance_front_front'] = float(line[37:41])
-        parsed_line['distance_front_back'] = float(line[42:46])
-        parsed_line['speed'] = self._cast_data_to_int(line[47:50], 'speed')
-        parsed_line['length'] = self._cast_data_to_int(
-            line[52:56], 'length')
-        parsed_line['category'] = self._cast_data_to_int(
-            line[60:62].strip(), 'category')
-        parsed_line['category_id'] = int(
-            self.categories[int(parsed_line['category'])])
-        parsed_line['height'] = line[63:65].strip()
+            parsed_line['numbering'] = line[0:6]
+            parsed_line['timestamp'] = datetime.strptime(
+                "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f")
+            parsed_line['reserve_code'] = line[25:31]
+            parsed_line['lane'] = int(line[32:34])
+            parsed_line['direction'] = int(line[35:36])
+            parsed_line['distance_front_front'] = float(line[37:41])
+            parsed_line['distance_front_back'] = float(line[42:46])
+            parsed_line['speed'] = int(line[47:50])
+            parsed_line['length'] = int(line[52:56])
+            parsed_line['category'] = int(line[60:62].strip())
+            parsed_line['category_id'] = int(
+                self.categories[int(parsed_line['category'])])
+            parsed_line['height'] = line[63:65].strip()
+        except ValueError:
+            # This can happen when some values are missed from a line
+            return None
 
         return parsed_line
-
-    def _cast_data_to_int(self, data, name):
-        try:
-            return int(data)
-        except ValueError:
-            if name == 'speed':
-                return 0
-            if name == 'length':
-                return 0
-            if name == 'category':
-                return 0
