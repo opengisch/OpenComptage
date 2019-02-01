@@ -38,7 +38,6 @@ class Comptages(QObject):
         self.filter_installation = None
         self.filter_sensor = None
         self.tm = QgsApplication.taskManager()
-        self.tm.allTasksFinished.connect(self.task_finished)
 
     def initGui(self):
         self.connect_db_action = QAction(
@@ -224,10 +223,12 @@ class Comptages(QObject):
                 os.path.basename(file_path)))
             return
 
+        self.tm.allTasksFinished.connect(self.task_finished)
         self.tm.addTask(task)
         return task
 
     def task_finished(self):
+        self.tm.allTasksFinished.disconnect(self.task_finished)
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
 
