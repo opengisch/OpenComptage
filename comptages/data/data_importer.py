@@ -5,6 +5,7 @@ from datetime import datetime
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
+from comptages.core.utils import connect_to_db
 from comptages.core.settings import Settings
 
 
@@ -16,7 +17,7 @@ class DataImporter(QgsTask):
             'Importation fichier {}'.format(self.basename))
         self.file_path = file_path
         self.count_id = count_id
-        self.connect_to_db()
+        self.db = connect_to_db()
         self.file_header = self.parse_file_header(self.file_path)
         self.lanes = dict()
         self.populate_lane_dict()
@@ -46,16 +47,6 @@ class DataImporter(QgsTask):
     def cancel(self):
         # TODO: Cancel needed?
         pass
-
-    def connect_to_db(self):
-        settings = Settings()
-        self.db = QSqlDatabase.addDatabase("QPSQL", str(datetime.now()))
-        self.db.setHostName(settings.value("db_host"))
-        self.db.setPort(settings.value("db_port"))
-        self.db.setDatabaseName(settings.value("db_name"))
-        self.db.setUserName(settings.value("db_username"))
-        self.db.setPassword(settings.value("db_password"))
-        self.db.open()
 
     def get_number_of_lines(self):
         return sum(1 for line in open(self.file_path))

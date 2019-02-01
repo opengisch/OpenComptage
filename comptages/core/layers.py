@@ -10,7 +10,7 @@ from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
-from comptages.core.utils import push_info
+from comptages.core.utils import push_info, connect_to_db
 
 
 class Layers(QObject):
@@ -427,18 +427,8 @@ class Layers(QObject):
         return True
 
     def init_db_connection(self):
-
         if self.db is None:
-
-            settings = Settings()
-
-            self.db = QSqlDatabase.addDatabase("QPSQL", "layers_db_connection")
-            self.db.setHostName(settings.value("db_host"))
-            self.db.setPort(settings.value("db_port"))
-            self.db.setDatabaseName(settings.value("db_name"))
-            self.db.setUserName(settings.value("db_username"))
-            self.db.setPassword(settings.value("db_password"))
-            self.db.open()
+            self.db = connect_to_db()
 
     def close_db_connection(self):
         if self.db is not None:

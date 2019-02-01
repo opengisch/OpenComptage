@@ -1,10 +1,15 @@
 import os
 
+from datetime import datetime
+
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
+
+from comptages.core.settings import Settings
 
 
 def get_ui_class(ui_file):
@@ -53,3 +58,16 @@ def create_progress_bar(message):
 
 def clear_widgets():
     iface.messageBar().clearWidgets()
+
+
+def connect_to_db():
+    settings = Settings()
+    db = QSqlDatabase.addDatabase("QPSQL", str(datetime.now()))
+    db.setHostName(settings.value("db_host"))
+    db.setPort(settings.value("db_port"))
+    db.setDatabaseName(settings.value("db_name"))
+    db.setUserName(settings.value("db_username"))
+    db.setPassword(settings.value("db_password"))
+    db.open()
+
+    return db

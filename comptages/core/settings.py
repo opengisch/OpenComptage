@@ -1,12 +1,13 @@
+import os
+
 from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.uic import loadUiType
 
 from comptages.qgissettingmanager import SettingManager, Scope
 from comptages.qgissettingmanager.types import String, Integer, Bool
 from comptages.qgissettingmanager.setting_dialog import SettingDialog
 
-from comptages.core.utils import get_ui_class
 
-FORM_CLASS = get_ui_class('settings_dialog.ui')
 
 
 class Settings(SettingManager):
@@ -35,6 +36,27 @@ class Settings(SettingManager):
             String("picture_directory", Scope.Global, '/'))
         self.add_setting(
             String("report_export_directory", Scope.Global, '/'))
+
+
+def get_ui_class(ui_file):
+    """Get UI Python class from .ui file.
+       Can be filename.ui or subdirectory/filename.ui
+    :param ui_file: The file of the ui in svir.ui
+    :type ui_file: str
+    """
+    os.path.sep.join(ui_file.split('/'))
+    ui_file_path = os.path.abspath(
+            os.path.join(
+                    os.path.dirname(__file__),
+                    os.pardir,
+                    'ui',
+                    ui_file
+            )
+    )
+    return loadUiType(ui_file_path)[0]
+
+
+FORM_CLASS = get_ui_class('settings_dialog.ui')
 
 
 class SettingsDialog(QDialog, FORM_CLASS, SettingDialog):
