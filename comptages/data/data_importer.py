@@ -1,12 +1,9 @@
 import os
 
-from datetime import datetime
-
 from qgis.core import QgsTask, Qgis, QgsMessageLog
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtSql import QSqlQuery
 
 from comptages.core.utils import connect_to_db
-from comptages.core.settings import Settings
 
 
 class DataImporter(QgsTask):
