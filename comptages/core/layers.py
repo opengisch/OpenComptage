@@ -495,7 +495,7 @@ class Layers(QObject):
         return next(self.layers['section'].getFeatures(request))
 
     def get_aggregate_speed_chart_data(
-            self, count_id, status):
+            self, count_id, status, section_id):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
@@ -505,10 +505,13 @@ class Layers(QObject):
             "comptages.count_aggregate as agg "
             "join comptages.count_aggregate_value_spd as spd "
             "on	agg.id = spd.id_count_aggregate "
+            "join comptages.lane as lan "
+            "on agg.id_lane = lan.id "
             "where agg.id_count = {} and agg.type = 'SPD' "
             "and agg.import_status = {} "
+            "and lan.id_section = '{}'"
             "group by spd.low, spd.high "
-            "order by spd.low;".format(count_id, status))
+            "order by spd.low;".format(count_id, status, section_id))
 
         query.exec_(query_str)
         x = []
