@@ -8,8 +8,6 @@ from comptages.qgissettingmanager.types import String, Integer, Bool
 from comptages.qgissettingmanager.setting_dialog import SettingDialog
 
 
-
-
 class Settings(SettingManager):
     def __init__(self):
         SettingManager.__init__(self, 'Comptages')
