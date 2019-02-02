@@ -524,7 +524,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_aggregate_category_chart_data(self, count_id, status):
+    def get_aggregate_category_chart_data(self, count_id, status, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -535,10 +535,13 @@ class Layers(QObject):
             "on agg.id = cls.id_count_aggregate "
             "join comptages.category as cat "
             "on cls.id_category = cat.id "
+            "join comptages.lane as lan "
+            "on agg.id_lane = lan.id "
             "where agg.id_count = {} and agg.type = 'CLS' "
             "and agg.import_status = {} "
+            "and lan.id_section = '{}' "
             "group by cat.code, cat.name "
-            "order by cat.code;".format(count_id, status))
+            "order by cat.code;".format(count_id, status, section_id))
 
         query.exec_(query_str)
         labels = []
@@ -569,7 +572,7 @@ class Layers(QObject):
         return days
 
     def get_aggregate_time_chart_data_by_lane(
-            self, count_id, status, lane):
+            self, count_id, status, lane, section_id):
 
         xs = []
         ys = []
@@ -577,13 +580,13 @@ class Layers(QObject):
         days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day_by_lane(
-                count_id, day, status, lane)
+                count_id, day, status, lane, section_id)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_aggregate_time_chart_data_day_by_lane(
-            self, count_id, day, status, lane):
+            self, count_id, day, status, lane, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -593,13 +596,16 @@ class Layers(QObject):
             "comptages.count_aggregate as agg "
             "join comptages.count_aggregate_value_cls as cls "
             "on agg.id = cls.id_count_aggregate "
+            "join comptages.lane as lan "
+            "on agg.id_lane = lan.id "
             "where agg.id_count = {} and agg.type = 'CLS' "
             "and agg.id_lane = {} "
             "and date_trunc('day', agg.start) = '{}' "
             "and agg.import_status = {} "
+            "and lan.id_section = '{}' "
             "group by agg.start, agg.end "
             "order by agg.start".format(
-                count_id, lane, day, status)
+                count_id, lane, day, status, section_id)
         )
         query.exec_(query_str)
 
@@ -615,7 +621,7 @@ class Layers(QObject):
         return x, y
 
     def get_aggregate_time_chart_data_by_direction(
-            self, count_id, status, direction):
+            self, count_id, status, direction, section_id):
 
         xs = []
         ys = []
@@ -623,13 +629,13 @@ class Layers(QObject):
         days = self.get_days_of_aggregate_dataset(count_id, status)
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day_by_direction(
-                count_id, day, status, direction)
+                count_id, day, status, direction, section_id)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_aggregate_time_chart_data_day_by_direction(
-            self, count_id, day, status, direction):
+            self, count_id, day, status, direction, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -645,9 +651,10 @@ class Layers(QObject):
             "and lan.direction = {} "
             "and date_trunc('day', agg.start) = '{}' "
             "and agg.import_status = {} "
+            "and lan.id_section = '{}' "
             "group by agg.start, agg.end, lan.direction "
             "order by agg.start".format(
-                count_id, direction, day, status)
+                count_id, direction, day, status, section_id)
         )
         query.exec_(query_str)
 
@@ -662,7 +669,7 @@ class Layers(QObject):
 
         return x, y
 
-    def get_detail_category_chart_data(self, count_id, status):
+    def get_detail_category_chart_data(self, count_id, status, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -671,10 +678,13 @@ class Layers(QObject):
             "comptages.count_detail as det "
             "join comptages.category as cat "
             "on det.id_category = cat.id "
+            "join comptages.lane as lan "
+            "on det.id_lane = lan.id "
             "where det.id_count = {} "
             "and det.import_status = {} "
+            "and lan.id_section = '{}' "
             "group by det.id_category, cat.code, cat.name "
-            "order by cat.code;".format(count_id, status))
+            "order by cat.code;".format(count_id, status, section_id))
 
         query.exec_(query_str)
         labels = []
@@ -687,53 +697,106 @@ class Layers(QObject):
 
         return labels, values
 
-    def get_detail_speed_chart_data(self, count_id, status):
+    def get_detail_speed_chart_data(self, count_id, status, section_id):
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
         query_str = (
             "select * from ("
+
             "select 0 as low, 10, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 0 and 9 and import_status = {1} union "
+
             "select 10, 20, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 10 and 19 and import_status = {1} union "
+
             "select 20, 30, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 20 and 29 and import_status = {1} union "
+
             "select 30, 40, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 30 and 39 and import_status = {1} union "
+
             "select 40, 50, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 40 and 49 and import_status = {1} union "
+
             "select 50, 60, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 50 and 59 and import_status = {1} union "
+
             "select 60, 70, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 60 and 69 and import_status = {1} union "
+
             "select 70, 80, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 70 and 79 and import_status = {1} union "
+
             "select 80, 90, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 80 and 89 and import_status = {1} union "
+
             "select 90, 100, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 90 and 99 and import_status = {1} union "
+
             "select 100, 110, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 100 and 109 and import_status = {1} union "
+
             "select 110, 120, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 110 and 119 and import_status = {1} union "
+
             "select 120, 999, count(*) from "
-            "comptages.count_detail where id_count = {0} and speed "
+            "comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id where lan.id_section = '{2}' "
+            "and id_count = {0} and speed "
             "between 120 and 999 and import_status = {1}"
-            ") as foo order by low".format(count_id, status))
+
+            ") as foo order by low".format(count_id, status, section_id))
 
         query.exec_(query_str)
         x = []
@@ -762,7 +825,8 @@ class Layers(QObject):
 
         return days
 
-    def get_detail_time_chart_data_by_lane(self, count_id, status, lane):
+    def get_detail_time_chart_data_by_lane(
+            self, count_id, status, lane, section_id):
 
         xs = []
         ys = []
@@ -770,13 +834,13 @@ class Layers(QObject):
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
             x, y = self.get_detail_time_chart_data_day_by_lane(
-                count_id, day, status, lane)
+                count_id, day, status, lane, section_id)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_detail_time_chart_data_day_by_lane(
-            self, count_id, day, status, lane):
+            self, count_id, day, status, lane, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -785,12 +849,15 @@ class Layers(QObject):
             "date_part('hour', timestamp) + 1, "
             "count(date_part('hour', timestamp)) "
             "from comptages.count_detail "
+            "join comptages.lane as lan "
+            "on id_lane = lan.id "
             "where id_count = {} and "
             "date_trunc('day', timestamp) = '{}' "
             "and import_status = {} "
             "and id_lane = {} "
+            "and lan.id_section = '{}' "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status, lane)
+                count_id, day, status, lane, section_id)
         )
         query.exec_(query_str)
 
@@ -806,7 +873,7 @@ class Layers(QObject):
         return x, y
 
     def get_detail_time_chart_data_by_direction(
-            self, count_id, status, direction):
+            self, count_id, status, direction, section_id):
 
         xs = []
         ys = []
@@ -814,13 +881,13 @@ class Layers(QObject):
         days = self.get_days_of_detail_dataset(count_id)
         for day in days:
             x, y = self.get_detail_time_chart_data_day_by_direction(
-                count_id, day, status, direction)
+                count_id, day, status, direction, section_id)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_detail_time_chart_data_day_by_direction(
-            self, count_id, day, status, direction):
+            self, count_id, day, status, direction, section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -835,8 +902,9 @@ class Layers(QObject):
             "date_trunc('day', timestamp) = '{}' "
             "and import_status = {} "
             "and lan.direction = {} "
+            "and lan.id_section = '{}' "
             "group by date_part('hour', timestamp);".format(
-                count_id, day, status, direction)
+                count_id, day, status, direction, section_id)
         )
         query.exec_(query_str)
 

@@ -81,7 +81,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         x, y = self.layers.get_aggregate_speed_chart_data(
-            1, self.layers.IMPORT_STATUS_QUARANTINE)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, '64080011')
 
         self.assertEqual(['0-15 km/h', '15-30 km/h', '30-40 km/h',
                           '40-50 km/h', '50-60 km/h', '60-70 km/h',
@@ -130,7 +130,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         x, y = self.layers.get_detail_speed_chart_data(
-            1, self.layers.IMPORT_STATUS_QUARANTINE)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, '64080011')
 
         self.assertEqual(['0-10 km/h', '10-20 km/h', '20-30 km/h',
                           '30-40 km/h', '40-50 km/h', '50-60 km/h',
@@ -179,7 +179,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         label, values = self.layers.get_aggregate_category_chart_data(
-            1, self.layers.IMPORT_STATUS_QUARANTINE)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, '64080011')
 
         self.assertEqual(label.index('CAR (1)'), values.index(10))
         self.assertEqual(label.index('MR (2)'), values.index(20))
@@ -231,7 +231,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         label, values = self.layers.get_detail_category_chart_data(
-            1, self.layers.IMPORT_STATUS_QUARANTINE)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, '64080011')
 
         self.assertEqual(label.index('CAR (1)'), values.index(3))
         self.assertEqual(label.index('MR (2)'), values.index(2))
@@ -285,7 +285,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0])
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0], '64080011')
 
         self.assertTrue(2, len(days))
         self.assertEqual(
@@ -312,7 +312,7 @@ class TestChartData(unittest.TestCase):
             ys[1])
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1])
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1], '64080011')
 
         self.assertTrue(2, len(days))
         self.assertEqual(
@@ -377,7 +377,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_direction(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, 1)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, 1, '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
@@ -394,7 +394,7 @@ class TestChartData(unittest.TestCase):
             ys[0])
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_direction(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, 2)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, 2, '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
@@ -455,7 +455,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_lane(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0])
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0], '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
@@ -472,7 +472,7 @@ class TestChartData(unittest.TestCase):
             ys[0])
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_lane(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1])
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1], '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
@@ -527,7 +527,7 @@ class TestChartData(unittest.TestCase):
         time.sleep(1)
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_direction(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, 1)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, 1, '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
@@ -544,7 +544,7 @@ class TestChartData(unittest.TestCase):
             ys[0])
 
         xs, ys, days = self.layers.get_detail_time_chart_data_by_direction(
-            1, self.layers.IMPORT_STATUS_QUARANTINE, 2)
+            1, self.layers.IMPORT_STATUS_QUARANTINE, 2, '00056520')
 
         self.assertTrue(1, len(days))
         self.assertEqual(
