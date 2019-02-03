@@ -559,3 +559,116 @@ class TestChartData(unittest.TestCase):
              None, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
+
+    def test_time_chart_special_case(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '53109999';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.lane \
+                    WHERE id_installation = {};".format(
+                        installation_id))
+        lanes_id = []
+        while query.next():
+            lanes_id.append(query.value(0))
+
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Boucle'")
+        query.next()
+        sensor_type_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2017-03-17', '2017-04-04', '2017-03-17', "
+            "'2017-04-04', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
+        query.exec_(query_str)
+
+        task = self.comptages.import_file(
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_special_case.A01'),
+            1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
+
+        xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[0], '53116845')
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, None,
+             None, 65, None, None, None, None,
+             None, None, None, None, None, None],
+            ys[0])
+
+        xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[1], '53126850')
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, None,
+             None, 53, None, None, None, None,
+             None, None, None, None, None, None],
+            ys[0])
+
+        xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[2], '53136855')
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, None,
+             None, 37, None, None, None, None,
+             None, None, None, None, None, None],
+            ys[0])
+
+        xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
+            1, self.layers.IMPORT_STATUS_QUARANTINE, lanes_id[3], '53146860')
+
+        self.assertTrue(1, len(days))
+        self.assertEqual(
+            ['00h-01h', '01h-02h', '02h-03h', '03h-04h', '04h-05h', '05h-06h',
+             '06h-07h', '07h-08h', '08h-09h', '09h-10h', '10h-11h', '11h-12h',
+             '12h-13h', '13h-14h', '14h-15h', '15h-16h', '16h-17h', '17h-18h',
+             '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
+            xs[0])
+        self.assertEqual(
+            [None, None, None, None, None, None,
+             None, None, None, None, None, None,
+             None, 18, None, None, None, None,
+             None, None, None, None, None, None],
+            ys[0])
