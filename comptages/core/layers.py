@@ -607,6 +607,7 @@ class Layers(QObject):
             "order by agg.start".format(
                 count_id, lane, day, status, section_id)
         )
+        print(query_str)
         query.exec_(query_str)
 
         x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
@@ -988,38 +989,58 @@ class Layers(QObject):
         iface.setActiveLayer(layer)
         iface.actionZoomToSelected().trigger()
 
-    def change_status_of_count_data(self, count_id, new_status):
+    def change_status_of_count_data(self, count_id, section_id, new_status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
         query_strs = []
 
         query_strs.append(
-            "update comptages.count_aggregate set import_status = {} "
-            "where id_count = {}".format(new_status, count_id))
+            "update comptages.count_aggregate as cou set import_status = {} "
+            "from comptages.lane as lan "
+            "where cou.id_lane = lan.id "
+            "and id_count = {} "
+            "and lan.id_section = '{}'".format(
+                new_status, count_id, section_id))
 
         query_strs.append(
-            "update comptages.count_detail set import_status = {} "
-            "where id_count = {}".format(new_status, count_id))
+            "update comptages.count_detail as cou set import_status = {} "
+            "from comptages.lane as lan "
+            "where cou.id_lane = lan.id "
+            "and id_count = {} "
+            "and lan.id_section = '{}'".format(
+                new_status, count_id, section_id))
 
         for _ in query_strs:
             query.exec_(_)
 
         push_info("Les données ont été importées")
 
-    def delete_count_data(self, count_id):
+    def delete_count_data(self, count_id, section_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
         query_strs = []
 
         query_strs.append(
-            "delete from comptages.count_aggregate where id_count = "
-            "{}".format(count_id))
+            "delete from comptages.count_aggregate "
+            "using comptages.count_aggregate as cou "
+            "join comptages.lane as lan "
+            "on cou.id_lane = lan.id "
+            "where cou.id_count = {} "
+            "and cou.import_status = {} "
+            "and lan.id_section = '{}' ".format(
+                count_id, status, section_id))
 
         query_strs.append(
-            "delete from comptages.count_detail where id_count = "
-            "{}".format(count_id))
+            "delete from comptages.count_detail "
+            "using comptages.count_aggregate as cou "
+            "join comptages.lane as lan "
+            "on cou.id_lane = lan.id "
+            "where cou.id_count = {} "
+            "and cou.import_status = {} "
+            "and lan.id_section = '{}' ".format(
+                count_id, status, section_id))
 
         for _ in query_strs:
             query.exec_(_)
