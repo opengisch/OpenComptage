@@ -607,7 +607,7 @@ class Layers(QObject):
             "order by agg.start".format(
                 count_id, lane, day, status, section_id)
         )
-        print(query_str)
+
         query.exec_(query_str)
 
         x = ["00h-01h", "01h-02h", "02h-03h", "03h-04h", "04h-05h", "05h-06h",
@@ -1219,7 +1219,7 @@ class Layers(QObject):
             "union select id from comptages.count_detail where id_count = {0} "
             "and import_status = {1}; ".format(
                 count_id, self.IMPORT_STATUS_DEFINITIVE))
-        print(query_str)
+
         query.exec_(query_str)
         if query.next():
             return True
