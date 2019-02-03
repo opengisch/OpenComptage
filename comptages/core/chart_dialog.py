@@ -21,6 +21,11 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.status = self.layers.IMPORT_STATUS_DEFINITIVE
 
     def set_attributes(self, count_id, approval_process=False):
+        try:
+            self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
+        except Exception:
+            pass
+
         self.count_id = count_id
 
         self.setWindowTitle("Comptage: {}, installation: {}".format(
@@ -32,17 +37,26 @@ class ChartDock(QDockWidget, FORM_CLASS):
                           'pour ce comptage.'))
 
         self.tabWidget.clear()
+        self.tabWidget.currentChanged.connect(self.current_tab_changed)
+        status = self.layers.IMPORT_STATUS_DEFINITIVE
+        if approval_process:
+            status = self.layers.IMPORT_STATUS_QUARANTINE
 
-        sections = self.layers.get_sections_of_count(count_id)
-        for section in sections:
-            section_id = section.attribute('id')
+        section_ids = self.layers.get_sections_with_data_of_count(
+            count_id, status)
+
+        for section_id in section_ids:
             tab = ChartTab(section_id)
-            self.tabWidget.addTab(tab, section_id)
+            self.tabWidget.addTab(tab, str(section_id))
             self.populate_tab(tab, count_id, section_id, approval_process)
 
     def populate_tab(self, tab, count_id, section_id, approval_process):
         # Remove previous items
-        # tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
+        try:
+            tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
+        except Exception:
+            pass
+
         for i in range(tab.chartList.count()):
             tab.chartList.takeItem(0)
         tab.chartList.currentRowChanged.connect(self.chart_selection_changed)
@@ -63,17 +77,21 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         if(sensor == 'Boucle'):
             # By lane
-            lanes = self.layers.get_lanes_of_count(count_id)
+            lanes = self.layers.get_lanes_of_section(section_id)
             for i, lane in enumerate(lanes):
                 tab.chartList.addItem(
                     QListWidgetItem('Par heure, voie {}'.format(
                         lane.attribute('number'))))
                 tab.charts.append(
-                    ChartTime(self.layers, count_id, section_id, self.status,
-                              (lane.attribute('number'), lane.attribute('id')),
+                    ChartTime(self.layers, count_id, section_id,
+                              self.status,
+                              (lane.attribute('number'),
+                               lane.attribute('id')),
                               None).get_div())
         else:
             # By direction
+            # TODO: better get_directions_of_section or doesnt matter
+            # i.e. special cases are always 'Boucle'?
             directions = self.layers.get_directions_of_count(count_id)
             for direction in directions:
                 tab.chartList.addItem(
@@ -102,6 +120,11 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def chart_selection_changed(self, row):
         tab = self.tabWidget.currentWidget()
         tab.webView.setHtml(tab.charts[row])
+
+    def current_tab_changed(self, index):
+        tab = self.tabWidget.currentWidget()
+        if tab.chartList.currentRow() == 0:
+            self.chart_selection_changed(0)
 
     def validate_count(self):
         tab = self.tabWidget.currentWidget()

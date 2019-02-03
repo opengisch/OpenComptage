@@ -449,6 +449,7 @@ class Layers(QObject):
 
         count = self.get_count(count_id)
         installation_id = count.attribute('id_installation')
+
         lanes = self.get_lanes_of_installation(installation_id)
 
         # Get only distinct section ids
@@ -461,6 +462,33 @@ class Layers(QObject):
             sections.append(self.get_section(section_id))
 
         return sections
+
+    def get_sections_with_data_of_count(self, count_id, status):
+        # TODO: return a list of section_id with data of this count
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct(lan.id_section) from comptages.count_aggregate "
+            "as cou "
+            "join comptages.lane as lan "
+            "on lan.id = cou.id_lane "
+            "where cou.id_count = {0} "
+            "and import_status = {1} "
+            "union "
+            "select distinct(lan.id_section) from comptages.count_detail "
+            "as cou "
+            "join comptages.lane as lan "
+            "on lan.id = cou.id_lane "
+            "where cou.id_count = {0} "
+            "and import_status = {1} ".format(count_id, status))
+
+        result = []
+        query.exec_(query_str)
+        while query.next():
+            result.append(int(query.value(0)))
+        return result
 
     def get_count(self, count_id):
         """Return the count feature"""
@@ -1023,21 +1051,19 @@ class Layers(QObject):
         query_strs = []
 
         query_strs.append(
-            "delete from comptages.count_aggregate "
-            "using comptages.count_aggregate as cou "
-            "join comptages.lane as lan "
-            "on cou.id_lane = lan.id "
-            "where cou.id_count = {} "
+            "delete from comptages.count_aggregate as cou "
+            "using comptages.lane as lan "
+            "where cou.id_lane = lan.id "
+            "and cou.id_count = {} "
             "and cou.import_status = {} "
             "and lan.id_section = '{}' ".format(
                 count_id, status, section_id))
 
         query_strs.append(
-            "delete from comptages.count_detail "
-            "using comptages.count_aggregate as cou "
-            "join comptages.lane as lan "
-            "on cou.id_lane = lan.id "
-            "where cou.id_count = {} "
+            "delete from comptages.count_detail as cou "
+            "using comptages.lane as lan "
+            "where cou.id_lane = lan.id "
+            "and cou.id_count = {} "
             "and cou.import_status = {} "
             "and lan.id_section = '{}' ".format(
                 count_id, status, section_id))

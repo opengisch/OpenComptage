@@ -959,3 +959,182 @@ class TestImportAggregate(unittest.TestCase):
         self.assertEqual(48, query.size())
 
         self.db.close()
+
+    def test_validate_special_case(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '53109999';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Boucle'")
+        query.next()
+        sensor_type_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2017-03-17', '2017-04-04', '2017-03-17', "
+            "'2017-04-04', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
+        query.exec_(query_str)
+
+        task = self.comptages.import_file(
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_special_case.A01'),
+            1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and import_status = {}".format(
+                self.layers.IMPORT_STATUS_QUARANTINE))
+
+        self.assertEqual(12, query.size())
+
+        self.layers.change_status_of_count_data(
+            1, '53116845', self.layers.IMPORT_STATUS_DEFINITIVE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and import_status = {}".format(
+                self.layers.IMPORT_STATUS_QUARANTINE))
+
+        self.assertEqual(9, query.size())
+
+        self.layers.change_status_of_count_data(
+            1, '53136855', self.layers.IMPORT_STATUS_DEFINITIVE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and import_status = {}".format(
+                self.layers.IMPORT_STATUS_QUARANTINE))
+
+        self.assertEqual(6, query.size())
+
+        self.layers.change_status_of_count_data(
+            1, '53126850', self.layers.IMPORT_STATUS_DEFINITIVE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and import_status = {}".format(
+                self.layers.IMPORT_STATUS_QUARANTINE))
+
+        self.assertEqual(3, query.size())
+
+        self.layers.change_status_of_count_data(
+            1, '53146860', self.layers.IMPORT_STATUS_DEFINITIVE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and import_status = {}".format(
+                self.layers.IMPORT_STATUS_QUARANTINE))
+
+        self.assertEqual(0, query.size())
+
+        self.db.close()
+
+    def test_refuse_special_case(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '53109999';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Boucle'")
+        query.next()
+        sensor_type_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2017-03-17', '2017-04-04', '2017-03-17', "
+            "'2017-04-04', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
+        query.exec_(query_str)
+
+        task = self.comptages.import_file(
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_special_case.A01'),
+            1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(12, query.size())
+
+        self.layers.delete_count_data(
+            1, '53116845', self.layers.IMPORT_STATUS_QUARANTINE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(9, query.size())
+
+        self.layers.delete_count_data(
+            1, '53136855', self.layers.IMPORT_STATUS_QUARANTINE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(6, query.size())
+
+        self.layers.delete_count_data(
+            1, '53126850', self.layers.IMPORT_STATUS_QUARANTINE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(3, query.size())
+
+        self.layers.delete_count_data(
+            1, '53146860', self.layers.IMPORT_STATUS_QUARANTINE)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(0, query.size())
+
+        self.db.close()
