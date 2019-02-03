@@ -873,3 +873,89 @@ class TestImportAggregate(unittest.TestCase):
         self.assertEqual(12, query.size())
 
         self.db.close()
+
+    def test_special_case(self):
+        self.db.open()
+        query = QSqlQuery(self.db)
+
+        query.exec_("SELECT id FROM comptages.installation \
+                    WHERE name = '53109999';")
+        query.next()
+        installation_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.model \
+                    WHERE name = 'M660';")
+        query.next()
+        model_id = query.value(0)
+
+        query.exec_("SELECT id FROM comptages.lane \
+                    WHERE id_installation = {} ORDER BY number;".format(
+                        installation_id))
+        query.next()
+        lane_1_id = query.value(0)
+        query.next()
+        lane_2_id = query.value(0)
+
+        query.exec_("select id from comptages.sensor_type \
+                    where name = 'Boucle'")
+        query.next()
+        sensor_type_id = query.value(0)
+
+        query_str = (
+            "INSERT INTO comptages.count(id, "
+            "start_process_date, end_process_date, start_service_date, "
+            "end_service_date, id_sensor_type, id_model, id_installation) "
+            "VALUES (1, '2017-03-17', '2017-04-04', '2017-03-17', "
+            "'2017-04-04', {}, {}, {});".format(
+                sensor_type_id, model_id, installation_id))
+        query.exec_(query_str)
+
+        task = self.comptages.import_file(
+            os.path.join(
+                self.test_data_path,
+                'simple_aggregate_special_case.A01'),
+            1)
+
+        task.waitForFinished()
+        # Let the time to the db to finish the writing
+        time.sleep(1)
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01';")
+
+        self.assertEqual(12, query.size())
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and id_lane = {};".format(
+                lane_1_id))
+
+        self.assertEqual(3, query.size())
+
+        query.exec_(
+            "SELECT type, start, \"end\", file_name, import_status, id_count, \
+            id_lane, id FROM comptages.count_aggregate WHERE file_name = \
+            'simple_aggregate_special_case.A01' and id_lane = {};".format(
+                lane_2_id))
+
+        self.assertEqual(3, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_len;")
+        self.assertEqual(16, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_cls;")
+        self.assertEqual(40, query.size())
+
+        query.exec_(
+            "SELECT * \
+            FROM comptages.count_aggregate_value_spd;")
+        self.assertEqual(48, query.size())
+
+        self.db.close()
