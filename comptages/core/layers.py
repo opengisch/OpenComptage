@@ -487,7 +487,7 @@ class Layers(QObject):
         result = []
         query.exec_(query_str)
         while query.next():
-            result.append(int(query.value(0)))
+            result.append(query.value(0))
         return result
 
     def get_count(self, count_id):
