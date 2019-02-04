@@ -10,11 +10,11 @@ from qgis.utils import qgsfunction, plugins
 from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
-from comptages.core.chart_dialog import ChartDock
 from comptages.core.utils import push_info
 from comptages.data.data_importer import DataImporter
 from comptages.data.data_importer_vbv1 import DataImporterVbv1
 from comptages.data.data_importer_int2 import DataImporterInt2
+from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
