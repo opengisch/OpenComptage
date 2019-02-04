@@ -47,7 +47,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         for section_id in section_ids:
             tab = ChartTab(section_id)
-            self.tabWidget.addTab(tab, str(section_id))
+            self.tabWidget.addTab(tab, section_id)
             self.populate_tab(tab, count_id, section_id, approval_process)
 
     def populate_tab(self, tab, count_id, section_id, approval_process):
@@ -189,7 +189,10 @@ class ChartSpeed(Chart):
             x, y = self.get_detail_data()
 
         total_y = sum(y)
-        percent_y = ['{}%'.format(round((i / total_y) * 100, 2)) for i in y]
+        percent_y = 0
+        if not total_y == 0:
+            percent_y = ['{}%'.format(
+                round((i / total_y) * 100, 2)) for i in y]
 
         bar = go.Bar(
             x=x,
@@ -251,8 +254,9 @@ class ChartTime(Chart):
             self, layers, count_id, section_id,
             status, lane, direction_number):
         super().__init__(layers, count_id, section_id, status)
-        self.lane_number = lane[0]
-        self.lane_id = lane[1]
+        if lane:
+            self.lane_number = lane[0]
+            self.lane_id = lane[1]
         self.direction_number = direction_number
 
     def get_div(self):
@@ -270,13 +274,15 @@ class ChartTime(Chart):
             title = 'Véhicules par heure, voie {}'.format(self.lane_number)
         elif is_aggregate and sensor == 'Tube':
             xs, ys, days = self.get_aggregate_data_by_direction()
-            title = 'Véhicules par heure, direction {}'.format(self.direction)
+            title = 'Véhicules par heure, direction {}'.format(
+                self.direction_number)
         elif not is_aggregate and sensor == 'Boucle':
             xs, ys, days = self.get_detail_data_by_lane()
             title = 'Véhicules par heure, voie {}'.format(self.lane_number)
         else:
             xs, ys, days = self.get_detail_data_by_direction()
-            title = 'Véhicules par heure, direction {}'.format(self.direction)
+            title = 'Véhicules par heure, direction {}'.format(
+                self.direction_number)
 
         data = []
         # In reverse order so if the first day is not complete, the
