@@ -290,12 +290,18 @@ class ChartTime(Chart):
         for i in range(len(xs)-1, -1, -1):
             day = datetime.strptime(
                 days[i], '%Y-%m-%d %H:%M:%S').strftime('%a %d.%m.%Y')
+
+            mode = 'lines'
+            if sum(y is not None for y in ys[i]) < 24:
+                mode = 'lines+markers'
+
             data.append(
                 go.Scatter(
                     x=xs[i],
                     y=ys[i],
                     name=day,
-                    showlegend=True
+                    showlegend=True,
+                    mode=mode
                 )
             )
 
