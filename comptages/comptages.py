@@ -231,6 +231,7 @@ class Comptages(QObject):
         self.tm.allTasksFinished.disconnect(self.task_finished)
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
+        self.chart_dock.show_next_quarantined_chart()
 
     def do_validate_imported_files_action(self):
         if self.tm.countActiveTasks() > 0:
