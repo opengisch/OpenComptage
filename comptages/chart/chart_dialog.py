@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 from datetime import datetime
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
-from comptages.core.utils import get_ui_class, push_warning
+from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
 
 
@@ -31,8 +31,18 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.setWindowTitle("Comptage: {}, installation: {}".format(
              count_id, self.layers.get_installation_name_of_count(count_id)))
 
+        contains_data = self.layers.count_contains_data(count_id)
+
+        # Show message if there are no data to show
+        if not contains_data and not approval_process:
+            self.hide()
+            push_info("Il n'y a pas de données à montrer")
+            return
+
+        self.show()
+
         # Show message if data for this count already exists in the db
-        if self.layers.count_contains_data(count_id) and approval_process:
+        if contains_data and approval_process:
             push_warning(('La base de données contient déjà des données '
                           'pour ce comptage.'))
 
@@ -144,6 +154,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         quarantined_counts = self.layers.get_quarantined_counts()
         if not quarantined_counts:
             self.hide()
+            push_info("Il n'y a pas de données à montrer")
             return
 
         self.set_attributes(quarantined_counts[0], True)

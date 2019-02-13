@@ -352,8 +352,6 @@ class Comptages(QObject):
             return
         self.chart_dock.set_attributes(count_id)
 
-        self.chart_dock.show()
-
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
         otherwise disable them"""
