@@ -32,6 +32,7 @@ class DataImporterVbv1(DataImporter):
         if not row:
             return
 
+        cat_bins = list(self.categories.values())
         query = QSqlQuery(self.db)
 
         query_str = ("insert into comptages.count_detail ("
@@ -53,8 +54,7 @@ class DataImporterVbv1(DataImporter):
                          Layers.IMPORT_STATUS_QUARANTINE,
                          self.lanes[int(row['lane'])],
                          self.count_id,
-                         row['category_id']))
-
+                         cat_bins[row['category']-1]))
         query.exec_(query_str)
 
     def parse_data_line(self, line):
@@ -73,8 +73,6 @@ class DataImporterVbv1(DataImporter):
             parsed_line['speed'] = int(line[47:50])
             parsed_line['length'] = int(line[52:56])
             parsed_line['category'] = int(line[60:62].strip())
-            parsed_line['category_id'] = int(
-                self.categories[int(parsed_line['category'])])
             parsed_line['height'] = line[63:65].strip()
         except ValueError:
             # This can happen when some values are missed from a line

@@ -47,8 +47,7 @@ class DataImporterInt2(DataImporter):
         elif code == 'LEN':
             values = self.file_header['LENBINS'].split()
         elif code == 'CLS':
-            for i in range(1, len(self.categories)+1):
-                values.append(self.categories[i])
+            values = list(self.categories.values())
         else:
             values = self.data_header[self.intspec.index(code)]
         return values
