@@ -606,15 +606,33 @@ class Layers(QObject):
         ys = []
 
         days = self.get_days_of_aggregate_dataset(count_id, status)
+
+        # Get info from one of the table depending on which one contains data
+        types = self.get_type_of_aggregate_count(count_id, status)
+        value_type = ''
+        if 'CLS' in types:
+            value_type = 'CLS'
+        elif 'SPD' in types:
+            value_type = 'SPD'
+        elif 'DRN' in types:
+            value_type = 'DRN'
+        elif 'CNT' in types:
+            value_type = 'CNT'
+        elif 'LEN' in types:
+            value_type = 'LEN'
+
+        if value_type == '':
+            return xs, ys, days
+
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day_by_lane(
-                count_id, day, status, lane, section_id)
+                count_id, day, status, lane, section_id, value_type)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_aggregate_time_chart_data_day_by_lane(
-            self, count_id, day, status, lane, section_id):
+            self, count_id, day, status, lane, section_id, value_type):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -622,18 +640,18 @@ class Layers(QObject):
             "select date_part('hour', agg.start), "
             "date_part('hour', agg.end), sum(cls.value) from "
             "comptages.count_aggregate as agg "
-            "join comptages.count_aggregate_value_cls as cls "
+            "join comptages.count_aggregate_value_{5} as cls "
             "on agg.id = cls.id_count_aggregate "
             "join comptages.lane as lan "
             "on agg.id_lane = lan.id "
-            "where agg.id_count = {} and agg.type = 'CLS' "
-            "and agg.id_lane = {} "
-            "and date_trunc('day', agg.start) = '{}' "
-            "and agg.import_status = {} "
-            "and lan.id_section = '{}' "
+            "where agg.id_count = {0} and agg.type = '{5}' "
+            "and agg.id_lane = {1} "
+            "and date_trunc('day', agg.start) = '{2}' "
+            "and agg.import_status = {3} "
+            "and lan.id_section = '{4}' "
             "group by agg.start, agg.end "
             "order by agg.start".format(
-                count_id, lane, day, status, section_id)
+                count_id, lane, day, status, section_id, value_type)
         )
 
         query.exec_(query_str)
@@ -656,15 +674,33 @@ class Layers(QObject):
         ys = []
 
         days = self.get_days_of_aggregate_dataset(count_id, status)
+
+        # Get info from one of the table depending on which one contains data
+        types = self.get_type_of_aggregate_count(count_id, status)
+        value_type = ''
+        if 'CLS' in types:
+            value_type = 'CLS'
+        elif 'SPD' in types:
+            value_type = 'SPD'
+        elif 'DRN' in types:
+            value_type = 'DRN'
+        elif 'CNT' in types:
+            value_type = 'CNT'
+        elif 'LEN' in types:
+            value_type = 'LEN'
+
+        if value_type == '':
+            return xs, ys, days
+
         for day in days:
             x, y = self.get_aggregate_time_chart_data_day_by_direction(
-                count_id, day, status, direction, section_id)
+                count_id, day, status, direction, section_id, value_type)
             xs.append(x)
             ys.append(y)
         return xs, ys, days
 
     def get_aggregate_time_chart_data_day_by_direction(
-            self, count_id, day, status, direction, section_id):
+            self, count_id, day, status, direction, section_id, value_type):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -672,18 +708,18 @@ class Layers(QObject):
             "select date_part('hour', agg.start), "
             "date_part('hour', agg.end), sum(cls.value) from "
             "comptages.count_aggregate as agg "
-            "join comptages.count_aggregate_value_cls as cls "
+            "join comptages.count_aggregate_value_{5} as cls "
             "on agg.id = cls.id_count_aggregate "
             "join comptages.lane as lan on "
             "agg.id_lane = lan.id "
-            "where agg.id_count = {} and agg.type = 'CLS' "
-            "and lan.direction = {} "
-            "and date_trunc('day', agg.start) = '{}' "
-            "and agg.import_status = {} "
-            "and lan.id_section = '{}' "
+            "where agg.id_count = {0} and agg.type = '{5}' "
+            "and lan.direction = {1} "
+            "and date_trunc('day', agg.start) = '{2}' "
+            "and agg.import_status = {3} "
+            "and lan.id_section = '{4}' "
             "group by agg.start, agg.end, lan.direction "
             "order by agg.start".format(
-                count_id, direction, day, status, section_id)
+                count_id, direction, day, status, section_id, value_type)
         )
         query.exec_(query_str)
 
@@ -1250,3 +1286,18 @@ class Layers(QObject):
         if query.next():
             return True
         return False
+
+    def get_type_of_aggregate_count(self, count_id, import_status):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select distinct(type) from comptages.count_aggregate where "
+            "id_count = {} and import_status = {};".format(
+                count_id, import_status))
+
+        result = []
+        query.exec_(query_str)
+        if query.next():
+            result.append(query.value(0))
+        return result
