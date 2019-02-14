@@ -85,6 +85,10 @@ class PlanCreator():
         self.set_text_item('f_23', '')
 
         self.set_picture_item('picture_1', installation.attribute('picture'))
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.set_picture_item(
+            'logo',
+            os.path.join(current_dir, os.pardir, 'images', 'logo_ne.png'))
 
     def set_text_item(self, name, text):
         self.layout.itemById(name).setText(text)
