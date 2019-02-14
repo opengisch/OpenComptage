@@ -4,7 +4,9 @@ from datetime import datetime
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.PyQt.QtCore import QObject, Qt, QDateTime
-from qgis.core import QgsMessageLog, Qgis, QgsApplication
+from qgis.core import (
+    QgsMessageLog, Qgis, QgsApplication, QgsExpressionContextUtils,
+    QgsProject)
 from qgis.utils import qgsfunction, plugins
 
 from comptages.core.settings import Settings, SettingsDialog
@@ -343,7 +345,21 @@ class Comptages(QObject):
         if not file:
             return
 
+        # Highlight the current sections and installation in the layout
+        previous_highlightes_sections = self.layers.highlighted_sections
+        self.layers.highlighted_sections = \
+            self.layers.get_section_ids_of_count(count_id)
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(), 'highlighted_installation',
+            self.layers.get_installation_name_of_count(count_id))
+
         plan_creator.export_pdf(count_id, file)
+
+        self.layers.highlighted_sections = previous_highlightes_sections
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(), 'highlighted_installation',
+            '')
+        self.layers.layers['section'].triggerRepaint()
 
     def do_generate_chart_action(self, count_id):
         if self.tm.countActiveTasks() > 0:

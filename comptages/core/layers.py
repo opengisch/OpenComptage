@@ -72,6 +72,10 @@ class Layers(QObject):
 
         self.layers['count'].featureAdded.connect(self.on_count_added)
 
+        from qgis.core import QgsExpressionContextUtils
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(), 'highlighted_installation', '')
+
     def apply_qml_styles(self):
         for key in LAYER_DEFINITIONS:
             current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -463,8 +467,22 @@ class Layers(QObject):
 
         return sections
 
+    def get_section_ids_of_count(self, count_id):
+        """Return the section ids related to a count"""
+
+        count = self.get_count(count_id)
+        installation_id = count.attribute('id_installation')
+
+        lanes = self.get_lanes_of_installation(installation_id)
+
+        # Get only distinct section ids
+        section_ids = set()
+        for lane in lanes:
+            section_ids.add(lane.attribute('id_section'))
+
+        return list(section_ids)
+
     def get_sections_with_data_of_count(self, count_id, status):
-        # TODO: return a list of section_id with data of this count
 
         self.init_db_connection()
         query = QSqlQuery(self.db)
