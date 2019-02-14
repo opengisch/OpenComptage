@@ -110,7 +110,7 @@ class Layers(QObject):
             'ValueRelation',
             {
                 'AllowMulti':       False,
-                'AllowNull':        False,
+                'AllowNull':        True,
                 'FilterExpression': '',
                 'Key':              'id',
                 'Layer':            self.layers['class'].id(),

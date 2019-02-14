@@ -1,5 +1,4 @@
 -- class
-INSERT INTO comptages.class VALUES (1, 'Volume', 'Volume');
 INSERT INTO comptages.class VALUES (2, 'SWISS2', 'SWISS 2');
 INSERT INTO comptages.class VALUES (3, 'SWISS5', 'SWISS 5');
 INSERT INTO comptages.class VALUES (4, 'SWISS6', 'SWISS 6 (SSVZ)');
@@ -10,9 +9,8 @@ INSERT INTO comptages.class VALUES (12, 'NZ13', 'New Zealand 13');
 INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 
 -- category
-INSERT INTO comptages.category (id, name, code, id_category) VALUES (1, 'MFZ', '0', 1);
-INSERT INTO comptages.category (id, name, code, id_category) VALUES (2, 'PF', '15', 1);
-INSERT INTO comptages.category (id, name, code, id_category) VALUES (3, 'MFZ', '16', 1);
+INSERT INTO comptages.category (id, name, code, id_category) VALUES (2, 'PF', '15', 2);
+INSERT INTO comptages.category (id, name, code, id_category) VALUES (3, 'MFZ', '16', 2);
 INSERT INTO comptages.category (id, name, code, id_category) VALUES (4, 'CAR', '1', 2);
 INSERT INTO comptages.category (id, name, code, id_category) VALUES (5, 'MR', '2', 2);
 INSERT INTO comptages.category (id, name, code, id_category) VALUES (6, 'PW', '11', 2);
@@ -29,7 +27,6 @@ INSERT INTO comptages.category (id, name, code, id_category) VALUES (16, 'LIE+AN
 INSERT INTO comptages.category (id, name, code, id_category) VALUES (17, 'LIE+AUFL', '7', 7);
 
 -- class_category
-INSERT INTO comptages.class_category (id_class, id_category) VALUES (1, 1);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 2);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 3);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 4);
@@ -98,7 +95,6 @@ INSERT INTO comptages.sensor_type VALUES (2, 'Tube', false);
 INSERT INTO comptages.sensor_type VALUES (3, 'Piezo', true);
 
 -- sensor_type_class
-INSERT INTO comptages.sensor_type_class VALUES (1, 1);
 INSERT INTO comptages.sensor_type_class VALUES (1, 2);
 INSERT INTO comptages.sensor_type_class VALUES (1, 3);
 INSERT INTO comptages.sensor_type_class VALUES (1, 4);
@@ -106,14 +102,12 @@ INSERT INTO comptages.sensor_type_class VALUES (1, 5);
 INSERT INTO comptages.sensor_type_class VALUES (1, 6);
 INSERT INTO comptages.sensor_type_class VALUES (1, 11);
 INSERT INTO comptages.sensor_type_class VALUES (1, 12);
-INSERT INTO comptages.sensor_type_class VALUES (2, 1);
 INSERT INTO comptages.sensor_type_class VALUES (2, 2);
 INSERT INTO comptages.sensor_type_class VALUES (2, 3);
 INSERT INTO comptages.sensor_type_class VALUES (2, 4);
 INSERT INTO comptages.sensor_type_class VALUES (2, 5);
 INSERT INTO comptages.sensor_type_class VALUES (2, 11);
 INSERT INTO comptages.sensor_type_class VALUES (2, 12);
-INSERT INTO comptages.sensor_type_class VALUES (3, 1);
 INSERT INTO comptages.sensor_type_class VALUES (3, 2);
 INSERT INTO comptages.sensor_type_class VALUES (3, 3);
 INSERT INTO comptages.sensor_type_class VALUES (3, 4);
