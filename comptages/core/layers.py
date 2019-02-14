@@ -381,7 +381,7 @@ class Layers(QObject):
         if end_date:
             wheres.append("c.end_process_date <= '{}'::date".format(end_date))
         if permanent is not None:
-                    wheres.append("i.permanent = '{}'::bool".format(permanent))
+            wheres.append("i.permanent = '{}'::bool".format(permanent))
         if sensor_type_id:
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
 
@@ -412,9 +412,9 @@ class Layers(QObject):
         if sensor_choice == 0:
             sensor_type_id = None
         elif sensor_choice == 1:
-            sensor_type_id = self.get_sensor_type_id('Tube')
-        elif sensor_choice == 2:
             sensor_type_id = self.get_sensor_type_id('Boucle')
+        elif sensor_choice == 2:
+            sensor_type_id = self.get_sensor_type_id('Tube')
 
         self.populate_list_of_highlighted_sections(
             start_date, end_date, permanent, sensor_type_id)
