@@ -52,7 +52,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -101,7 +101,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -150,7 +150,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -202,7 +202,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -248,7 +248,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -348,7 +348,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -420,7 +420,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -498,7 +498,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -570,7 +570,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
@@ -683,7 +683,7 @@ class TestChartData(unittest.TestCase):
         installation_id = query.value(0)
 
         query.exec_("SELECT id FROM comptages.model \
-                    WHERE name = 'M660';")
+                    WHERE name = 'M660_LT';")
         query.next()
         model_id = query.value(0)
 
