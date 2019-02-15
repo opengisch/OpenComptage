@@ -4,7 +4,6 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.testing import unittest
 from qgis.utils import plugins
 from comptages.core.settings import Settings
-from comptages.data.data_importer_vbv1 import DataImporterVbv1
 
 
 class TestImportDetail(unittest.TestCase):
