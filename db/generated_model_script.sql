@@ -99,7 +99,8 @@ ALTER TABLE comptages.class OWNER TO postgres;
 CREATE TABLE comptages.category (
 	id serial NOT NULL,
 	name text NOT NULL,
-	code text,
+	code smallint NOT NULL,
+	light boolean NOT NULL,
 	id_category integer NOT NULL,
 	CONSTRAINT category_pk PRIMARY KEY (id)
 

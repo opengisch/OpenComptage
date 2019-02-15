@@ -57,16 +57,6 @@ class TestImportDetail(unittest.TestCase):
         query.next()
         lane_2_id = query.value(0)
 
-        query.exec_("SELECT id FROM comptages.category \
-                    WHERE code = '3'")
-        query.next()
-        category_id_1 = query.value(0)
-
-        query.exec_("SELECT id FROM comptages.category \
-                    WHERE code = '4'")
-        query.next()
-        category_id_2 = query.value(0)
-
         query.exec_("select id from comptages.sensor_type \
                     where name = 'Tube'")
         query.next()
@@ -116,7 +106,7 @@ class TestImportDetail(unittest.TestCase):
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(10))
         self.assertEqual(lane_1_id, query.value(11))
         self.assertEqual(1, query.value(12))
-        self.assertEqual(category_id_1, query.value(13))
+        self.assertEqual(24, query.value(13))
 
         query.next()
         self.assertEqual(2, query.value(0))
@@ -134,7 +124,7 @@ class TestImportDetail(unittest.TestCase):
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(10))
         self.assertEqual(lane_2_id, query.value(11))
         self.assertEqual(1, query.value(12))
-        self.assertEqual(category_id_2, query.value(13))
+        self.assertEqual(25, query.value(13))
 
         self.db.close()
 
