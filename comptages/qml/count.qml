@@ -1,14 +1,12 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" version="3.4.3-Madeira" minScale="1e+08" maxScale="0" readOnly="0" styleCategories="AllStyleCategories">
+<qgis readOnly="0" maxScale="0" version="3.4.3-Madeira" styleCategories="AllStyleCategories" minScale="1e+08" hasScaleBasedVisibilityFlag="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
   </flags>
   <customproperties>
-    <property key="dualview/previewExpressions">
-      <value>id</value>
-    </property>
+    <property value="id" key="dualview/previewExpressions"/>
     <property value="0" key="embeddedWidgets/count"/>
     <property key="variableNames"/>
     <property key="variableValues"/>
@@ -29,11 +27,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -42,11 +40,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -55,11 +53,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -68,11 +66,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -81,11 +79,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -94,11 +92,11 @@
       <editWidget type="DateTime">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="allow_null"/>
-            <Option value="true" type="bool" name="calendar_popup"/>
-            <Option value="dd-MM-yyyy" type="QString" name="display_format"/>
-            <Option value="yyyy-MM-dd" type="QString" name="field_format"/>
-            <Option value="false" type="bool" name="field_iso_format"/>
+            <Option type="bool" value="true" name="allow_null"/>
+            <Option type="bool" value="true" name="calendar_popup"/>
+            <Option type="QString" value="dd-MM-yyyy" name="display_format"/>
+            <Option type="QString" value="yyyy-MM-dd" name="field_format"/>
+            <Option type="bool" value="false" name="field_iso_format"/>
           </Option>
         </config>
       </editWidget>
@@ -107,8 +105,8 @@
       <editWidget type="CheckBox">
         <config>
           <Option type="Map">
-            <Option value="" type="QString" name="CheckedState"/>
-            <Option value="" type="QString" name="UncheckedState"/>
+            <Option type="QString" value="" name="CheckedState"/>
+            <Option type="QString" value="" name="UncheckedState"/>
           </Option>
         </config>
       </editWidget>
@@ -117,8 +115,8 @@
       <editWidget type="CheckBox">
         <config>
           <Option type="Map">
-            <Option value="" type="QString" name="CheckedState"/>
-            <Option value="" type="QString" name="UncheckedState"/>
+            <Option type="QString" value="" name="CheckedState"/>
+            <Option type="QString" value="" name="UncheckedState"/>
           </Option>
         </config>
       </editWidget>
@@ -127,8 +125,8 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="true" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
@@ -137,14 +135,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="AllowMulti"/>
-            <Option value="false" type="bool" name="AllowNull"/>
-            <Option value="" type="QString" name="FilterExpression"/>
-            <Option value="id" type="QString" name="Key"/>
-            <Option value="model_cc014b15_ab01_4104_a167_96664b89cf49" type="QString" name="Layer"/>
-            <Option value="false" type="bool" name="OrderByValue"/>
-            <Option value="false" type="bool" name="UseCompleter"/>
-            <Option value="name" type="QString" name="Value"/>
+            <Option type="bool" value="false" name="AllowMulti"/>
+            <Option type="bool" value="false" name="AllowNull"/>
+            <Option type="QString" value="" name="FilterExpression"/>
+            <Option type="QString" value="id" name="Key"/>
+            <Option type="QString" value="model_9ba4dedb_f693_4f18_bf33_e9438fe96381" name="Layer"/>
+            <Option type="bool" value="false" name="OrderByValue"/>
+            <Option type="bool" value="false" name="UseCompleter"/>
+            <Option type="QString" value="name" name="Value"/>
           </Option>
         </config>
       </editWidget>
@@ -153,14 +151,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="AllowMulti"/>
-            <Option value="false" type="bool" name="AllowNull"/>
-            <Option value="" type="QString" name="FilterExpression"/>
-            <Option value="id" type="QString" name="Key"/>
-            <Option value="automate_ea92567d_99be_44cc_8d67_291d55fff545" type="QString" name="Layer"/>
-            <Option value="false" type="bool" name="OrderByValue"/>
-            <Option value="false" type="bool" name="UseCompleter"/>
-            <Option value="name" type="QString" name="Value"/>
+            <Option type="bool" value="false" name="AllowMulti"/>
+            <Option type="bool" value="false" name="AllowNull"/>
+            <Option type="QString" value="" name="FilterExpression"/>
+            <Option type="QString" value="id" name="Key"/>
+            <Option type="QString" value="automate_d41b1b3f_ad04_4a11_a33d_80a90153fae1" name="Layer"/>
+            <Option type="bool" value="false" name="OrderByValue"/>
+            <Option type="bool" value="false" name="UseCompleter"/>
+            <Option type="QString" value="name" name="Value"/>
           </Option>
         </config>
       </editWidget>
@@ -169,14 +167,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="AllowMulti"/>
-            <Option value="false" type="bool" name="AllowNull"/>
-            <Option value="" type="QString" name="FilterExpression"/>
-            <Option value="id" type="QString" name="Key"/>
-            <Option value="type_capteur_9adb705c_d60c_46be_994d_9db8d89cad83" type="QString" name="Layer"/>
-            <Option value="false" type="bool" name="OrderByValue"/>
-            <Option value="false" type="bool" name="UseCompleter"/>
-            <Option value="name" type="QString" name="Value"/>
+            <Option type="bool" value="false" name="AllowMulti"/>
+            <Option type="bool" value="false" name="AllowNull"/>
+            <Option type="QString" value="" name="FilterExpression"/>
+            <Option type="QString" value="id" name="Key"/>
+            <Option type="QString" value="type_capteur_5b0b9c94_c5ea_4217_80df_35148790cc52" name="Layer"/>
+            <Option type="bool" value="false" name="OrderByValue"/>
+            <Option type="bool" value="false" name="UseCompleter"/>
+            <Option type="QString" value="name" name="Value"/>
           </Option>
         </config>
       </editWidget>
@@ -185,14 +183,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="AllowMulti"/>
-            <Option value="false" type="bool" name="AllowNull"/>
-            <Option value="" type="QString" name="FilterExpression"/>
-            <Option value="id" type="QString" name="Key"/>
-            <Option value="classification_fc7736a3_e3c7_42db_9a61_0a5c87c5f0e1" type="QString" name="Layer"/>
-            <Option value="false" type="bool" name="OrderByValue"/>
-            <Option value="false" type="bool" name="UseCompleter"/>
-            <Option value="name" type="QString" name="Value"/>
+            <Option type="bool" value="false" name="AllowMulti"/>
+            <Option type="bool" value="true" name="AllowNull"/>
+            <Option type="QString" value="" name="FilterExpression"/>
+            <Option type="QString" value="id" name="Key"/>
+            <Option type="QString" value="classification_8a8da63d_8977_4713_9258_51c3e1308224" name="Layer"/>
+            <Option type="bool" value="false" name="OrderByValue"/>
+            <Option type="bool" value="false" name="UseCompleter"/>
+            <Option type="QString" value="name" name="Value"/>
           </Option>
         </config>
       </editWidget>
@@ -201,14 +199,14 @@
       <editWidget type="ValueRelation">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="AllowMulti"/>
-            <Option value="false" type="bool" name="AllowNull"/>
-            <Option value="" type="QString" name="FilterExpression"/>
-            <Option value="id" type="QString" name="Key"/>
-            <Option value="installation_26366269_638e_46b3_9a47_fc47e7fc82a2" type="QString" name="Layer"/>
-            <Option value="false" type="bool" name="OrderByValue"/>
-            <Option value="false" type="bool" name="UseCompleter"/>
-            <Option value="name" type="QString" name="Value"/>
+            <Option type="bool" value="false" name="AllowMulti"/>
+            <Option type="bool" value="false" name="AllowNull"/>
+            <Option type="QString" value="" name="FilterExpression"/>
+            <Option type="QString" value="id" name="Key"/>
+            <Option type="QString" value="installation_c31ea9e0_3620_4919_845f_1eaba6361895" name="Layer"/>
+            <Option type="bool" value="false" name="OrderByValue"/>
+            <Option type="bool" value="false" name="UseCompleter"/>
+            <Option type="QString" value="name" name="Value"/>
           </Option>
         </config>
       </editWidget>
@@ -217,68 +215,68 @@
       <editWidget type="TextEdit">
         <config>
           <Option type="Map">
-            <Option value="false" type="bool" name="IsMultiline"/>
-            <Option value="false" type="bool" name="UseHtml"/>
+            <Option type="bool" value="false" name="IsMultiline"/>
+            <Option type="bool" value="false" name="UseHtml"/>
           </Option>
         </config>
       </editWidget>
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias name="" index="0" field="id"/>
-    <alias name="Début service" index="1" field="start_service_date"/>
-    <alias name="Fin service" index="2" field="end_service_date"/>
-    <alias name="Début pose" index="3" field="start_put_date"/>
-    <alias name="Fin pose" index="4" field="end_put_date"/>
-    <alias name="Début traitement" index="5" field="start_process_date"/>
-    <alias name="Fin traitement" index="6" field="end_process_date"/>
-    <alias name="Valide" index="7" field="valid"/>
-    <alias name="Dysfonctionnement" index="8" field="dysfunction"/>
-    <alias name="Remarques" index="9" field="remarks"/>
-    <alias name="Model" index="10" field="id_model"/>
-    <alias name="Automate" index="11" field="id_device"/>
-    <alias name="Type capteur" index="12" field="id_sensor_type"/>
-    <alias name="Classification" index="13" field="id_class"/>
-    <alias name="Installation" index="14" field="id_installation"/>
-    <alias name="" index="15" field="Periode speciale"/>
+    <alias index="0" name="" field="id"/>
+    <alias index="1" name="Début service" field="start_service_date"/>
+    <alias index="2" name="Fin service" field="end_service_date"/>
+    <alias index="3" name="Début pose" field="start_put_date"/>
+    <alias index="4" name="Fin pose" field="end_put_date"/>
+    <alias index="5" name="Début traitement" field="start_process_date"/>
+    <alias index="6" name="Fin traitement" field="end_process_date"/>
+    <alias index="7" name="Valide" field="valid"/>
+    <alias index="8" name="Dysfonctionnement" field="dysfunction"/>
+    <alias index="9" name="Remarques" field="remarks"/>
+    <alias index="10" name="Model" field="id_model"/>
+    <alias index="11" name="Automate" field="id_device"/>
+    <alias index="12" name="Type capteur" field="id_sensor_type"/>
+    <alias index="13" name="Classification" field="id_class"/>
+    <alias index="14" name="Installation" field="id_installation"/>
+    <alias index="15" name="" field="Periode speciale"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
   <defaults>
-    <default expression="" applyOnUpdate="0" field="id"/>
-    <default expression="''" applyOnUpdate="0" field="start_service_date"/>
-    <default expression="" applyOnUpdate="0" field="end_service_date"/>
-    <default expression="" applyOnUpdate="0" field="start_put_date"/>
-    <default expression="" applyOnUpdate="0" field="end_put_date"/>
-    <default expression="" applyOnUpdate="0" field="start_process_date"/>
-    <default expression="" applyOnUpdate="0" field="end_process_date"/>
-    <default expression="" applyOnUpdate="0" field="valid"/>
-    <default expression="" applyOnUpdate="0" field="dysfunction"/>
-    <default expression="" applyOnUpdate="0" field="remarks"/>
-    <default expression="" applyOnUpdate="0" field="id_model"/>
-    <default expression="" applyOnUpdate="0" field="id_device"/>
-    <default expression="" applyOnUpdate="0" field="id_sensor_type"/>
-    <default expression="" applyOnUpdate="0" field="id_class"/>
-    <default expression="@selected_installation" applyOnUpdate="0" field="id_installation"/>
-    <default expression="" applyOnUpdate="0" field="Periode speciale"/>
+    <default expression="" field="id" applyOnUpdate="0"/>
+    <default expression="''" field="start_service_date" applyOnUpdate="0"/>
+    <default expression="" field="end_service_date" applyOnUpdate="0"/>
+    <default expression="" field="start_put_date" applyOnUpdate="0"/>
+    <default expression="" field="end_put_date" applyOnUpdate="0"/>
+    <default expression="" field="start_process_date" applyOnUpdate="0"/>
+    <default expression="" field="end_process_date" applyOnUpdate="0"/>
+    <default expression="" field="valid" applyOnUpdate="0"/>
+    <default expression="" field="dysfunction" applyOnUpdate="0"/>
+    <default expression="" field="remarks" applyOnUpdate="0"/>
+    <default expression="" field="id_model" applyOnUpdate="0"/>
+    <default expression="" field="id_device" applyOnUpdate="0"/>
+    <default expression="" field="id_sensor_type" applyOnUpdate="0"/>
+    <default expression="" field="id_class" applyOnUpdate="0"/>
+    <default expression="@selected_installation" field="id_installation" applyOnUpdate="0"/>
+    <default expression="" field="Periode speciale" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint constraints="3" notnull_strength="1" exp_strength="0" unique_strength="1" field="id"/>
-    <constraint constraints="1" notnull_strength="2" exp_strength="0" unique_strength="0" field="start_service_date"/>
-    <constraint constraints="1" notnull_strength="2" exp_strength="0" unique_strength="0" field="end_service_date"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="start_put_date"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="end_put_date"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="start_process_date"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="end_process_date"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="valid"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="dysfunction"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="remarks"/>
-    <constraint constraints="1" notnull_strength="1" exp_strength="0" unique_strength="0" field="id_model"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="id_device"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="id_sensor_type"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="id_class"/>
-    <constraint constraints="1" notnull_strength="2" exp_strength="0" unique_strength="0" field="id_installation"/>
-    <constraint constraints="0" notnull_strength="0" exp_strength="0" unique_strength="0" field="Periode speciale"/>
+    <constraint constraints="3" exp_strength="0" notnull_strength="1" unique_strength="1" field="id"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="start_service_date"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="end_service_date"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="start_put_date"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="end_put_date"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="start_process_date"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="end_process_date"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="valid"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="dysfunction"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="remarks"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="id_model"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="id_device"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="id_sensor_type"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="id_class"/>
+    <constraint constraints="1" exp_strength="0" notnull_strength="1" unique_strength="0" field="id_installation"/>
+    <constraint constraints="0" exp_strength="0" notnull_strength="0" unique_strength="0" field="Periode speciale"/>
   </constraints>
   <constraintExpressions>
     <constraint desc="" exp="" field="id"/>
@@ -299,45 +297,45 @@
     <constraint desc="" exp="" field="Periode speciale"/>
   </constraintExpressions>
   <expressionfields>
-    <field precision="0" comment="" typeName="text" type="10" length="-1" name="Periode speciale" expression=" check_dates()" subType="0"/>
+    <field type="10" expression=" check_dates()" subType="0" name="Periode speciale" typeName="text" length="-1" precision="0" comment=""/>
   </expressionfields>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
-    <actionsetting id="{458e2ef6-1066-4a7d-8778-163c530bbbb0}" type="1" shortTitle="" name="Exporter la configuration" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_configuration_action([% $id %])" capture="0" isEnabledOnlyWhenEditable="0" notificationMessage="" icon="">
+    <actionsetting type="1" notificationMessage="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_configuration_action([% $id %])" id="{ca6b2377-6ff6-40a6-904c-3c49b3c6c301}" shortTitle="" icon="" capture="0" name="Exporter la configuration" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting id="{ef45e43b-a0e1-4b80-9681-fa4229ff8bc5}" type="1" shortTitle="" name="Importation" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_single_file_action([% $id %])" capture="0" isEnabledOnlyWhenEditable="0" notificationMessage="" icon="">
+    <actionsetting type="1" notificationMessage="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_import_single_file_action([% $id %])" id="{e50bc99e-2f48-4e31-bae8-1e999f80a79e}" shortTitle="" icon="" capture="0" name="Importation" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting id="{d6ede3e2-8e0a-48cf-8e95-40a18956e283}" type="1" shortTitle="" name="Creer un rapport" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_report_action([% $id %])" capture="0" isEnabledOnlyWhenEditable="0" notificationMessage="" icon="">
+    <actionsetting type="1" notificationMessage="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_report_action([% $id %])" id="{da14a4fa-31fa-40b4-85b4-f3d835f7f996}" shortTitle="" icon="" capture="0" name="Creer un rapport" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting id="{f73c75cf-9fdc-440f-b8ff-52f28335a73f}" type="1" shortTitle="" name="Creer un plan" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_plan_action([% $id %])" capture="0" isEnabledOnlyWhenEditable="0" notificationMessage="" icon="">
+    <actionsetting type="1" notificationMessage="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_export_plan_action([% $id %])" id="{fe2069f6-0dd8-4085-8279-498cebe8013a}" shortTitle="" icon="" capture="0" name="Creer un plan" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
-    <actionsetting id="{55301a02-ac9f-43c0-9eac-d4f30224254a}" type="1" shortTitle="" name="Générer les graphiques" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_chart_action([% $id %])" capture="0" isEnabledOnlyWhenEditable="0" notificationMessage="" icon="">
+    <actionsetting type="1" notificationMessage="" action="from qgis.utils import plugins&#xa;plugins['comptages'].do_generate_chart_action([% $id %])" id="{8246e6be-34c0-4b4a-8514-a5ed7c0eef42}" shortTitle="" icon="" capture="0" name="Générer les graphiques" isEnabledOnlyWhenEditable="0">
       <actionScope id="Feature"/>
     </actionsetting>
   </attributeactions>
-  <attributetableconfig sortExpression="" actionWidgetStyle="dropDown" sortOrder="0">
+  <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="">
     <columns>
-      <column type="field" hidden="0" name="id" width="-1"/>
-      <column type="field" hidden="0" name="start_service_date" width="-1"/>
-      <column type="field" hidden="0" name="end_service_date" width="-1"/>
-      <column type="field" hidden="0" name="start_put_date" width="-1"/>
-      <column type="field" hidden="0" name="end_put_date" width="-1"/>
-      <column type="field" hidden="0" name="start_process_date" width="-1"/>
-      <column type="field" hidden="0" name="end_process_date" width="-1"/>
-      <column type="field" hidden="0" name="valid" width="-1"/>
-      <column type="field" hidden="0" name="dysfunction" width="-1"/>
-      <column type="field" hidden="0" name="remarks" width="-1"/>
-      <column type="field" hidden="0" name="id_model" width="-1"/>
-      <column type="field" hidden="0" name="id_device" width="-1"/>
-      <column type="field" hidden="0" name="id_sensor_type" width="-1"/>
-      <column type="field" hidden="0" name="id_class" width="-1"/>
-      <column type="field" hidden="0" name="id_installation" width="-1"/>
-      <column type="actions" hidden="0" width="-1"/>
-      <column type="field" hidden="0" name="Periode speciale" width="-1"/>
+      <column type="field" width="-1" hidden="0" name="id"/>
+      <column type="field" width="-1" hidden="0" name="start_service_date"/>
+      <column type="field" width="-1" hidden="0" name="end_service_date"/>
+      <column type="field" width="-1" hidden="0" name="start_put_date"/>
+      <column type="field" width="-1" hidden="0" name="end_put_date"/>
+      <column type="field" width="-1" hidden="0" name="start_process_date"/>
+      <column type="field" width="-1" hidden="0" name="end_process_date"/>
+      <column type="field" width="-1" hidden="0" name="valid"/>
+      <column type="field" width="-1" hidden="0" name="dysfunction"/>
+      <column type="field" width="-1" hidden="0" name="remarks"/>
+      <column type="field" width="-1" hidden="0" name="id_model"/>
+      <column type="field" width="-1" hidden="0" name="id_device"/>
+      <column type="field" width="-1" hidden="0" name="id_sensor_type"/>
+      <column type="field" width="-1" hidden="0" name="id_class"/>
+      <column type="field" width="-1" hidden="0" name="id_installation"/>
+      <column type="actions" width="-1" hidden="0"/>
+      <column type="field" width="-1" hidden="0" name="Periode speciale"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -358,19 +356,32 @@ def on_form_open(dialog, layer, feature):
 	
 def on_dialog_changed(dialog, attribute, value, attributeChanged):
 	if attributeChanged:
-		if attribute == 'start_service_date':
-			dialog.changeAttribute('end_service_date', value.addDays(14), '')
-			dialog.changeAttribute('start_put_date', value, '')
-			dialog.changeAttribute('end_put_date', value.addDays(14), '')
-			dialog.changeAttribute('start_process_date', value, '')
-			dialog.changeAttribute('end_process_date', value.addDays(14), '')
-		if attribute == 'start_put_date':
-			dialog.changeAttribute('end_put_date', value.addDays(14), '')
 		if attribute == 'start_process_date':
-			dialog.changeAttribute('end_process_date', value.addDays(14), '')
-			dialog.changeAttribute('Periode speciale', plugins['comptages'].layers.check_dates(value, value.addDays(14)), '')]]></editforminitcode>
+			dialog.changeAttribute('end_process_date', value.addDays(13), '')
+			dialog.changeAttribute('start_put_date', value.addDays(-4), '')
+			dialog.changeAttribute('end_put_date', value.addDays(14), '')
+			dialog.changeAttribute('start_service_date', value.addDays(-5), '')
+			dialog.changeAttribute('end_service_date', value.addDays(15), '')            
+			dialog.changeAttribute('Periode speciale', plugins['comptages'].layers.check_dates(value, value.addDays(13)), '')]]></editforminitcode>
   <featformsuppress>0</featformsuppress>
-  <editorlayout>generatedlayout</editorlayout>
+  <editorlayout>tablayout</editorlayout>
+  <attributeEditorForm>
+    <attributeEditorField index="5" name="start_process_date" showLabel="1"/>
+    <attributeEditorField index="6" name="end_process_date" showLabel="1"/>
+    <attributeEditorField index="3" name="start_put_date" showLabel="1"/>
+    <attributeEditorField index="4" name="end_put_date" showLabel="1"/>
+    <attributeEditorField index="1" name="start_service_date" showLabel="1"/>
+    <attributeEditorField index="2" name="end_service_date" showLabel="1"/>
+    <attributeEditorField index="15" name="Periode speciale" showLabel="1"/>
+    <attributeEditorField index="7" name="valid" showLabel="1"/>
+    <attributeEditorField index="8" name="dysfunction" showLabel="1"/>
+    <attributeEditorField index="9" name="remarks" showLabel="1"/>
+    <attributeEditorField index="12" name="id_sensor_type" showLabel="1"/>
+    <attributeEditorField index="13" name="id_class" showLabel="1"/>
+    <attributeEditorField index="10" name="id_model" showLabel="1"/>
+    <attributeEditorField index="11" name="id_device" showLabel="1"/>
+    <attributeEditorField index="14" name="id_installation" showLabel="1"/>
+  </attributeEditorForm>
   <editable>
     <field editable="0" name="Periode speciale"/>
     <field editable="1" name="dysfunction"/>
