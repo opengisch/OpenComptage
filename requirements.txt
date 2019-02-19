@@ -1,3 +1,4 @@
 nose2==0.8.0
 psycopg2-binary==2.7.7
 icalendar==4.0.3
+openpyxl==2.6.0

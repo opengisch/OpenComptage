@@ -316,20 +316,20 @@ class Comptages(QObject):
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
-        report_creator = ReportCreator(self.layers)
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('*.PDF')
+        file_dialog.setDefaultSuffix('*.xlsx')
         title = 'Exporter un rapport'
         path = os.path.join(
             self.settings.value('report_export_directory'),
-            "{}.pdf".format("report"))
-        file = QFileDialog.getSaveFileName(
-            file_dialog, title, path, "Config file (*.PDF)")[0]
+            "{}.xlsx".format("report"))
+        file_path = QFileDialog.getSaveFileName(
+            file_dialog, title, path, "Rapport (*.XLSX)")[0]
 
-        if not file:
+        if not file_path:
             return
 
-        report_creator.export_pdf(count_id, file)
+        report_creator = ReportCreator(count_id, file_path, self.layers)
+        report_creator.run()
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
