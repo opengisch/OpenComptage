@@ -209,6 +209,24 @@ class ReportCreator():
     def _set_vit_hd(self):
         ws = self.wb['Vit_Hd']
 
+        ws['A1'] = ('Poste de comptage : {}  Axe : {}:{}:  '
+                    'PR {} + {} m à PR {} + {} m').format(
+                        self.section_id,
+                        self.count_data.attributes['owner'],
+                        self.count_data.attributes['road'],
+                        self.count_data.attributes['start_pr'],
+                        self.count_data.attributes['start_dist'],
+                        self.count_data.attributes['end_pr'],
+                        self.count_data.attributes['end_dist'])
+
+        ws['A2'] = 'Periode de comptage du {}/{}/{} au {}/{}/{}'.format(
+            self.count_data.attributes['dates'][0][2],
+            self.count_data.attributes['dates'][0][1],
+            self.count_data.attributes['dates'][0][0],
+            self.count_data.attributes['dates'][6][2],
+            self.count_data.attributes['dates'][6][1],
+            self.count_data.attributes['dates'][6][0],)
+
         speed_cols = ['B', 'C', 'D', 'E', 'F', 'G', 'H',
                       'I', 'J', 'K', 'L', 'M', 'N']
 
@@ -222,6 +240,16 @@ class ReportCreator():
         for i, hour in enumerate(dir2):
             for j, speed in enumerate(hour):
                 ws['{}{}'.format(speed_cols[j], i+50)] = speed
+
+        for col in speed_cols:
+            ws['{}40'.format(col)] = '=SUM({0}14:{0}37)/{1}'.format(
+                col, self.count_data.total(0, [0, 1, 2, 3, 4, 5, 6]))
+            ws['{}41'.format(col)] = '=SUM({0}20:{0}35)/{1}'.format(
+                col, self.count_data.total(0, [0, 1, 2, 3, 4, 5, 6]))
+            ws['{}76'.format(col)] = '=SUM({0}50:{0}73)/{1}'.format(
+                col, self.count_data.total(1, [0, 1, 2, 3, 4, 5, 6]))
+            ws['{}77'.format(col)] = '=SUM({0}56:{0}71)/{1}'.format(
+                col, self.count_data.total(1, [0, 1, 2, 3, 4, 5, 6]))
 
     def _set_swiss10_h(self):
         ws = self.wb['SWISS10_H']
