@@ -126,12 +126,18 @@ class ReportCreator():
         ws['C20'] = self.count_data.average_total(days=[0, 1, 2, 3, 4])
         ws['D20'] = self.count_data.average_total(0, days=[0, 1, 2, 3, 4])
         ws['E20'] = self.count_data.average_total(1, days=[0, 1, 2, 3, 4])
-        ws['F20'] = self.count_data.average_light_vehicles(0, days=[0, 1, 2, 3, 4])
-        ws['G20'] = self.count_data.average_light_vehicles(1, days=[0, 1, 2, 3, 4])
-        ws['H20'] = self.count_data.average_heavy_vehicles(0, days=[0, 1, 2, 3, 4])
-        ws['I20'] = self.count_data.average_heavy_vehicles(1, days=[0, 1, 2, 3, 4])
-        ws['J20'] = self.count_data.average_percent_heavy_vehicles(0, days=[0, 1, 2, 3, 4])
-        ws['K20'] = self.count_data.average_percent_heavy_vehicles(1, days=[0, 1, 2, 3, 4])
+        ws['F20'] = self.count_data.average_light_vehicles(
+            0, days=[0, 1, 2, 3, 4])
+        ws['G20'] = self.count_data.average_light_vehicles(
+            1, days=[0, 1, 2, 3, 4])
+        ws['H20'] = self.count_data.average_heavy_vehicles(
+            0, days=[0, 1, 2, 3, 4])
+        ws['I20'] = self.count_data.average_heavy_vehicles(
+            1, days=[0, 1, 2, 3, 4])
+        ws['J20'] = self.count_data.average_percent_heavy_vehicles(
+            0, days=[0, 1, 2, 3, 4])
+        ws['K20'] = self.count_data.average_percent_heavy_vehicles(
+            1, days=[0, 1, 2, 3, 4])
 
         ws['C21'] = self.count_data.average_total(days=[5, 6])
         ws['D21'] = self.count_data.average_total(0, days=[5, 6])
@@ -140,8 +146,10 @@ class ReportCreator():
         ws['G21'] = self.count_data.average_light_vehicles(1, days=[5, 6])
         ws['H21'] = self.count_data.average_heavy_vehicles(0, days=[5, 6])
         ws['I21'] = self.count_data.average_heavy_vehicles(1, days=[5, 6])
-        ws['J21'] = self.count_data.average_percent_heavy_vehicles(0, days=[5, 6])
-        ws['K21'] = self.count_data.average_percent_heavy_vehicles(1, days=[5, 6])
+        ws['J21'] = self.count_data.average_percent_heavy_vehicles(
+            0, days=[5, 6])
+        ws['K21'] = self.count_data.average_percent_heavy_vehicles(
+            1, days=[5, 6])
 
     def _set_cv_c(self):
         ws = self.wb['CV_C']
@@ -202,9 +210,12 @@ class ReportCreator():
         day_cols_d2 = ['W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC']
         for i, day_data in enumerate(days):
             for j in range(24):
-                ws['{}{}'.format(day_cols_tot[i], j+14)] = day_data.hour_data[j].total()
-                ws['{}{}'.format(day_cols_d1[i], j+14)] = day_data.hour_data[j].total(0)
-                ws['{}{}'.format(day_cols_d2[i], j+14)] = day_data.hour_data[j].total(1)
+                ws['{}{}'.format(day_cols_tot[i], j+14)] = \
+                    day_data.hour_data[j].total()
+                ws['{}{}'.format(day_cols_d1[i], j+14)] = \
+                    day_data.hour_data[j].total(0)
+                ws['{}{}'.format(day_cols_d2[i], j+14)] = \
+                    day_data.hour_data[j].total(1)
 
     def _set_vit_hd(self):
         ws = self.wb['Vit_Hd']
