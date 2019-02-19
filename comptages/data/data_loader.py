@@ -9,6 +9,9 @@ from comptages.data.direction_data import DirectionData
 
 class DataLoader():
 
+    _monthly_coefficients = [93, 96, 100, 102, 101, 104,
+                             98, 98, 104, 103, 102, 98]
+
     def __init__(self, count_id, section_id, status):
         self.db = connect_to_db()
         self.count_id = count_id
@@ -17,14 +20,20 @@ class DataLoader():
         self.categories = []
         self.light_vehicles = []
         self.populate_category_and_light_index()
+        self.attributes = {}
 
     def load(self):
         function = self.get_detail_direction_data
+        self.attributes['aggregate'] = False
         if self.is_data_aggregate():
             function = self.get_aggregate_direction_data
+            self.attributes['aggregate'] = True
 
+        self.read_attributes()
         count_data = CountData()
+        count_data.attributes = self.attributes
         dates = self.get_count_dates()
+        self.attributes['dates'] = dates
         for date in dates:
             day_data = DayData()
             for hour in range(24):
@@ -35,6 +44,8 @@ class DataLoader():
                         function(date[0], date[1], date[2], hour, direction)
                     hour_data.direction_data.append(direction_data)
                 day_data.hour_data.append(hour_data)
+                day_data.monthly_coefficient = self._monthly_coefficients[
+                    date[1]-1]
             count_data.day_data.append(day_data)
 
         self.db.close()
@@ -74,7 +85,7 @@ class DataLoader():
             if query.value(0) == 'CLS':
                 category_data[self.category_index(
                     int(query.value(2)))] += int(query.value(1))
-            else:
+            elif query.value(0) == 'SPD':
                 speed_data[spd_index] = int(query.value(3))
                 spd_index += 1
 
@@ -124,13 +135,14 @@ class DataLoader():
             "where cou.id = {};".format(self.count_id)
         )
         query.exec_(query_str)
-
+        print(query_str)
         i = 0
         while query.next():
             self.categories.append(int(query.value(0)))
             if query.value(1):
                 self.light_vehicles.append(i)
             i += 1
+        print(self.categories)
 
     def get_count_dates(self):
         query = QSqlQuery(self.db)
@@ -171,3 +183,40 @@ class DataLoader():
         if query.next():
             return True
         return False
+
+    def read_attributes(self):
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select cou.remarks, sty.name, mdl.name, cla.name "
+            "from comptages.count as cou "
+            "join comptages.sensor_type as sty on cou.id_sensor_type = sty.id "
+            "join comptages.model as mdl on cou.id_model = mdl.id "
+            "join comptages.class as cla on cou.id_class = cla.id "
+            "where cou.id = {} ".format(self.count_id))
+
+        query.exec_(query_str)
+
+        query.next()
+        self.attributes['remarks'] = query.value(0)
+        self.attributes['sensor_type'] = query.value(1)
+        self.attributes['model'] = query.value(2)
+        self.attributes['class'] = query.value(3)
+
+        query_str = (
+            "select sec.owner, sec.road, sec.start_pr, sec.end_pr, "
+            "sec.start_dist, sec.end_dist, sec.place_name "
+            "from comptages.section as sec "
+            "inner join comptages.lane as lan on sec.id = lan.id_section "
+            "where sec.id = '{}' ".format(self.section_id))
+
+        query.exec_(query_str)
+
+        query.next()
+        self.attributes['owner'] = query.value(0)
+        self.attributes['road'] = query.value(1)
+        self.attributes['start_pr'] = query.value(2)
+        self.attributes['end_pr'] = query.value(3)
+        self.attributes['start_dist'] = query.value(4)
+        self.attributes['end_dist'] = query.value(5)
+        self.attributes['place_name'] = query.value(6)

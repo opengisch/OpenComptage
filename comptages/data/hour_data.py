@@ -26,5 +26,11 @@ class HourData():
         return round(100 / self.total(direction) *
                      self.heavy_vehicles(direction), 2)
 
+    def speed(self, direction):
+        return self.direction_data[direction].speed_data
+
+    def category(self, direction):
+        return self.direction_data[direction].category_data
+
     def __str__(self):
         return str(self.direction_data)

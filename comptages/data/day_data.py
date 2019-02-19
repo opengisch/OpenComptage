@@ -4,6 +4,7 @@ class DayData():
 
     def __init__(self):
         self.hour_data = []
+        self.monthly_coefficient = 0
 
     def total(self, direction=None):
         return sum([i.total(direction) for i in self.hour_data])
