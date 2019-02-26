@@ -22,7 +22,7 @@ class DirectionData():
         return self.total() - self.light_vehicles()
 
     def percent_heavy_vehicles(self):
-        return round(100 / self.total() * self.heavy_vehicles(), 2)
+        return round(100 / self.total() * self.heavy_vehicles(), 1)
 
     def __str__(self):
         return str("Speed_data: {}, category_data: {}".format(

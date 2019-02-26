@@ -24,7 +24,7 @@ class HourData():
         if self.total(direction) * self.heavy_vehicles(direction) == 0:
             return 0
         return round(100 / self.total(direction) *
-                     self.heavy_vehicles(direction), 2)
+                     self.heavy_vehicles(direction), 1)
 
     def speed(self, direction):
         return self.direction_data[direction].speed_data

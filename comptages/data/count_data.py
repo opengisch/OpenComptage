@@ -33,10 +33,10 @@ class CountData():
         if days is None:
             return round(
                 mean([i.percent_heavy_vehicles(direction)
-                      for i in self.day_data]), 2)
+                      for i in self.day_data]), 1)
         return round(
             mean([self.day_data[i].percent_heavy_vehicles(direction)
-                  for i in days]), 2)
+                  for i in days]), 1)
 
     def speed_cumulus(self, direction, days):
         bin_size = len(

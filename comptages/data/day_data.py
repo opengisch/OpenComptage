@@ -19,7 +19,7 @@ class DayData():
         if self.total(direction) * self.heavy_vehicles(direction) == 0:
             return 0
         return round(100 / self.total(direction) *
-                     self.heavy_vehicles(direction), 2)
+                     self.heavy_vehicles(direction), 1)
 
     def __str__(self):
         return str(self.hour_data)
