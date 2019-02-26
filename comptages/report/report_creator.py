@@ -322,10 +322,10 @@ class ReportCreator():
                     col, self.count_data.total(0, [0, 1, 2, 3, 4, 5, 6]))
             ws['{}70'.format(col)] = \
                 '=SUM({0}45:{0}68)/{1}'.format(
-                    col, self.count_data.total(0, [0, 1, 2, 3, 4, 5, 6]))
+                    col, self.count_data.total(1, [0, 1, 2, 3, 4, 5, 6]))
             ws['{}71'.format(col)] = \
                 '=SUM({0}51:{0}66)/{1}'.format(
-                    col, self.count_data.total(0, [0, 1, 2, 3, 4, 5, 6]))
+                    col, self.count_data.total(1, [0, 1, 2, 3, 4, 5, 6]))
 
         for i in range(24):
             ws['N{}'.format(i+12)] = '=M{}/{}*7'.format(
