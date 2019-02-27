@@ -58,8 +58,56 @@ class ReportCreator():
         self.wb.save(filename=output)
 
     def _set_data_count(self):
-        # TODO: implement
-        pass
+        ws = self.wb['Data_count']
+
+        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}:  '
+                    'PR {} + {} m à PR {} + {} m').format(
+                        self.section_id,
+                        self.count_data.attributes['owner'],
+                        self.count_data.attributes['road'],
+                        self.count_data.attributes['start_pr'],
+                        self.count_data.attributes['start_dist'],
+                        self.count_data.attributes['end_pr'],
+                        self.count_data.attributes['end_dist'])
+
+        ws['B4'] = 'Periode de comptage du {}/{}/{} au {}/{}/{}'.format(
+            self.count_data.attributes['dates'][0][2],
+            self.count_data.attributes['dates'][0][1],
+            self.count_data.attributes['dates'][0][0],
+            self.count_data.attributes['dates'][6][2],
+            self.count_data.attributes['dates'][6][1],
+            self.count_data.attributes['dates'][6][0],)
+
+        ws['B5'] = 'Comptage {}'.format(
+            self.count_data.attributes['dates'][0][0])
+
+        ws['B6'] = 'Type de capteur : {}'.format(
+            self.count_data.attributes['sensor_type'])
+        ws['B7'] = 'Modèle : {}'.format(
+            self.count_data.attributes['model'])
+        ws['B8'] = 'Classification : {}'.format(
+            self.count_data.attributes['class'])
+
+        ws['B9'] = 'Comptage véhicule par véhicule'
+        if self.count_data.attributes['aggregate']:
+            ws['K5'] = 'Comptage par interval'
+
+        ws['B10'] = 'Periode speciales : {}'.format(
+            self.layers.check_dates(
+                QDate(
+                    self.count_data.attributes['dates'][0][0],
+                    self.count_data.attributes['dates'][0][1],
+                    self.count_data.attributes['dates'][0][2]),
+                QDate(
+                    self.count_data.attributes['dates'][6][0],
+                    self.count_data.attributes['dates'][0][1],
+                    self.count_data.attributes['dates'][0][2])))
+
+        ws['B11'] = self.count_data.attributes['place_name']
+
+        ws['B12'] = 'Remarque : {}'.format(
+            self.count_data.attributes['remarks']
+            if type(self.count_data.attributes['remarks']) == str else '')
 
     def _set_data_day(self):
         ws = self.wb['Data_day']
