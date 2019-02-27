@@ -159,6 +159,7 @@ CREATE TABLE comptages.lane (
 	id serial NOT NULL,
 	number smallint NOT NULL,
 	direction smallint NOT NULL,
+	direction_desc text,
 	id_installation integer,
 	id_section char(20) NOT NULL,
 	CONSTRAINT lane_pk PRIMARY KEY (id)
