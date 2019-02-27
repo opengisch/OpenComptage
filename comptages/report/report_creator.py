@@ -109,6 +109,9 @@ class ReportCreator():
             self.count_data.attributes['remarks']
             if type(self.count_data.attributes['remarks']) == str else '')
 
+        ws['B13'] = self.count_data.attributes['dir1']
+        ws['B14'] = self.count_data.attributes['dir2']
+
     def _set_data_day(self):
         ws = self.wb['Data_day']
 
