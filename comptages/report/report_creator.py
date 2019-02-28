@@ -119,13 +119,13 @@ class ReportCreator():
 
         day_cols_tot = ['B', 'C', 'D', 'E', 'F', 'G', 'H']
         section_start_cell = 5
-        dir1_start_cell = 33
-        dir1_light_cell = 59
-        dir1_heavy_cell = 60
-
-        dir2_start_cell = 64
-        dir2_light_cell = 90
-        dir2_heavy_cell = 91
+        coefficient_cell = 31
+        dir1_start_cell = 35
+        dir1_light_cell = 61
+        dir1_heavy_cell = 62
+        dir2_start_cell = 66
+        dir2_light_cell = 92
+        dir2_heavy_cell = 93
         for i, day_data in enumerate(days):
             for j in range(24):
                 ws['{}{}'.format(day_cols_tot[i], j+section_start_cell)] = \
@@ -135,6 +135,8 @@ class ReportCreator():
                 ws['{}{}'.format(day_cols_tot[i], j+dir2_start_cell)] = \
                     day_data.hour_data[j].total(1)
 
+            ws['{}{}'.format(day_cols_tot[i], coefficient_cell)] = \
+                '{}%'.format(day_data.monthly_coefficient)
             ws['{}{}'.format(day_cols_tot[i], dir1_light_cell)] = \
                 day_data.light_vehicles(0)
             ws['{}{}'.format(day_cols_tot[i], dir2_light_cell)] = \
