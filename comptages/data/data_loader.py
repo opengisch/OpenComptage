@@ -135,14 +135,12 @@ class DataLoader():
             "where cou.id = {};".format(self.count_id)
         )
         query.exec_(query_str)
-        print(query_str)
         i = 0
         while query.next():
             self.categories.append(int(query.value(0)))
             if query.value(1):
                 self.light_vehicles.append(i)
             i += 1
-        print(self.categories)
 
     def get_count_dates(self):
         query = QSqlQuery(self.db)
