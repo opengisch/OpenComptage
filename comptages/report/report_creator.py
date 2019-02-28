@@ -15,18 +15,19 @@ class ReportCreator():
         self.layers = layers
 
     def run(self):
-        # TODO: Evaluate special cases
+        section_ids = self.layers.get_section_ids_of_count(self.count_id)
 
-        # FIXME: section_id
-        self.section_id = '01743230'
+        for section_id in section_ids:
+            self.section_id = section_id
 
-        data_loader = DataLoader(
-            self.count_id, self.section_id, Layers.IMPORT_STATUS_DEFINITIVE)
+            data_loader = DataLoader(
+                self.count_id, self.section_id,
+                Layers.IMPORT_STATUS_DEFINITIVE)
 
-        count_data = data_loader.load()
+            count_data = data_loader.load()
 
-        for i in range(int(len(count_data.day_data)/7)):
-            self._export_report(count_data, i*7, i*7+6)
+            for i in range(int(len(count_data.day_data)/7)):
+                self._export_report(count_data, i*7, i*7+6)
 
     def _export_report(self, count_data, start_day, end_day):
         current_dir = os.path.dirname(os.path.abspath(__file__))
