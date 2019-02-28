@@ -301,14 +301,14 @@ class TestChartData(unittest.TestCase):
              '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
             xs[1])
         self.assertEqual(
-            [None, None, None, None, None, None, None, None,
+            [None, None, None, None, None, None, None,
              55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
-             None, None, None, None, None, None],
+             None, None, None, None, None, None, None],
             ys[0])
         self.assertEqual(
             [None, None, None, None, None, None, None, None,
              None, None, None, None, None, None, None, None,
-             None, 55, None, None, None, None, None, None],
+             55, None, None, None, None, None, None, None],
             ys[1])
 
         xs, ys, days = self.layers.get_aggregate_time_chart_data_by_lane(
@@ -328,14 +328,14 @@ class TestChartData(unittest.TestCase):
              '18h-19h', '19h-20h', '20h-21h', '21h-22h', '22h-23h', '23h-00h'],
             xs[1])
         self.assertEqual(
-            [None, None, None, None, None, None, None, None,
+            [None, None, None, None, None, None, None,
              10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-             None, None, None, None, None, None],
+             None, None, None, None, None, None, None],
             ys[0])
         self.assertEqual(
             [None, None, None, None, None, None, None, None,
              None, None, None, None, None, None, None, None,
-             None, 10, None, None, None, None, None, None],
+             10, None, None, None, None, None, None, None],
             ys[1])
 
     def test_time_chart_by_direction_aggregate(self):
@@ -388,8 +388,8 @@ class TestChartData(unittest.TestCase):
             xs[0])
         self.assertEqual(
             [None, None, None, None, None, None,
-             None, None, 66, 66, 66, 66,
-             66, None, None, None, None, None,
+             None, 66, 66, 66, 66, 66,
+             None, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
 
@@ -405,8 +405,8 @@ class TestChartData(unittest.TestCase):
             xs[0])
         self.assertEqual(
             [None, None, None, None, None, None,
-             None, None, 70, 70, 70, 70,
-             70, None, None, None, None, None,
+             None, 70, 70, 70, 70, 70,
+             None, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
 
@@ -731,7 +731,7 @@ class TestChartData(unittest.TestCase):
         self.assertEqual(
             [None, None, None, None, None, None,
              None, None, None, None, None, None,
-             None, 65, None, None, None, None,
+             65, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
 
@@ -748,7 +748,7 @@ class TestChartData(unittest.TestCase):
         self.assertEqual(
             [None, None, None, None, None, None,
              None, None, None, None, None, None,
-             None, 53, None, None, None, None,
+             53, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
 
@@ -765,7 +765,7 @@ class TestChartData(unittest.TestCase):
         self.assertEqual(
             [None, None, None, None, None, None,
              None, None, None, None, None, None,
-             None, 37, None, None, None, None,
+             37, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])
 
@@ -782,6 +782,6 @@ class TestChartData(unittest.TestCase):
         self.assertEqual(
             [None, None, None, None, None, None,
              None, None, None, None, None, None,
-             None, 18, None, None, None, None,
+             18, None, None, None, None, None,
              None, None, None, None, None, None],
             ys[0])

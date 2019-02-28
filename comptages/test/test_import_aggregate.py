@@ -105,10 +105,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('CLS', query.value(0))
         self.assertEqual(
-            '240918 0800',
+            '240918 0700',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0900',
+            '240918 0800',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_cls.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
@@ -219,10 +219,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('DRN', query.value(0))
         self.assertEqual(
-            '240918 0800',
+            '240918 0700',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0900',
+            '240918 0800',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_drn.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
@@ -301,10 +301,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('LEN', query.value(0))
         self.assertEqual(
-            '240918 0800',
+            '240918 0700',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0900',
+            '240918 0800',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_len.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
@@ -395,10 +395,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('SPD', query.value(0))
         self.assertEqual(
-            '240918 0800',
+            '240918 0700',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0900',
+            '240918 0800',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_spd.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
@@ -529,10 +529,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('SDS', query.value(0))
         self.assertEqual(
-            '240918 0800',
+            '240918 0700',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0900',
+            '240918 0800',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_sds.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
@@ -674,10 +674,10 @@ class TestImportAggregate(unittest.TestCase):
         query.next()
         self.assertEqual('CNT', query.value(0))
         self.assertEqual(
-            '240918 0100',
+            '240918 0000',
             query.value(1).toString('ddMMyy HHmm'))
         self.assertEqual(
-            '240918 0200',
+            '240918 0100',
             query.value(2).toString('ddMMyy HHmm'))
         self.assertEqual('simple_aggregate_cnt.i00', query.value(3))
         self.assertEqual(self.layers.IMPORT_STATUS_QUARANTINE, query.value(4))
