@@ -330,6 +330,7 @@ class Comptages(QObject):
 
         report_creator = ReportCreator(count_id, file_path, self.layers)
         report_creator.run()
+        push_info(("Exportation rappport terminée."))
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
