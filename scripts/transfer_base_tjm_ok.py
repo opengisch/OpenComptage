@@ -107,7 +107,9 @@ class TransferBaseTjmOk(object):
                             record[20], record[1])
                         self.write_sensor_type_installation(
                             record[17], installation_id)
-                        self.write_lanes(record, installation_id, section_id)
+                        self.write_lanes(
+                            record, installation_id, section_id, record[28],
+                            record[29])
 
     def write_section(self, record):
         with self.connection:
@@ -152,27 +154,31 @@ class TransferBaseTjmOk(object):
 
                 return cursor.fetchone()[0]
 
-    def write_lanes(self, record, installation_id, section_id):
+    def write_lanes(self, record, installation_id, section_id, dir1, dir2):
         if record[17] == 'Tuyaux':
             if record[5] == '=':
-                self.write_lane(1, 1, installation_id, section_id)
-                self.write_lane(2, 2, installation_id, section_id)
+                self.write_lane(1, 1, installation_id, section_id, dir1)
+                self.write_lane(2, 2, installation_id, section_id, dir2)
             elif record[5] == '+':
-                self.write_lane(1, 1, installation_id, section_id)
+                self.write_lane(1, 1, installation_id, section_id, dir1)
             elif record[5] == '-':
-                self.write_lane(1, 2, installation_id, section_id)
+                self.write_lane(1, 2, installation_id, section_id, dir2)
         else:  # Boucles
             for i, _ in enumerate(record[22]):  # Boucon
                 self.write_lane(
-                    i+1, (1 if _ == 'A' else 2), installation_id, section_id)
+                    i+1, (1 if _ == 'A' else 2), installation_id, section_id,
+                    (dir1 if _ == 'A' else dir2))
 
-    def write_lane(self, number, direction, installation_id, section_id):
+    def write_lane(
+            self, number, direction, installation_id, section_id,
+            direction_desc):
         with self.connection:
             with self.connection.cursor() as cursor:
                 query = (
                     "INSERT INTO comptages.lane("
-                    "number, direction, id_installation, id_section)"
-                    "VALUES (%s, %s, %s, %s) "
+                    "number, direction, id_installation, id_section, "
+                    "direction_desc) "
+                    "VALUES (%s, %s, %s, %s, %s) "
                     "RETURNING id;"
                 )
                 cursor.execute(
@@ -180,89 +186,90 @@ class TransferBaseTjmOk(object):
                     (f"{number}",
                      f"{direction}",
                      f"{installation_id}",
-                     f"{section_id}"))
+                     f"{section_id}",
+                     f"{direction_desc}"))
 
     def write_special_cases(self):
         installation_id = self.write_installation(True, '4720_1_2')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '47226035')
-        self.write_lane(2, 1, installation_id, '47216025')
+        self.write_lane(1, 1, installation_id, '47226035', '')
+        self.write_lane(2, 1, installation_id, '47216025', '')
         installation_id = self.write_installation(True, '4720_3_4')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '47246045')
-        self.write_lane(2, 1, installation_id, '47236040')
+        self.write_lane(1, 1, installation_id, '47246045', '')
+        self.write_lane(2, 1, installation_id, '47236040', '')
         installation_id = self.write_installation(True, '4730_3_4')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '47346070')
-        self.write_lane(2, 1, installation_id, '47336065')
+        self.write_lane(1, 1, installation_id, '47346070', '')
+        self.write_lane(2, 1, installation_id, '47336065', '')
         installation_id = self.write_installation(True, '53109999')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '53116845')
-        self.write_lane(2, 1, installation_id, '53126850')
-        self.write_lane(3, 1, installation_id, '53136855')
-        self.write_lane(4, 1, installation_id, '53146860')
+        self.write_lane(1, 1, installation_id, '53116845', '')
+        self.write_lane(2, 1, installation_id, '53126850', '')
+        self.write_lane(3, 1, installation_id, '53136855', '')
+        self.write_lane(4, 1, installation_id, '53146860', '')
         installation_id = self.write_installation(True, '53309999')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '00056200')
-        self.write_lane(2, 2, installation_id, '00056200')
-        self.write_lane(3, 1, installation_id, '00056202')
-        self.write_lane(4, 2, installation_id, '00056202')
-        self.write_lane(5, 1, installation_id, '53316875')
-        self.write_lane(6, 1, installation_id, '53326880')
-        self.write_lane(7, 1, installation_id, '53336885')
-        self.write_lane(8, 1, installation_id, '53346890')
+        self.write_lane(1, 1, installation_id, '00056200', '')
+        self.write_lane(2, 2, installation_id, '00056200', '')
+        self.write_lane(3, 1, installation_id, '00056202', '')
+        self.write_lane(4, 2, installation_id, '00056202', '')
+        self.write_lane(5, 1, installation_id, '53316875', '')
+        self.write_lane(6, 1, installation_id, '53326880', '')
+        self.write_lane(7, 1, installation_id, '53336885', '')
+        self.write_lane(8, 1, installation_id, '53346890', '')
         installation_id = self.write_installation(True, '53401002')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '00056230')
-        self.write_lane(2, 2, installation_id, '00056230')
-        self.write_lane(3, 1, installation_id, '10020355')
-        self.write_lane(4, 2, installation_id, '10020355')
+        self.write_lane(1, 1, installation_id, '00056230', '')
+        self.write_lane(2, 2, installation_id, '00056230', '')
+        self.write_lane(3, 1, installation_id, '10020355', '')
+        self.write_lane(4, 2, installation_id, '10020355', '')
         installation_id = self.write_installation(True, '53409999')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '53410005')
-        self.write_lane(2, 1, installation_id, '53420005')
-        self.write_lane(3, 1, installation_id, '53430005')
-        self.write_lane(4, 1, installation_id, '53440005')
+        self.write_lane(1, 1, installation_id, '53410005', '')
+        self.write_lane(2, 1, installation_id, '53420005', '')
+        self.write_lane(3, 1, installation_id, '53430005', '')
+        self.write_lane(4, 1, installation_id, '53440005', '')
         installation_id = self.write_installation(True, '5350_1_4')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '53515786')
-        self.write_lane(2, 1, installation_id, '53545796')
+        self.write_lane(1, 1, installation_id, '53515786', '')
+        self.write_lane(2, 1, installation_id, '53545796', '')
         installation_id = self.write_installation(True, '5350_3_2')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '53536901')
-        self.write_lane(2, 1, installation_id, '53526896')
+        self.write_lane(1, 1, installation_id, '53536901', '')
+        self.write_lane(2, 1, installation_id, '53526896', '')
         installation_id = self.write_installation(True, '5510_124')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '55110005')
-        self.write_lane(2, 1, installation_id, '55120050')
-        self.write_lane(3, 1, installation_id, '64010085')
-        self.write_lane(4, 2, installation_id, '64010085')
+        self.write_lane(1, 1, installation_id, '55110005', '')
+        self.write_lane(2, 1, installation_id, '55120050', '')
+        self.write_lane(3, 1, installation_id, '64010085', '')
+        self.write_lane(4, 2, installation_id, '64010085', '')
         installation_id = self.write_installation(True, '5510_3_5')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '00056360')
-        self.write_lane(2, 2, installation_id, '00056360')
-        self.write_lane(3, 1, installation_id, '00056355')
-        self.write_lane(4, 2, installation_id, '00056355')
+        self.write_lane(1, 1, installation_id, '00056360', '')
+        self.write_lane(2, 2, installation_id, '00056360', '')
+        self.write_lane(3, 1, installation_id, '00056355', '')
+        self.write_lane(4, 2, installation_id, '00056355', '')
         installation_id = self.write_installation(True, '5830_2_4')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '58327205')
-        self.write_lane(2, 1, installation_id, '58347235')
+        self.write_lane(1, 1, installation_id, '58327205', '')
+        self.write_lane(2, 1, installation_id, '58347235', '')
         installation_id = self.write_installation(True, '5840_1_2')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '58417240')
-        self.write_lane(2, 1, installation_id, '58427245')
+        self.write_lane(1, 1, installation_id, '58417240', '')
+        self.write_lane(2, 1, installation_id, '58427245', '')
         installation_id = self.write_installation(True, '5840_3_4')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '58437250')
-        self.write_lane(2, 1, installation_id, '58447255')
+        self.write_lane(1, 1, installation_id, '58437250', '')
+        self.write_lane(2, 1, installation_id, '58447255', '')
         installation_id = self.write_installation(True, '5610_1_1')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '00056380')
-        self.write_lane(2, 2, installation_id, '56146965')
+        self.write_lane(1, 1, installation_id, '00056380', '')
+        self.write_lane(2, 2, installation_id, '56146965', '')
         installation_id = self.write_installation(True, '5610_2_1')
         self.write_sensor_type_installation(None, installation_id)
-        self.write_lane(1, 1, installation_id, '00056380')
-        self.write_lane(2, 2, installation_id, '56126945')
+        self.write_lane(1, 1, installation_id, '00056380', '')
+        self.write_lane(2, 2, installation_id, '56126945', '')
 
     def write_sensor_type_installation(self, sensor_type, id_installation):
         if sensor_type == 'Tuyaux':

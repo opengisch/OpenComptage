@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha1" last-position="0,485" last-zoom="1" max-obj-count="33"
+<dbmodel pgmodeler-ver="0.9.2-alpha1" last-position="0,0" last-zoom="1" max-obj-count="33"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -138,7 +138,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="category" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="category" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="160" y="380"/>
@@ -148,15 +148,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="code">
-		<type name="text" length="0"/>
+	<column name="code" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="light" not-null="true">
+		<type name="boolean" length="0"/>
 	</column>
 	<constraint name="category_pk" type="pk-constr" table="comptages.category">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_category" index="3"/>
+		<object name="id_category" index="4"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -240,7 +243,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <extension name="postgis">
 </extension>
 
-<table name="lane" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="lane" layer="0" collapse-mode="2" max-obj-count="7">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="60" y="840"/>
@@ -253,13 +256,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="direction" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
+	<column name="direction_desc">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="lane_pk" type="pk-constr" table="comptages.lane">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_installation" index="3"/>
-		<object name="id_section" index="4"/>
+		<object name="id_installation" index="4"/>
+		<object name="id_section" index="5"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -600,9 +606,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="393.298" y="428.654"/>
-	<position x="393.298" y="369"/>
-	<position x="308.198" y="369"/>
+		<position x="393.198" y="434.151"/>
+	<position x="393.198" y="369"/>
+	<position x="308.132" y="369"/>
 	</line>
 </relationship>
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from qgis.PyQt.QtSql import QSqlQuery
 
 from comptages.core.layers import Layers
-from comptages.data.data_importer import DataImporter
+from comptages.importer.data_importer import DataImporter
 
 
 class DataImporterVbv1(DataImporter):

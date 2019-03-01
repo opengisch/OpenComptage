@@ -13,9 +13,9 @@ from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.utils import push_info
-from comptages.data.data_importer import DataImporter
-from comptages.data.data_importer_vbv1 import DataImporterVbv1
-from comptages.data.data_importer_int2 import DataImporterInt2
+from comptages.importer.data_importer import DataImporter
+from comptages.importer.data_importer_vbv1 import DataImporterVbv1
+from comptages.importer.data_importer_int2 import DataImporterInt2
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
@@ -316,20 +316,21 @@ class Comptages(QObject):
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
-        report_creator = ReportCreator(self.layers)
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('*.PDF')
+        file_dialog.setDefaultSuffix('*.xlsx')
         title = 'Exporter un rapport'
         path = os.path.join(
             self.settings.value('report_export_directory'),
-            "{}.pdf".format("report"))
-        file = QFileDialog.getSaveFileName(
-            file_dialog, title, path, "Config file (*.PDF)")[0]
+            "{}.xlsx".format("report"))
+        file_path = QFileDialog.getSaveFileName(
+            file_dialog, title, path, "Rapport (*.XLSX)")[0]
 
-        if not file:
+        if not file_path:
             return
 
-        report_creator.export_pdf(count_id, file)
+        report_creator = ReportCreator(count_id, file_path, self.layers)
+        report_creator.run()
+        push_info(("Exportation rappport terminée."))
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)

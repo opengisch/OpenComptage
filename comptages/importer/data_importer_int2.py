@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from qgis.PyQt.QtSql import QSqlQuery
 
 from comptages.core.layers import Layers
-from comptages.data.data_importer import DataImporter
+from comptages.importer.data_importer import DataImporter
 
 
 class DataImporterInt2(DataImporter):
@@ -59,15 +59,15 @@ class DataImporterInt2(DataImporter):
         # instead of 0000 of the next day
         if line[7:9] == '24':
             line = line[:7] + '00' + line[9:]
-            start = datetime.strptime(
+            end = datetime.strptime(
                 "{}".format(line[0:11]), "%d%m%y %H%M")
-            start += timedelta(days=1)
+            end += timedelta(days=1)
         else:
-            start = datetime.strptime(
+            end = datetime.strptime(
                 "{}".format(line[0:11]), "%d%m%y %H%M")
 
-        parsed_line['start'] = start
-        parsed_line['end'] = parsed_line['start'] + timedelta(
+        parsed_line['end'] = end
+        parsed_line['start'] = parsed_line['end'] - timedelta(
             minutes=int(self.file_header['INTERVAL']))
         parsed_line['channel'] = line[12:13]
         parsed_line['reserve_code'] = line[14:16]
