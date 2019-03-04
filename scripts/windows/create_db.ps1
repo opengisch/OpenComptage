@@ -1,6 +1,8 @@
-$dbName = "spch95"
-$pgConf = "$($env:USERPROFILE)\.pg_service.conf"
-$env:PGSERVICEFILE = $pgConf
+$dbName = "spch95" # The name of pg_service
+$pgConf = "$($env:USERPROFILE)\.pg_service.conf" # Where your pg_service file is
+$isProduction = $FALSE # Toogle this to $TRUE if you're deploying production environment
+
+$env:PGSERVICEFILE = $pgConf 
 $env:PGSERVICE = $dbName
 
 if ([bool](Get-ChildItem -Path $pgConf | Select-String -Pattern $dbName)) {
@@ -21,6 +23,10 @@ if ([bool](Get-ChildItem -Path $pgConf | Select-String -Pattern $dbName)) {
   ogr2ogr -f "PostgreSQL" PG:"schemas=transfer" -t_srs EPSG:2056 -overwrite ../../db/legacy/base_tjm_ok_20180227/BASE_TJM_OK.TAB
   Write-Host "ogr2ogr finished"
   python ../transfer_base_tjm_ok.py $env:PGSERVICE
+  psql --echo-errors -c 'DROP SCHEMA IF EXISTS transfer CASCADE;'
+  if ($isProduction) {
+    psql --echo-errors -f "..\..\db\rights.sql"
+  }
 } else {
   Write-Error "You need to define you pg_service conf."
 }
