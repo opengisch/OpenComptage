@@ -1,6 +1,8 @@
 import os
 import datetime
 from openpyxl import load_workbook
+from openpyxl.chart import BarChart, LineChart, Series, Reference
+
 from qgis.PyQt.QtCore import QDate
 from comptages.core.settings import Settings
 from comptages.data.data_loader import DataLoader
@@ -38,6 +40,9 @@ class ReportCreator():
         self._set_data_day(wb, count_data, start_day, end_day)
         self._set_data_speed(wb, count_data, start_day, end_day)
         self._set_data_category(wb, count_data, start_day, end_day)
+        self._set_cv_lv_chart(wb)
+        self._set_swiss10_chart(wb)
+        self._set_swiss7_chart(wb)
 
         # Save the file
         week_num = datetime.date(
@@ -80,7 +85,7 @@ class ReportCreator():
 
         ws['B9'] = 'Comptage véhicule par véhicule'
         if count_data.attributes['aggregate']:
-            ws['K5'] = 'Comptage par interval'
+            ws['B9'] = 'Comptage par interval'
 
         ws['B10'] = 'Periode speciales : {}'.format(
             self.layers.check_dates(
@@ -175,3 +180,114 @@ class ReportCreator():
         for i, hour in enumerate(dir2):
             for j, cat in enumerate(hour):
                 ws['{}{}'.format(cat_cols[j], i+dir2_start_cell)] = cat
+
+    def _set_cv_lv_chart(self, workbook):
+        ws = workbook['CV_LV']
+        ws_data = workbook['Data_day']
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        chart1.width = 19
+        chart1.height = 8
+        chart1.style = 2
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
+        #chart1.x_axis.title = "Selon l'heure de la journée"
+
+        data = Reference(ws_data, min_col=11, min_row=5, max_row=28, max_col=11)
+        #cats = Reference(ws, min_col=1, min_row=2, max_row=7)
+        chart1.add_data(data, titles_from_data=True)
+        #chart1.set_categories(['proba'])
+        #chart1.shape = 4
+
+        chart2 = LineChart()
+        data = Reference(ws_data, min_col=11, min_row=35, max_row=58, max_col=11)
+        chart2.add_data(data, titles_from_data=True)
+
+        chart1 += chart2
+
+        chart3 = LineChart()
+        data = Reference(ws_data, min_col=11, min_row=66, max_row=89, max_col=11)
+        chart2.add_data(data, titles_from_data=True)
+
+        ws.add_chart(chart1, "A15")
+
+    def _set_swiss10_chart(self, workbook):
+        ws = workbook['SWISS10_G']
+        ws_data = workbook['Data_category']
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        #chart1.style = 12
+        chart1.width = 21
+        chart1.height = 12
+        chart1.grouping = "stacked"
+        chart1.overlap = 100
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Volume du trafic en %'
+        #chart1.x_axis.title = 'Heure'
+
+        data = Reference(ws_data, min_col=2, min_row=5, max_row=28, max_col=11)
+        cats = Reference(ws_data, min_col=2, min_row=5, max_row=28)
+        chart1.add_data(data, titles_from_data=True)
+        chart1.set_categories(cats)
+        chart1.shape = 4
+        ws.add_chart(chart1, "A11")
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        #chart1.style = 12
+        chart1.width = 21
+        chart1.height = 12
+        chart1.grouping = "stacked"
+        chart1.overlap = 100
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Volume du trafic en %'
+        #chart1.x_axis.title = 'Heure'
+
+        data = Reference(ws_data, min_col=2, min_row=33, max_row=56, max_col=11)
+        cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
+        chart1.add_data(data, titles_from_data=True)
+        chart1.set_categories(cats)
+        chart1.shape = 4
+        ws.add_chart(chart1, "A46")
+
+    def _set_swiss7_chart(self, workbook):
+        ws = workbook['SWISS7_G']
+        ws_data = workbook['Data_category']
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        #chart1.style = 12
+        chart1.width = 21
+        chart1.height = 12
+        chart1.grouping = "stacked"
+        chart1.overlap = 100
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Volume du trafic en %'
+        #chart1.x_axis.title = 'Heure'
+
+        data = Reference(ws_data, min_col=2, min_row=5, max_row=28, max_col=8)
+        cats = Reference(ws_data, min_col=2, min_row=5, max_row=28)
+        chart1.add_data(data, titles_from_data=True)
+        chart1.set_categories(cats)
+        chart1.shape = 4
+        ws.add_chart(chart1, "A11")
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        #chart1.style = 12
+        chart1.width = 21
+        chart1.height = 12
+        chart1.grouping = "stacked"
+        chart1.overlap = 100
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Volume du trafic en %'
+        #chart1.x_axis.title = 'Heure'
+
+        data = Reference(ws_data, min_col=2, min_row=33, max_row=56, max_col=8)
+        cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
+        chart1.add_data(data, titles_from_data=True)
+        chart1.set_categories(cats)
+        chart1.shape = 4
+        ws.add_chart(chart1, "A46")
