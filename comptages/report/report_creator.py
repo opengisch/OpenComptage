@@ -226,15 +226,16 @@ class ReportCreator():
         chart1.type = "col"
         chart1.width = 19
         chart1.height = 8
-        chart1.style = 2
-        chart1.title = "Bar Chart"
+        #chart1.style = 2
+        #chart1.title = "Bar Chart"
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
-        #chart1.x_axis.title = "Selon l'heure de la journée"
+        chart1.x_axis.title = "Selon l'heure de la journée"
+        chart1.gapWidth = 1
 
         data = Reference(ws_data, min_col=11, min_row=5, max_row=28, max_col=11)
-        #cats = Reference(ws, min_col=1, min_row=2, max_row=7)
+        cats = Reference(ws, min_col=1, min_row=5, max_row=28)
         chart1.add_data(data, titles_from_data=True)
-        #chart1.set_categories(['proba'])
+        chart1.set_categories(cats)
         #chart1.shape = 4
 
         chart2 = LineChart()
@@ -263,11 +264,12 @@ class ReportCreator():
         chart1.title = "Bar Chart"
         chart1.y_axis.title = 'Volume du trafic en %'
         #chart1.x_axis.title = 'Heure'
+        chart1.gapWidth = 1
 
         data = Reference(ws_data, min_col=2, min_row=5, max_row=28, max_col=11)
-        cats = Reference(ws_data, min_col=2, min_row=5, max_row=28)
+        #cats = Reference(ws_data, min_col=1, min_row=5, max_row=28)
         chart1.add_data(data, titles_from_data=True)
-        chart1.set_categories(cats)
+        #chart1.set_categories(cats)
         chart1.shape = 4
         ws.add_chart(chart1, "A11")
 
@@ -281,6 +283,7 @@ class ReportCreator():
         chart1.title = "Bar Chart"
         chart1.y_axis.title = 'Volume du trafic en %'
         #chart1.x_axis.title = 'Heure'
+        chart1.gapWidth = 1
 
         data = Reference(ws_data, min_col=2, min_row=33, max_row=56, max_col=11)
         cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
@@ -321,6 +324,7 @@ class ReportCreator():
         chart1.title = "Bar Chart"
         chart1.y_axis.title = 'Volume du trafic en %'
         #chart1.x_axis.title = 'Heure'
+        chart1.gapWidth = 1
 
         data = Reference(ws_data, min_col=2, min_row=33, max_row=56, max_col=8)
         cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
