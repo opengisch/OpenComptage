@@ -29,11 +29,22 @@ class IcsImporter():
 
         for event in cal.walk('vevent'):
 
+            if 'DTSTART' not in event and 'DTEND' not in event:
+                continue
+
+            summary = ''
+            if 'SUMMARY' in event:
+                summary = str(event['SUMMARY'])
+
+            location = ''
+            if 'LOCATION' in event:
+                location = str(event['LOCATION'])
+
             self.layers.write_special_period(
                 event['DTSTART'].dt,
                 event['DTEND'].dt,
-                str(event['SUMMARY']),
-                str(event['LOCATION']),
+                summary,
+                location,
                 '')
 
             # str(event['PRIORITY'])
