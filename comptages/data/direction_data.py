@@ -2,7 +2,6 @@
 
 class DirectionData():
 
-    # TODO: passare i cat bins e speed bins?
     def __init__(
             self, light_indexes=[]):
         self.light_indexes = light_indexes

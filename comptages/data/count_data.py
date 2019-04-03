@@ -1,7 +1,6 @@
 from statistics import mean
 
 
-# TODO: rename in CountDataSection ?
 class CountData():
 
     def __init__(self):
