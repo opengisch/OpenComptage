@@ -43,6 +43,7 @@ class ReportCreator():
         self._set_cv_lv_chart(wb)
         self._set_swiss10_chart(wb)
         self._set_swiss7_chart(wb)
+        self._remove_useless_sheets(wb, count_data)
 
         # Save the file
         week_num = datetime.date(
@@ -336,3 +337,17 @@ class ReportCreator():
         chart1.shape = 4
         chart1.legend = None
         ws.add_chart(chart1, "A46")
+
+    def _remove_useless_sheets(self, workbook, count_data):
+
+        if count_data.attributes['class'] == 'SWISS10':
+            workbook.remove_sheet(workbook['SWISS7_H'])
+            workbook.remove_sheet(workbook['SWISS7_G'])
+        elif count_data.attributes['class'] == 'SWISS7':
+            workbook.remove_sheet(workbook['SWISS10_H'])
+            workbook.remove_sheet(workbook['SWISS10_G'])
+
+        if count_data.attributes['aggregate']:
+            workbook.remove_sheet(workbook['Vit_Hd'])
+        else:
+            workbook.remove_sheet(workbook['Vit_H'])
