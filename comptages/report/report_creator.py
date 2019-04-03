@@ -153,39 +153,28 @@ class ReportCreator():
         dir1 = count_data.speed_cumulus(0, days=days_idx)
         dir2 = count_data.speed_cumulus(1, days=days_idx)
 
-        average_bin_speed = [5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105,
-                             115, 125]
-        if count_data.attributes['aggregate']:
-            average_bin_speed = [12.5, 22.5, 35, 45, 55, 65, 75, 85, 95,
-                                 105, 115, 125]
+        if not count_data.attributes['aggregate']:
+            for i, hour in enumerate(dir1):
+                for j, speed in enumerate(hour):
+                    ws['{}{}'.format(speed_cols[j], i+dir1_start_cell)] = speed
+                # Average and characteristic speed
+                char_speed = self.layers.get_characteristic_speeds(
+                    self.count_id, i, 1)
+                ws['P{}'.format(i+dir1_start_cell)] = char_speed[0]
+                ws['Q{}'.format(i+dir1_start_cell)] = char_speed[1]
+                ws['R{}'.format(i+dir1_start_cell)] = char_speed[2]
+                ws['S{}'.format(i+dir1_start_cell)] = char_speed[3]
 
-        for i, hour in enumerate(dir1):
-            for j, speed in enumerate(hour):
-                ws['{}{}'.format(speed_cols[j], i+dir1_start_cell)] = speed
-            # Average and characteristic speed
-            ws['P{}'.format(i+dir1_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.15)
-            ws['Q{}'.format(i+dir1_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.5)
-            ws['R{}'.format(i+dir1_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.85)
-
-            ws['S{}'.format(i+dir1_start_cell)] = self._average_speed(
-                average_bin_speed, hour)
-
-        for i, hour in enumerate(dir2):
-            for j, speed in enumerate(hour):
-                ws['{}{}'.format(speed_cols[j], i+dir2_start_cell)] = speed
-            # Average and characteristic speed
-            ws['P{}'.format(i+dir2_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.15)
-            ws['Q{}'.format(i+dir2_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.5)
-            ws['R{}'.format(i+dir2_start_cell)] = self._characteristic_speed(
-                average_bin_speed, hour, 0.85)
-
-            ws['S{}'.format(i+dir2_start_cell)] = self._average_speed(
-                average_bin_speed, hour)
+            for i, hour in enumerate(dir2):
+                for j, speed in enumerate(hour):
+                    ws['{}{}'.format(speed_cols[j], i+dir2_start_cell)] = speed
+                # Average and characteristic speed
+                char_speed = self.layers.get_characteristic_speeds(
+                    self.count_id, i, 2)
+                ws['P{}'.format(i+dir2_start_cell)] = char_speed[0]
+                ws['Q{}'.format(i+dir2_start_cell)] = char_speed[1]
+                ws['R{}'.format(i+dir2_start_cell)] = char_speed[2]
+                ws['S{}'.format(i+dir2_start_cell)] = char_speed[3]
 
     def _set_data_category(self, workbook, count_data, start_day, end_day):
         ws = workbook['Data_category']
@@ -207,17 +196,6 @@ class ReportCreator():
         for i, hour in enumerate(dir2):
             for j, cat in enumerate(hour):
                 ws['{}{}'.format(cat_cols[j], i+dir2_start_cell)] = cat
-
-    def _average_speed(self, average_bin_speed, speed_data):
-        return sum(x * y for x, y in zip(
-            average_bin_speed, speed_data)) / sum(speed_data)
-
-    def _characteristic_speed(self, average_bin_speed, speed_data, percent):
-        vehicle_index = int(sum(speed_data) * percent)
-
-        for i in range(len(speed_data)):
-            if sum(speed_data[0:i+1]) >= vehicle_index:
-                return average_bin_speed[i]
 
     def _set_cv_lv_chart(self, workbook):
         ws = workbook['CV_LV']

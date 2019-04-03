@@ -1319,3 +1319,54 @@ class Layers(QObject):
         if query.next():
             result.append(query.value(0))
         return result
+
+    def get_characteristic_speeds(self, count_id, hour, direction):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+        result = []
+
+        query_str = (
+            "select count(*) from comptages.count_detail as det join "
+            "comptages.lane as lan on det.id_lane = lan.id "
+            "where det.id_count = {} and lan.direction = {} "
+            "and date_part('hour', det.timestamp) = {};".format(
+                count_id, direction, hour))
+
+        query.exec_(query_str)
+        if query.next():
+            count = query.value(0)
+        else:
+            return [0, 0, 0, 0]
+
+        percent = []
+        percent.append(int(count * 0.15))
+        percent.append(int(count * 0.5))
+        percent.append(int(count * 0.85))
+
+        for i in percent:
+            if i < 0:
+                i = 0
+            query_str = (
+                "select det.speed from comptages.count_detail as det join "
+                "comptages.lane as lan on det.id_lane = lan.id "
+                "where det.id_count = {} and lan.direction = {} "
+                "and date_part('hour', det.timestamp) = {} "
+                "order by speed "
+                "offset ({}-1) rows "
+                "fetch next 1 rows only;".format(
+                    count_id, direction, hour, i))
+            query.exec_(query_str)
+            query.next()
+            result.append(query.value(0))
+
+        query_str = (
+            "select avg(det.speed) from comptages.count_detail as det join "
+            "comptages.lane as lan on det.id_lane = lan.id "
+            "where det.id_count = {} and lan.direction = {} "
+            "and date_part('hour', det.timestamp) = {};".format(
+                count_id, direction, hour))
+        query.exec_(query_str)
+        query.next()
+        result.append(query.value(0))
+
+        return result
