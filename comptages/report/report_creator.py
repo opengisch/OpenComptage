@@ -205,29 +205,42 @@ class ReportCreator():
         chart1.type = "col"
         chart1.width = 19
         chart1.height = 8
-        # chart1.style = 2
+        chart1.style = 10
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
         # chart1.x_axis.title = "Selon l'heure de la journée"
-        chart1.gapWidth = 2
+        chart1.gapWidth = 0
         chart1.legend = None
 
         data = Reference(
-            ws_data, min_col=11, min_row=5, max_row=28, max_col=11)
+            ws_data, min_col=11, min_row=4, max_row=28, max_col=11)
         cats = Reference(ws, min_col=1, min_row=5, max_row=28)
         chart1.add_data(data, titles_from_data=True)
         chart1.set_categories(cats)
         # chart1.shape = 4
 
+        s = chart1.series[0]
+        s.graphicalProperties.line.solidFill = "000000"
+        s.graphicalProperties.solidFill = "66ffb2"
+
         chart2 = LineChart()
         data = Reference(
-            ws_data, min_col=11, min_row=35, max_row=58, max_col=11)
+            ws_data, min_col=11, min_row=34, max_row=58, max_col=11)
         chart2.add_data(data, titles_from_data=True)
         data = Reference(
-            ws_data, min_col=11, min_row=66, max_row=89, max_col=11)
+            ws_data, min_col=11, min_row=65, max_row=89, max_col=11)
         chart2.add_data(data, titles_from_data=True)
+        # chart2.style = 12
+
+        s = chart2.series[0]
+        s.graphicalProperties.line.solidFill = "3333ff"
+        s.smooth = False
+
+        s = chart2.series[1]
+        s.graphicalProperties.line.solidFill = "ff3333"
+        s.graphicalProperties.line.dashStyle = "sysDash"
+        s.smooth = False
 
         chart1 += chart2
-
         ws.add_chart(chart1, "A15")
 
     def _set_swiss10_chart(self, workbook):
@@ -251,6 +264,18 @@ class ReportCreator():
         # chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
+
+        chart1.series[0].graphicalProperties.solidFill = "0022ff"
+        chart1.series[1].graphicalProperties.solidFill = "0fe400"
+        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[3].graphicalProperties.solidFill = "ff6666"
+        chart1.series[4].graphicalProperties.solidFill = "003366"
+        chart1.series[5].graphicalProperties.solidFill = "000099"
+        chart1.series[6].graphicalProperties.solidFill = "6600cc"
+        chart1.series[7].graphicalProperties.solidFill = "ff00ff"
+        chart1.series[8].graphicalProperties.solidFill = "ff3399"
+        chart1.series[9].graphicalProperties.solidFill = "ff99cc"
+
         ws.add_chart(chart1, "A11")
 
         chart1 = BarChart()
@@ -271,6 +296,18 @@ class ReportCreator():
         chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
+
+        chart1.series[0].graphicalProperties.solidFill = "0022ff"
+        chart1.series[1].graphicalProperties.solidFill = "0fe400"
+        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[3].graphicalProperties.solidFill = "ff6666"
+        chart1.series[4].graphicalProperties.solidFill = "003366"
+        chart1.series[5].graphicalProperties.solidFill = "000099"
+        chart1.series[6].graphicalProperties.solidFill = "6600cc"
+        chart1.series[7].graphicalProperties.solidFill = "ff00ff"
+        chart1.series[8].graphicalProperties.solidFill = "ff3399"
+        chart1.series[9].graphicalProperties.solidFill = "ff99cc"
+
         ws.add_chart(chart1, "A46")
 
     def _set_swiss7_chart(self, workbook):
@@ -294,6 +331,15 @@ class ReportCreator():
         chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
+
+        chart1.series[0].graphicalProperties.solidFill = "0022ff"
+        chart1.series[1].graphicalProperties.solidFill = "0fe400"
+        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[3].graphicalProperties.solidFill = "003366"
+        chart1.series[4].graphicalProperties.solidFill = "ff00ff"
+        chart1.series[5].graphicalProperties.solidFill = "ff3399"
+        chart1.series[6].graphicalProperties.solidFill = "ff99cc"
+
         ws.add_chart(chart1, "A11")
 
         chart1 = BarChart()
@@ -314,6 +360,15 @@ class ReportCreator():
         chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
+
+        chart1.series[0].graphicalProperties.solidFill = "0022ff"
+        chart1.series[1].graphicalProperties.solidFill = "0fe400"
+        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[3].graphicalProperties.solidFill = "003366"
+        chart1.series[4].graphicalProperties.solidFill = "ff00ff"
+        chart1.series[5].graphicalProperties.solidFill = "ff3399"
+        chart1.series[6].graphicalProperties.solidFill = "ff99cc"
+
         ws.add_chart(chart1, "A46")
 
     def _remove_useless_sheets(self, workbook, count_data):
