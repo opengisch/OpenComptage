@@ -106,7 +106,9 @@ class ReportCreator():
             if type(count_data.attributes['remarks']) == str else '')
 
         ws['B13'] = count_data.attributes['dir1']
-        ws['B14'] = count_data.attributes['dir2']
+
+        if 'dir2' in count_data.attributes:
+            ws['B14'] = count_data.attributes['dir2']
 
     def _set_data_day(self, workbook, count_data, start_day, end_day):
         ws = workbook['Data_day']
@@ -153,10 +155,11 @@ class ReportCreator():
         dir1 = count_data.speed_cumulus(0, days=days_idx)
         dir2 = count_data.speed_cumulus(1, days=days_idx)
 
-        if not count_data.attributes['aggregate']:
-            for i, hour in enumerate(dir1):
-                for j, speed in enumerate(hour):
-                    ws['{}{}'.format(speed_cols[j], i+dir1_start_cell)] = speed
+        for i, hour in enumerate(dir1):
+            for j, speed in enumerate(hour):
+                ws['{}{}'.format(speed_cols[j], i+dir1_start_cell)] = speed
+
+            if not count_data.attributes['aggregate']:
                 # Average and characteristic speed
                 char_speed = self.layers.get_characteristic_speeds(
                     self.count_id, i, 1)
@@ -165,9 +168,11 @@ class ReportCreator():
                 ws['R{}'.format(i+dir1_start_cell)] = char_speed[2]
                 ws['S{}'.format(i+dir1_start_cell)] = char_speed[3]
 
-            for i, hour in enumerate(dir2):
-                for j, speed in enumerate(hour):
-                    ws['{}{}'.format(speed_cols[j], i+dir2_start_cell)] = speed
+        for i, hour in enumerate(dir2):
+            for j, speed in enumerate(hour):
+                ws['{}{}'.format(speed_cols[j], i+dir2_start_cell)] = speed
+
+            if not count_data.attributes['aggregate']:
                 # Average and characteristic speed
                 char_speed = self.layers.get_characteristic_speeds(
                     self.count_id, i, 2)
