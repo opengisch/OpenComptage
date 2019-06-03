@@ -21,8 +21,10 @@ class DataLoader():
         self.light_vehicles = []
         self.populate_category_and_light_index()
         self.attributes = {}
+        self.query = QSqlQuery(self.db)
 
     def load(self):
+
         function = self.get_detail_direction_data
         self.attributes['aggregate'] = False
         if self.is_data_aggregate():
@@ -35,24 +37,34 @@ class DataLoader():
         dates = self.get_count_dates()
         self.attributes['dates'] = dates
         for date in dates:
-            day_data = DayData()
-            for hour in range(24):
-                hour_data = HourData()
-                for direction in range(1, 3):
-                    direction_data = DirectionData(self.light_vehicles)
-                    direction_data.speed_data, direction_data.category_data = \
-                        function(date[0], date[1], date[2], hour, direction)
-                    hour_data.direction_data.append(direction_data)
-                day_data.hour_data.append(hour_data)
-                day_data.monthly_coefficient = self._monthly_coefficients[
-                    date[1]-1]
+
+            if self.is_data_aggregate():
+                day_data = DayData()
+                for hour in range(24):
+                    hour_data = HourData()
+                    for direction in range(1, 3):
+                        direction_data = DirectionData(self.light_vehicles)
+                        direction_data.speed_data, \
+                            direction_data.category_data = \
+                            function(
+                                date[0], date[1], date[2], hour, direction)
+                        hour_data.direction_data.append(direction_data)
+                    day_data.hour_data.append(hour_data)
+                    day_data.monthly_coefficient = self._monthly_coefficients[
+                        date[1]-1]
+            else:
+                day_data = self.get_detail_day_data(
+                    date[0], date[1], date[2])
+
+            day_data.monthly_coefficient = self._monthly_coefficients[
+                date[1]-1]
             count_data.day_data.append(day_data)
 
         self.db.close()
         return count_data
 
     def get_aggregate_direction_data(self, year, month, day, hour, direction):
-        query = QSqlQuery(self.db)
+        query = self.query
 
         query_str = (
             "select cou.type, cls.value, cls.id_category, spd.value from "
@@ -91,35 +103,58 @@ class DataLoader():
 
         return speed_data, category_data
 
-    def get_detail_direction_data(self, year, month, day, hour, direction):
-        query = QSqlQuery(self.db)
+    def get_detail_day_data(self, year, month, day):
+        day_data = DayData()
+        query = self.query
 
         query_str = (
-            "select cou.speed, cou.id_category from "
+            "select cou.speed, cou.id_category, "
+            "date_part('hour', cou.timestamp), lan.direction from "
             "comptages.count_detail as cou "
             "join comptages.lane as lan on cou.id_lane = lan.id "
             "where date_part('year', timestamp) = {} "
             "and date_part('month', timestamp) = {} "
             "and date_part('day', timestamp) = {} "
-            "and date_part('hour', timestamp) = {} "
             "and id_count = {} "
-            "and direction = {} "
             "and id_section = '{}' "
             "and import_status = {};".format(
-                year, month, day, hour, self.count_id, direction,
+                year, month, day, self.count_id,
                 self.section_id, self.status))
         query.exec_(query_str)
 
-        speed_data = [0]*13
-        category_data = [0]*len(self.categories)
+        hour_datas = []
+
+        for _ in range(25):
+            hour_data = HourData()
+            direction_data_1 = DirectionData(self.light_vehicles)
+            direction_data_1.speed_data = [0]*13
+            direction_data_1.category_data = [0]*len(self.categories)
+
+            direction_data_2 = DirectionData(self.light_vehicles)
+            direction_data_2.speed_data = [0]*13
+            direction_data_2.category_data = [0]*len(self.categories)
+
+            hour_data.direction_data.append(direction_data_1)
+            hour_data.direction_data.append(direction_data_2)
+            hour_datas.append(hour_data)
 
         while query.next():
+
+            hour = int(query.value(2))
+            direction = int(query.value(3))-1
             speed = int(query.value(0))
+
             if speed > 120:
                 speed = 121
-            speed_data[int((speed - 0.1)/10)] += 1
-            category_data[self.category_index(int(query.value(1)))] += 1
-        return speed_data, category_data
+
+            hour_datas[hour].direction_data[direction].speed_data[
+                int((speed - 0.1)/10)] += 1
+
+            hour_datas[hour].direction_data[direction].category_data[
+                self.category_index(int(query.value(1)))] += 1
+
+        day_data.hour_data = hour_datas
+        return day_data
 
     def category_index(self, category_id):
         return self.categories.index(category_id)
