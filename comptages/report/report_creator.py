@@ -263,8 +263,8 @@ class ReportCreator():
         # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
-        data = Reference(ws_data, min_col=2, min_row=5, max_row=28, max_col=11)
-        # cats = Reference(ws_data, min_col=1, min_row=5, max_row=28)
+        data = Reference(ws_data, min_col=2, min_row=4, max_row=28, max_col=11)
+        # cats = Reference(ws_data, min_col=1, min_row=4, max_row=28)
         chart1.add_data(data, titles_from_data=True)
         # chart1.set_categories(cats)
         chart1.shape = 4
@@ -295,8 +295,8 @@ class ReportCreator():
         chart1.gapWidth = 2
 
         data = Reference(
-            ws_data, min_col=2, min_row=33, max_row=56, max_col=11)
-        cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
+            ws_data, min_col=2, min_row=32, max_row=56, max_col=11)
+        cats = Reference(ws_data, min_col=2, min_row=32, max_row=56)
         chart1.add_data(data, titles_from_data=True)
         chart1.set_categories(cats)
         chart1.shape = 4
@@ -330,8 +330,8 @@ class ReportCreator():
         # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
-        data = Reference(ws_data, min_col=2, min_row=5, max_row=28, max_col=8)
-        cats = Reference(ws_data, min_col=2, min_row=5, max_row=28)
+        data = Reference(ws_data, min_col=2, min_row=4, max_row=28, max_col=8)
+        cats = Reference(ws_data, min_col=2, min_row=4, max_row=28)
         chart1.add_data(data, titles_from_data=True)
         chart1.set_categories(cats)
         chart1.shape = 4
@@ -359,8 +359,8 @@ class ReportCreator():
         chart1.gapWidth = 2
 
         data = Reference(
-            ws_data, min_col=2, min_row=33, max_row=56, max_col=8)
-        cats = Reference(ws_data, min_col=2, min_row=33, max_row=56)
+            ws_data, min_col=2, min_row=32, max_row=56, max_col=8)
+        cats = Reference(ws_data, min_col=2, min_row=32, max_row=56)
         chart1.add_data(data, titles_from_data=True)
         chart1.set_categories(cats)
         chart1.shape = 4
