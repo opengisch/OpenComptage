@@ -8,6 +8,8 @@ from comptages.core.settings import Settings
 from comptages.data.data_loader import DataLoader
 from comptages.core.layers import Layers
 
+import datetime
+
 
 class ReportCreator():
     def __init__(self, count_id, file_path, layers):
@@ -29,9 +31,13 @@ class ReportCreator():
             count_data = data_loader.load()
 
             for i in range(int(len(count_data.day_data)/7)):
-                self._export_report(count_data, i*7, i*7+6)
+                self._export_report(count_data, i*7, i*7+6, section_id)
 
-    def _export_report(self, count_data, start_day, end_day):
+    def __print_timestamp(self, msg=""):
+        print("{} {}".format(msg, datetime.datetime.fromtimestamp(
+            datetime.datetime.now().timestamp())))
+
+    def _export_report(self, count_data, start_day, end_day, section_id):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         template = os.path.join(current_dir, 'template.xlsx')
         wb = load_workbook(filename=template)
@@ -50,7 +56,8 @@ class ReportCreator():
             count_data.attributes['dates'][start_day][0],
             count_data.attributes['dates'][start_day][1],
             count_data.attributes['dates'][start_day][2]).strftime('%V')
-        output = '{}_S{}.xlsx'.format(self.file_path[0:-5], week_num)
+        output = '{}_{}_S{}.xlsx'.format(
+            self.file_path[0:-5], section_id, week_num)
         wb.save(filename=output)
 
     def _set_data_count(self, workbook, count_data, start_day, end_day):
