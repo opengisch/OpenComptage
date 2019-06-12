@@ -25,10 +25,8 @@ class DataLoader():
 
     def load(self):
 
-        function = self.get_detail_direction_data
         self.attributes['aggregate'] = False
         if self.is_data_aggregate():
-            function = self.get_aggregate_direction_data
             self.attributes['aggregate'] = True
 
         self.read_attributes()
@@ -46,7 +44,7 @@ class DataLoader():
                         direction_data = DirectionData(self.light_vehicles)
                         direction_data.speed_data, \
                             direction_data.category_data = \
-                            function(
+                            self.get_aggregate_direction_data(
                                 date[0], date[1], date[2], hour, direction)
                         hour_data.direction_data.append(direction_data)
                     day_data.hour_data.append(hour_data)
