@@ -278,9 +278,9 @@ class ReportCreator():
         chart1.shape = 4
         chart1.legend = None
 
-        chart1.series[0].graphicalProperties.solidFill = "0022ff"
-        chart1.series[1].graphicalProperties.solidFill = "0fe400"
-        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
+        chart1.series[1].graphicalProperties.solidFill = "bce273"
+        chart1.series[2].graphicalProperties.solidFill = "ff708c"
         chart1.series[3].graphicalProperties.solidFill = "ff6666"
         chart1.series[4].graphicalProperties.solidFill = "003366"
         chart1.series[5].graphicalProperties.solidFill = "000099"
@@ -310,9 +310,9 @@ class ReportCreator():
         chart1.shape = 4
         chart1.legend = None
 
-        chart1.series[0].graphicalProperties.solidFill = "0022ff"
-        chart1.series[1].graphicalProperties.solidFill = "0fe400"
-        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
+        chart1.series[1].graphicalProperties.solidFill = "bce273"
+        chart1.series[2].graphicalProperties.solidFill = "ff708c"
         chart1.series[3].graphicalProperties.solidFill = "ff6666"
         chart1.series[4].graphicalProperties.solidFill = "003366"
         chart1.series[5].graphicalProperties.solidFill = "000099"
@@ -345,9 +345,9 @@ class ReportCreator():
         chart1.shape = 4
         chart1.legend = None
 
-        chart1.series[0].graphicalProperties.solidFill = "0022ff"
-        chart1.series[1].graphicalProperties.solidFill = "0fe400"
-        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
+        chart1.series[1].graphicalProperties.solidFill = "bce273"
+        chart1.series[2].graphicalProperties.solidFill = "ff708c"
         chart1.series[3].graphicalProperties.solidFill = "003366"
         chart1.series[4].graphicalProperties.solidFill = "ff00ff"
         chart1.series[5].graphicalProperties.solidFill = "ff3399"
@@ -374,9 +374,9 @@ class ReportCreator():
         chart1.shape = 4
         chart1.legend = None
 
-        chart1.series[0].graphicalProperties.solidFill = "0022ff"
-        chart1.series[1].graphicalProperties.solidFill = "0fe400"
-        chart1.series[2].graphicalProperties.solidFill = "ff0739"
+        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
+        chart1.series[1].graphicalProperties.solidFill = "bce273"
+        chart1.series[2].graphicalProperties.solidFill = "ff708c"
         chart1.series[3].graphicalProperties.solidFill = "003366"
         chart1.series[4].graphicalProperties.solidFill = "ff00ff"
         chart1.series[5].graphicalProperties.solidFill = "ff3399"
