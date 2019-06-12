@@ -49,6 +49,7 @@ class ReportCreator():
         self._set_cv_lv_chart(wb)
         self._set_swiss10_chart(wb)
         self._set_swiss7_chart(wb)
+        self._set_print_areas(wb)
         self._remove_useless_sheets(wb, count_data)
 
         # Save the file
@@ -382,6 +383,9 @@ class ReportCreator():
         chart1.series[6].graphicalProperties.solidFill = "ff99cc"
 
         ws.add_chart(chart1, "A46")
+
+    def _set_print_areas(self, workbook):
+        workbook['Vit_Hd'].print_area = 'A1:V78'
 
     def _remove_useless_sheets(self, workbook, count_data):
 
