@@ -1,5 +1,5 @@
 -- Database generated with pgModeler (PostgreSQL Database Modeler).
--- pgModeler  version: 0.9.2-alpha1
+-- pgModeler  version: 0.9.2-beta
 -- PostgreSQL version: 11.0
 -- Project Site: pgmodeler.io
 -- Model Author: ---
@@ -632,6 +632,40 @@ ALTER TABLE comptages.count_aggregate_value_sds OWNER TO postgres;
 ALTER TABLE comptages.count_aggregate_value_sds ADD CONSTRAINT count_aggregate_fk FOREIGN KEY (id_count_aggregate)
 REFERENCES comptages.count_aggregate (id) MATCH FULL
 ON DELETE CASCADE ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: comptages.sensor | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.sensor CASCADE;
+CREATE TABLE comptages.sensor (
+	id serial NOT NULL,
+	id_lane integer,
+	id_sensor_type integer,
+	start_pr text,
+	end_pr text,
+	start_dist decimal,
+	end_dist decimal,
+	start_service_date date,
+	end_service_date date,
+	geometry geometry(MULTILINESTRINGZM, 2056),
+	CONSTRAINT sensor_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE comptages.sensor OWNER TO postgres;
+-- ddl-end --
+
+-- object: lane_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.sensor DROP CONSTRAINT IF EXISTS lane_fk CASCADE;
+ALTER TABLE comptages.sensor ADD CONSTRAINT lane_fk FOREIGN KEY (id_lane)
+REFERENCES comptages.lane (id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.sensor DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.sensor ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 
