@@ -1360,7 +1360,8 @@ class Layers(QObject):
             result.append(query.value(0))
 
         query_str = (
-            "select avg(det.speed) from comptages.count_detail as det join "
+            "select coalesce(avg(det.speed), 0) from "
+            "comptages.count_detail as det join "
             "comptages.lane as lan on det.id_lane = lan.id "
             "where det.id_count = {} and lan.direction = {} "
             "and date_part('hour', det.timestamp) = {};".format(
