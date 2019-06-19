@@ -155,7 +155,12 @@ class TransferBaseTjmOk(object):
                 return cursor.fetchone()[0]
 
     def write_lanes(self, record, installation_id, section_id, dir1, dir2):
-        if record[17] == 'Tuyaux':
+        if record[17] == 'Boucles':
+            for i, _ in enumerate(record[22]):  # Boucon
+                self.write_lane(
+                    i+1, (1 if _ == 'A' else 2), installation_id, section_id,
+                    (dir1 if _ == 'A' else dir2))
+        else:  # Tuyaux
             if record[5] == '=':
                 self.write_lane(1, 1, installation_id, section_id, dir1)
                 self.write_lane(2, 2, installation_id, section_id, dir2)
@@ -163,11 +168,6 @@ class TransferBaseTjmOk(object):
                 self.write_lane(1, 1, installation_id, section_id, dir1)
             elif record[5] == '-':
                 self.write_lane(1, 2, installation_id, section_id, dir2)
-        else:  # Boucles
-            for i, _ in enumerate(record[22]):  # Boucon
-                self.write_lane(
-                    i+1, (1 if _ == 'A' else 2), installation_id, section_id,
-                    (dir1 if _ == 'A' else dir2))
 
     def write_lane(
             self, number, direction, installation_id, section_id,
