@@ -18,21 +18,10 @@ class DataImporter(QgsTask):
         self.count_id = count_id
         self.db = connect_to_db()
         self.file_header = self.parse_file_header(self.file_path)
-        QgsMessageLog.logMessage(
-            'file_header: {}'.format(self.file_header),
-            'Comptages', Qgis.Info)
         self.lanes = dict()
         self.populate_lane_dict()
-        QgsMessageLog.logMessage(
-            'lanes: {}'.format(self.lanes),
-            'Comptages', Qgis.Info)
-
         self.categories = dict()
         self.populate_category_dict()
-        QgsMessageLog.logMessage(
-            'categories: {}'.format(self.categories),
-            'Comptages', Qgis.Info)
-
         self.data_header = self.parse_data_header()
         self.exception = None
 
@@ -109,7 +98,7 @@ class DataImporter(QgsTask):
                 encoding = 'utf8'
                 break
 
-        with open(file_path, encoding=encoding) as f:  # FIXME: encoding
+        with open(file_path, encoding=encoding) as f:
             for line in f:
                 if line.startswith('* ') and not line.startswith('* HEAD '):
                     line = line[2:]
@@ -123,7 +112,6 @@ class DataImporter(QgsTask):
                 # MetroCount
                 elif line.startswith('MetroCount'):
                     file_header['FORMAT'] = 'MC'
-                    file_header['CLASS'] = 'SWISS10' # TODO: class
                 elif line.startswith('Place'):
                     file_header['SITE'] = line[
                         line.find('[') + 1:line.find(']')].replace('-', '')
@@ -131,12 +119,15 @@ class DataImporter(QgsTask):
                     file_header['STARTREC'] = datetime.strftime(
                         datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
                         "%H:%M %d/%m/%y")
-                elif line.startswith('20') and file_header['FORMAT'] == 'MC' :
+                elif line.startswith('20') and file_header['FORMAT'] == 'MC':
                     file_header['STOPREC'] = datetime.strftime(
                         datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
                         "%H:%M %d/%m/%y")
                     file_header['STOPREC'] = "11:09 04/12/18"
-        print(file_header)
+                elif line.startswith('Type') and file_header['FORMAT'] == 'MC':
+                    file_header['CLASS'] = line[line.find('(') + 1:line.find(')')]
+                    if file_header['CLASS'] == 'ARX':
+                        file_header['CLASS'] = 'ARX Cycle'
         return file_header
 
     def parse_data_header(self):

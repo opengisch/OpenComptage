@@ -11,6 +11,7 @@ class DataImporterMC(DataImporter):
 
     def __init__(self, file_path, count_id):
         super().__init__(file_path, count_id)
+        self.numbering = 0
 
     def run(self):
         try:
@@ -34,7 +35,6 @@ class DataImporterMC(DataImporter):
         if not row:
             return
 
-        cat_bins = list(self.categories.values())
         query = QSqlQuery(self.db)
 
         query_str = ("insert into comptages.count_detail ("
@@ -56,8 +56,7 @@ class DataImporterMC(DataImporter):
                          Layers.IMPORT_STATUS_QUARANTINE,
                          self.lanes[int(row['lane'])+1],
                          self.count_id,
-                         #cat_bins[row['category']-1]))
-                         cat_bins[1]))
+                         self.categories[row['category']]))
         query.exec_(query_str)
 
     def parse_data_line(self, line):
@@ -65,10 +64,10 @@ class DataImporterMC(DataImporter):
         try:
             parsed_line = dict()
 
-            parsed_line['numbering'] = 0  # TODO:
+            self.numbering += 1
+            parsed_line['numbering'] = self.numbering
             parsed_line['timestamp'] = datetime.strptime(
                 line[0:19], "%Y-%m-%d %H:%M:%S")
-            # parsed_line['reserve_code'] = line[25:31]
             parsed_line['lane'] = int(line[22:23])
             parsed_line['direction'] = int(line[22:23])
             parsed_line['distance_front_front'] = float(line[24:31])
