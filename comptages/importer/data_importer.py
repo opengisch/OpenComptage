@@ -1,5 +1,7 @@
 import os
 
+from datetime import datetime
+
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlQuery
 
@@ -16,10 +18,21 @@ class DataImporter(QgsTask):
         self.count_id = count_id
         self.db = connect_to_db()
         self.file_header = self.parse_file_header(self.file_path)
+        QgsMessageLog.logMessage(
+            'file_header: {}'.format(self.file_header),
+            'Comptages', Qgis.Info)
         self.lanes = dict()
         self.populate_lane_dict()
+        QgsMessageLog.logMessage(
+            'lanes: {}'.format(self.lanes),
+            'Comptages', Qgis.Info)
+
         self.categories = dict()
         self.populate_category_dict()
+        QgsMessageLog.logMessage(
+            'categories: {}'.format(self.categories),
+            'Comptages', Qgis.Info)
+
         self.data_header = self.parse_data_header()
         self.exception = None
 
@@ -81,7 +94,22 @@ class DataImporter(QgsTask):
     @staticmethod
     def parse_file_header(file_path):
         file_header = dict()
-        with open(file_path) as f:
+
+        # Guess the right file encoding
+        f = open(file_path, 'r', encoding='utf8')
+        while True:
+            try:
+                line = f.readline()
+            except UnicodeDecodeError:
+                f.close()
+                encoding = 'ISO-8859-1'
+                break
+            if not line:
+                f.close()
+                encoding = 'utf8'
+                break
+
+        with open(file_path, encoding=encoding) as f:  # FIXME: encoding
             for line in f:
                 if line.startswith('* ') and not line.startswith('* HEAD '):
                     line = line[2:]
@@ -92,11 +120,43 @@ class DataImporter(QgsTask):
                         if key == 'CLASS' and value == 'SPECIAL10':
                             value = 'SWISS10'
                         file_header[key] = value
+                # MetroCount
+                elif line.startswith('MetroCount'):
+                    file_header['FORMAT'] = 'MC'
+                    file_header['CLASS'] = 'SWISS10' # TODO: class
+                elif line.startswith('Place'):
+                    file_header['SITE'] = line[
+                        line.find('[') + 1:line.find(']')].replace('-', '')
+                elif line.startswith('20') and file_header['FORMAT'] == 'MC' and 'STARTREC' not in file_header:
+                    file_header['STARTREC'] = datetime.strftime(
+                        datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
+                        "%H:%M %d/%m/%y")
+                elif line.startswith('20') and file_header['FORMAT'] == 'MC' :
+                    file_header['STOPREC'] = datetime.strftime(
+                        datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
+                        "%H:%M %d/%m/%y")
+                    file_header['STOPREC'] = "11:09 04/12/18"
+        print(file_header)
         return file_header
 
     def parse_data_header(self):
         data_header = []
-        with open(self.file_path) as f:
+
+        # Guess the right file encoding
+        f = open(self.file_path, 'r', encoding='utf8')
+        while True:
+            try:
+                line = f.readline()
+            except UnicodeDecodeError:
+                f.close()
+                encoding = 'ISO-8859-1'
+                break
+            if not line:
+                f.close()
+                encoding = 'utf8'
+                break
+
+        with open(self.file_path, encoding=encoding) as f:
             for line in f:
                 if line.startswith('* HEAD '):
                     start_char = 20

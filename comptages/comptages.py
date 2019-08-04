@@ -16,6 +16,7 @@ from comptages.core.utils import push_info
 from comptages.importer.data_importer import DataImporter
 from comptages.importer.data_importer_vbv1 import DataImporterVbv1
 from comptages.importer.data_importer_int2 import DataImporterInt2
+from comptages.importer.data_importer_mc import DataImporterMC
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
@@ -189,13 +190,15 @@ class Comptages(QObject):
         title = 'Importer'
         path = self.settings.value('data_import_directory')
         files = QFileDialog.getOpenFileNames(
-            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
+            file_dialog, title, path,
+            "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
 
         for file_path in files:
             self.import_file(file_path)
 
     def import_file(self, file_path, count_id=None):
         file_header = DataImporter.parse_file_header(file_path)
+        print(file_header)
         if not count_id:
             count_id = self.layers.guess_count_id(
                 file_header['SITE'],
@@ -219,6 +222,8 @@ class Comptages(QObject):
             task = DataImporterVbv1(file_path, count_id)
         elif file_format == 'INT-2':
             task = DataImporterInt2(file_path, count_id)
+        elif file_format == 'MC':
+            task = DataImporterMC(file_path, count_id)
         else:
             push_info('Format {} of {} not supported'.format(
                 file_format,
