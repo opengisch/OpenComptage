@@ -7,6 +7,7 @@ INSERT INTO comptages.class VALUES (6, 'SWISS10', 'SWISS 10');
 INSERT INTO comptages.class VALUES (11, 'EUR13', 'EUR 13');
 INSERT INTO comptages.class VALUES (12, 'NZ13', 'New Zealand 13');
 INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
+INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
 
 -- category
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (2, 'PF', 1, 2, TRUE);
@@ -44,6 +45,38 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (29, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (30, 'LZ', 9, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (31, 'SZ', 10, 2, FALSE);
 
+  --ARX Cycle
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (32, 'ANY', 0, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (33, 'CYCLE', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (34, 'MC', 2, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (35, 'SV', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (36, 'SVT', 4, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (37, 'TB2', 5, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (38, 'TB3', 6, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (39, 'T4', 7, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (40, 'ART3', 8, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (41, 'ART4', 9, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (42, 'ART5', 10, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (43, 'ART6', 11, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (44, 'BD', 12, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (45, 'DRT', 13, 2, FALSE);
+
+  -- NZ13
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (46, 'NZTA 1', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (47, 'NZTA 2', 2, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (48, 'NZTA 3', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (49, 'NZTA 4', 4, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (50, 'NZTA 5', 5, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (51, 'NZTA 6', 6, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (52, 'NZTA 7', 7, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (53, 'NZTA 8', 8, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (54, 'NZTA 9', 9, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (55, 'NZTA 10', 10, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (56, 'NZTA 11', 11, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (57, 'NZTA 12', 12, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (58, 'NZTA 13', 13, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (59, 'ANY', 14, 2, FALSE);
+
 -- class_category
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 2);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 3);
@@ -79,6 +112,36 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 28);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 29);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 30);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 31);
+
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 32);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 33);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 34);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 35);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 36);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 37);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 38);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 39);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 40);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 41);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 42);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 43);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 44);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 45);
+
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 46);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 47);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 48);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 49);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 50);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 51);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 52);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 53);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 54);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 55);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 56);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 57);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 58);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 59);
 
 -- brand
 INSERT INTO comptages.brand VALUES (1, 'GoldenRiver');
