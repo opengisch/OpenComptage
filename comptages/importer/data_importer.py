@@ -123,7 +123,6 @@ class DataImporter(QgsTask):
                     file_header['STOPREC'] = datetime.strftime(
                         datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
                         "%H:%M %d/%m/%y")
-                    file_header['STOPREC'] = "11:09 04/12/18"
                 elif line.startswith('Type') and file_header['FORMAT'] == 'MC':
                     file_header['CLASS'] = line[line.find('(') + 1:line.find(')')]
                     if file_header['CLASS'] == 'ARX':
