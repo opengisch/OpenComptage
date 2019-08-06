@@ -309,7 +309,8 @@ class Comptages(QObject):
         title = 'Importation'
         path = self.settings.value('data_import_directory')
         file_path = QFileDialog.getOpenFileName(
-            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V??)")[0]
+            file_dialog, title, path,
+            "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
 
         if not file_path:
             return
