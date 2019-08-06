@@ -125,8 +125,10 @@ class DataImporter(QgsTask):
                         "%H:%M %d/%m/%y")
                 elif line.startswith('Type') and file_header['FORMAT'] == 'MC':
                     file_header['CLASS'] = line[line.find('(') + 1:line.find(')')]
-                    if file_header['CLASS'] == 'ARX':
-                        file_header['CLASS'] = 'ARX Cycle'
+                    if file_header['CLASS'] == 'Euro13':
+                        file_header['CLASS'] = 'EUR13'
+                    elif file_header['CLASS'] == 'NZTA2011':
+                        file_header['CLASS'] = 'NZ13'
         return file_header
 
     def parse_data_header(self):
