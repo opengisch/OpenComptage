@@ -41,11 +41,13 @@ class ReportCreator():
         current_dir = os.path.dirname(os.path.abspath(__file__))
         template = os.path.join(current_dir, 'template.xlsx')
         wb = load_workbook(filename=template)
-
         self._set_data_count(wb, count_data, start_day, end_day)
         self._set_data_day(wb, count_data, start_day, end_day)
         self._set_data_speed(wb, count_data, start_day, end_day)
-        self._set_data_category(wb, count_data, start_day, end_day)
+
+        # FIXME: Fix category page for ARX Cycle
+        if not count_data.attributes['class'] == 'ARX Cycle':
+            self._set_data_category(wb, count_data, start_day, end_day)
         self._set_cv_lv_chart(wb)
         self._set_swiss10_chart(wb)
         self._set_swiss7_chart(wb)
