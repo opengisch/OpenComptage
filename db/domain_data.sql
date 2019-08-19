@@ -218,9 +218,18 @@ INSERT INTO comptages.sensor_type_model VALUES (2, 11);
 INSERT INTO comptages.sensor_type_model VALUES (3, 12);
 
 --sequences
-SELECT pg_catalog.setval('comptages.class_id_seq', 21, true);
-SELECT pg_catalog.setval('comptages.category_id_seq', 31, true);
+SELECT pg_catalog.setval('comptages.class_id_seq', 22, true);
+SELECT pg_catalog.setval('comptages.category_id_seq', 61, true);
 SELECT pg_catalog.setval('comptages.brand_id_seq', 2, true);
 SELECT pg_catalog.setval('comptages.model_id_seq', 12, true);
 SELECT pg_catalog.setval('comptages.device_id_seq', 208, true);
 SELECT pg_catalog.setval('comptages.sensor_type_id_seq', 3, true);
+
+
+-- indexes
+CREATE index ON comptages.count_aggregate_value_cls(id_count_aggregate);
+CREATE index ON comptages.count_aggregate_value_cnt(id_count_aggregate);
+CREATE index ON comptages.count_aggregate_value_drn(id_count_aggregate);
+CREATE index ON comptages.count_aggregate_value_len(id_count_aggregate);
+CREATE index ON comptages.count_aggregate_value_spd(id_count_aggregate);
+CREATE index ON comptages.count_aggregate_value_sds(id_count_aggregate);
