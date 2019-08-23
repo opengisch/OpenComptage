@@ -39,7 +39,6 @@ class PlanCreator():
         sections = self.layers.get_sections_of_count(count_id)
 
         self.set_text_item('f_01', installation.attribute('name'))
-        self.set_text_item('f_02', '')
         self.set_text_item('f_03', '')
         self.set_text_item('f_04', sections[0].attribute('owner'))
         self.set_text_item('f_05', sections[0].attribute('road'))
@@ -63,11 +62,8 @@ class PlanCreator():
             'f_11',
             count.attribute('end_process_date').toString(
                 'dd.MM.yyyy (dddd)'))
-        self.set_text_item('f_12', '')
-        self.set_text_item('f_13', '')
         self.set_text_item('f_14', '')
         self.set_text_item('f_15', '')
-        self.set_text_item('f_16', '')
 
         # Page 2
         self.set_text_item('f_17', 'Campagne de comptage')
