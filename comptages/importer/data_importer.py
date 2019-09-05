@@ -123,12 +123,14 @@ class DataImporter(QgsTask):
                     file_header['STOPREC'] = datetime.strftime(
                         datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S"),
                         "%H:%M %d/%m/%y")
-                elif line.startswith('Type') and file_header['FORMAT'] == 'MC':
+                elif line.startswith('Type de Cat') and file_header['FORMAT'] == 'MC':
                     file_header['CLASS'] = line[line.find('(') + 1:line.find(')')]
                     if file_header['CLASS'] == 'Euro13':
                         file_header['CLASS'] = 'EUR13'
                     elif file_header['CLASS'] == 'NZTA2011':
                         file_header['CLASS'] = 'NZ13'
+                    elif file_header['CLASS'][:5] == 'FHWA ':
+                        file_header['CLASS'] = 'FHWA13'
         return file_header
 
     def parse_data_header(self):
