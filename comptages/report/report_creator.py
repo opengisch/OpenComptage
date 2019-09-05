@@ -8,8 +8,6 @@ from comptages.core.settings import Settings
 from comptages.data.data_loader import DataLoader
 from comptages.core.layers import Layers
 
-import datetime
-
 
 class ReportCreator():
     def __init__(self, count_id, file_path, layers):
@@ -51,7 +49,6 @@ class ReportCreator():
         self._set_cv_lv_chart(wb)
         self._set_swiss10_chart(wb)
         self._set_swiss7_chart(wb)
-        self._set_print_areas(wb)
         self._remove_useless_sheets(wb, count_data)
 
         # Save the file
@@ -66,11 +63,12 @@ class ReportCreator():
     def _set_data_count(self, workbook, count_data, start_day, end_day):
         ws = workbook['Data_count']
 
-        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}:  '
+        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}{}  '
                     'PR {} + {} m à PR {} + {} m').format(
                         self.section_id,
                         count_data.attributes['owner'],
                         count_data.attributes['road'],
+                        count_data.attributes['way'],
                         count_data.attributes['start_pr'],
                         count_data.attributes['start_dist'],
                         count_data.attributes['end_pr'],
@@ -386,9 +384,6 @@ class ReportCreator():
         chart1.series[6].graphicalProperties.solidFill = "ff99cc"
 
         ws.add_chart(chart1, "A46")
-
-    def _set_print_areas(self, workbook):
-        workbook['Vit_Hd'].print_area = 'A1:V78'
 
     def _remove_useless_sheets(self, workbook, count_data):
 
