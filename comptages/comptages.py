@@ -323,10 +323,8 @@ class Comptages(QObject):
                        "soit terminée."))
             return
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('*.xlsx')
         title = 'Exporter un rapport'
-        path = os.path.join(
-            self.settings.value('report_export_directory'))
+        path = self.settings.value('report_export_directory')
         file_path = QFileDialog.getExistingDirectory(
             file_dialog, title, path)
         print(file_path)

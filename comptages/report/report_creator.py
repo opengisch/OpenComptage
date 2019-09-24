@@ -8,8 +8,6 @@ from comptages.core.settings import Settings
 from comptages.data.data_loader import DataLoader
 from comptages.core.layers import Layers
 
-import datetime
-
 
 class ReportCreator():
     def __init__(self, count_id, file_path, layers):
