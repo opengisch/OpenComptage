@@ -55,12 +55,14 @@ class ReportCreator():
         self._remove_useless_sheets(wb, count_data)
 
         # Save the file
-        week_num = datetime.date(
+        first_day_date = datetime.date(
             count_data.attributes['dates'][start_day][0],
             count_data.attributes['dates'][start_day][1],
-            count_data.attributes['dates'][start_day][2]).strftime('%V')
-        output = '{}_{}_S{}.xlsx'.format(
-            self.file_path[0:-5], section_id, week_num)
+            count_data.attributes['dates'][start_day][2]).strftime('%Y%m%d')
+
+        output = os.path.join(
+            self.file_path, '{}_{}_r.xlsx'.format(section_id, first_day_date))
+
         wb.save(filename=output)
 
     def _set_data_count(self, workbook, count_data, start_day, end_day):
