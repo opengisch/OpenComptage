@@ -160,6 +160,17 @@ class ReportCreator():
                       'I', 'J', 'K', 'L', 'M', 'N']
         dir1_start_cell = 5
         dir2_start_cell = 33
+        average_class_speeds_row = 60
+
+        average_class_speeds = []
+        if count_data.attributes['aggregate']:
+            average_class_speeds = [12.5, 22.5, 35, 45,
+                                    55, 65, 75, 85, 95,
+                                    105, 115, 125]
+
+            for i, speed in enumerate(average_class_speeds):
+                ws['{}{}'.format(
+                    speed_cols[i], average_class_speeds_row)] = speed
 
         days_idx = [x for x in range(start_day, end_day+1)]
         dir1 = count_data.speed_cumulus(0, days=days_idx)
