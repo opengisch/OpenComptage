@@ -197,8 +197,27 @@ class Comptages(QObject):
             self.import_file(file_path)
 
     def import_file(self, file_path, count_id=None):
+
+        # Manage binary files
+        extension = os.path.splitext(file_path)[1]
+        if extension.startswith('.i'):
+            file_path_formatted = list(file_path)
+            file_path_formatted[-3] = 'a'
+            file_path_formatted = "".join(file_path_formatted)
+            os.system("GrFromat.exe {} {}".format(
+                file_path, file_path_formatted))
+            file_path = file_path_formatted
+        elif extension.startswith('.V'):
+            file_path_formatted = list(file_path)
+            file_path_formatted[-3] = 'a'
+            file_path_formatted[-2] = 'V'
+            file_path_formatted = "".join(file_path_formatted)
+            os.system("GrFromat.exe {} {}".format(
+                file_path, file_path_formatted))
+            file_path = file_path_formatted
+
         file_header = DataImporter.parse_file_header(file_path)
-        print(file_header)
+
         if not count_id:
             count_id = self.layers.guess_count_id(
                 file_header['SITE'],
