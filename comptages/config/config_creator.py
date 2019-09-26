@@ -28,6 +28,23 @@ class ConfigCreatorCmd(ConfigCreator):
         self.set_command(
             'CLASS',
             self.layers.get_class_name_of_count(self.count_id))
+        self.set_command('LPLENS', '200')
+        self.set_command('LPSEPS', '500')
+
+        lanes = self.layers.get_lanes_of_count(self.count_id)
+        sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
+        channels_str = ''
+        sensors_str = ''
+
+        for i, lane in enumerate(lanes):
+            channels_str += '{} '.format(i+1)
+            if sensor_type.attribute('name') == 'Boucle':
+                sensors_str += '{} '.format('LL')
+            else:
+                sensors_str += '{} '.format('TT')
+
+        self.set_command('CHANNELS', channels_str)
+        self.set_command('SENSORS', sensors_str)
 
     def set_command(self, command, value):
         self.commands[command] = value
