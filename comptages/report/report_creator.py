@@ -231,18 +231,15 @@ class ReportCreator():
         chart1.type = "col"
         chart1.width = 19
         chart1.height = 8
-        # chart1.style = 10
+
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
         chart1.x_axis.title = "Selon l'heure de la journée"
         chart1.gapWidth = 0
-        #chart1.legend = None
 
         data = Reference(
             ws_data, min_col=11, min_row=4, max_row=28, max_col=11)
-        # cats = Reference(ws, min_col=1, min_row=5, max_row=28)
+
         chart1.add_data(data, titles_from_data=True)
-        # chart1.set_categories(cats)
-        # chart1.shape = 4
 
         s = chart1.series[0]
         s.graphicalProperties.line.solidFill = "000000"
@@ -255,7 +252,6 @@ class ReportCreator():
         data = Reference(
             ws_data, min_col=11, min_row=65, max_row=89, max_col=11)
         chart2.add_data(data, titles_from_data=True)
-        # chart2.style = 12
 
         s = chart2.series[0]
         s.graphicalProperties.line.solidFill = "3333ff"
@@ -275,20 +271,16 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        # chart1.style = 12
         chart1.width = 22
         chart1.height = 11
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
-        # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
         data = Reference(
             ws_data, min_col=14, min_row=4, max_row=28, max_col=23)
-        # cats = Reference(ws_data, min_col=1, min_row=4, max_row=28)
         chart1.add_data(data, titles_from_data=True)
-        # chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
 
@@ -307,20 +299,16 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        # chart1.style = 12
         chart1.width = 22
         chart1.height = 11
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
-        # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
         data = Reference(
             ws_data, min_col=14, min_row=32, max_row=56, max_col=23)
-        # cats = Reference(ws_data, min_col=2, min_row=32, max_row=56)
         chart1.add_data(data, titles_from_data=True)
-        # chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
 
@@ -343,19 +331,15 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        # chart1.style = 12
         chart1.width = 22
         chart1.height = 11
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
-        # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
         data = Reference(ws_data, min_col=2, min_row=4, max_row=28, max_col=8)
-        # cats = Reference(ws_data, min_col=2, min_row=4, max_row=28)
         chart1.add_data(data, titles_from_data=True)
-        # chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
 
@@ -371,20 +355,16 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        # chart1.style = 12
         chart1.width = 22
         chart1.height = 11
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
-        # chart1.x_axis.title = 'Heure'
         chart1.gapWidth = 2
 
         data = Reference(
             ws_data, min_col=2, min_row=32, max_row=56, max_col=8)
-        # cats = Reference(ws_data, min_col=2, min_row=32, max_row=56)
         chart1.add_data(data, titles_from_data=True)
-        # chart1.set_categories(cats)
         chart1.shape = 4
         chart1.legend = None
 
