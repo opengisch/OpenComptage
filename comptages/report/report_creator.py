@@ -235,7 +235,7 @@ class ReportCreator():
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
         chart1.x_axis.title = "Selon l'heure de la journée"
         chart1.gapWidth = 0
-        chart1.legend = None
+        #chart1.legend = None
 
         data = Reference(
             ws_data, min_col=11, min_row=4, max_row=28, max_col=11)
