@@ -199,19 +199,12 @@ class Comptages(QObject):
     def import_file(self, file_path, count_id=None):
 
         # Manage binary files
-        extension = os.path.splitext(file_path)[1]
-        if extension.startswith('.i'):
-            file_path_formatted = list(file_path)
-            file_path_formatted[-3] = 'a'
-            file_path_formatted = "".join(file_path_formatted)
-            os.system("GrFromat.exe {} {}".format(
-                file_path, file_path_formatted))
-            file_path = file_path_formatted
-        elif extension.startswith('.V'):
-            file_path_formatted = list(file_path)
-            file_path_formatted[-3] = 'a'
-            file_path_formatted[-2] = 'V'
-            file_path_formatted = "".join(file_path_formatted)
+        with open(file_path, 'rb') as fd:
+            file_head = fd.read(24)
+
+        if file_head == b'Golden River Traffic Ltd':  # is a binary file
+
+            file_path_formatted = "{}_for".format(file_path)
             os.system("GrFromat.exe {} {}".format(
                 file_path, file_path_formatted))
             file_path = file_path_formatted
