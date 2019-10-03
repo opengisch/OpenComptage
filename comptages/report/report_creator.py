@@ -229,8 +229,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19
-        chart1.height = 8
+        chart1.width = 18.12
+        chart1.height = 8.12
 
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
         chart1.x_axis.title = "Selon l'heure de la journée"
@@ -299,8 +299,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 22
-        chart1.height = 11
+        chart1.width = 19.76
+        chart1.height = 12.38
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -331,8 +331,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 22
-        chart1.height = 11
+        chart1.width = 19.76
+        chart1.height = 12.38
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -355,8 +355,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 22
-        chart1.height = 11
+        chart1.width = 19.76
+        chart1.height = 12.38
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
