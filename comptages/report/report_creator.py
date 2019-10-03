@@ -66,11 +66,12 @@ class ReportCreator():
     def _set_data_count(self, workbook, count_data, start_day, end_day):
         ws = workbook['Data_count']
 
-        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}:  '
+        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}:{}  '
                     'PR {} + {} m à PR {} + {} m').format(
                         self.section_id,
                         count_data.attributes['owner'],
                         count_data.attributes['road'],
+                        count_data.attributes['way'],
                         count_data.attributes['start_pr'],
                         count_data.attributes['start_dist'],
                         count_data.attributes['end_pr'],
@@ -271,8 +272,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 22
-        chart1.height = 11
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -299,8 +300,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -331,8 +332,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -355,8 +356,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
