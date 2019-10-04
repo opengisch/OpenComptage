@@ -275,7 +275,7 @@ class ReportCreator():
         chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en %'
+        chart1.y_axis.title = 'Volume du trafic en % du TJM'
         chart1.gapWidth = 2
 
         data = Reference(
@@ -335,7 +335,7 @@ class ReportCreator():
         chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en %'
+        chart1.y_axis.title = 'Volume du trafic en % du TJM'
         chart1.gapWidth = 2
 
         data = Reference(ws_data, min_col=2, min_row=4, max_row=28, max_col=8)
