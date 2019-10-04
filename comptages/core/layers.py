@@ -1371,3 +1371,10 @@ class Layers(QObject):
         result.append(query.value(0))
 
         return result
+
+    def get_formatter_name(self, model_name):
+        request = QgsFeatureRequest().setFilterExpression(
+            '"name" = \'{}\''.format(model_name)
+        )
+        return next(self.layers['brand'].getFeatures(
+            request)).attribute('formatter_name')

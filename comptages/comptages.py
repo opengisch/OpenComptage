@@ -203,10 +203,10 @@ class Comptages(QObject):
             file_head = fd.read(24)
 
         if file_head == b'Golden River Traffic Ltd':  # is a binary file
-
+            formatter = self.layers.get_formatter_name('GoldenRiver')
             file_path_formatted = "{}_for".format(file_path)
-            os.system("GrFromat.exe {} {}".format(
-                file_path, file_path_formatted))
+            os.system("{} {} {}".format(
+                formatter, file_path, file_path_formatted))
             file_path = file_path_formatted
 
         file_header = DataImporter.parse_file_header(file_path)
