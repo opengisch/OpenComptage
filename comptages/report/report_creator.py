@@ -271,8 +271,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 22
-        chart1.height = 11
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -299,8 +299,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -331,8 +331,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'
@@ -355,8 +355,8 @@ class ReportCreator():
 
         chart1 = BarChart()
         chart1.type = "col"
-        chart1.width = 19.76
-        chart1.height = 12.38
+        chart1.width = 19.83
+        chart1.height = 12.34
         chart1.grouping = "stacked"
         chart1.overlap = 100
         chart1.y_axis.title = 'Volume du trafic en %'

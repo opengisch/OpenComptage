@@ -235,7 +235,7 @@ class DataLoader():
         self.attributes['class'] = query.value(3)
 
         query_str = (
-            "select sec.owner, sec.road, sec.start_pr, sec.end_pr, "
+            "select sec.owner, sec.road, sec.way, sec.start_pr, sec.end_pr, "
             "sec.start_dist, sec.end_dist, sec.place_name, "
             "lan.direction, lan.direction_desc "
             "from comptages.section as sec "
@@ -247,12 +247,13 @@ class DataLoader():
         while query.next():
             self.attributes['owner'] = query.value(0)
             self.attributes['road'] = query.value(1)
-            self.attributes['start_pr'] = query.value(2)
-            self.attributes['end_pr'] = query.value(3)
-            self.attributes['start_dist'] = query.value(4)
-            self.attributes['end_dist'] = query.value(5)
-            self.attributes['place_name'] = query.value(6)
-            if int(query.value(7)) == 1:
-                self.attributes['dir1'] = query.value(8)
-            elif int(query.value(7)) == 2:
-                self.attributes['dir2'] = query.value(8)
+            self.attributes['way'] = query.value(2)
+            self.attributes['start_pr'] = query.value(3)
+            self.attributes['end_pr'] = query.value(4)
+            self.attributes['start_dist'] = query.value(5)
+            self.attributes['end_dist'] = query.value(6)
+            self.attributes['place_name'] = query.value(7)
+            if int(query.value(8)) == 1:
+                self.attributes['dir1'] = query.value(9)
+            elif int(query.value(8)) == 2:
+                self.attributes['dir2'] = query.value(9)
