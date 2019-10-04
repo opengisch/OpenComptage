@@ -73,7 +73,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="model" layer="0" collapse-mode="2" max-obj-count="7">
+<table name="model" layer="0" collapse-mode="2" max-obj-count="6">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1140" y="200"/>
@@ -81,9 +81,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="formatter_name">
 		<type name="text" length="0"/>
 	</column>
 	<column name="card_name">
@@ -97,7 +94,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_brand" index="5"/>
+		<object name="id_brand" index="4"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
@@ -105,7 +102,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="brand" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="brand" layer="0" collapse-mode="2" max-obj-count="3">
 	<schema name="comptages"/>
 	<role name="postgres"/>
 	<position x="1200" y="60"/>
@@ -113,6 +110,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="formatter_name">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="brand_pk" type="pk-constr" table="comptages.brand">
@@ -606,9 +606,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="525.197" y="494.15"/>
-	<position x="525.197" y="417"/>
-	<position x="428.131" y="417"/>
+		<position x="525.221" y="494.159"/>
+	<position x="525.221" y="417"/>
+	<position x="428.147" y="417"/>
 	</line>
 </relationship>
 

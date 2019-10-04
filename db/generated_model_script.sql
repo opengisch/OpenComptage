@@ -58,7 +58,6 @@ ALTER TABLE comptages.device OWNER TO postgres;
 CREATE TABLE comptages.model (
 	id serial NOT NULL,
 	name text NOT NULL,
-	formatter_name text,
 	card_name text,
 	configuration text,
 	id_brand integer NOT NULL,
@@ -74,6 +73,7 @@ ALTER TABLE comptages.model OWNER TO postgres;
 CREATE TABLE comptages.brand (
 	id serial NOT NULL,
 	name text NOT NULL,
+	formatter_name text,
 	CONSTRAINT brand_pk PRIMARY KEY (id)
 
 );

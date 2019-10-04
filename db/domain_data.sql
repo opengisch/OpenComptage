@@ -148,19 +148,19 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 60);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 61);
 
 -- brand
-INSERT INTO comptages.brand VALUES (1, 'GoldenRiver');
-INSERT INTO comptages.brand VALUES (2, 'MetroCount');
+INSERT INTO comptages.brand VALUES (1, 'GoldenRiver', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe');
+INSERT INTO comptages.brand VALUES (2, 'MetroCount', NULL);
 
 -- model
-INSERT INTO comptages.model VALUES (1, 'M660_LT', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', '8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity)', '', 1);
-INSERT INTO comptages.model VALUES (2, 'M660_L', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', '8 Loop Card (HP)', '', 1);
-INSERT INTO comptages.model VALUES (3, 'M660_T', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', 'Tube/Switch Input Card (Rev Polarity)', '', 1);
-INSERT INTO comptages.model VALUES (4, 'M660_L2', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', '2 x 8 Loop Card (HP)', '', 1);
-INSERT INTO comptages.model VALUES (5, 'M660_T2', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', '2 x Tube/Switch Input Card (Rev Polarity)', '', 1);
-INSERT INTO comptages.model VALUES (6, 'M680_L', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', '16 Loop Sensor', '', 1);
-INSERT INTO comptages.model VALUES (7, 'M720_L', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe', 'Loop Sensor', '', 1);
-INSERT INTO comptages.model VALUES (11, 'MC5900_T', NULL, 'Tube', '', 2);
-INSERT INTO comptages.model VALUES (12, 'MC5720_P', NULL, 'Piezo', '', 2);
+INSERT INTO comptages.model VALUES (1, 'M660_LT', '8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity)', '', 1);
+INSERT INTO comptages.model VALUES (2, 'M660_L', '8 Loop Card (HP)', '', 1);
+INSERT INTO comptages.model VALUES (3, 'M660_T', 'Tube/Switch Input Card (Rev Polarity)', '', 1);
+INSERT INTO comptages.model VALUES (4, 'M660_L2', '2 x 8 Loop Card (HP)', '', 1);
+INSERT INTO comptages.model VALUES (5, 'M660_T2', '2 x Tube/Switch Input Card (Rev Polarity)', '', 1);
+INSERT INTO comptages.model VALUES (6, 'M680_L', '16 Loop Sensor', '', 1);
+INSERT INTO comptages.model VALUES (7, 'M720_L', 'Loop Sensor', '', 1);
+INSERT INTO comptages.model VALUES (11, 'MC5900_T', 'Tube', '', 2);
+INSERT INTO comptages.model VALUES (12, 'MC5720_P', 'Piezo', '', 2);
 
 -- device
 INSERT INTO comptages.device VALUES (1, '229007', NULL, '1', 1);
