@@ -1,9 +1,8 @@
 #+TITLE:     Documentation
 #+AUTHOR:    Mario Baranzini
 #+EMAIL:     mario@opengis.ch
-#+DATE:      2019-10-26
 #+LANGUAGE:  en
-#+OPTIONS:   H:4 num:nil toc:2
+#+OPTIONS:   H:4 num:nil toc:4
 
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/setup/theme-readtheorg.setup
 
