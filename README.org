@@ -1,4 +1,7 @@
 *OpenComptage* is a QGIS plugin to manage Canton Neuchâtel's /Comptages/
+
+The documentation is published [[https://opengisch.github.io/OpenComptage/index.html][here]]
+
 * Purpose
   The purposes of the QGIS plugin are:
   - plan the future traffic measure
