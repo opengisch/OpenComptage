@@ -1,0 +1,18 @@
+#+TITLE:     Documentation
+#+AUTHOR:    Mario Baranzini
+#+EMAIL:     mario@opengis.ch
+#+DATE:      2019-10-26
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 num:nil toc:2
+
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/setup/theme-readtheorg.setup
+
+
+#+BEGIN_EXPORT html
+<div class="right">
+  <a href="https://github.com/opengish/OpenComptages/blob/master/docs/index.org" class="fa fa-github"> Edit on GitHub</a>
+</div>
+#+END_EXPORT
+
+-----
+* Documentation
