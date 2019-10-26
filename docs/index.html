@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-10-26 Sat 17:48 -->
+<!-- 2019-10-26 Sat 18:00 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Documentation</title>
@@ -253,23 +253,132 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgf1b028a">Documentation</a></li>
+<li><a href="#orge5c58e2">Documentation</a>
+<ul>
+<li><a href="#org9ee80ea">Data model</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div class="right">
-  <a href="https://github.com/opengish/OpenComptages/blob/master/docs/index.org" class="fa fa-github"> Edit on GitHub</a>
+  <a href="https://github.com/opengisch/OpenComptage/blob/master/docs/index.org" class="fa fa-github"> Edit on GitHub</a>
 </div>
 
 <hr />
-<div id="outline-container-orgf1b028a" class="outline-2">
-<h2 id="orgf1b028a">Documentation</h2>
+<div id="outline-container-orge5c58e2" class="outline-2">
+<h2 id="orge5c58e2">Documentation</h2>
+<div class="outline-text-2" id="text-orge5c58e2">
+</div>
+<div id="outline-container-org9ee80ea" class="outline-3">
+<h3 id="org9ee80ea">Data model</h3>
+<div class="outline-text-3" id="text-org9ee80ea">
+<p>
+The data model has been created to easily allow to add functionality to the product
+e.g. adding new vehicle classes and to be as simple as possible and easily
+usable into QGIS. It is flexible enough to support natively all the current
+special cases without write special management code.
+</p>
+
+<p>
+The data model is created with <code>pgmodeler</code> and is exported into an sql script
+used by <code>create_db.sh</code> script. To create a new sql from the pgmodeler's model,
+run the script <code>create_data_model_sql_script.sh</code>.
+</p>
+</div>
+<div id="outline-container-org177ccaa" class="outline-4">
+<h4 id="org177ccaa">Tables</h4>
+<div class="outline-text-4" id="text-org177ccaa">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">English name</th>
+<th scope="col" class="org-left">French name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">damage<sub>log</sub></td>
+<td class="org-left">journal<sub>panne</sub></td>
+</tr>
+
+<tr>
+<td class="org-left">device</td>
+<td class="org-left">automate</td>
+</tr>
+
+<tr>
+<td class="org-left">model</td>
+<td class="org-left">model</td>
+</tr>
+
+<tr>
+<td class="org-left">brand</td>
+<td class="org-left">marque</td>
+</tr>
+
+<tr>
+<td class="org-left">sensor<sub>type</sub></td>
+<td class="org-left">type<sub>capteur</sub></td>
+</tr>
+
+<tr>
+<td class="org-left">classe</td>
+<td class="org-left">classification</td>
+</tr>
+
+<tr>
+<td class="org-left">category</td>
+<td class="org-left">categorie</td>
+</tr>
+
+<tr>
+<td class="org-left">count</td>
+<td class="org-left">comptage</td>
+</tr>
+
+<tr>
+<td class="org-left">installation</td>
+<td class="org-left">installation</td>
+</tr>
+
+<tr>
+<td class="org-left">lane</td>
+<td class="org-left">voie</td>
+</tr>
+
+<tr>
+<td class="org-left">section</td>
+<td class="org-left">troncon</td>
+</tr>
+
+<tr>
+<td class="org-left">count<sub>detail</sub></td>
+<td class="org-left">comptage<sub>detail</sub></td>
+</tr>
+
+<tr>
+<td class="org-left">special<sub>period</sub></td>
+<td class="org-left">periode<sub>speciale</sub></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="date">Date: 2019-10-26</p>
 <p class="author">Author: Mario Baranzini</p>
-<p class="date">Created: 2019-10-26 Sat 17:48</p>
+<p class="date">Created: 2019-10-26 Sat 18:00</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
