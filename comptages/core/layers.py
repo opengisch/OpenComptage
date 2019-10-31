@@ -1365,7 +1365,10 @@ class Layers(QObject):
                     end_timestamp, i))
             query.exec_(query_str)
             query.next()
-            result.append(query.value(0))
+            if query.value(0) and query.value(0) >= 1:
+                result.append(query.value(0))
+            else:
+                result.append('NA')
 
         query_str = (
             "select coalesce(avg(det.speed), 0) from "
@@ -1379,7 +1382,10 @@ class Layers(QObject):
                 end_timestamp))
         query.exec_(query_str)
         query.next()
-        result.append(query.value(0))
+        if query.value(0) and query.value(0) >= 1:
+            result.append(query.value(0))
+        else:
+            result.append('NA')
 
         return result
 
