@@ -176,6 +176,17 @@ class ReportCreator():
         dir1 = count_data.speed_cumulus(0, days=days_idx)
         dir2 = count_data.speed_cumulus(1, days=days_idx)
 
+        start_timestamp = datetime.date(
+            count_data.attributes['dates'][start_day][0],
+            count_data.attributes['dates'][start_day][1],
+            count_data.attributes['dates'][start_day][2]).strftime('%Y-%m-%d')
+
+        end_timestamp = (datetime.date(
+            count_data.attributes['dates'][end_day][0],
+            count_data.attributes['dates'][end_day][1],
+            count_data.attributes['dates'][end_day][2])
+            + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+
         for i, hour in enumerate(dir1):
             for j, speed in enumerate(hour):
                 ws['{}{}'.format(speed_cols[j], i+dir1_start_cell)] = speed
@@ -183,7 +194,8 @@ class ReportCreator():
             if not count_data.attributes['aggregate']:
                 # Average and characteristic speed
                 char_speed = self.layers.get_characteristic_speeds(
-                    self.count_id, i, 1)
+                    self.count_id, i, 1, start_timestamp, end_timestamp,
+                    self.section_id)
                 ws['P{}'.format(i+dir1_start_cell)] = char_speed[0]
                 ws['Q{}'.format(i+dir1_start_cell)] = char_speed[1]
                 ws['R{}'.format(i+dir1_start_cell)] = char_speed[2]
@@ -196,7 +208,8 @@ class ReportCreator():
             if not count_data.attributes['aggregate']:
                 # Average and characteristic speed
                 char_speed = self.layers.get_characteristic_speeds(
-                    self.count_id, i, 2)
+                    self.count_id, i, 2, start_timestamp, end_timestamp,
+                    self.section_id)
                 ws['P{}'.format(i+dir2_start_cell)] = char_speed[0]
                 ws['Q{}'.format(i+dir2_start_cell)] = char_speed[1]
                 ws['R{}'.format(i+dir2_start_cell)] = char_speed[2]

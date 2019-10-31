@@ -1320,7 +1320,9 @@ class Layers(QObject):
             result.append(query.value(0))
         return result
 
-    def get_characteristic_speeds(self, count_id, hour, direction):
+    def get_characteristic_speeds(
+            self, count_id, hour, direction, start_timestamp, end_timestamp,
+            section_id):
         self.init_db_connection()
         query = QSqlQuery(self.db)
         result = []
@@ -1329,8 +1331,11 @@ class Layers(QObject):
             "select count(*) from comptages.count_detail as det join "
             "comptages.lane as lan on det.id_lane = lan.id "
             "where det.id_count = {} and lan.direction = {} "
-            "and date_part('hour', det.timestamp) = {};".format(
-                count_id, direction, hour))
+            "and lan.id_section = '{}' "
+            "and date_part('hour', det.timestamp) = {} "
+            "and det.timestamp>='{}' and det.timestamp<'{}';".format(
+                count_id, direction, section_id, hour, start_timestamp,
+                end_timestamp))
 
         query.exec_(query_str)
         if query.next():
@@ -1350,11 +1355,14 @@ class Layers(QObject):
                 "select det.speed from comptages.count_detail as det join "
                 "comptages.lane as lan on det.id_lane = lan.id "
                 "where det.id_count = {} and lan.direction = {} "
+                "and lan.id_section = '{}' "
                 "and date_part('hour', det.timestamp) = {} "
+                "and det.timestamp>='{}' and det.timestamp<'{}' "
                 "order by speed "
                 "offset ({}-1) rows "
                 "fetch next 1 rows only;".format(
-                    count_id, direction, hour, i))
+                    count_id, direction, section_id, hour, start_timestamp,
+                    end_timestamp, i))
             query.exec_(query_str)
             query.next()
             result.append(query.value(0))
@@ -1364,8 +1372,11 @@ class Layers(QObject):
             "comptages.count_detail as det join "
             "comptages.lane as lan on det.id_lane = lan.id "
             "where det.id_count = {} and lan.direction = {} "
-            "and date_part('hour', det.timestamp) = {};".format(
-                count_id, direction, hour))
+            "and lan.id_section = '{}' "
+            "and date_part('hour', det.timestamp) = {} "
+            "and det.timestamp>='{}' and det.timestamp<'{}';".format(
+                count_id, direction, section_id, hour, start_timestamp,
+                end_timestamp))
         query.exec_(query_str)
         query.next()
         result.append(query.value(0))
