@@ -146,7 +146,7 @@ class DataLoader():
                 speed = 121
 
             hour_datas[hour].direction_data[direction].speed_data[
-                int((speed - 0.1)/10)] += 1
+                int(speed/10)] += 1
 
             hour_datas[hour].direction_data[direction].category_data[
                 self.category_index(int(query.value(1)))] += 1
