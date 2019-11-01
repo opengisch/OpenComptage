@@ -243,7 +243,7 @@ class ReportCreator():
         chart1 = BarChart()
         chart1.type = "col"
         chart1.width = 18.12
-        chart1.height = 8.12
+        chart1.height = 8
 
         chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
         chart1.x_axis.title = "Selon l'heure de la journée"
