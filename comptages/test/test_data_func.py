@@ -92,7 +92,7 @@ class TestData(unittest.TestCase):
 
         count_data = data_loader.load()
         self.assertEqual(
-            [1, 0, 3, 0, 1, 3, 0, 1, 0, 0, 0, 0, 2],
+            [1, 0, 3, 0, 0, 4, 0, 0, 1, 0, 0, 0, 2],
             count_data.day_data[0].hour_data[15].direction_data[0].speed_data)
 
         self.assertEqual(
