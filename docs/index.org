@@ -42,7 +42,7 @@
     #+CAPTION: Bouton connection DB
     [[./assets/power.png]]
 
-    Le bouton "Connection DB" ouvre une connexion à la base de données et charge
+    Le bouton =Connection DB= ouvre une connexion à la base de données et charge
     les couches de l'application dans QGIS.
 
     #+CAPTION: Couches dans QGIS
@@ -52,27 +52,35 @@
     #+CAPTION: Bouton creation nouveau comptage
     [[./assets/measure.png]]
 
-    Pour créer un nouveau comptage (élément dans la table de comptage), il
-    existe l'outil "Créer un nouveau comptage" qui simplifie l'opération par
+    Pour créer un nouveau comptage (élément dans la couche =comptage=), il
+    existe l'outil =Créer un nouveau comptage= qui simplifie l'opération par
     rapport à l'insertion manuelle dans la table.
 
     Pour créer un nouveau comptage à l'aide de l'outil, vous devez commencer par
     sélectionner un tronçon sur la carte en utilisant les outils de sélection de
     géométrie QGIS normaux. Pour simplifier la recherche du tronçon à
-    sélectionner, vous pouvez utiliser l'outil de recherche dans la couche des
-    tronçon.
+    sélectionner, vous pouvez utiliser l'outil de recherche dans la couche
+    =tronçon=.
 
-    Une fois que vous avez sélectionné le coffre pour lequel vous voulez créer
-    le comptage, en appuyant sur le bouton "Créer un nouveau comptage" vous
+    Une fois que vous avez sélectionné le tronçon pour lequel vous voulez créer
+    le comptage, en appuyant sur le bouton =Créer un nouveau comptage= vous
     pouvez entrer les données du comptage et les sauvegarder dans la base de
     données.
 
     #+CAPTION: Creation d'un nouveau comptage
     [[./assets/create_measure.gif]]
 *** Modifier comptage
-    #+attr_html: :width 80px
     #+CAPTION: Bouton modifier comptage
+    #+attr_html: :width 80px
     [[./assets/select_edit.png]]
+
+    Après avoir sélectionné un tronçon sur la carte, appuyer sur le bouton
+    =Modifier comptage= affiche le tableau d'attributs de la couche =comptage= avec
+    les comptages du tronçon sélectionné où vous pouvez éditer les données du
+    comptage.
+
+    #+CAPTION: Modification d'un comptage
+    [[./assets/edit_measure.gif]]
 *** Importation
     #+attr_html: :width 80px
     #+CAPTION: Bouton importation données
