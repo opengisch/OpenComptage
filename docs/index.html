@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 <head>
-<!-- 2019-10-26 Sat 18:05 -->
+<!-- 2019-11-02 Sat 08:34 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Documentation</title>
@@ -250,14 +250,26 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">Documentation</h1>
 <div id="table-of-contents">
-<h2>Table of Contents</h2>
+<h2>Table des matières</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga32c9d7">Documentation</a>
+<li><a href="#org079e253">Plugin QGIS</a>
 <ul>
-<li><a href="#orge5b4526">Data model</a>
+<li><a href="#orgf794f93">Barre d'outils</a></li>
+<li><a href="#org6310ab8">Utilisation</a>
 <ul>
-<li><a href="#org115bfc0">Tables</a></li>
+<li><a href="#orgc396cc0">Connection DB</a></li>
+<li><a href="#org06088c7">Créer un nouveau comptage</a></li>
+<li><a href="#org8b530bf">Modifier comptage</a></li>
+<li><a href="#org51da48e">Importation</a></li>
+<li><a href="#org083c4a3">Validation</a></li>
+<li><a href="#org800b614">Filtrage</a></li>
+<li><a href="#org9cda4d2">Importation fichiers ICS</a></li>
+<li><a href="#org2fee3e7">Réglages</a></li>
+<li><a href="#org34f1736">Exporter la configuration</a></li>
+<li><a href="#org204ceb7">Créer un rapport</a></li>
+<li><a href="#org0a7ac74">Créer un plan de pose</a></li>
+<li><a href="#orgda784de">Visualiser les graphiques d'un comptage</a></li>
 </ul>
 </li>
 </ul>
@@ -270,119 +282,196 @@ for the JavaScript code in this tag.
 </div>
 
 <hr />
-<div id="outline-container-orga32c9d7" class="outline-2">
-<h2 id="orga32c9d7">Documentation</h2>
-<div class="outline-text-2" id="text-orga32c9d7">
+<div id="outline-container-org079e253" class="outline-2">
+<h2 id="org079e253">Plugin QGIS</h2>
+<div class="outline-text-2" id="text-org079e253">
 </div>
-<div id="outline-container-orge5b4526" class="outline-3">
-<h3 id="orge5b4526">Data model</h3>
-<div class="outline-text-3" id="text-orge5b4526">
+<div id="outline-container-orgf794f93" class="outline-3">
+<h3 id="orgf794f93">Barre d'outils</h3>
+<div class="outline-text-3" id="text-orgf794f93">
 <p>
-The data model has been created to easily allow to add functionality to the product
-e.g. adding new vehicle classes and to be as simple as possible and easily
-usable into QGIS. It is flexible enough to support natively all the current
-special cases without write special management code.
+Le plugin, une fois installé, ajoute une barre d'outils à l'interface QGIS,
+composée de plusieurs boutons qui permettent d'effectuer différentes
+opérations.
+</p>
+
+
+<div class="figure">
+<p><img src="./assets/toolbar.png" alt="toolbar.png" />
+</p>
+<p><span class="figure-number">Figure&nbsp;1&nbsp;: </span>Barre d'outils du plugin</p>
+</div>
+
+<p>
+Les outils sont, dans l'ordre :
+</p>
+<ul class="org-ul">
+<li>Connection DB</li>
+<li>Créer un nouveau comptage</li>
+<li>Modifier un comptage</li>
+<li>Importation données</li>
+<li>Validation données</li>
+<li>Filtrage</li>
+<li>Importation fichiers ICS</li>
+<li>Réglages</li>
+</ul>
+
+<p>
+L'utilisation des outils est décrite dans le chapitre <a href="#org6310ab8">Utilisation</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6310ab8" class="outline-3">
+<h3 id="org6310ab8">Utilisation</h3>
+<div class="outline-text-3" id="text-org6310ab8">
+</div>
+<div id="outline-container-orgc396cc0" class="outline-4">
+<h4 id="orgc396cc0">Connection DB</h4>
+<div class="outline-text-4" id="text-orgc396cc0">
+
+<div class="figure">
+<p><img src="./assets/power.png" alt="power.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;2&nbsp;: </span>Bouton connection DB</p>
+</div>
+
+<p>
+Le bouton "Connection DB" ouvre une connexion à la base de données et charge
+les couches de l'application dans QGIS.
+</p>
+
+
+<div class="figure">
+<p><img src="./assets/layers.png" alt="layers.png" />
+</p>
+<p><span class="figure-number">Figure&nbsp;3&nbsp;: </span>Couches dans QGIS</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org06088c7" class="outline-4">
+<h4 id="org06088c7">Créer un nouveau comptage</h4>
+<div class="outline-text-4" id="text-org06088c7">
+
+<div class="figure">
+<p><img src="./assets/measure.png" alt="measure.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;4&nbsp;: </span>Bouton creation nouveau comptage</p>
+</div>
+
+<p>
+Pour créer un nouveau comptage (élément dans la table de comptage), il
+existe l'outil "Créer un nouveau comptage" qui simplifie l'opération par
+rapport à l'insertion manuelle dans la table.
 </p>
 
 <p>
-The data model is created with <code>pgmodeler</code> and is exported into an sql script
-used by <code>create_db.sh</code> script. To create a new sql from the pgmodeler's model,
-run the script <code>create_data_model_sql_script.sh</code>.
+Pour créer un nouveau comptage à l'aide de l'outil, vous devez commencer par
+sélectionner un tronçon sur la carte en utilisant les outils de sélection de
+géométrie QGIS normaux. Pour simplifier la recherche du tronçon à
+sélectionner, vous pouvez utiliser l'outil de recherche dans la couche des
+tronçon.
 </p>
+
+<p>
+Une fois que vous avez sélectionné le coffre pour lequel vous voulez créer
+le comptage, en appuyant sur le bouton "Créer un nouveau comptage" vous
+pouvez entrer les données du comptage et les sauvegarder dans la base de
+données.
+</p>
+
+
+<div class="figure">
+<p><img src="./assets/create_measure.gif" alt="create_measure.gif" />
+</p>
+<p><span class="figure-number">Figure&nbsp;5&nbsp;: </span>Creation d'un nouveau comptage</p>
 </div>
-<div id="outline-container-org115bfc0" class="outline-4">
-<h4 id="org115bfc0">Tables</h4>
-<div class="outline-text-4" id="text-org115bfc0">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="org-left" />
-
-<col  class="org-left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="org-left">English name</th>
-<th scope="col" class="org-left">French name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="org-left">damage<sub>log</sub></td>
-<td class="org-left">journal<sub>panne</sub></td>
-</tr>
-
-<tr>
-<td class="org-left">device</td>
-<td class="org-left">automate</td>
-</tr>
-
-<tr>
-<td class="org-left">model</td>
-<td class="org-left">model</td>
-</tr>
-
-<tr>
-<td class="org-left">brand</td>
-<td class="org-left">marque</td>
-</tr>
-
-<tr>
-<td class="org-left">sensor<sub>type</sub></td>
-<td class="org-left">type<sub>capteur</sub></td>
-</tr>
-
-<tr>
-<td class="org-left">classe</td>
-<td class="org-left">classification</td>
-</tr>
-
-<tr>
-<td class="org-left">category</td>
-<td class="org-left">categorie</td>
-</tr>
-
-<tr>
-<td class="org-left">count</td>
-<td class="org-left">comptage</td>
-</tr>
-
-<tr>
-<td class="org-left">installation</td>
-<td class="org-left">installation</td>
-</tr>
-
-<tr>
-<td class="org-left">lane</td>
-<td class="org-left">voie</td>
-</tr>
-
-<tr>
-<td class="org-left">section</td>
-<td class="org-left">troncon</td>
-</tr>
-
-<tr>
-<td class="org-left">count<sub>detail</sub></td>
-<td class="org-left">comptage<sub>detail</sub></td>
-</tr>
-
-<tr>
-<td class="org-left">special<sub>period</sub></td>
-<td class="org-left">periode<sub>speciale</sub></td>
-</tr>
-</tbody>
-</table>
 </div>
+</div>
+<div id="outline-container-org8b530bf" class="outline-4">
+<h4 id="org8b530bf">Modifier comptage</h4>
+<div class="outline-text-4" id="text-org8b530bf">
+
+<div class="figure">
+<p><img src="./assets/select_edit.png" alt="select_edit.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;6&nbsp;: </span>Bouton modifier comptage</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org51da48e" class="outline-4">
+<h4 id="org51da48e">Importation</h4>
+<div class="outline-text-4" id="text-org51da48e">
+
+<div class="figure">
+<p><img src="./assets/import.png" alt="import.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;7&nbsp;: </span>Bouton importation données</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org083c4a3" class="outline-4">
+<h4 id="org083c4a3">Validation</h4>
+<div class="outline-text-4" id="text-org083c4a3">
+
+<div class="figure">
+<p><img src="./assets/validate.png" alt="validate.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;8&nbsp;: </span>Bouton validation</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org800b614" class="outline-4">
+<h4 id="org800b614">Filtrage</h4>
+<div class="outline-text-4" id="text-org800b614">
+
+<div class="figure">
+<p><img src="./assets/filter.png" alt="filter.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;9&nbsp;: </span>Bouton filtrage</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org9cda4d2" class="outline-4">
+<h4 id="org9cda4d2">Importation fichiers ICS</h4>
+<div class="outline-text-4" id="text-org9cda4d2">
+
+<div class="figure">
+<p><img src="./assets/calendar.png" alt="calendar.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;10&nbsp;: </span>Bouton importation fichiers ICS</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org2fee3e7" class="outline-4">
+<h4 id="org2fee3e7">Réglages</h4>
+<div class="outline-text-4" id="text-org2fee3e7">
+
+<div class="figure">
+<p><img src="./assets/settings.png" alt="settings.png" width="80px" />
+</p>
+<p><span class="figure-number">Figure&nbsp;11&nbsp;: </span>Bouton réglages</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org34f1736" class="outline-4">
+<h4 id="org34f1736">Exporter la configuration</h4>
+</div>
+<div id="outline-container-org204ceb7" class="outline-4">
+<h4 id="org204ceb7">Créer un rapport</h4>
+</div>
+<div id="outline-container-org0a7ac74" class="outline-4">
+<h4 id="org0a7ac74">Créer un plan de pose</h4>
+</div>
+<div id="outline-container-orgda784de" class="outline-4">
+<h4 id="orgda784de">Visualiser les graphiques d'un comptage</h4>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Mario Baranzini</p>
-<p class="date">Created: 2019-10-26 Sat 18:05</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="author">Auteur: Mario Baranzini</p>
+<p class="date">Created: 2019-11-02 Sat 08:34</p>
 </div>
 </body>
 </html>
