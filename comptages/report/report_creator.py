@@ -1,7 +1,6 @@
 import os
 import datetime
 from openpyxl import load_workbook
-from openpyxl.chart import BarChart, LineChart, Series, Reference
 
 from qgis.PyQt.QtCore import QDate
 from comptages.core.settings import Settings
@@ -46,9 +45,6 @@ class ReportCreator():
         # FIXME: Fix category page for ARX Cycle
         if not count_data.attributes['class'] == 'ARX Cycle':
             self._set_data_category(wb, count_data, start_day, end_day)
-        self._set_cv_lv_chart(wb)
-        self._set_swiss10_chart(wb)
-        self._set_swiss7_chart(wb)
         self._remove_useless_sheets(wb, count_data)
 
         # Save the file
@@ -235,161 +231,6 @@ class ReportCreator():
         for i, hour in enumerate(dir2):
             for j, cat in enumerate(hour):
                 ws['{}{}'.format(cat_cols[j], i+dir2_start_cell)] = cat
-
-    def _set_cv_lv_chart(self, workbook):
-        ws = workbook['CV_LV']
-        ws_data = workbook['Data_day']
-
-        chart1 = BarChart()
-        chart1.type = "col"
-        chart1.width = 18.12
-        chart1.height = 8
-
-        chart1.y_axis.title = 'Vehicules à moteur en % du TJMO de la section'
-        chart1.x_axis.title = "Selon l'heure de la journée"
-        chart1.gapWidth = 0
-
-        data = Reference(
-            ws_data, min_col=11, min_row=4, max_row=28, max_col=11)
-
-        chart1.add_data(data, titles_from_data=True)
-
-        s = chart1.series[0]
-        s.graphicalProperties.line.solidFill = "000000"
-        s.graphicalProperties.solidFill = "66ffb2"
-
-        chart2 = LineChart()
-        data = Reference(
-            ws_data, min_col=11, min_row=34, max_row=58, max_col=11)
-        chart2.add_data(data, titles_from_data=True)
-        data = Reference(
-            ws_data, min_col=11, min_row=65, max_row=89, max_col=11)
-        chart2.add_data(data, titles_from_data=True)
-
-        s = chart2.series[0]
-        s.graphicalProperties.line.solidFill = "3333ff"
-        s.smooth = False
-
-        s = chart2.series[1]
-        s.graphicalProperties.line.solidFill = "ff3333"
-        s.graphicalProperties.line.dashStyle = "sysDash"
-        s.smooth = False
-
-        chart1 += chart2
-        ws.add_chart(chart1, "A15")
-
-    def _set_swiss10_chart(self, workbook):
-        ws = workbook['SWISS10_G']
-        ws_data = workbook['Data_category']
-
-        chart1 = BarChart()
-        chart1.type = "col"
-        chart1.width = 19.83
-        chart1.height = 12.34
-        chart1.grouping = "stacked"
-        chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en % du TJM'
-        chart1.gapWidth = 2
-
-        data = Reference(
-            ws_data, min_col=14, min_row=4, max_row=28, max_col=23)
-        chart1.add_data(data, titles_from_data=True)
-        chart1.shape = 4
-        chart1.legend = None
-
-        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
-        chart1.series[1].graphicalProperties.solidFill = "bce273"
-        chart1.series[2].graphicalProperties.solidFill = "ff708c"
-        chart1.series[3].graphicalProperties.solidFill = "ff6666"
-        chart1.series[4].graphicalProperties.solidFill = "003366"
-        chart1.series[5].graphicalProperties.solidFill = "000099"
-        chart1.series[6].graphicalProperties.solidFill = "6600cc"
-        chart1.series[7].graphicalProperties.solidFill = "ff00ff"
-        chart1.series[8].graphicalProperties.solidFill = "ff3399"
-        chart1.series[9].graphicalProperties.solidFill = "ff99cc"
-
-        ws.add_chart(chart1, "A11")
-
-        chart1 = BarChart()
-        chart1.type = "col"
-        chart1.width = 19.83
-        chart1.height = 12.34
-        chart1.grouping = "stacked"
-        chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en % du TJM'
-        chart1.gapWidth = 2
-
-        data = Reference(
-            ws_data, min_col=14, min_row=32, max_row=56, max_col=23)
-        chart1.add_data(data, titles_from_data=True)
-        chart1.shape = 4
-        chart1.legend = None
-
-        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
-        chart1.series[1].graphicalProperties.solidFill = "bce273"
-        chart1.series[2].graphicalProperties.solidFill = "ff708c"
-        chart1.series[3].graphicalProperties.solidFill = "ff6666"
-        chart1.series[4].graphicalProperties.solidFill = "003366"
-        chart1.series[5].graphicalProperties.solidFill = "000099"
-        chart1.series[6].graphicalProperties.solidFill = "6600cc"
-        chart1.series[7].graphicalProperties.solidFill = "ff00ff"
-        chart1.series[8].graphicalProperties.solidFill = "ff3399"
-        chart1.series[9].graphicalProperties.solidFill = "ff99cc"
-
-        ws.add_chart(chart1, "A46")
-
-    def _set_swiss7_chart(self, workbook):
-        ws = workbook['SWISS7_G']
-        ws_data = workbook['Data_category']
-
-        chart1 = BarChart()
-        chart1.type = "col"
-        chart1.width = 19.83
-        chart1.height = 12.34
-        chart1.grouping = "stacked"
-        chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en % du TJM'
-        chart1.gapWidth = 2
-
-        data = Reference(ws_data, min_col=2, min_row=4, max_row=28, max_col=8)
-        chart1.add_data(data, titles_from_data=True)
-        chart1.shape = 4
-        chart1.legend = None
-
-        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
-        chart1.series[1].graphicalProperties.solidFill = "bce273"
-        chart1.series[2].graphicalProperties.solidFill = "ff708c"
-        chart1.series[3].graphicalProperties.solidFill = "003366"
-        chart1.series[4].graphicalProperties.solidFill = "ff00ff"
-        chart1.series[5].graphicalProperties.solidFill = "ff3399"
-        chart1.series[6].graphicalProperties.solidFill = "ff99cc"
-
-        ws.add_chart(chart1, "A11")
-
-        chart1 = BarChart()
-        chart1.type = "col"
-        chart1.width = 19.83
-        chart1.height = 12.34
-        chart1.grouping = "stacked"
-        chart1.overlap = 100
-        chart1.y_axis.title = 'Volume du trafic en % du TJM'
-        chart1.gapWidth = 2
-
-        data = Reference(
-            ws_data, min_col=2, min_row=32, max_row=56, max_col=8)
-        chart1.add_data(data, titles_from_data=True)
-        chart1.shape = 4
-        chart1.legend = None
-
-        chart1.series[0].graphicalProperties.solidFill = "00a9ff"
-        chart1.series[1].graphicalProperties.solidFill = "bce273"
-        chart1.series[2].graphicalProperties.solidFill = "ff708c"
-        chart1.series[3].graphicalProperties.solidFill = "003366"
-        chart1.series[4].graphicalProperties.solidFill = "ff00ff"
-        chart1.series[5].graphicalProperties.solidFill = "ff3399"
-        chart1.series[6].graphicalProperties.solidFill = "ff99cc"
-
-        ws.add_chart(chart1, "A46")
 
     def _remove_useless_sheets(self, workbook, count_data):
 
