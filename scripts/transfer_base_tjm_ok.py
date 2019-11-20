@@ -54,7 +54,35 @@ class TransferBaseTjmOk(object):
             '58437250',
             '58447255',
             '00056380',
-            '56146965'
+            '56146965',
+            '00208495',
+            '00208525',
+            '00208505',
+            '00208540',
+            '50050035',
+            '50050150',
+            '50050040',
+            '50050155',
+            '50050047',
+            '50050162',
+            '50050051',
+            '50050166',
+            '50050055',
+            '50050170',
+            '50050065',
+            '50050180',
+            '50050070',
+            '50050185',
+            '50050080',
+            '50050195',
+            '50050090',
+            '50050200',
+            '50050105',
+            '50050215',
+            '50050110',
+            '50050220',
+            '50050135',
+            '50050245',
         ]
 
         self.sensor_type_id = {'BOUCLE': 1, 'TUBE': 2}
@@ -288,6 +316,116 @@ class TransferBaseTjmOk(object):
                         'Neuchâtel (Serrières)')
         self.write_lane(2, 2, installation_id, '56126945',
                         'Neuchâtel (Tunnel N5)')
+        installation_id = self.write_installation(True, '00208495')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '00208495',
+                        'Le Breuil Valangin (par le tunnel)')
+        self.write_lane(2, 1, installation_id, '00208495',
+                        'Le Breuil Valangin (par le tunnel)')
+        self.write_lane(3, 2, installation_id, '00208525',
+                        'Les Hauts-Geneveys (par le tunnel)')
+        self.write_lane(4, 2, installation_id, '00208525',
+                        'Les Hauts-Geneveys (par le tunnel)')
+        installation_id = self.write_installation(True, '00208505')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '00208505',
+                        'Neuchâtel (Jct. N5 à Vauseyon)')
+        self.write_lane(2, 1, installation_id, '00208505',
+                        'Neuchâtel (Jct. N5 à Vauseyon)')
+        self.write_lane(3, 2, installation_id, '00208540',
+                        'Le Breuil Valangin (par les gorges)')
+        self.write_lane(4, 2, installation_id, '00208540',
+                        'Le Breuil Valangin (par les gorges)')
+        installation_id = self.write_installation(True, '50050035')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050035', 'Areuse')
+        self.write_lane(2, 1, installation_id, '50050035', 'Areuse')
+        self.write_lane(3, 2, installation_id, '50050150',
+                        'Frontière vaudoise (Vaumarcus)')
+        self.write_lane(4, 2, installation_id, '50050150',
+                        'Frontière vaudoise (Vaumarcus)')
+        installation_id = self.write_installation(True, '50050040')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050040', 'Areuse')
+        self.write_lane(2, 1, installation_id, '50050040', 'Areuse')
+        self.write_lane(3, 2, installation_id, '50050155',
+                        'Frontière vaudoise (Vaumarcus)')
+        self.write_lane(4, 2, installation_id, '50050155',
+                        'Frontière vaudoise (Vaumarcus)')
+        installation_id = self.write_installation(True, '50050047')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050047', 'Areuse')
+        self.write_lane(2, 1, installation_id, '50050047', 'Areuse')
+        self.write_lane(3, 2, installation_id, '50050162',
+                        'Frontière vaudoise (Vaumarcus)')
+        self.write_lane(4, 2, installation_id, '50050162',
+                        'Frontière vaudoise (Vaumarcus)')
+        installation_id = self.write_installation(True, '50050051')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050051', 'Areuse')
+        self.write_lane(2, 1, installation_id, '50050051', 'Areuse')
+        self.write_lane(3, 2, installation_id, '50050166',
+                        'Frontière vaudoise (Vaumarcus)')
+        self.write_lane(4, 2, installation_id, '50050166',
+                        'Frontière vaudoise (Vaumarcus)')
+        installation_id = self.write_installation(True, '50050055')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050055', 'Serrières')
+        self.write_lane(2, 1, installation_id, '50050055', 'Serrières')
+        self.write_lane(3, 2, installation_id, '50050170', 'Areuse')
+        self.write_lane(4, 2, installation_id, '50050170', 'Areuse')
+        installation_id = self.write_installation(True, '50050065')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050065', 'Serrières')
+        self.write_lane(2, 1, installation_id, '50050065', 'Serrières')
+        self.write_lane(3, 2, installation_id, '50050180', 'Areuse')
+        self.write_lane(4, 2, installation_id, '50050180', 'Areuse')
+        installation_id = self.write_installation(True, '50050070')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050070', 'Serrières')
+        self.write_lane(2, 1, installation_id, '50050070', 'Serrières')
+        self.write_lane(3, 2, installation_id, '50050185', 'Areuse')
+        self.write_lane(4, 2, installation_id, '50050185', 'Areuse')
+        installation_id = self.write_installation(True, '50050080')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050080',
+                        'Traversée de Neuchâtel (Nid-du-Crô)')
+        self.write_lane(2, 1, installation_id, '50050080',
+                        'Traversée de Neuchâtel (Nid-du-Crô)')
+        self.write_lane(3, 2, installation_id, '50050195',
+                        'Traversée de Neuchâtel (Serrières)')
+        self.write_lane(4, 2, installation_id, '50050195',
+                        'Traversée de Neuchâtel (Serrières)')
+        installation_id = self.write_installation(True, '50050090')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050090',
+                        'Traversée de Neuchâtel (Nid-du-Crô)')
+        self.write_lane(2, 1, installation_id, '50050090',
+                        'Traversée de Neuchâtel (Nid-du-Crô)')
+        self.write_lane(3, 2, installation_id, '50050200',
+                        'Traversée de Neuchâtel (Serrières)')
+        self.write_lane(4, 2, installation_id, '50050200',
+                        'Traversée de Neuchâtel (Serrières)')
+        installation_id = self.write_installation(True, '50050105')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050105', 'Saint-Blaise')
+        self.write_lane(2, 1, installation_id, '50050105', 'Saint-Blaise')
+        self.write_lane(3, 2, installation_id, '50050215',
+                        'Neuchâtel (Nid-du-Crô)')
+        self.write_lane(4, 2, installation_id, '50050215',
+                        'Neuchâtel (Nid-du-Crô)')
+        installation_id = self.write_installation(True, '50050110')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050110', 'Le Landeron')
+        self.write_lane(2, 1, installation_id, '50050110', 'Le Landeron')
+        self.write_lane(3, 2, installation_id, '50050220', 'Saint-Blaise')
+        self.write_lane(4, 2, installation_id, '50050220', 'Saint-Blaise')
+        installation_id = self.write_installation(True, '50050135')
+        self.write_sensor_type_installation(None, installation_id)
+        self.write_lane(1, 1, installation_id, '50050135', 'Le Landeron')
+        self.write_lane(2, 1, installation_id, '50050135', 'Le Landeron')
+        self.write_lane(3, 2, installation_id, '50050245', 'Saint-Blaise')
+        self.write_lane(4, 2, installation_id, '50050245', 'Saint-Blaise')
 
     def write_sensor_type_installation(self, sensor_type, id_installation):
         if sensor_type == 'Tuyaux':
