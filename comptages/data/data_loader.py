@@ -65,8 +65,8 @@ class DataLoader():
         query = self.query
 
         query_str = (
-            "select cou.type, cls.value, cls.id_category, spd.value from "
-            "comptages.count_aggregate as cou "
+            "select cou.type, sum(cls.value), cls.id_category, sum(spd.value) "
+            "from comptages.count_aggregate as cou "
             "join comptages.lane as lan on cou.id_lane = lan.id "
             "left join comptages.count_aggregate_value_cls as cls on "
             "cls.id_count_aggregate = cou.id "
@@ -75,12 +75,13 @@ class DataLoader():
             "where "
             "date_part('year', start) = {} and "
             "date_part('month', start) = {} and "
-            " date_part('day', start) = {} and "
+            "date_part('day', start) = {} and "
             "date_part('hour', start) = {} and "
             "cou.id_count = {} and "
             "direction = {} and "
             "id_section = '{}' and "
             "import_status = {} "
+            "group by cou.type, cls.id_category, spd.low "
             "order by cls.id_category, spd.low ".format(
                 year, month, day, hour, self.count_id, direction,
                 self.section_id, self.status))
