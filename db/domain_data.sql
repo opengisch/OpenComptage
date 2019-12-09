@@ -79,6 +79,12 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (59, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (60, 'NZTA 13', 13, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (61, 'ANY', 14, 2, FALSE);
 
+
+  -- Bicycle
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (77, 'TRASH', 0, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (78, 'Bicycle', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (79, 'ELSE', 2, 2, FALSE);
+
 -- class_category
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 2);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 3);
@@ -146,6 +152,11 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 58);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 59);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 60);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 61);
+
+
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 77);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 78);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 79);
 
 -- brand
 INSERT INTO comptages.brand VALUES (1, 'GoldenRiver', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe');
