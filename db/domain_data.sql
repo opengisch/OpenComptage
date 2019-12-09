@@ -8,6 +8,7 @@ INSERT INTO comptages.class VALUES (11, 'EUR13', 'EUR 13');
 INSERT INTO comptages.class VALUES (12, 'NZ13', 'New Zealand 13');
 INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
+INSERT INTO comptages.class VALUES (13, 'FHWA13', 'Federal HighWay Administration 13 category');
 
 -- category
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (2, 'PF', 1, 2, TRUE);
@@ -79,6 +80,22 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (59, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (60, 'NZTA 13', 13, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (61, 'ANY', 14, 2, FALSE);
 
+  -- FHWA13
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (62, 'TRASH', 0, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (63, 'FHW01', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (64, 'FHW02', 2, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (65, 'FHW03', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (66, 'FHW04', 4, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (67, 'FHW05', 5, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (68, 'FHW06', 6, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (69, 'FHW07', 7, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (70, 'FHW08', 8, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (71, 'FHW09', 9, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (72, 'FHW10', 10, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (73, 'FHW11', 11, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (74, 'FHW12', 12, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (75, 'FHW13', 13, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (76, 'ELSE', 14, 2, FALSE);
 
   -- Bicycle
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (77, 'TRASH', 0, 2, FALSE);
@@ -153,6 +170,21 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 59);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 60);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 61);
 
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 62);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 63);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 64);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 65);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 66);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 67);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 68);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 69);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 70);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 71);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 72);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 73);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 74);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 75);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 76);
 
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 77);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 78);
