@@ -68,9 +68,9 @@ class ReportCreator():
                         count_data.attributes['road'],
                         count_data.attributes['way'],
                         count_data.attributes['start_pr'],
-                        count_data.attributes['start_dist'],
+                        int(round(count_data.attributes['start_dist'])),
                         count_data.attributes['end_pr'],
-                        count_data.attributes['end_dist'])
+                        int(round(count_data.attributes['end_dist'])))
 
         ws['B4'] = 'Periode de comptage du {}/{}/{} au {}/{}/{}'.format(
             count_data.attributes['dates'][start_day][2],
