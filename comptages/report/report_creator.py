@@ -42,9 +42,7 @@ class ReportCreator():
         self._set_data_day(wb, count_data, start_day, end_day)
         self._set_data_speed(wb, count_data, start_day, end_day)
 
-        # FIXME: Fix category page for ARX Cycle
-        if not count_data.attributes['class'] == 'ARX Cycle':
-            self._set_data_category(wb, count_data, start_day, end_day)
+        self._set_data_category(wb, count_data, start_day, end_day)
         self._remove_useless_sheets(wb, count_data)
 
         # Save the file
@@ -88,7 +86,7 @@ class ReportCreator():
         ws['B7'] = 'Modèle : {}'.format(
             count_data.attributes['model'])
         ws['B8'] = 'Classification : {}'.format(
-            count_data.attributes['class'])
+            self._translate_class_name(count_data.attributes['class']))
 
         ws['B9'] = 'Comptage véhicule par véhicule'
         if count_data.attributes['aggregate']:
@@ -225,19 +223,26 @@ class ReportCreator():
         dir2 = count_data.category_cumulus(1, days=days_idx)
 
         for i, hour in enumerate(dir1):
+            # The report is configurated for SWISS7 or SWISS10 data.
+            # If the data is in another class, we need to translate it to
+            # SWISS7 or SWISS10
+            hour = self._translate_class_hour(count_data, hour)
             for j, cat in enumerate(hour):
                 ws['{}{}'.format(cat_cols[j], i+dir1_start_cell)] = cat
 
         for i, hour in enumerate(dir2):
+            hour = self._translate_class_hour(count_data, hour)
             for j, cat in enumerate(hour):
                 ws['{}{}'.format(cat_cols[j], i+dir2_start_cell)] = cat
 
     def _remove_useless_sheets(self, workbook, count_data):
 
-        if count_data.attributes['class'] == 'SWISS10':
+        class_name = self._translate_class_name(count_data.attributes['class'])
+
+        if class_name == 'SWISS10':
             workbook.remove_sheet(workbook['SWISS7_H'])
             workbook.remove_sheet(workbook['SWISS7_G'])
-        elif count_data.attributes['class'] == 'SWISS7':
+        elif class_name == 'SWISS7':
             workbook.remove_sheet(workbook['SWISS10_H'])
             workbook.remove_sheet(workbook['SWISS10_G'])
 
@@ -245,3 +250,45 @@ class ReportCreator():
             workbook.remove_sheet(workbook['Vit_Hd'])
         else:
             workbook.remove_sheet(workbook['Vit_H'])
+
+    def _translate_class_hour(self, count_data, hour):
+        """Convert a class to another one e.g. FHWA13
+        should be converted in SWISS7 in order to fill the
+        report cells"""
+
+        if count_data.attributes['class'] == 'SWISS10':
+            return hour
+
+        if count_data.attributes['class'] == 'SWISS7':
+            return hour
+
+        if count_data.attributes['class'] == 'ARX Cycle':
+            # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
+            new_hour = [0] * 7
+            return new_hour
+
+        if count_data.attributes['class'] == 'FHWA13':
+            new_hour = [0] * 7
+            new_hour[0] = hour[4]
+            new_hour[1] = hour[1]
+            new_hour[2] = hour[2]
+            new_hour[3] = hour[3]
+            new_hour[4] = hour[5] + hour[6] + hour[7]
+            new_hour[5] = hour[11] + hour[12]
+            new_hour[6] = hour[8] + hour[9] + hour[10] + hour[13] + hour[14]
+            return new_hour
+
+    def _translate_class_name(self, name):
+
+        if name == 'SWISS10':
+            return name
+
+        if name == 'SWISS7':
+            return name
+
+        if name == 'ARX Cycle':
+            # TODO: implement
+            pass
+
+        if name == 'FHWA13':
+            return 'SWISS7'
