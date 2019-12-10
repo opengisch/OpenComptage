@@ -219,8 +219,13 @@ class Comptages(QObject):
 
         if not count_id:
             QgsMessageLog.logMessage(
-                'Impossible de trouver le comptage associé {}'.format(
-                    file_path),
+                """Impossible de trouver le comptage associé {}:
+                section: {} start: {} end: {}""".format(
+                    file_path,
+                    file_header['SITE'],
+                    datetime.strptime(file_header['STARTREC'], "%H:%M %d/%m/%y"),
+                    datetime.strptime(file_header['STOPREC'], "%H:%M %d/%m/%y")
+                ),
                 'Comptages', Qgis.Critical)
             return
 
