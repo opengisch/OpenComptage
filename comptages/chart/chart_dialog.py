@@ -251,6 +251,12 @@ class ChartCategory(Chart):
     def get_aggregate_data(self):
         labels, values = self.layers.get_aggregate_category_chart_data(
             self.count_id, self.status, self.section_id)
+
+        if not labels and not values:
+            labels = ['Volume']
+            values = [
+                self.layers.get_aggregate_total(
+                    self.count_id, self.status, self.section_id)]
         return labels, values
 
     def get_detail_data(self):

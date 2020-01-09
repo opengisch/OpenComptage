@@ -600,6 +600,27 @@ class Layers(QObject):
 
         return labels, values
 
+    def get_aggregate_total(self, count_id, status, section_id):
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select sum(spd.value) from "
+            "comptages.count_aggregate as agg "
+            "join comptages.count_aggregate_value_spd as spd "
+            "on agg.id = spd.id_count_aggregate "
+            "join comptages.lane as lan "
+            "on agg.id_lane = lan.id "
+            "where agg.id_count = {} and agg.type = 'SPD' "
+            "and agg.import_status = {} "
+            "and lan.id_section = '{}';".format(count_id, status, section_id))
+
+        query.exec_(query_str)
+
+        if query.next():
+            return query.value(0)
+        return None
+
     def get_days_of_aggregate_dataset(self, count_id, status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
