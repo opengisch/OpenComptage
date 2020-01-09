@@ -210,6 +210,9 @@ class ReportCreator():
                 ws['S{}'.format(i+dir2_start_cell)] = char_speed[3]
 
     def _set_data_category(self, workbook, count_data, start_day, end_day):
+        if self._translate_class_name(count_data.attributes['class']) == 'Volume':
+            return
+
         ws = workbook['Data_category']
 
         cat_cols = ['B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -243,6 +246,11 @@ class ReportCreator():
             workbook.remove_sheet(workbook['SWISS7_H'])
             workbook.remove_sheet(workbook['SWISS7_G'])
         elif class_name == 'SWISS7':
+            workbook.remove_sheet(workbook['SWISS10_H'])
+            workbook.remove_sheet(workbook['SWISS10_G'])
+        elif class_name == 'Volume':
+            workbook.remove_sheet(workbook['SWISS7_H'])
+            workbook.remove_sheet(workbook['SWISS7_G'])
             workbook.remove_sheet(workbook['SWISS10_H'])
             workbook.remove_sheet(workbook['SWISS10_G'])
 
@@ -292,3 +300,6 @@ class ReportCreator():
 
         if name == 'FHWA13':
             return 'SWISS7'
+
+        if name is None:
+            return 'Volume'
