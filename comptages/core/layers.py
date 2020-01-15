@@ -1337,7 +1337,7 @@ class Layers(QObject):
 
         result = []
         query.exec_(query_str)
-        if query.next():
+        while query.next():
             result.append(query.value(0))
         return result
 
