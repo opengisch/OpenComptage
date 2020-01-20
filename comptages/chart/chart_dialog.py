@@ -36,7 +36,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         # Show message if there are no data to show
         if not contains_data and not approval_process:
             self.hide()
-            push_info("Il n'y a pas de données à montrer")
+            push_info("Installation {}: Il n'y a pas de données à montrer pour "
+                "le comptage {}".format(
+                self.layers.get_installation_name_of_count(count_id),count_id))
             return
 
         self.show()
@@ -154,7 +156,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         quarantined_counts = self.layers.get_quarantined_counts()
         if not quarantined_counts:
             self.hide()
-            push_info("Il n'y a pas de données à montrer")
+            push_info("Il n'y a pas de données à valider")
             return
 
         self.set_attributes(quarantined_counts[0], True)

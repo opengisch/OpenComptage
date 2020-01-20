@@ -86,7 +86,7 @@ class ReportCreator():
         ws['B7'] = 'Modèle : {}'.format(
             count_data.attributes['model'])
         ws['B8'] = 'Classification : {}'.format(
-            self._translate_class_name(count_data.attributes['class']))
+            count_data.attributes['class'])
 
         ws['B9'] = 'Comptage véhicule par véhicule'
         if count_data.attributes['aggregate']:

@@ -339,6 +339,15 @@ class Comptages(QObject):
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
+
+        # Show message if there are no data to process
+        contains_data = self.layers.count_contains_data(count_id)
+        if not contains_data :
+            push_info("Installation {}: Il n'y a pas de données à traiter pour "
+                "le comptage {}".format(
+                self.layers.get_installation_name_of_count(count_id),count_id))
+            return
+
         file_dialog = QFileDialog()
         title = 'Exporter un rapport'
         path = self.settings.value('report_export_directory')
@@ -351,7 +360,8 @@ class Comptages(QObject):
 
         report_creator = ReportCreator(count_id, file_path, self.layers)
         report_creator.run()
-        push_info(("Exportation rappport terminée."))
+        push_info("Installation {} (count={}): Génération du rapport terminée."
+         .format(self.layers.get_installation_name_of_count(count_id),count_id))
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
