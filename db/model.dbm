@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta" last-position="0,0" last-zoom="1" max-obj-count="33"
+<dbmodel pgmodeler-ver="0.9.2" last-position="0,0" last-zoom="1" max-obj-count="33"
 	 default-schema="public" default-owner="postgres">
 <database name="comptages" is-template="false" allow-conns="true">
 </database>
@@ -606,9 +606,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="comptages.category"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="525.221" y="494.159"/>
-	<position x="525.221" y="417"/>
-	<position x="428.147" y="417"/>
+		<position x="513.221" y="494.159"/>
+	<position x="513.221" y="429"/>
+	<position x="428.147" y="429"/>
 	</line>
 </relationship>
 
@@ -970,6 +970,27 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
+<table name="sensor_type_section" layer="0" collapse-mode="2" max-obj-count="4">
+	<schema name="comptages"/>
+	<role name="postgres"/>
+	<position x="1220" y="1360"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="geometry">
+		<type name="geometry" length="0" spatial-type="POLYGON" variation="0" srid="2056"/>
+	</column>
+	<column name="id_sensor_type">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="id_section">
+		<type name="char" length="20"/>
+	</column>
+	<constraint name="sensor_type_section_pk" type="pk-constr" table="comptages.sensor_type_section">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="lane_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="comptages.lane" table="comptages.sensor">
 	<columns names="id_lane" ref-type="src-columns"/>
@@ -982,6 +1003,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="sensor_type_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="comptages.sensor_type" table="comptages.sensor_type_section">
+	<columns names="id_sensor_type" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="section_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="comptages.section" table="comptages.sensor_type_section">
+	<columns names="id_section" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_sensor_lane" type="relfk" layer="0"
 	 src-table="comptages.sensor"
 	 dst-table="comptages.lane" reference-fk="lane_fk"
@@ -990,6 +1023,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_sensor_sensor_type" type="relfk" layer="0"
 	 src-table="comptages.sensor"
 	 dst-table="comptages.sensor_type" reference-fk="sensor_type_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_sensor_type_section_sensor_type" type="relfk" layer="0"
+	 src-table="comptages.sensor_type_section"
+	 dst-table="comptages.sensor_type" reference-fk="sensor_type_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_sensor_type_section_section" type="relfk" layer="0"
+	 src-table="comptages.sensor_type_section"
+	 dst-table="comptages.section" reference-fk="section_fk"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
