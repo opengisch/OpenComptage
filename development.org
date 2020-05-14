@@ -12,13 +12,13 @@
     #+CAPTION: Data model
     [[./docs/assets/data_model.png]]
 ** Repository structure
-   | Directory | Content                                                                                                                                                    |
-   |-----------+------------------------------------------------------------------------------------------------------------------------------------------------------------|
-   | .docker   | docker-compose files to run a development environment (i.e. PostGIS db) or a test environment (i.e. PostGIS db and QGIS to allow using QGIS API in Travis) |
-   | comptages | root directory of the QGIS plugin (for more details see the "Code Structure" section)                                                                      |
-   | db        | contains the sql files to create the database structure and a dump of the initial data                                                                     |
-   | docs      | contains the user manual that is published online using Github Pages                                                                                       |
-   | scripts   | contains useful scripts to launch docker enviroments, run tests, create the database, etc                                                                  |
+   | Directory  | Content                                                                                                                                                    |
+   |------------+------------------------------------------------------------------------------------------------------------------------------------------------------------|
+   | .docker/   | docker-compose files to run a development environment (i.e. PostGIS db) or a test environment (i.e. PostGIS db and QGIS to allow using QGIS API in Travis) |
+   | comptages/ | root directory of the QGIS plugin (for more details see the "Code Structure" section)                                                                      |
+   | db/        | contains the sql files to create the database structure and a dump of the initial data                                                                     |
+   | docs/      | contains the user manual that is published online using Github Pages                                                                                       |
+   | scripts/   | contains useful scripts to launch docker enviroments, run tests, create the database, etc                                                                  |
 ** Code structure
    The code of the plugin (directory =comptages=) is structured in the following way:
    | Directory /File     | Content                                                                            |
