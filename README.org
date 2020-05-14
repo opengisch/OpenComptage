@@ -77,7 +77,7 @@ The user manual is published [[https://opengisch.github.io/OpenComptage/index.ht
   used by ~create_db.sh~ script. To create a new sql from the pgmodeler's model,
   run the script ~create_data_model_sql_script.sh~.
 
-   #+CAPTION: Modèle de données
+   #+CAPTION: Data model
    [[./docs/assets/data_model.png]]
 * Development
 

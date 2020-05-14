@@ -1,6 +1,6 @@
 -- Database generated with pgModeler (PostgreSQL Database Modeler).
--- pgModeler  version: 0.9.2-beta
--- PostgreSQL version: 11.0
+-- pgModeler  version: 0.9.2
+-- PostgreSQL version: 12.0
 -- Project Site: pgmodeler.io
 -- Model Author: ---
 
@@ -17,7 +17,7 @@
 -- DROP SCHEMA IF EXISTS comptages CASCADE;
 CREATE SCHEMA comptages;
 -- ddl-end --
-ALTER SCHEMA comptages OWNER TO postgres;
+-- ALTER SCHEMA comptages OWNER TO postgres;
 -- ddl-end --
 
 SET search_path TO pg_catalog,public,comptages;
@@ -35,7 +35,7 @@ CREATE TABLE comptages.damage_log (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.damage_log OWNER TO postgres;
+-- ALTER TABLE comptages.damage_log OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.device | type: TABLE --
@@ -50,7 +50,7 @@ CREATE TABLE comptages.device (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.device OWNER TO postgres;
+-- ALTER TABLE comptages.device OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.model | type: TABLE --
@@ -65,7 +65,7 @@ CREATE TABLE comptages.model (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.model OWNER TO postgres;
+-- ALTER TABLE comptages.model OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.brand | type: TABLE --
@@ -78,7 +78,7 @@ CREATE TABLE comptages.brand (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.brand OWNER TO postgres;
+-- ALTER TABLE comptages.brand OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.class | type: TABLE --
@@ -91,7 +91,7 @@ CREATE TABLE comptages.class (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.class OWNER TO postgres;
+-- ALTER TABLE comptages.class OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.category | type: TABLE --
@@ -106,7 +106,7 @@ CREATE TABLE comptages.category (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.category OWNER TO postgres;
+-- ALTER TABLE comptages.category OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.sensor_type | type: TABLE --
@@ -119,7 +119,7 @@ CREATE TABLE comptages.sensor_type (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.sensor_type OWNER TO postgres;
+-- ALTER TABLE comptages.sensor_type OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.count | type: TABLE --
@@ -144,7 +144,7 @@ CREATE TABLE comptages.count (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count OWNER TO postgres;
+-- ALTER TABLE comptages.count OWNER TO postgres;
 -- ddl-end --
 
 -- object: postgis | type: EXTENSION --
@@ -166,7 +166,7 @@ CREATE TABLE comptages.lane (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.lane OWNER TO postgres;
+-- ALTER TABLE comptages.lane OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.section | type: TABLE --
@@ -189,7 +189,7 @@ CREATE TABLE comptages.section (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.section OWNER TO postgres;
+-- ALTER TABLE comptages.section OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.special_period | type: TABLE --
@@ -205,7 +205,7 @@ CREATE TABLE comptages.special_period (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.special_period OWNER TO postgres;
+-- ALTER TABLE comptages.special_period OWNER TO postgres;
 -- ddl-end --
 
 -- object: comptages.count_detail | type: TABLE --
@@ -230,7 +230,7 @@ CREATE TABLE comptages.count_detail (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_detail OWNER TO postgres;
+-- ALTER TABLE comptages.count_detail OWNER TO postgres;
 -- ddl-end --
 
 -- object: device_fk | type: CONSTRAINT --
@@ -291,7 +291,7 @@ CREATE TABLE comptages.installation (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.installation OWNER TO postgres;
+-- ALTER TABLE comptages.installation OWNER TO postgres;
 -- ddl-end --
 
 -- object: section_fk | type: CONSTRAINT --
@@ -475,7 +475,7 @@ CREATE TABLE comptages.count_aggregate (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_fk | type: CONSTRAINT --
@@ -503,7 +503,7 @@ CREATE TABLE comptages.count_aggregate_value_cls (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_cls OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_cls OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -538,7 +538,7 @@ CREATE TABLE comptages.count_aggregate_value_cnt (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_cnt OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_cnt OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -559,7 +559,7 @@ CREATE TABLE comptages.count_aggregate_value_drn (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_drn OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_drn OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -581,7 +581,7 @@ CREATE TABLE comptages.count_aggregate_value_len (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_len OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_len OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -603,7 +603,7 @@ CREATE TABLE comptages.count_aggregate_value_spd (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_spd OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_spd OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -624,7 +624,7 @@ CREATE TABLE comptages.count_aggregate_value_sds (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.count_aggregate_value_sds OWNER TO postgres;
+-- ALTER TABLE comptages.count_aggregate_value_sds OWNER TO postgres;
 -- ddl-end --
 
 -- object: count_aggregate_fk | type: CONSTRAINT --
@@ -651,7 +651,21 @@ CREATE TABLE comptages.sensor (
 
 );
 -- ddl-end --
-ALTER TABLE comptages.sensor OWNER TO postgres;
+-- ALTER TABLE comptages.sensor OWNER TO postgres;
+-- ddl-end --
+
+-- object: comptages.sensor_type_section | type: TABLE --
+-- DROP TABLE IF EXISTS comptages.sensor_type_section CASCADE;
+CREATE TABLE comptages.sensor_type_section (
+	id serial NOT NULL,
+	geometry geometry(POLYGON, 2056),
+	id_sensor_type integer,
+	id_section char(20),
+	CONSTRAINT sensor_type_section_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+-- ALTER TABLE comptages.sensor_type_section OWNER TO postgres;
 -- ddl-end --
 
 -- object: lane_fk | type: CONSTRAINT --
@@ -665,6 +679,20 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ALTER TABLE comptages.sensor DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
 ALTER TABLE comptages.sensor ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
 REFERENCES comptages.sensor_type (id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: sensor_type_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.sensor_type_section DROP CONSTRAINT IF EXISTS sensor_type_fk CASCADE;
+ALTER TABLE comptages.sensor_type_section ADD CONSTRAINT sensor_type_fk FOREIGN KEY (id_sensor_type)
+REFERENCES comptages.sensor_type (id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: section_fk | type: CONSTRAINT --
+-- ALTER TABLE comptages.sensor_type_section DROP CONSTRAINT IF EXISTS section_fk CASCADE;
+ALTER TABLE comptages.sensor_type_section ADD CONSTRAINT section_fk FOREIGN KEY (id_section)
+REFERENCES comptages.section (id) MATCH FULL
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
