@@ -9,7 +9,7 @@ INSERT INTO comptages.class VALUES (12, 'NZ13', 'New Zealand 13');
 INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (13, 'FHWA13', 'Federal HighWay Administration 13 category');
-INSERT INTO comptages.class VALUES (14, 'SWISS7-MK', 'SWISS 7 modified for Marksmann devices');
+INSERT INTO comptages.class VALUES (14, 'SWISS7-MM', 'SWISS 7 modified for Marksmann devices');
 
 -- category
   -- SWISS 2
