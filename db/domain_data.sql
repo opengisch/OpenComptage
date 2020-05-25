@@ -9,17 +9,21 @@ INSERT INTO comptages.class VALUES (12, 'NZ13', 'New Zealand 13');
 INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (13, 'FHWA13', 'Federal HighWay Administration 13 category');
+INSERT INTO comptages.class VALUES (14, 'SWISS7-MM', 'SWISS 7 modified for Marksmann devices');
 
 -- category
+  -- SWISS 2
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (2, 'PF', 1, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (3, 'MFZ', 2, 2, FALSE);
 
+  -- SWISS 5
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (4, 'CAR', 1, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (5, 'MR', 2, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (6, 'PW', 3, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (7, 'LIE', 4, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (8, 'SGF', 5, 2, FALSE);
 
+  -- SWISS 6
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (9, 'CAR', 1, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (10, 'MR', 2, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (11, 'PW', 3, 2, TRUE);
@@ -27,6 +31,7 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (12, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (13, 'LW', 5, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (14, 'LZ+SZ', 6, 2, FALSE);
 
+  -- SWISS 7
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (15, 'CAR', 1, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (16, 'MR', 2, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (17, 'PW', 3, 2, TRUE);
@@ -35,6 +40,7 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (19, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (20, 'LZ', 6, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (21, 'SZ', 7, 2, FALSE);
 
+  -- SWISS 10
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (22, 'CAR', 1, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (23, 'MR', 2, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (24, 'PW', 3, 2, TRUE);
@@ -102,16 +108,28 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (77, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (78, 'Bicycle', 1, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (79, 'ELSE', 2, 2, FALSE);
 
+-- SWISS 7 Marksmann
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (80, 'PW', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (81, 'CAR', 2, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (82, 'LIE', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (83, 'LW', 4, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (84, 'LZ', 5, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (85, 'SZ', 6, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (86, 'MR', 7, 2, TRUE);
+
 -- class_category
+  -- SWISS 2
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 2);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (2, 3);
 
+  -- SWISS 5
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 4);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 5);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 6);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 7);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (3, 8);
 
+  -- SWISS 6
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 9);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 10);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 11);
@@ -119,6 +137,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 12);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 13);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (4, 14);
 
+  -- SWISS 7
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 15);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 16);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 17);
@@ -127,6 +146,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 19);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 20);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (5, 21);
 
+  -- SWISS 10
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 22);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 23);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 24);
@@ -138,6 +158,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 29);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 30);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (6, 31);
 
+  -- ARX Cycle
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 32);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 33);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 34);
@@ -154,6 +175,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 44);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 45);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (22, 46);
 
+  -- NZ 13
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 47);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 48);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 49);
@@ -170,6 +192,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 59);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 60);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (12, 61);
 
+  -- FHWA 13
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 62);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 63);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 64);
@@ -186,9 +209,19 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 74);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 75);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (13, 76);
 
+  -- Bicycle
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 77);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 78);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (21, 79);
+
+  -- SWISS 7 Marksmann
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 80);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 81);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 82);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 83);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 84);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 85);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 86);
 
 -- brand
 INSERT INTO comptages.brand VALUES (1, 'GoldenRiver', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe');
