@@ -69,6 +69,11 @@ class DataImporter(QgsTask):
         class_name = self.file_header['CLASS']
         query = QSqlQuery(self.db)
 
+        # Use customized SWISS7 class for Marksmann devices
+        # because they manage this class in a wrong way
+        if self.file_header['FORMAT'] in ['INT-2', 'VBV-1'] and class_name == 'SWISS7':
+            class_name = 'SWISS7-MM'
+
         query_str = (
             "select cat.code, cc.id_category from "
             "comptages.class_category as cc "
@@ -100,6 +105,7 @@ class DataImporter(QgsTask):
 
         with open(file_path, encoding=encoding) as f:
             for line in f:
+                # Marksmann
                 if line.startswith('* ') and not line.startswith('* HEAD '):
                     line = line[2:]
                     splitted = line.split('=', 1)
