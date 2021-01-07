@@ -6,7 +6,7 @@ LAYER_DEFINITIONS = {
         'geometry':     'geometry',
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       True
     },
     'section':        {
@@ -15,7 +15,7 @@ LAYER_DEFINITIONS = {
         'geometry':     'geometry',
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       True
     },
     'lane':        {
@@ -24,7 +24,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'count': {
@@ -33,7 +33,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       True
     },
     'model': {
@@ -42,7 +42,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'device': {
@@ -51,7 +51,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'sensor_type': {
@@ -60,7 +60,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'class': {
@@ -69,7 +69,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
  #   'count_detail': {
@@ -78,7 +78,7 @@ LAYER_DEFINITIONS = {
  #       'geometry':     None,
  #       'sql':          '',
  #       'id':           'id',
- #       'epsg':         2056,
+ #       'epsg':         'EPSG:2056',
  #       'legend':       False
  #   },
     'damage_log': {
@@ -87,7 +87,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'brand': {
@@ -96,7 +96,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'category': {
@@ -105,7 +105,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
     'special_period': {
@@ -114,7 +114,7 @@ LAYER_DEFINITIONS = {
         'geometry':     None,
         'sql':          '',
         'id':           'id',
-        'epsg':         2056,
+        'epsg':         'EPSG:2056',
         'legend':       False
     },
 }
