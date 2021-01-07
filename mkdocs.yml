@@ -1,0 +1,26 @@
+# Project information
+site_name: OpenComptage
+site_description: >-
+  This site contains documentation of OpenComptage
+
+# Repository
+repo_name: opengisch/OpenComptage
+repo_url: https://github.com/opengisch/OpenComptage
+edit_uri: https://github.com/opengisch/OpenComptage/tree/master/docs/
+
+# Theme configuration
+theme:
+  name: material
+  features:
+    - navigation.tabs
+
+# Page tree
+nav:
+  - Home: index.md
+  - User Manual (French): user_manual.md
+  - Installation: installation.md
+  - Development: development.md
+
+markdown_extensions:
+  - attr_list
+  - def_list
