@@ -1,0 +1,774 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="This site contains documentation of OpenComptage">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
+    
+    
+      
+        <title>User Manual (French) - OpenComptage</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.3b61ea93.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#plugin-qgis" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="OpenComptage" class="md-header-nav__button md-logo" aria-label="OpenComptage">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            OpenComptage
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              User Manual (French)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/opengisch/OpenComptage/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    opengisch/OpenComptage
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href=".." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
+      User Manual (French)
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../installation/" class="md-tabs__link">
+      Installation
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../development/" class="md-tabs__link">
+      Development
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="OpenComptage" class="md-nav__button md-logo" aria-label="OpenComptage">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OpenComptage
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/opengisch/OpenComptage/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    opengisch/OpenComptage
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href=".." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        User Manual (French)
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      User Manual (French)
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#barre-doutils" class="md-nav__link">
+    Barre d'outils
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilisation" class="md-nav__link">
+    Utilisation
+  </a>
+  
+    <nav class="md-nav" aria-label="Utilisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connection-db" class="md-nav__link">
+    Connection DB
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-nouveau-comptage" class="md-nav__link">
+    Créer un nouveau comptage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modifier-comptage" class="md-nav__link">
+    Modifier comptage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importation" class="md-nav__link">
+    Importation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtrage" class="md-nav__link">
+    Filtrage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importation-fichiers-ics" class="md-nav__link">
+    Importation fichiers ICS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reglages" class="md-nav__link">
+    Réglages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exporter-la-configuration" class="md-nav__link">
+    Exporter la configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-rapport" class="md-nav__link">
+    Créer un rapport
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-plan-de-pose" class="md-nav__link">
+    Créer un plan de pose
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualiser-les-graphiques-dun-comptage" class="md-nav__link">
+    Visualiser les graphiques d'un comptage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../development/" class="md-nav__link">
+      Development
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#barre-doutils" class="md-nav__link">
+    Barre d'outils
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilisation" class="md-nav__link">
+    Utilisation
+  </a>
+  
+    <nav class="md-nav" aria-label="Utilisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connection-db" class="md-nav__link">
+    Connection DB
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-nouveau-comptage" class="md-nav__link">
+    Créer un nouveau comptage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modifier-comptage" class="md-nav__link">
+    Modifier comptage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importation" class="md-nav__link">
+    Importation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtrage" class="md-nav__link">
+    Filtrage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importation-fichiers-ics" class="md-nav__link">
+    Importation fichiers ICS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reglages" class="md-nav__link">
+    Réglages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exporter-la-configuration" class="md-nav__link">
+    Exporter la configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-rapport" class="md-nav__link">
+    Créer un rapport
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creer-un-plan-de-pose" class="md-nav__link">
+    Créer un plan de pose
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualiser-les-graphiques-dun-comptage" class="md-nav__link">
+    Visualiser les graphiques d'un comptage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/opengisch/OpenComptage/tree/master/docs/user_manual.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="plugin-qgis">Plugin QGIS</h1>
+<h2 id="barre-doutils">Barre d'outils</h2>
+<p>Le plugin, une fois installé, ajoute une barre d'outils à l'interface QGIS,
+composée de plusieurs boutons qui permettent d'effectuer différentes
+opérations.</p>
+<figure>
+  <img src="../assets/toolbar.png" width="300" />
+  <figcaption>Barre d'outils du plugin</figcaption>
+</figure>
+
+<p>Les outils sont, dans l'ordre :</p>
+<ul>
+<li>Connection DB</li>
+<li>Créer un nouveau comptage</li>
+<li>Modifier un comptage</li>
+<li>Importation données</li>
+<li>Validation données</li>
+<li>Filtrage</li>
+<li>Importation fichiers ICS</li>
+<li>Réglages</li>
+</ul>
+<h2 id="utilisation">Utilisation</h2>
+<h3 id="connection-db">Connection DB</h3>
+<figure>
+  <img src="../assets/power.png" width="80" />
+  <figcaption>Bouton connection DB</figcaption>
+</figure>
+
+<p>Le bouton <code>Connection DB</code> ouvre une connexion à la base de données et charge
+les couches de l'application dans QGIS.</p>
+<figure>
+  <img src="../assets/layers.png" width="300" />
+  <figcaption>Couches dans QGIS</figcaption>
+</figure>
+
+<h3 id="creer-un-nouveau-comptage">Créer un nouveau comptage</h3>
+<figure>
+  <img src="../assets/measure.png" width="80" />
+  <figcaption>Bouton creation nouveau comptage</figcaption>
+</figure>
+
+<p>Pour créer un nouveau comptage (élément dans la couche <code>comptage</code>), il
+existe l'outil <code>Créer un nouveau comptage</code> qui simplifie l'opération par
+rapport à l'insertion manuelle dans la table.</p>
+<p>Pour créer un nouveau comptage à l'aide de l'outil, vous devez commencer par
+sélectionner un tronçon sur la carte en utilisant les outils de sélection de
+géométrie QGIS normaux. Pour simplifier la recherche du tronçon à
+sélectionner, vous pouvez utiliser l'outil de recherche dans la couche
+<code>tronçon</code>.</p>
+<p>Une fois que vous avez sélectionné le tronçon pour lequel vous voulez créer
+le comptage, en appuyant sur le bouton <code>Créer un nouveau comptage</code> vous
+pouvez entrer les données du comptage et les sauvegarder dans la base de
+données.</p>
+<figure>
+  <img src="../assets/create_measure.gif" width="800" />
+  <figcaption>Creation d'un nouveau comptage</figcaption>
+</figure>
+
+<h3 id="modifier-comptage">Modifier comptage</h3>
+<figure>
+  <img src="../assets/select_edit.png" width="80" />
+  <figcaption>Bouton modifier comptage</figcaption>
+</figure>
+
+<p>Après avoir sélectionné un tronçon sur la carte, appuyer sur le bouton
+<code>Modifier comptage</code> affiche le tableau d'attributs de la couche <code>comptage</code> avec
+les comptages du tronçon sélectionné où vous pouvez éditer les données du
+comptage.</p>
+<figure>
+  <img src="../assets/edit_measure.gif" width="800" />
+  <figcaption>Modification d'un comptage</figcaption>
+</figure>
+
+<h3 id="importation">Importation</h3>
+<figure>
+  <img src="../assets/import.png" width="80" />
+  <figcaption>Bouton importation données</figcaption>
+</figure>
+
+<h3 id="validation">Validation</h3>
+<figure>
+  <img src="../assets/validate.png" width="80" />
+  <figcaption>Bouton validation</figcaption>
+</figure>
+
+<h3 id="filtrage">Filtrage</h3>
+<figure>
+  <img src="../assets/filter.png" width="80" />
+  <figcaption>Bouton filtrage</figcaption>
+</figure>
+
+<h3 id="importation-fichiers-ics">Importation fichiers ICS</h3>
+<figure>
+  <img src="../assets/calendar.png" width="80" />
+  <figcaption>Bouton importation fichiers ICS</figcaption>
+</figure>
+
+<h3 id="reglages">Réglages</h3>
+<figure>
+  <img src="../assets/settings.png" width="80" />
+  <figcaption>Bouton réglages</figcaption>
+</figure>
+
+<h3 id="exporter-la-configuration">Exporter la configuration</h3>
+<h3 id="creer-un-rapport">Créer un rapport</h3>
+<h3 id="creer-un-plan-de-pose">Créer un plan de pose</h3>
+<h3 id="visualiser-les-graphiques-dun-comptage">Visualiser les graphiques d'un comptage</h3>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href=".." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../installation/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Installation
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.08c56446.min.js"></script>
+      <script src="../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ['navigation.tabs'],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
