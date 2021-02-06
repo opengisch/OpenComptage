@@ -54,7 +54,7 @@ class DataImporterVbv1(DataImporter):
                          Layers.IMPORT_STATUS_QUARANTINE,
                          self.lanes[int(row['lane'])],
                          self.count_id,
-                         cat_bins[row['category']-1]))
+                         cat_bins[row['category']]))
         query.exec_(query_str)
 
     def parse_data_line(self, line):
@@ -74,6 +74,16 @@ class DataImporterVbv1(DataImporter):
             parsed_line['length'] = int(line[52:56])
             parsed_line['category'] = int(line[60:62].strip())
             parsed_line['height'] = line[63:65].strip()
+
+            # If the speed of a vehicle is 0, we put it in the category 0
+            if parsed_line['speed'] == 0:
+                parsed_line['category'] = 0
+
+            # If the speed of a vehicle is greater than 3*max_speed or 150km/h
+            # TODO: get actual speed limit of the section
+            if parsed_line['speed'] > 150:
+                parsed_line['category'] = 0
+
         except ValueError:
             # This can happen when some values are missed from a line
             return None

@@ -197,7 +197,7 @@ class DataImporterInt2(DataImporter):
         for i in range(1, len(catbins)+1):
             data = row['data_{}'.format(i)]
             if not data == '':
-                category = catbins[i-1]
+                category = catbins[i]
                 queries.append(
                     ("insert into comptages.count_aggregate_value_cls ("
                      "value, id_category, "
