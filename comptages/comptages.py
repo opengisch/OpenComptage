@@ -22,6 +22,7 @@ from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
+from comptages.report.yearly_report_creator import YearlyReportCreator
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
@@ -327,19 +328,32 @@ class Comptages(QObject):
         else:
             selected_feature = next(layer.getSelectedFeatures())
 
-        section = selected_feature.attribute('id')
+        section_id = selected_feature.attribute('id')
 
         dlg = YearlyReportDialog(self.iface)
-        dlg.section.insert(section)
+        dlg.section.insert(section_id)
 
         if dlg.exec_():
             year = dlg.year.value()
 
-            print('generate report')
-            print(section)
-            print(year)
+            file_dialog = QFileDialog()
+            title = 'Exporter un rapport'
+            path = self.settings.value('report_export_directory')
+            file_path = QFileDialog.getExistingDirectory(
+                file_dialog, title, path)
+            print(file_path)
 
-        # TODO: check if there are comptages for this section and year
+            if not file_path:
+                return
+
+            yearly_report_creator = YearlyReportCreator(
+                file_path, self.layers, year, section_id)
+            yearly_report_creator.run()
+
+            push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
+                      .format(section_id, year))
+
+            # TODO: check if there are comptages for this section and year
 
     def do_import_ics_action(self):
         IcsImporter(self.layers)
