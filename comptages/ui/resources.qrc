@@ -26,4 +26,7 @@
     <qresource prefix="/plugins/Comptages/" >
         <file>../images/validate.png</file>
     </qresource>    
+    <qresource prefix="/plugins/Comptages/" >
+        <file>../images/filled_file.png</file>
+    </qresource>    
 </RCC>

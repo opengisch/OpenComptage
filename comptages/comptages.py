@@ -12,6 +12,7 @@ from qgis.utils import qgsfunction, plugins
 from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
+from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.utils import push_info
 from comptages.importer.data_importer import DataImporter
 from comptages.importer.data_importer_vbv1 import DataImporterVbv1
@@ -80,7 +81,7 @@ class Comptages(QObject):
         )
 
         self.yearly_report_action = QAction(
-            QIcon(':/plugins/Comptages/images/validate.png'),
+            QIcon(':/plugins/Comptages/images/filled_file.png'),
             'Rapport annuel',
             None
         )
@@ -308,19 +309,36 @@ class Comptages(QObject):
                 dlg.sensor.currentIndex())
 
     def do_yearly_report_action(self):
-        print('yearly_report')
-        # TODO: create dialog with year and get selected troncon
-        # TODO: manage special cases?
-
-        year = '2018'
-        section = '10020260'
 
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
 
-        # Show message if there are no data to process
+        layer = self.layers.layers['section']
+
+        selected_count = layer.selectedFeatureCount()
+        if selected_count == 0:
+            push_info("Veuillez sélectionner un tronçon")
+            return
+        elif selected_count > 1:
+            push_info("Veuillez ne sélectionner qu'un tronçon")
+            return
+        else:
+            selected_feature = next(layer.getSelectedFeatures())
+
+        section = selected_feature.attribute('id')
+
+        dlg = YearlyReportDialog(self.iface)
+        dlg.section.insert(section)
+
+        if dlg.exec_():
+            year = dlg.year.value()
+
+            print('generate report')
+            print(section)
+            print(year)
+
         # TODO: check if there are comptages for this section and year
 
     def do_import_ics_action(self):
