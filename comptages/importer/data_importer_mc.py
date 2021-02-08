@@ -71,7 +71,11 @@ class DataImporterMC(DataImporter):
             parsed_line['lane'] = int(line[22:23])
             parsed_line['direction'] = int(line[22:23])
             parsed_line['distance_front_front'] = float(line[24:31])
+            if parsed_line['distance_front_front'] > 99.9:
+                parsed_line['distance_front_front'] = 99.9
             parsed_line['distance_front_back'] = float(line[31:38])
+            if parsed_line['distance_front_back'] > 99.9:
+                parsed_line['distance_front_back'] = 99.9
             parsed_line['speed'] = int(float(line[39:44]))
             parsed_line['length'] = int(float(line[44:50]))
             parsed_line['category'] = int(line[51:54].strip())

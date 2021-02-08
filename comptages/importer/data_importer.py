@@ -137,6 +137,8 @@ class DataImporter(QgsTask):
                         file_header['CLASS'] = 'NZ13'
                     elif file_header['CLASS'][:5] == 'FHWA ':
                         file_header['CLASS'] = 'FHWA13'
+                    elif file_header['CLASS'] == 'CAT-Cycle_dist-empat':
+                        file_header['CLASS'] = 'ARX Cycle'
         return file_header
 
     def parse_data_header(self):
