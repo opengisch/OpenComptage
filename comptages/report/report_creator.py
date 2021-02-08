@@ -226,17 +226,27 @@ class ReportCreator():
         dir2 = count_data.category_cumulus(1, days=days_idx)
 
         for i, hour in enumerate(dir1):
-            # The report is configurated for SWISS7 or SWISS10 data.
+            # The report is configured for SWISS7 or SWISS10 data.
             # If the data is in another class, we need to translate it to
             # SWISS7 or SWISS10
             hour = self._translate_class_hour(count_data, hour)
+
             for j, cat in enumerate(hour):
-                ws['{}{}'.format(cat_cols[j], i+dir1_start_cell)] = cat
+                # Don't consider cat 0 (TRASH) in the report
+                if j == 0:
+                    continue
+
+                ws['{}{}'.format(cat_cols[j-1], i+dir1_start_cell)] = cat
 
         for i, hour in enumerate(dir2):
             hour = self._translate_class_hour(count_data, hour)
+
             for j, cat in enumerate(hour):
-                ws['{}{}'.format(cat_cols[j], i+dir2_start_cell)] = cat
+                # Don't consider cat 0 (TRASH) in the report
+                if j == 0:
+                    continue
+
+                ws['{}{}'.format(cat_cols[j-1], i+dir2_start_cell)] = cat
 
     def _remove_useless_sheets(self, workbook, count_data):
 
@@ -276,14 +286,16 @@ class ReportCreator():
             return new_hour
 
         if count_data.attributes['class'] == 'FHWA13':
-            new_hour = [0] * 7
-            new_hour[0] = hour[4]
-            new_hour[1] = hour[1]
-            new_hour[2] = hour[2]
-            new_hour[3] = hour[3]
-            new_hour[4] = hour[5] + hour[6] + hour[7]
-            new_hour[5] = hour[11] + hour[12]
-            new_hour[6] = hour[8] + hour[9] + hour[10] + hour[13] + hour[14]
+            new_hour = [0] * 8
+
+            new_hour[0] = hour[0]
+            new_hour[1] = hour[4]
+            new_hour[2] = hour[1]
+            new_hour[3] = hour[2]
+            new_hour[4] = hour[3]
+            new_hour[5] = hour[5] + hour[6] + hour[7]
+            new_hour[6] = hour[11] + hour[12]
+            new_hour[7] = hour[8] + hour[9] + hour[10] + hour[13] + hour[14]
             return new_hour
 
     def _translate_class_name(self, name):
