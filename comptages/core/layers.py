@@ -332,6 +332,22 @@ class Layers(QObject):
 
         return counts
 
+    def get_counts_of_section_by_year(self, section_id, year):
+        """Return a list of all count features related with the passed
+        section for the passed year"""
+
+        try:
+            lanes = self.get_lanes_of_section(section_id)
+            installation = self.get_installation_of_lane(
+                next(lanes).attribute('id'))
+            counts = self.get_counts_of_installation(
+                installation.attribute('id'))
+        except StopIteration:
+            return []
+
+        print(counts)
+        return counts
+
     def get_lanes_of_section(self, section_id):
         """Return a list of the lane features of the passed section"""
         request = QgsFeatureRequest().setFilterExpression(

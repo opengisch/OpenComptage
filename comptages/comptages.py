@@ -12,6 +12,7 @@ from qgis.utils import qgsfunction, plugins
 from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
+from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.utils import push_info
 from comptages.importer.data_importer import DataImporter
 from comptages.importer.data_importer_vbv1 import DataImporterVbv1
@@ -21,6 +22,7 @@ from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
+from comptages.report.yearly_report_creator import YearlyReportCreator
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
@@ -79,6 +81,12 @@ class Comptages(QObject):
             None
         )
 
+        self.yearly_report_action = QAction(
+            QIcon(':/plugins/Comptages/images/filled_file.png'),
+            'Rapport annuel',
+            None
+        )
+
         self.import_ics_action = QAction(
             QIcon(':/plugins/Comptages/images/calendar.png'),
             'Importer fichier ics',
@@ -109,6 +117,9 @@ class Comptages(QObject):
         self.filter_action.triggered.connect(
             self.do_filter_action)
 
+        self.yearly_report_action.triggered.connect(
+            self.do_yearly_report_action)
+
         self.import_ics_action.triggered.connect(
             self.do_import_ics_action)
 
@@ -120,6 +131,7 @@ class Comptages(QObject):
         self.import_files_action.setEnabled(False)
         self.validate_imported_files.setEnabled(False)
         self.filter_action.setEnabled(False)
+        self.yearly_report_action.setEnabled(False)
         self.import_ics_action.setEnabled(False)
 
         self.iface.addPluginToMenu('Comptages', self.connect_db_action)
@@ -128,6 +140,7 @@ class Comptages(QObject):
         self.iface.addPluginToMenu('Comptages', self.import_files_action)
         self.iface.addPluginToMenu('Comptages', self.validate_imported_files)
         self.iface.addPluginToMenu('Comptages', self.filter_action)
+        self.iface.addPluginToMenu('Comptages', self.yearly_report_action)
         self.iface.addPluginToMenu('Comptages', self.import_ics_action)
         self.iface.addPluginToMenu('Comptages', self.settings_action)
 
@@ -142,6 +155,7 @@ class Comptages(QObject):
         self.toolbar.addAction(self.import_files_action)
         self.toolbar.addAction(self.validate_imported_files)
         self.toolbar.addAction(self.filter_action)
+        self.toolbar.addAction(self.yearly_report_action)
         self.toolbar.addAction(self.import_ics_action)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.settings_action)
@@ -151,6 +165,7 @@ class Comptages(QObject):
         self.iface.removePluginMenu('Comptages', self.create_new_action)
         self.iface.removePluginMenu('Comptages', self.select_edit_action)
         self.iface.removePluginMenu('Comptages', self.filter_action)
+        self.iface.removePluginMenu('Comptages', self.yearly_report_action)
         self.iface.removePluginMenu('Comptages', self.import_ics_action)
         self.iface.removePluginMenu('Comptages', self.settings_action)
 
@@ -158,6 +173,7 @@ class Comptages(QObject):
         del self.create_new_action
         del self.select_edit_action
         del self.filter_action
+        del self.yearly_report_action
         del self.import_ics_action
         del self.settings_action
 
@@ -293,6 +309,52 @@ class Comptages(QObject):
                 dlg.installation.currentIndex(),
                 dlg.sensor.currentIndex())
 
+    def do_yearly_report_action(self):
+
+        if self.tm.countActiveTasks() > 0:
+            push_info(("Veuillez patienter jusqu'à ce que l'importation "
+                       "soit terminée."))
+            return
+
+        layer = self.layers.layers['section']
+
+        selected_count = layer.selectedFeatureCount()
+        if selected_count == 0:
+            push_info("Veuillez sélectionner un tronçon")
+            return
+        elif selected_count > 1:
+            push_info("Veuillez ne sélectionner qu'un tronçon")
+            return
+        else:
+            selected_feature = next(layer.getSelectedFeatures())
+
+        section_id = selected_feature.attribute('id')
+
+        dlg = YearlyReportDialog(self.iface)
+        dlg.section.insert(section_id)
+
+        if dlg.exec_():
+            year = dlg.year.value()
+
+            file_dialog = QFileDialog()
+            title = 'Exporter un rapport'
+            path = self.settings.value('report_export_directory')
+            file_path = QFileDialog.getExistingDirectory(
+                file_dialog, title, path)
+            print(file_path)
+
+            if not file_path:
+                return
+
+            yearly_report_creator = YearlyReportCreator(
+                file_path, self.layers, year, section_id)
+            yearly_report_creator.run()
+
+            push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
+                      .format(section_id, year))
+
+            # TODO: check if there are comptages for this section and year
+
     def do_import_ics_action(self):
         IcsImporter(self.layers)
 
@@ -409,6 +471,7 @@ class Comptages(QObject):
         self.validate_imported_files.setEnabled(True)
         self.import_ics_action.setEnabled(True)
         self.filter_action.setEnabled(True)
+        self.yearly_report_action.setEnabled(True)
 
     def is_section_highlighted(self, section_id):
         return self.layers.is_section_highlighted(section_id)
