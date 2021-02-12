@@ -23,14 +23,16 @@ class DataLoader():
         self.attributes = {}
         self.query = QSqlQuery(self.db)
 
-    def load(self):
+    def load(self, count_data=None):
 
         self.attributes['aggregate'] = False
         if self.is_data_aggregate():
             self.attributes['aggregate'] = True
 
         self.read_attributes()
-        count_data = CountData()
+        if not count_data:
+            count_data = CountData()
+
         count_data.attributes = self.attributes
         dates = self.get_count_dates()
         self.attributes['dates'] = dates

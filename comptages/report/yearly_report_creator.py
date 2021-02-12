@@ -6,6 +6,7 @@ from qgis.PyQt.QtCore import QDate
 from comptages.core.settings import Settings
 
 from comptages.data.data_loader import DataLoader
+from comptages.data.count_data import CountData
 from comptages.core.layers import Layers
 
 
@@ -23,18 +24,16 @@ class YearlyReportCreator():
         counts = self.layers.get_counts_of_section_by_year(
             self.section_id, self.year)
 
-        # TODO: Adapt data_loader to work on multiple counts or better
-        # create a function to merge results from dataloader (i.e.
-        # count_data)
+        merged_count_data = CountData()
 
         for count in counts:
             count_id = count.attribute('id')
             data_loader = DataLoader(
                 count_id, self.section_id,
                 Layers.IMPORT_STATUS_DEFINITIVE)
-            count_data = data_loader.load()
+            merged_count_data = data_loader.load(merged_count_data)
 
-        self._export_report(count_data)
+        self._export_report(merged_count_data)
 
     def _export_report(self, count_data):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -257,7 +256,6 @@ class YearlyReportCreator():
             return hour
 
         if count_data.attributes['class'] == 'ARX Cycle':
-            # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
             new_hour = [0] * 7
             return new_hour
 
@@ -283,8 +281,7 @@ class YearlyReportCreator():
             return name
 
         if name == 'ARX Cycle':
-            # TODO: implement
-            pass
+            return name
 
         if name == 'FHWA13':
             return 'SWISS7'
