@@ -19,8 +19,7 @@ class YearlyReportCreator():
 
     def run(self):
 
-        # TODO: get the list of all the count_is of the section for the year
-
+        # Get the list of all the count_is of the section for the year
         counts = self.layers.get_counts_of_section_by_year(
             self.section_id, self.year)
 
@@ -37,7 +36,11 @@ class YearlyReportCreator():
 
     def _export_report(self, count_data):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        template = os.path.join(current_dir, 'template_yearly.xlsx')
+        class_name = self._translate_class_name(count_data.attributes['class'])
+        if class_name == 'ARX Cycle':
+            template = os.path.join(current_dir, 'template_yearly_arx.xlsx')
+        else:
+            template = os.path.join(current_dir, 'template_yearly.xlsx')
         wb = load_workbook(filename=template)
 
         self._set_data_count(wb, count_data)
@@ -234,6 +237,11 @@ class YearlyReportCreator():
             workbook.remove_sheet(workbook['SWISS10_H'])
             workbook.remove_sheet(workbook['SWISS10_G'])
         elif class_name == 'Volume':
+            workbook.remove_sheet(workbook['SWISS7_H'])
+            workbook.remove_sheet(workbook['SWISS7_G'])
+            workbook.remove_sheet(workbook['SWISS10_H'])
+            workbook.remove_sheet(workbook['SWISS10_G'])
+        elif class_name == 'ARX Cycle':
             workbook.remove_sheet(workbook['SWISS7_H'])
             workbook.remove_sheet(workbook['SWISS7_G'])
             workbook.remove_sheet(workbook['SWISS10_H'])
