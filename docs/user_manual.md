@@ -18,12 +18,13 @@ Les outils sont, dans l'ordre :
 - Validation données
 - Filtrage
 - Importation fichiers ICS
+- Rapport annuel
 - Réglages
 
 ## Utilisation
 ### Connection DB
 <figure>
-  <img src="../assets/power.png" width="80" />
+  <img src="../assets/power.png" width="60" />
   <figcaption>Bouton connection DB</figcaption>
 </figure>
 
@@ -37,7 +38,7 @@ les couches de l'application dans QGIS.
 
 ### Créer un nouveau comptage
 <figure>
-  <img src="../assets/measure.png" width="80" />
+  <img src="../assets/measure.png" width="60" />
   <figcaption>Bouton creation nouveau comptage</figcaption>
 </figure>
 
@@ -63,7 +64,7 @@ données.
 
 ### Modifier comptage
 <figure>
-  <img src="../assets/select_edit.png" width="80" />
+  <img src="../assets/select_edit.png" width="60" />
   <figcaption>Bouton modifier comptage</figcaption>
 </figure>
 
@@ -78,36 +79,113 @@ comptage.
 </figure>
 
 ### Importation
+Vous pouvez importer des données de deux manières différentes. Soit en spécifiant directement à quel comptage ils appartiennent, soit en important un ou plusieurs fichiers, laissant le programme déterminer à quel comptage ils appartiennent sur base de la date et du tronçon sur lequel le comptage est effectué. Pour importer un seul fichier associé à un comptage, utilisez l'action "Importation" de la table attributaire de la couche "comptage" et sélectionnez ensuite le fichier à importer.
 <figure>
-  <img src="../assets/import.png" width="80" />
+  <img src="../assets/count_actions.png" width="800" />
+  <figcaption>Actions comptage</figcaption>
+</figure>
+
+Pour importer un ou plusieurs fichiers et laisser le système identifier à quel comptage ils appartiennent, utilisez le bouton "Importation" de la barre d'outils.
+<figure>
+  <img src="../assets/import.png" width="60" />
   <figcaption>Bouton importation données</figcaption>
 </figure>
 
-### Validation
+Une fois que les données ont été importées, une fenêtre apparaît qui présente graphiquement les données importées (par heure et voie, par catégorie et par vitesse), de sorte que vous pouvez évaluer d'un coup d'œil si les données semblent correctes et décider de les importer définitivement dans la base de données ou de les écarter.
 <figure>
-  <img src="../assets/validate.png" width="80" />
+  <img src="../assets/validation.png" width="800" />
+  <figcaption>Validation des données</figcaption>
+</figure>
+
+La fenêtre de validation des données peut être appelée à l'aide du bouton approprié de la barre d'outils et montrera toutes les données qui ont été importées mais pas encore validées.
+<figure>
+  <img src="../assets/validate.png" width="60" />
   <figcaption>Bouton validation</figcaption>
 </figure>
 
 ### Filtrage
 <figure>
-  <img src="../assets/filter.png" width="80" />
+  <img src="../assets/filter.png" width="60" />
   <figcaption>Bouton filtrage</figcaption>
+</figure>
+Le bouton "filtrage" de la barre d'outils permet de filtrer les "comptages" qui sont affichés sur la carte (couche "comptage"). Vous pouvez filtrer par date de début, date de fin, type d'installation (permanente ou périodique) et type de capteur (tube ou boucle).
+<figure>
+  <img src="../assets/filter_dialog.png" width="500" />
+  <figcaption>Options filtrage</figcaption>
 </figure>
 
 ### Importation fichiers ICS
 <figure>
-  <img src="../assets/calendar.png" width="80" />
+  <img src="../assets/calendar.png" width="60" />
   <figcaption>Bouton importation fichiers ICS</figcaption>
 </figure>
+Le bouton "Importation ICS" vous permet de charger un fichier calendrier ICS depuis votre ordinateur avec des périodes spéciales définies (vacances et jours fériés) à prendre en compte dans les rapports.
 
 ### Réglages
 <figure>
-  <img src="../assets/settings.png" width="80" />
+  <img src="../assets/settings.png" width="60" />
   <figcaption>Bouton réglages</figcaption>
 </figure>
+Le bouton "Réglages" de la barre d'outils vous permet de spécifier les options du programme. En particulier les données de connexion avec la base de données et les répertoires par défaut où rechercher ou sauvegarder les fichiers.
+
+<figure>
+  <img src="../assets/settings_dialog.png" width="400" />
+  <figcaption>Réglages</figcaption>
+</figure
+>
+### Rapport annuel
+<figure>
+  <img src="../assets/filled_file.png" width="60" />
+  <figcaption>Bouton rapport annuel</figcaption>
+</figure>
+Le bouton "Rapport annuel" de la barre d'outils vous permet de générer un rapport annuel d'un tronçon.
+Vous pouvez sélectionner l'année et le tronçon souhaités.
+
+<figure>
+  <img src="../assets/yearly_report_dialog.png" width="250" />
+  <figcaption>Options rapport annuel</figcaption>
+</figure>
+
 
 ### Exporter la configuration
+
+Dans la table attributaire de la couche `comptage`, vous pouvez effectuer des actions sur les comptages présents. L'une de ces actions est la génération de la configuration de l'appareil de mesure. 
+<figure>
+  <img src="../assets/count_actions.png" width="800" />
+  <figcaption>Actions comptage</figcaption>
+</figure>
+
+La configuration générée dépend du modèle de dispositif défini pour le comptage. Vous pouvez ajouter une partie de configuration fixe pour un modèle spécifique dans la couche `modèle` champ `configuration`.
+
+<figure>
+  <img src="../assets/model_configuration.png" width="800" />
+  <figcaption>Configuration fixe</figcaption>
+</figure>
+
 ### Créer un rapport
+Dans la table attributaire de la couche `comptage`, vous pouvez effectuer des actions sur les comptages présents. L'une de ces actions est la génération du rapport du comptage. 
+<figure>
+  <img src="../assets/count_actions.png" width="800" />
+  <figcaption>Actions comptage</figcaption>
+</figure>
+
 ### Créer un plan de pose
+Dans la table attributaire de la couche `comptage`, vous pouvez effectuer des actions sur les comptages présents. L'une de ces actions est la génération du pland de pose. 
+<figure>
+  <img src="../assets/count_actions.png" width="800" />
+  <figcaption>Actions comptage</figcaption>
+</figure>
+
+
 ### Visualiser les graphiques d'un comptage
+Dans la table attributaire de la couche `comptage`, vous pouvez effectuer des actions sur les comptages présents. L'une de ces actions est la visualisation des graphiques du comptage. 
+<figure>
+  <img src="../assets/count_actions.png" width="800" />
+  <figcaption>Actions comptage</figcaption>
+</figure>
+
+Des graphiques sont générés et affichés dans une fenêtre.
+<figure>
+  <img src="../assets/count_charts.png" width="800" />
+  <figcaption>Graphiques d'un comptage</figcaption>
+</figure>
