@@ -17,9 +17,9 @@ theme:
 # Page tree
 nav:
   - Home: index.md
-  - User Manual (French): user_manual.md
-  - Installation: installation.md
-  - Development: development.md
+  - Manuel de l'utilisateur: user_manual.md
+  - Installation (en): installation.md
+  - Development (en): development.md
 
 markdown_extensions:
   - attr_list
