@@ -6,6 +6,7 @@ class CountData():
     def __init__(self):
         self.day_data = []
         self.attributes = {}
+        self.month_data = [0]*12
 
     def average_total(self, direction=None, days=None):
         if days is None:

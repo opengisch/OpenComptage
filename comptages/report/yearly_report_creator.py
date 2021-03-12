@@ -45,6 +45,7 @@ class YearlyReportCreator():
 
         self._set_data_count(wb, count_data)
         self._set_data_day(wb, count_data)
+        self._set_data_month(wb, count_data)
         self._set_data_speed(wb, count_data)
 
         self._set_data_category(wb, count_data)
@@ -132,6 +133,14 @@ class YearlyReportCreator():
                 day_data.heavy_vehicles(0)
             ws['{}{}'.format(day_cols_tot[i], dir2_heavy_cell)] = \
                 day_data.heavy_vehicles(1)
+
+    def _set_data_month(self, workbook, count_data):
+        ws = workbook['Data_month']
+
+        month_cols_tot = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
+        section_start_cell = 4
+        for i in range(12):
+             ws['{}{}'.format(month_cols_tot[i], section_start_cell)] = count_data.month_data[i]
 
     def _set_data_speed(self, workbook, count_data):
         ws = workbook['Data_speed']

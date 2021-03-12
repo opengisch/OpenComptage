@@ -60,6 +60,7 @@ class DataLoader():
                 date[1]-1]
             count_data.day_data.append(day_data)
 
+            count_data.month_data[date[1]] += day_data.total()
         self.db.close()
         return count_data
 
