@@ -13,7 +13,7 @@ INSERT INTO comptages.class VALUES (14, 'SWISS7-MM', 'SWISS 7 modified for Marks
 
 -- category
   -- SWISS 2
-INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (902, 'TRASH', 0, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (902, 'TRASH', 0, 902, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (2, 'PF', 1, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (3, 'MFZ', 2, 2, FALSE);
 
