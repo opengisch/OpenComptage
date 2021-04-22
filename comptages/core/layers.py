@@ -1437,3 +1437,12 @@ class Layers(QObject):
         )
         return next(self.layers['brand'].getFeatures(
             request)).attribute('formatter_name')
+
+    def get_classes_of_section(self, section_id):
+        result = set()
+        counts = self.get_counts_of_section(section_id)
+
+        for count in counts:
+            result.add(self.get_class_name_of_count(count.attribute('id')))
+
+        return result

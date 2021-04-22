@@ -11,11 +11,12 @@ from comptages.core.layers import Layers
 
 
 class YearlyReportCreator():
-    def __init__(self, file_path, layers, year, section_id):
+    def __init__(self, file_path, layers, year, section_id, clazz):
         self.file_path = file_path
         self.layers = layers
         self.year = year
         self.section_id = section_id
+        self.clazz = clazz
 
     def run(self):
 
@@ -27,6 +28,9 @@ class YearlyReportCreator():
 
         for count in counts:
             count_id = count.attribute('id')
+            class_of_count = self.layers.get_class_name_of_count(count_id)
+            if not class_of_count == self.clazz:
+                continue
             data_loader = DataLoader(
                 count_id, self.section_id,
                 Layers.IMPORT_STATUS_DEFINITIVE)

@@ -330,11 +330,14 @@ class Comptages(QObject):
 
         section_id = selected_feature.attribute('id')
 
+        classes = self.layers.get_classes_of_section(section_id)
         dlg = YearlyReportDialog(self.iface)
         dlg.section.insert(section_id)
+        dlg.classi.addItems(classes)
 
         if dlg.exec_():
             year = dlg.year.value()
+            clazz = dlg.classi.currentText()
 
             file_dialog = QFileDialog()
             title = 'Exporter un rapport'
@@ -347,7 +350,7 @@ class Comptages(QObject):
                 return
 
             yearly_report_creator = YearlyReportCreator(
-                file_path, self.layers, year, section_id)
+                file_path, self.layers, year, section_id, clazz)
             yearly_report_creator.run()
 
             push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."

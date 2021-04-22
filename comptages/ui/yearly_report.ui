@@ -6,15 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>248</width>
-    <height>99</height>
+    <width>461</width>
+    <height>108</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Rapport Annuel</string>
   </property>
-  <layout class="QFormLayout" name="formLayout_2">
-   <item row="2" column="0">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Classification</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" colspan="2">
+    <widget class="QLineEdit" name="section">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLabel" name="section_label">
+     <property name="text">
+      <string>Tronçon</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
     <widget class="QSpinBox" name="year">
      <property name="minimum">
       <number>2000</number>
@@ -27,31 +58,10 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="section">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
+   <item row="2" column="0" colspan="2">
+    <widget class="QComboBox" name="classi"/>
    </item>
-   <item row="3" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="section_label">
-     <property name="text">
-      <string>Tronçon</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item row="0" column="2">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Année</string>
