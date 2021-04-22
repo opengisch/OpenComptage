@@ -189,3 +189,6 @@ Des graphiques sont générés et affichés dans une fenêtre.
   <img src="../assets/count_charts.png" width="800" />
   <figcaption>Graphiques d'un comptage</figcaption>
 </figure>
+
+### Ajouter un nouveau automate
+La table `device` (chargée dans la couche automate de QGIS), contient la liste des dispositifs disponibles. Chaque dispositif doit avoir une référence à un modèle défini dans la table `model`. Pour ajouter un nouveau dispositif, il suffit d'ajouter dans QGIS un élément à la table `automate` (et éventuellement à la table `model`).
