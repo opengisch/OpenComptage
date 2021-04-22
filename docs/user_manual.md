@@ -192,3 +192,7 @@ Des graphiques sont générés et affichés dans une fenêtre.
 
 ### Ajouter un nouveau automate
 La table `device` (chargée dans la couche automate de QGIS), contient la liste des dispositifs disponibles. Chaque dispositif doit avoir une référence à un modèle défini dans la table `model`. Pour ajouter un nouveau dispositif, il suffit d'ajouter dans QGIS un élément à la table `automate` (et éventuellement à la table `model`).
+
+### Cas spéciaux
+Les installations considérées comme des `cas speciaux`, sont des installations où plusieurs voies de sections différentes sont mesurées à partir de la même installation. Chaque voie a une relation (Foreign Key) avec une installation. En attribuant plusieurs voies à la même installation, il est possible de créer des cas speciaux. 
+Ces tables ne sont normalement pas chargées comme des couches dans QGIS, donc normalement ces changements sont faits directement dans la base de données.
