@@ -10,6 +10,8 @@ INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (13, 'FHWA13', 'Federal HighWay Administration 13 category');
 INSERT INTO comptages.class VALUES (14, 'SWISS7-MM', 'SWISS 7 modified for Marksmann devices');
+INSERT INTO comptages.class VALUES (15, 'SPCH-13', 'SPCH-13');
+INSERT INTO comptages.class VALUES (16, 'SPCH-MD 5C', 'SPCH-MD 5C');
 
 -- category
   -- SWISS 2
@@ -113,7 +115,7 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (77, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (78, 'Bicycle', 1, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (79, 'ELSE', 2, 2, FALSE);
 
--- SWISS 7 Marksmann
+  -- SWISS 7 Marksmann
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (80, 'PW', 1, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (81, 'CAR', 2, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (82, 'LIE', 3, 2, TRUE);
@@ -121,6 +123,26 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (83, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (84, 'LZ', 5, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (85, 'SZ', 6, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (86, 'MR', 7, 2, TRUE);
+
+  -- SPCH-13
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (87, 'TRASH', 0, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (88, 'CAR', 1, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (89, 'MR', 2, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (90, 'PW', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (91, 'LIE', 4, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (92, 'LW', 5, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (93, 'LZ', 6, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (94, 'SZ', 7, 2, FALSE);
+
+  -- SPCH-MD 5C
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (95, 'TRASH', 0, 2, FALSE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (96, 'VELO', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (97, 'MONO', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (98, 'SHORT', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (99, 'SPECIAL', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (100, 'MULTI', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (101, 'ELSE', 2, 2, FALSE);
+
 
 -- class_category
   -- SWISS 2
@@ -232,6 +254,25 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 83);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 84);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 85);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 86);
+
+  -- SPCH-13
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 87);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 88);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 89);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 90);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 91);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 92);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 93);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 94);
+
+  -- SPCH-MD 5C
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 95);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 96);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 97);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 98);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 99);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 100);
+INSERT INTO comptages.class_category (id_class, id_category) VALUES (16, 101);
 
 -- brand
 INSERT INTO comptages.brand VALUES (1, 'GoldenRiver', 'L:\Data\Compteurs\MTL\Bin2Asc\grformat.exe');
