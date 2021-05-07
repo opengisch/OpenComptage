@@ -137,10 +137,10 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (94, 
   -- SPCH-MD 5C
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (95, 'TRASH', 0, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (96, 'VELO', 1, 2, TRUE);
-INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (97, 'MONO', 1, 2, TRUE);
-INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (98, 'SHORT', 1, 2, TRUE);
-INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (99, 'SPECIAL', 1, 2, TRUE);
-INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (100, 'MULTI', 1, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (97, 'MONO', 2, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (98, 'SHORT', 3, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (99, 'SPECIAL', 4, 2, TRUE);
+INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (100, 'MULTI', 5, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (101, 'ELSE', 2, 2, FALSE);
 
 
