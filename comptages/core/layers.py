@@ -1446,3 +1446,18 @@ class Layers(QObject):
             result.add(self.get_class_name_of_count(count.attribute('id')))
 
         return result
+
+    def check_sensor_of_lane(self, lane_id):
+        """ Check id a lane is registered in the sensor table"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select id from comptages.sensor where id_lane = {0};".format(
+                lane_id))
+
+        query.exec_(query_str)
+        if query.next():
+            return True
+        return False

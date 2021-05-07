@@ -35,6 +35,7 @@ class ConfigCreatorCmd(ConfigCreator):
         sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
         channels_str = ''
         sensors_str = ''
+        carriageway_nr = 0
 
         for i, lane in enumerate(lanes):
             channels_str += '{} '.format(i+1)
@@ -43,8 +44,15 @@ class ConfigCreatorCmd(ConfigCreator):
             else:
                 sensors_str += '{} '.format('TT')
 
+            if self.layers.check_sensor_of_lane(lane.id()):
+                carriageway_nr += 1
+
         self.set_command('CHANNELS', channels_str)
         self.set_command('SENSORS', sensors_str)
+
+        self.set_command(
+            'CARRIAGEWAY',
+            ' '.join('1' * carriageway_nr) + ' ' + ' '.join('0' * (8 - carriageway_nr)))
 
     def set_command(self, command, value):
         self.commands[command] = value
