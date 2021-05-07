@@ -1461,3 +1461,18 @@ class Layers(QObject):
         if query.next():
             return True
         return False
+
+    def get_sensor_length(self, lane_id):
+        """ Get length of geometry in the sensor table"""
+
+        self.init_db_connection()
+        query = QSqlQuery(self.db)
+
+        query_str = (
+            "select ST_LENGTH(geometry) from comptages.sensor where id_lane = {};".format(lane_id))
+
+        query.exec_(query_str)
+
+        if query.next():
+            return query.value(0)
+        return None
