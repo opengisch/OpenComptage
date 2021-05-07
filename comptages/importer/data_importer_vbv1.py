@@ -86,6 +86,22 @@ class DataImporterVbv1(DataImporter):
 
         except ValueError:
             # This can happen when some values are missed from a line
-            return None
+
+            if 'lane' not in parsed_line:
+                return None
+            if 'direction' not in parsed_line:
+                return None
+            if 'distance_front_front' not in parsed_line:
+                parsed_line['distance_front_front'] = 0
+            if 'distance_front_back' not in parsed_line:
+                parsed_line['distance_front_back'] = 0
+            if 'speed' not in parsed_line:
+                parsed_line['speed'] = -1
+            if 'length' not in parsed_line:
+                parsed_line['length'] = 0
+            if 'category' not in parsed_line:
+                parsed_line['category'] = 0
+            if 'height ' not in parsed_line:
+                parsed_line['height'] = 'NA'
 
         return parsed_line
