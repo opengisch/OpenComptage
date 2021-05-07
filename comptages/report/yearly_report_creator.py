@@ -41,7 +41,7 @@ class YearlyReportCreator():
     def _export_report(self, count_data):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         class_name = self._translate_class_name(count_data.attributes['class'])
-        if class_name == 'ARX Cycle':
+        if class_name in ['ARX Cycle', 'SPCH-MD 5C']:
             template = os.path.join(current_dir, 'template_yearly_arx.xlsx')
         else:
             template = os.path.join(current_dir, 'template_yearly.xlsx')
@@ -254,7 +254,7 @@ class YearlyReportCreator():
             workbook.remove_sheet(workbook['SWISS7_G'])
             workbook.remove_sheet(workbook['SWISS10_H'])
             workbook.remove_sheet(workbook['SWISS10_G'])
-        elif class_name == 'ARX Cycle':
+        elif class_name in ['ARX Cycle', 'SPCH-MD 5C']:
             workbook.remove_sheet(workbook['SWISS7_H'])
             workbook.remove_sheet(workbook['SWISS7_G'])
             workbook.remove_sheet(workbook['SWISS10_H'])
@@ -276,7 +276,7 @@ class YearlyReportCreator():
         if count_data.attributes['class'] == 'SWISS7':
             return hour
 
-        if count_data.attributes['class'] == 'ARX Cycle':
+        if count_data.attributes['class'] in ['ARX Cycle', 'SPCH-MD 5C']:
             new_hour = [0] * 7
             return new_hour
 
@@ -302,6 +302,9 @@ class YearlyReportCreator():
             return name
 
         if name == 'ARX Cycle':
+            return name
+
+        if name == 'SPCH-MD 5C':
             return name
 
         if name == 'FHWA13':
