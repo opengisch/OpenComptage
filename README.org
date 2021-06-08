@@ -8,3 +8,12 @@ The documentation is [[https://opengisch.github.io/OpenComptage/][here]]
   - prepare the current traffic measure
   - import and management of the measure data
   - centralized management of the measure data
+
+* Setup
+  ```
+  # Install requirements
+  pip install -r requirements.txt
+
+  # Initialize the datamodel
+  python manage.py migrate
+  ```
