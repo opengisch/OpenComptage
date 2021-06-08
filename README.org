@@ -10,10 +10,18 @@ The documentation is [[https://opengisch.github.io/OpenComptage/][here]]
   - centralized management of the measure data
 
 * Setup
-  ```
-  # Install requirements
-  pip install -r requirements.txt
+  #+BEGIN_SRC bash
+    # Install requirements
+    pip install -r requirements.txt
 
-  # Initialize the datamodel
-  python manage.py migrate
-  ```
+    # Initialize the datamodel
+    python .\manage.py migrate --fake core 0001_initial
+
+    # Upgrade the datamodel
+    python manage.py migrate
+  #+END_SRC
+
+* Import data
+  #+BEGIN_SRC bash
+    python manage.py importcomptage test_files/vbv_100k_01.txt
+  #+END_SRC
