@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# TODO : convert to django management command
 set -e
 
 read -p "This will delete the comptages database all the data. Are you sure? " -n 1 -r
@@ -10,7 +10,7 @@ then
     # Cleaning before starting
     psql "service=comptages_dev" --echo-errors -c 'DROP SCHEMA IF EXISTS comptages CASCADE;'
     psql "service=comptages_dev" --echo-errors -c 'DROP SCHEMA IF EXISTS transfer CASCADE;'
-    
+
     # Import the data model into the database
     psql "service=comptages_dev" --single-transaction --echo-errors -f ../db/generated_model_script.sql
 

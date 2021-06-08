@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# TODO : CHANGE TO BASIC GIS ORMAT THEN IMPORT WITH MANAGEMENT COMMAND
+
 import psycopg2
 import sys
 
