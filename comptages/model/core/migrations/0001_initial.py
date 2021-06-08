@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('nom_rue', models.CharField(blank=True, max_length=45, null=True)),
                 ('dir1', models.CharField(blank=True, max_length=75, null=True)),
                 ('dir2', models.CharField(blank=True, max_length=75, null=True)),
-                ('wkb_geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
+                ('wkb_geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=2056)),
             ],
             options={
                 'db_table': 'base_tjm_ok',
@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
             name='CoreStructure',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=4326)),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=2056)),
                 ('name', models.CharField(max_length=255)),
                 ('label', models.CharField(max_length=255)),
             ],
@@ -140,7 +140,7 @@ class Migration(migrations.Migration):
                 ('permanent', models.BooleanField()),
                 ('name', models.TextField()),
                 ('picture', models.TextField(blank=True, null=True)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
+                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=2056)),
                 ('active', models.BooleanField()),
             ],
             options={
@@ -186,7 +186,7 @@ class Migration(migrations.Migration):
                 ('start_dist', models.DecimalField(blank=True, decimal_places=65535, max_digits=65535, null=True)),
                 ('end_dist', models.DecimalField(blank=True, decimal_places=65535, max_digits=65535, null=True)),
                 ('place_name', models.TextField(blank=True, null=True)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(srid=4326)),
+                ('geometry', django.contrib.gis.db.models.fields.LineStringField(srid=2056)),
                 ('start_validity', models.DateField(blank=True, null=True)),
                 ('end_validity', models.DateField(blank=True, null=True)),
             ],
@@ -233,7 +233,7 @@ class Migration(migrations.Migration):
             name='SensorTypeSection',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
+                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=2056)),
                 ('id_section', models.ForeignKey(blank=True, db_column='id_section', null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='core.section')),
                 ('id_sensor_type', models.ForeignKey(blank=True, db_column='id_sensor_type', null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='core.sensortype')),
             ],
@@ -251,7 +251,7 @@ class Migration(migrations.Migration):
                 ('end_dist', models.DecimalField(blank=True, decimal_places=65535, max_digits=65535, null=True)),
                 ('start_service_date', models.DateField(blank=True, null=True)),
                 ('end_service_date', models.DateField(blank=True, null=True)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=4326)),
+                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=2056)),
                 ('id_lane', models.ForeignKey(blank=True, db_column='id_lane', null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='core.lane')),
                 ('id_sensor_type', models.ForeignKey(blank=True, db_column='id_sensor_type', null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='core.sensortype')),
             ],

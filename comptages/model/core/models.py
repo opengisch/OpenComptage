@@ -36,7 +36,7 @@ class BaseTjmOk(models.Model):
     nom_rue = models.CharField(max_length=45, blank=True, null=True)
     dir1 = models.CharField(max_length=75, blank=True, null=True)
     dir2 = models.CharField(max_length=75, blank=True, null=True)
-    wkb_geometry = models.GeometryField(blank=True, null=True)
+    wkb_geometry = models.GeometryField(blank=True, null=True, srid=2056)
 
     class Meta:
         db_table = 'base_tjm_ok'
@@ -90,7 +90,7 @@ class CoreBuilding(models.Model):
 
 class CoreStructure(models.Model):
     id = models.BigAutoField(primary_key=True)
-    geom = models.GeometryField()
+    geom = models.GeometryField(srid=2056)
     name = models.CharField(max_length=255)
     label = models.CharField(max_length=255)
 
@@ -244,7 +244,7 @@ class Installation(models.Model):
     permanent = models.BooleanField()
     name = models.TextField()
     picture = models.TextField(blank=True, null=True)
-    geometry = models.GeometryField(blank=True, null=True)
+    geometry = models.GeometryField(blank=True, null=True, srid=2056)
     active = models.BooleanField()
 
     class Meta:
@@ -294,7 +294,7 @@ class Section(models.Model):
     start_dist = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     end_dist = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     place_name = models.TextField(blank=True, null=True)
-    geometry = models.GeometryField()
+    geometry = models.LineStringField(srid=2056)
     start_validity = models.DateField(blank=True, null=True)
     end_validity = models.DateField(blank=True, null=True)
 
@@ -312,7 +312,7 @@ class Sensor(models.Model):
     end_dist = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     start_service_date = models.DateField(blank=True, null=True)
     end_service_date = models.DateField(blank=True, null=True)
-    geometry = models.GeometryField(blank=True, null=True)
+    geometry = models.GeometryField(blank=True, null=True, srid=2056)
 
     class Meta:
         db_table = 'sensor'
@@ -356,7 +356,7 @@ class SensorTypeModel(models.Model):
 
 class SensorTypeSection(models.Model):
     id = models.BigAutoField(primary_key=True)
-    geometry = models.GeometryField(blank=True, null=True)
+    geometry = models.GeometryField(blank=True, null=True, srid=2056)
     id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type', blank=True, null=True)
     id_section = models.ForeignKey(Section, models.DO_NOTHING, db_column='id_section', blank=True, null=True)
 
