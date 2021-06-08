@@ -19,6 +19,10 @@ The documentation is [[https://opengisch.github.io/OpenComptage/][here]]
 
     # Upgrade the datamodel
     python manage.py migrate
+
+    # Import initial data
+    python manage.py importsections
+
   #+END_SRC
 
 * Import data
