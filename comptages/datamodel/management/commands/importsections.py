@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = "Import sections from file"
 
     def add_arguments(self, parser):
-        parser.add_argument('--sections_file', default=os.path.join(os.path.dirname(__file__),'..','..','..','..','..','db','sections_clean.csv'))
+        parser.add_argument('--sections_file', default=os.path.join(os.path.dirname(__file__),'..','..','..','..','db','sections_clean.csv'))
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
 
     def handle(self, *args, **options):
