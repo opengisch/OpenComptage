@@ -99,6 +99,8 @@ class CoreStructure(models.Model):
 
 
 class Count(models.Model):
+    qdmtk_addlayer = True
+
     id = models.BigAutoField(primary_key=True)
     start_service_date = models.DateField()
     end_service_date = models.DateField()
@@ -240,6 +242,8 @@ class Device(models.Model):
 
 
 class Installation(models.Model):
+    qdmtk_addlayer = True
+
     id = models.BigAutoField(primary_key=True)
     permanent = models.BooleanField()
     name = models.TextField()
@@ -284,6 +288,8 @@ class ModelClass(models.Model):
 
 
 class Section(models.Model):
+    qdmtk_addlayer = True
+
     id = models.CharField(primary_key=True, max_length=20)
     name = models.TextField()
     owner = models.TextField(blank=True, null=True)
