@@ -5,43 +5,6 @@
 from django.contrib.gis.db import models
 
 
-class BaseTjmOk(models.Model):
-    ogc_fid = models.AutoField(primary_key=True)
-    fsection = models.CharField(max_length=20, blank=True, null=True)
-    fonctionel = models.CharField(max_length=4, blank=True, null=True)
-    f_prop = models.CharField(max_length=12, blank=True, null=True)
-    f_axe = models.CharField(max_length=64, blank=True, null=True)
-    f_sens = models.CharField(max_length=1, blank=True, null=True)
-    f_pr_d = models.CharField(max_length=64, blank=True, null=True)
-    f_dist_d = models.CharField(max_length=19, blank=True, null=True)
-    ecartd = models.CharField(max_length=10, blank=True, null=True)
-    f_pr_f = models.CharField(max_length=64, blank=True, null=True)
-    f_dist_f = models.CharField(max_length=19, blank=True, null=True)
-    ecartf = models.CharField(max_length=10, blank=True, null=True)
-    usaneg = models.CharField(max_length=2, blank=True, null=True)
-    poste = models.CharField(max_length=4, blank=True, null=True)
-    troncon = models.CharField(max_length=4, blank=True, null=True)
-    lieu_rue = models.CharField(max_length=45, blank=True, null=True)
-    type_tra = models.CharField(max_length=11, blank=True, null=True)
-    sensor = models.CharField(max_length=7, blank=True, null=True)
-    classif = models.CharField(max_length=3, blank=True, null=True)
-    lpseps = models.CharField(max_length=11, blank=True, null=True)
-    permanent = models.CharField(max_length=3, blank=True, null=True)
-    c_ehbdo = models.CharField(max_length=6, blank=True, null=True)
-    boucon = models.CharField(max_length=6, blank=True, null=True)
-    ccd = models.CharField(max_length=1, blank=True, null=True)
-    ccf = models.CharField(max_length=1, blank=True, null=True)
-    f_long = models.CharField(max_length=20, blank=True, null=True)
-    f_surf = models.CharField(max_length=20, blank=True, null=True)
-    nom_rue = models.CharField(max_length=45, blank=True, null=True)
-    dir1 = models.CharField(max_length=75, blank=True, null=True)
-    dir2 = models.CharField(max_length=75, blank=True, null=True)
-    wkb_geometry = models.GeometryField(blank=True, null=True, srid=2056)
-
-    class Meta:
-        db_table = 'base_tjm_ok'
-
-
 class Brand(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
