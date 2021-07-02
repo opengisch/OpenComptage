@@ -41,7 +41,7 @@ Clone this repository with the submodules, fetch all tags and checkout to a <TAG
     git fetch --all --tags --prune
     git checkout tags/<TAG_NAME> -b <TAG_NAME>
 
-Create a database and a user with CREATE rights on it. Create a pg_service.conf file in your %USERPROFILE% directory.
+If starting from zero, create a database and a user with CREATE rights on it. Create a pg_service.conf file in your %USERPROFILE% directory.
 Go into the `scripts\windows` directory of the repository
 
     cd .\scripts\windows
@@ -50,6 +50,8 @@ Adapt `create_db.ps1` with the name of your pg_service.
 Create the database structure (need to be done when model is modified, data will be reset):
 
     .\create_db.ps1
+
+**If updating an existing project**, make sure to check the diff on the SQL files located in the `db` folder between the version you're deploying and the previous deployed version.
 
 Deploy to your custom repository
 
