@@ -237,13 +237,13 @@ class Migration(migrations.Migration):
                 (
                     "start_dist",
                     models.DecimalField(
-                        blank=True, decimal_places=65535, max_digits=65535, null=True
+                        blank=True, decimal_places=500, max_digits=1000, null=True
                     ),
                 ),
                 (
                     "end_dist",
                     models.DecimalField(
-                        blank=True, decimal_places=65535, max_digits=65535, null=True
+                        blank=True, decimal_places=500, max_digits=1000, null=True
                     ),
                 ),
                 ("place_name", models.TextField(blank=True, null=True)),
@@ -345,13 +345,13 @@ class Migration(migrations.Migration):
                 (
                     "start_dist",
                     models.DecimalField(
-                        blank=True, decimal_places=65535, max_digits=65535, null=True
+                        blank=True, decimal_places=500, max_digits=1000, null=True
                     ),
                 ),
                 (
                     "end_dist",
                     models.DecimalField(
-                        blank=True, decimal_places=65535, max_digits=65535, null=True
+                        blank=True, decimal_places=500, max_digits=1000, null=True
                     ),
                 ),
                 ("start_service_date", models.DateField(blank=True, null=True)),
