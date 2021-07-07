@@ -6,29 +6,25 @@ Clone this repository with the submodules
 
     git clone --recurse-submodules git@github.com:opengisch/OpenComptage.git
 
-Go into the `scripts` directory of the repository
+Start dev postgres for development, using docker
 
-    cd OpenComptage/scripts
+    docker run -d --rm -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=comptages --name=comptagesdb postgis/postgis:12-2.5
 
-Run the docker with the development database
+Install python requirements
 
-    ./start_docker.sh
+    pip install -r requirements.txt
 
-Create the database structure (needed to be done only the fist time)
+Initialize the datamodel (use "--fake" flag if the database already exists)
 
-    ./create_db.sh
+    python manage.py migrate --fake comptages 0001_initial
 
-Link the plugin directory (`comptages` directory inside the repository) to the
-QGIS plugin directory. E.g.:
+Upgrade the datamodel
 
-    ln -s /home/mario/OpenComptage/comptages /home/mario/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+    python manage.py migrate
 
-Run QGIS and enable the plugin from the *plugin-manager*
+Import initial data
 
-To completely reset the docker with all the data
-
-    cd .docker
-    docker-compose -f docker-compose_dev_env.yml down --volume
+    python manage.py importsections
 
 
 ## Windows deployment

@@ -1,15 +1,17 @@
 from datetime import datetime
 
-from qgis.PyQt.QtSql import QSqlQuery
-
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
+from comptages.datamodel import models
+from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterVbv1(DataImporter):
 
     def __init__(self, file_path, count_id):
         super().__init__(file_path, count_id)
+        self.instances = []
+        self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
         try:
@@ -25,6 +27,8 @@ class DataImporterVbv1(DataImporter):
         except Exception as e:
             self.exception = e
             return False
+
+        self.bulk_mgr.done()
         return True
 
     def write_row_into_db(self, line):
@@ -33,29 +37,23 @@ class DataImporterVbv1(DataImporter):
             return
 
         cat_bins = list(self.categories.values())
-        query = QSqlQuery(self.db)
 
-        query_str = ("insert into comptages.count_detail ("
-                     "numbering, timestamp, "
-                     "distance_front_front, distance_front_back, "
-                     "speed, length, height, "
-                     "file_name, import_status, "
-                     "id_lane, id_count, id_category) values ("
-                     "{}, '{}', {}, {}, {}, {}, '{}', '{}', {}, {}, "
-                     "{}, {})".format(
-                         row['numbering'],
-                         row['timestamp'],
-                         row['distance_front_front'],
-                         row['distance_front_back'],
-                         row['speed'],
-                         row['length'],
-                         row['height'],
-                         self.basename,
-                         Layers.IMPORT_STATUS_QUARANTINE,
-                         self.lanes[int(row['lane'])],
-                         self.count_id,
-                         cat_bins[row['category']]))
-        query.exec_(query_str)
+        self.bulk_mgr.add(
+            models.CountDetail(
+                numbering=row['numbering'],
+                timestamp=row['timestamp'],
+                distance_front_front=row['distance_front_front'],
+                distance_front_back=row['distance_front_back'],
+                speed=row['speed'],
+                length=row['length'],
+                height=row['height'],
+                file_name=self.basename,
+                import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                id_lane_id=self.lanes[int(row['lane'])],
+                id_count_id=self.count_id,
+                id_category_id=cat_bins[row['category']]
+            )
+        )
 
     def parse_data_line(self, line):
         parsed_line = None

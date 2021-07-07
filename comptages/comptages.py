@@ -9,6 +9,7 @@ from qgis.core import (
     QgsProject)
 from qgis.utils import qgsfunction, plugins
 
+
 from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
