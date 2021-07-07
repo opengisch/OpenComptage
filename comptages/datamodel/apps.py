@@ -11,7 +11,7 @@ def move_tables_to_schemas(sender, **kwargs):
     with connection.cursor() as cursor:
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {app.label};")
         for model in app.get_models():
-            query = f'ALTER TABLE {model._meta.db_table} SET SCHEMA {app.label};'
+            query = f'ALTER TABLE IF EXISTS {model._meta.db_table} SET SCHEMA {app.label};'
             print(query)
             cursor.execute(query)
 
