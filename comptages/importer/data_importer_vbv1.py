@@ -3,6 +3,7 @@ from datetime import datetime
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
 from comptages.datamodel import models
+from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterVbv1(DataImporter):
@@ -10,6 +11,7 @@ class DataImporterVbv1(DataImporter):
     def __init__(self, file_path, count_id):
         super().__init__(file_path, count_id)
         self.instances = []
+        self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
         try:
@@ -26,8 +28,7 @@ class DataImporterVbv1(DataImporter):
             self.exception = e
             return False
 
-        models.CountDetail.objects.bulk_create(self.instances)
-
+        self.bulk_mgr.done()
         return True
 
     def write_row_into_db(self, line):
@@ -37,7 +38,7 @@ class DataImporterVbv1(DataImporter):
 
         cat_bins = list(self.categories.values())
 
-        self.instances.append(
+        self.bulk_mgr.add(
             models.CountDetail(
                 numbering=row['numbering'],
                 timestamp=row['timestamp'],
