@@ -11,7 +11,7 @@ def alter_search_path(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datamodel', '0001_initial'),
+        ('comptages', '0001_initial'),
     ]
 
     operations = [

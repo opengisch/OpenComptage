@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_category",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.category",
+                        to="comptages.category",
                     ),
                 ),
             ],
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
                         db_column="id_class",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.class",
+                        to="comptages.class",
                     ),
                 ),
             ],
@@ -152,7 +152,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.count",
+                        to="comptages.count",
                     ),
                 ),
             ],
@@ -193,7 +193,7 @@ class Migration(migrations.Migration):
                         db_column="id_installation",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.installation",
+                        to="comptages.installation",
                     ),
                 ),
             ],
@@ -213,7 +213,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_brand",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.brand",
+                        to="comptages.brand",
                     ),
                 ),
             ],
@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.corestructure",
+                        to="comptages.corestructure",
                     ),
                 ),
                 ("stories_count", models.IntegerField()),
@@ -318,7 +318,7 @@ class Migration(migrations.Migration):
                         db_column="id_section",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.section",
+                        to="comptages.section",
                     ),
                 ),
                 (
@@ -328,7 +328,7 @@ class Migration(migrations.Migration):
                         db_column="id_sensor_type",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.sensortype",
+                        to="comptages.sensortype",
                     ),
                 ),
             ],
@@ -369,7 +369,7 @@ class Migration(migrations.Migration):
                         db_column="id_lane",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.lane",
+                        to="comptages.lane",
                     ),
                 ),
                 (
@@ -379,7 +379,7 @@ class Migration(migrations.Migration):
                         db_column="id_sensor_type",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.sensortype",
+                        to="comptages.sensortype",
                     ),
                 ),
             ],
@@ -393,7 +393,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 db_column="id_section",
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.section",
+                to="comptages.section",
             ),
         ),
         migrations.CreateModel(
@@ -408,7 +408,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_model",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.model",
+                        to="comptages.model",
                     ),
                 ),
             ],
@@ -428,7 +428,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_device",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.device",
+                        to="comptages.device",
                     ),
                 ),
             ],
@@ -466,7 +466,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_category",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.category",
+                        to="comptages.category",
                     ),
                 ),
                 (
@@ -474,7 +474,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.count",
+                        to="comptages.count",
                     ),
                 ),
                 (
@@ -482,7 +482,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_lane",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.lane",
+                        to="comptages.lane",
                     ),
                 ),
             ],
@@ -502,7 +502,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -521,7 +521,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -541,7 +541,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -560,7 +560,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -579,7 +579,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -597,7 +597,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_category",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.category",
+                        to="comptages.category",
                     ),
                 ),
                 (
@@ -605,7 +605,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_count_aggregate",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.countaggregate",
+                        to="comptages.countaggregate",
                     ),
                 ),
             ],
@@ -619,7 +619,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 db_column="id_lane",
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.lane",
+                to="comptages.lane",
             ),
         ),
         migrations.AddField(
@@ -630,7 +630,7 @@ class Migration(migrations.Migration):
                 db_column="id_device",
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.device",
+                to="comptages.device",
             ),
         ),
         migrations.AddField(
@@ -639,7 +639,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 db_column="id_installation",
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.installation",
+                to="comptages.installation",
             ),
         ),
         migrations.AddField(
@@ -648,7 +648,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 db_column="id_model",
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.model",
+                to="comptages.model",
             ),
         ),
         migrations.AddField(
@@ -657,7 +657,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 db_column="id_sensor_type",
                 on_delete=django.db.models.deletion.DO_NOTHING,
-                to="datamodel.sensortype",
+                to="comptages.sensortype",
             ),
         ),
         migrations.CreateModel(
@@ -670,7 +670,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.sensortype",
+                        to="comptages.sensortype",
                     ),
                 ),
                 (
@@ -678,7 +678,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_model",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.model",
+                        to="comptages.model",
                     ),
                 ),
             ],
@@ -697,7 +697,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.sensortype",
+                        to="comptages.sensortype",
                     ),
                 ),
                 (
@@ -705,7 +705,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_installation",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.installation",
+                        to="comptages.installation",
                     ),
                 ),
             ],
@@ -724,7 +724,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.sensortype",
+                        to="comptages.sensortype",
                     ),
                 ),
                 (
@@ -732,7 +732,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_class",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.class",
+                        to="comptages.class",
                     ),
                 ),
             ],
@@ -751,7 +751,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.model",
+                        to="comptages.model",
                     ),
                 ),
                 (
@@ -759,7 +759,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_class",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.class",
+                        to="comptages.class",
                     ),
                 ),
             ],
@@ -778,7 +778,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         primary_key=True,
                         serialize=False,
-                        to="datamodel.class",
+                        to="comptages.class",
                     ),
                 ),
                 (
@@ -786,7 +786,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         db_column="id_category",
                         on_delete=django.db.models.deletion.DO_NOTHING,
-                        to="datamodel.category",
+                        to="comptages.category",
                     ),
                 ),
             ],

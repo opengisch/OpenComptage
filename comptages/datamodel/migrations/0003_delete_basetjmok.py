@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("datamodel", "0002_search_path"),
+        ("comptages", "0002_search_path"),
     ]
 
     operations = [
