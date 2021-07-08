@@ -14,17 +14,21 @@ Install python requirements
 
     pip install -r requirements.txt
 
-Initialize the datamodel (use "--fake" flag if the database already exists)
+Initialize the datamodel from the QGIS's Python Console (use "--fake" flag if the database already exists)
 
-    python manage.py migrate --fake comptages 0001_initial
+    from django.core.management import call_command
+    call_command('migrate', '--fake', 'comptages', '0001_initial')
 
 Upgrade the datamodel
 
-    python manage.py migrate
+    from django.core.management import call_command
+    call_command('migrate', 'comptages')
 
 Import initial data
 
-    python manage.py importsections
+    from django.core.management import call_command
+    call_command('importsections')
+
 
 !!! warning
     The `python manage.py` commands must be executed inside the plugin installation directory root (from QGIS you can open the plugin directory from `settings->user profiles` menu). In case you have more than one user profile, make sure you are in the directory of the correct profile. 
