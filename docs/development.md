@@ -10,7 +10,7 @@ used by `create_db.sh` script. To create a new sql from the pgmodeler's model,
 run the script `create_data_model_sql_script.sh`.
 
 <figure>
-  <img src="../assets/data_model.png" width="800" />
+  <img src="./assets/data_model.png" width="800" />
   <figcaption>Data model</figcaption>
 </figure>
 
