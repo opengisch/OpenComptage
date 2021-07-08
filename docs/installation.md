@@ -29,10 +29,6 @@ Import initial data
     from django.core.management import call_command
     call_command('importsections')
 
-
-!!! warning
-    The `python manage.py` commands must be executed inside the plugin installation directory root (from QGIS you can open the plugin directory from `settings->user profiles` menu). In case you have more than one user profile, make sure you are in the directory of the correct profile. 
-
 ## Windows deployment
 
 Requirements: PostgreSQL, ogr2ogr, psycopg2, GDAL_DATA on path (the one provided with mapserver is fine).
