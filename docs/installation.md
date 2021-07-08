@@ -26,6 +26,8 @@ Import initial data
 
     python manage.py importsections
 
+!!! warning
+    The `python manage.py` commands must be executed inside the main plugin installation directory (from QGIS you can open the plugin directory from `settings->user profiles` menu. In case you have more than one user profile, make sure you are in the directory of the correct profile. 
 
 ## Windows deployment
 
