@@ -2,7 +2,6 @@ from datetime import datetime
 
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
-from comptages.datamodel import models
 from .bulk_create_manager import BulkCreateManager
 
 
@@ -32,6 +31,8 @@ class DataImporterVbv1(DataImporter):
         return True
 
     def write_row_into_db(self, line):
+        from comptages.datamodel import models
+
         row = self.parse_data_line(line)
         if not row:
             return
