@@ -31,33 +31,46 @@ Import initial data
 
 ## Windows deployment
 
-Requirements: PostgreSQL, ogr2ogr, psycopg2, GDAL_DATA on path (the one provided with mapserver is fine).
+Requirements:
+ - PostgreSQL,
+ - ogr2ogr, psycopg2,
+ - QGIS installed with OSGEO4W with pip and a GDAL version matching requirements for django
+
 Clone this repository with the submodules, fetch all tags and checkout to a <TAG_NAME> of your choice
 
     git clone --recurse-submodules https://github.com/opengisch/OpenComptage.git
     cd OpenComptage
     git fetch --all --tags --prune
     git checkout tags/<TAG_NAME> -b <TAG_NAME>
+    
+If updating an existing application, go directly to the [Deploying plugin](#deploying-plugin) section.
 
-If starting from zero, create a database and a user with CREATE rights on it. Create a pg_service.conf file in your %USERPROFILE% directory.
-Go into the `scripts\windows` directory of the repository
+If starting from zero, restore a backup of opencomptages database or follow [Development version](#development-version)
 
-    cd .\scripts\windows
+### Deploying plugin
 
-Adapt `create_db.ps1` with the name of your pg_service.
-Create the database structure (need to be done when model is modified, data will be reset):
+1. Look into `requirements.txt` file and install dependencies by opening QGIS > Python Console:
 
-    .\create_db.ps1
+```python
+subprocess.check_call(['python', '-m', 'pip', 'install', '<package_1>', '<package_n*>'])
+```
 
-**If updating an existing project**, make sure to check the diff on the SQL files located in the `db` folder between the version you're deploying and the previous deployed version.
+2. Deploy to your custom qgis plugin repository:
 
-Deploy to your custom repository
+```powershell
+cd .\scripts\windows
+.\deploy.ps1
+```
 
-    .\deploy.ps1
+3. Install plugin from your custom repository.
 
-On the client machine, make sure you have a QGIS installed with its own pip (use OSGEO4W installer).
-Then, use the QGIS pip to install the additional python packages (replace OSGEO4W install directory if necessary):
+4. Make sure the user in the plugin settings is owner of the database otherwise migrations will not work.
 
-    $env:PATH = "C:\OSGeo4W64\apps\Python37;C:\OSGeo4W64\apps\Python37\Scripts"
-    python -m pip install setuptools icalendar openpyxl
+5. Run migrations. Open Python console in QGIS:
 
+```python
+from django.core.management import call_command
+call_command('migrate', 'comptages')
+```
+
+6. Revert ownership of database if required
