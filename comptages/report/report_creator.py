@@ -298,6 +298,8 @@ class ReportCreator():
             new_hour[7] = hour[8] + hour[9] + hour[10] + hour[13] + hour[14]
             return new_hour
 
+        return hour
+
     def _translate_class_name(self, name):
 
         if name == 'SWISS10':
