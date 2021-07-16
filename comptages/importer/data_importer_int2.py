@@ -4,6 +4,8 @@ from qgis.PyQt.QtSql import QSqlQuery
 
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
+from comptages.datamodel import models
+from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterInt2(DataImporter):
@@ -11,6 +13,7 @@ class DataImporterInt2(DataImporter):
         super().__init__(file_path, count_id)
         self.intspec = self.get_intspec()
         self.number_of_lines = self.get_number_of_lines()
+        self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
         try:
@@ -26,6 +29,8 @@ class DataImporterInt2(DataImporter):
         except Exception as e:
             self.exception = e
             return False
+
+        self.bulk_mgr.done()
         return True
 
     def get_intspec(self):
