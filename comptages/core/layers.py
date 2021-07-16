@@ -166,12 +166,13 @@ class Layers(QObject):
             {
                 'AllowMulti':       False,
                 'AllowNull':        False,
-                'FilterExpression': """
-                CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN ('1', '2', '4', '6', '7')
-                WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN ('1', '3', '5')
-                WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN ('12')
-                ELSE \"id\"
-                END""",
+                'FilterExpression': '',
+                # """
+                # CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN ('1', '2', '4', '6', '7')
+                # WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN ('1', '3', '5')
+                # WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN ('12')
+                # ELSE \"id\"
+                # END""",
                 'Key':              'id',
                 'Layer':            self.layers['model'].id(),
                 'OrderByValue':     False,
