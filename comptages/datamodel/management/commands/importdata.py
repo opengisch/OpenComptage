@@ -22,9 +22,21 @@ class Command(BaseCommand):
 
         if options["clear"]:
             print("Deleting...")
+
+            ClassCategory.objects.all().delete()
+            Category.objects.all().delete()
+            SensorTypeClass.objects.all().delete()
+            SensorTypeModel.objects.all().delete()
+            SensorTypeInstallation.objects.all().delete()
+            SensorType.objects.all().delete()
+            ModelClass.objects.all().delete()
+            Class.objects.all().delete()
+            Device.objects.all().delete()
+            Model.objects.all().delete()
+            Brand.objects.all().delete()
+            Installation.objects.all().delete()
             Lane.objects.all().delete()
             Section.objects.all().delete()
-            Brand.objects.all().delete()
 
         self.import_sections(self.file_path("section.csv"))
         self.import_brands(self.file_path("brand.csv"))
