@@ -203,7 +203,6 @@ class Device(models.Model):
         db_table = 'device'
 
 
-
 class Installation(models.Model):
     qdmtk_addlayer = True
 
