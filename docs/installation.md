@@ -27,7 +27,7 @@ Upgrade the datamodel
 Import initial data
 
     from django.core.management import call_command
-    call_command('importsections')
+    call_command('importdata')
 
 ## Windows deployment
 
