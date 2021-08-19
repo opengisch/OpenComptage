@@ -2,7 +2,6 @@ import logging
 import os
 from decimal import Decimal
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.gdal.error import GDALException
 from django.core.management.base import BaseCommand
 
 from ...models import Section, Lane
@@ -11,7 +10,7 @@ logger = logging.getLogger("main")
 
 
 class Command(BaseCommand):
-    help = "Import sections from file"
+    help = "Import initial data from files"
 
     def add_arguments(self, parser):
         parser.add_argument('--sections_file', default=os.path.join(os.path.dirname(__file__),'..','..','..','..','db','sections_clean.csv'))
