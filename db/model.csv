@@ -1,0 +1,10 @@
+id,name,card_name,configuration,id_brand
+"1",M660_LT,8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity),,"1"
+"2",M660_L,8 Loop Card (HP),,"1"
+"3",M660_T,Tube/Switch Input Card (Rev Polarity),,"1"
+"4",M660_L2,2 x 8 Loop Card (HP),,"1"
+"5",M660_T2,2 x Tube/Switch Input Card (Rev Polarity),,"1"
+"6",M680_L,16 Loop Sensor,,"1"
+"7",M720_L,Loop Sensor,,"1"
+"11",MC5900_T,Tube,,"2"
+"12",MC5720_P,Piezo,,"2"
