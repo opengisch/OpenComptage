@@ -175,6 +175,8 @@ class CountDetail(models.Model):
     id_lane = models.ForeignKey('Lane', models.DO_NOTHING, db_column='id_lane')
     id_count = models.ForeignKey(Count, models.DO_NOTHING, db_column='id_count')
     id_category = models.ForeignKey(Category, models.DO_NOTHING, db_column='id_category')
+    times = models.IntegerField(default=1)
+    from_aggregate = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'count_detail'
