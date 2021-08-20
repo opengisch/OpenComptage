@@ -24,7 +24,7 @@ Upgrade the datamodel
     from django.core.management import call_command
     call_command('migrate', 'comptages')
 
-Import initial data
+Import initial data (use "--clear" flag to delete data before import)
 
     from django.core.management import call_command
     call_command('importdata')
