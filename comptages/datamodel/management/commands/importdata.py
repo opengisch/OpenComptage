@@ -6,8 +6,8 @@ from django.core.management.base import BaseCommand
 
 from ...models import (
     Section, Lane, Brand, Category, Class, ClassCategory, Device, Installation,
-    Lane, Model, ModelClass, SensorType, SensorTypeClass,
-    SensorTypeInstallation, SensorTypeModel)
+    Model, ModelClass, SensorType, SensorTypeClass, SensorTypeInstallation,
+    SensorTypeModel)
 
 logger = logging.getLogger("main")
 
@@ -55,7 +55,7 @@ class Command(BaseCommand):
         print("🚓")
 
     def file_path(self, filename):
-        return os.path.join(os.path.dirname(__file__),'..','..','..','..','db',filename)
+        return os.path.join(os.path.dirname(__file__),'..','..','..','basedata',filename)
 
     def import_sections(self, csv_file):
         print("Importing sections...")
