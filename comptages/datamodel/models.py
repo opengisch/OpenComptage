@@ -19,7 +19,6 @@ class Category(models.Model):
     name = models.TextField()
     code = models.SmallIntegerField()
     light = models.BooleanField()
-    id_category = models.ForeignKey('self', models.DO_NOTHING, db_column='id_category')
 
     class Meta:
         db_table = 'category'

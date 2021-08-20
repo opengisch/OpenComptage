@@ -114,7 +114,6 @@ class Command(BaseCommand):
                     name=feat["name"],
                     code=Decimal(feat["code"].value),
                     light=bool(feat["light"]),
-                    id_category_id=Decimal(feat["id"].value)
                 )
             )
         Category.objects.bulk_create(categories)
