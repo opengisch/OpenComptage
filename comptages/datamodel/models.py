@@ -2,6 +2,7 @@
 #   * Rearrange models' order
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 
+import uuid
 from django.contrib.gis.db import models
 
 
@@ -34,12 +35,13 @@ class Class(models.Model):
 
 
 class ClassCategory(models.Model):
-    id_class = models.OneToOneField(Class, models.DO_NOTHING, db_column='id_class', primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')
     id_category = models.ForeignKey(Category, models.DO_NOTHING, db_column='id_category')
 
     class Meta:
         db_table = 'class_category'
-        unique_together = (('id_class', 'id_category'),)
+        # unique_together = (('id_class', 'id_category'),)
 
 
 class CoreBuilding(models.Model):
@@ -297,30 +299,33 @@ class SensorType(models.Model):
 
 
 class SensorTypeClass(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')
 
     class Meta:
         db_table = 'sensor_type_class'
-        unique_together = (('id_sensor_type', 'id_class'),)
+        # unique_together = (('id_sensor_type', 'id_class'),)
 
 
 class SensorTypeInstallation(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_installation = models.ForeignKey(Installation, models.DO_NOTHING, db_column='id_installation')
 
     class Meta:
         db_table = 'sensor_type_installation'
-        unique_together = (('id_sensor_type', 'id_installation'),)
+        # unique_together = (('id_sensor_type', 'id_installation'),)
 
 
 class SensorTypeModel(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_model = models.ForeignKey(Model, models.DO_NOTHING, db_column='id_model')
 
     class Meta:
         db_table = 'sensor_type_model'
-        unique_together = (('id_sensor_type', 'id_model'),)
+        # unique_together = (('id_sensor_type', 'id_model'),)
 
 
 class SensorTypeSection(models.Model):
