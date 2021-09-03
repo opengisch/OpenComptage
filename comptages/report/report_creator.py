@@ -309,7 +309,6 @@ class ReportCreator():
             return name
 
         if name == 'ARX Cycle':
-            # TODO: implement
             pass
 
         if name == 'FHWA13':

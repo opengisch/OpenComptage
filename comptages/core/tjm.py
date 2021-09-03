@@ -5,11 +5,11 @@ from comptages.datamodel import models
 
 def calculate_tjm(count_id):
 
-    qs = models.CountDetail.objects.filter(id_count_id=count_id).annotate(week_day=Extract('timestamp', 'week_day'))
+    qs = models.CountDetail.objects.filter(id_count_id=count_id).annotate(week_day=Extract('timestamp', 'iso_week_day'))
 
     for i in qs.values('week_day', 'id_lane').order_by('week_day').annotate(count=Count('times')):
         models.Tjm.objects.create(
-            week_day=i['week_day'],
+            week_day=i['week_day']-1,
             lane_id=i['id_lane'],
             count_id=count_id,
             value=i['count']
