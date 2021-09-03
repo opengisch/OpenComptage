@@ -6,160 +6,138 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>110</height>
+    <width>979</width>
+    <height>93</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Filter</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>70</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>81</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Date début</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="installation">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>40</y>
-     <width>121</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Tous</string>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Date fin</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>Permanent</string>
-    </property>
+   <item row="0" column="6">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>TJM</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>Périodique</string>
-    </property>
+   <item row="1" column="3">
+    <widget class="QComboBox" name="sensor">
+     <item>
+      <property name="text">
+       <string>Tous</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Boucle</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tube</string>
+      </property>
+     </item>
+    </widget>
    </item>
-  </widget>
-  <widget class="QComboBox" name="sensor">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>40</y>
-     <width>111</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Tous</string>
-    </property>
+   <item row="1" column="0">
+    <widget class="QgsDateTimeEdit" name="start_date">
+     <property name="locale">
+      <locale language="French" country="France"/>
+     </property>
+     <property name="displayFormat">
+      <string>dd.MM.yyyy </string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>Boucle</string>
-    </property>
+   <item row="0" column="3">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Capteur</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>Tube</string>
-    </property>
+   <item row="1" column="4">
+    <widget class="QComboBox" name="secteur"/>
    </item>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>20</y>
-     <width>59</width>
-     <height>15</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Date fin</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>20</y>
-     <width>71</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Installation</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>20</y>
-     <width>59</width>
-     <height>15</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Capteur</string>
-   </property>
-  </widget>
-  <widget class="QgsDateTimeEdit" name="start_date">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>40</y>
-     <width>131</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="locale">
-    <locale language="French" country="France"/>
-   </property>
-   <property name="displayFormat">
-    <string>dd.MM.yyyy </string>
-   </property>
-  </widget>
-  <widget class="QgsDateTimeEdit" name="end_date">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>40</y>
-     <width>131</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="displayFormat">
-    <string>dd.MM.yyyy </string>
-   </property>
-  </widget>
+   <item row="0" column="5">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Axe</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QComboBox" name="installation">
+     <item>
+      <property name="text">
+       <string>Tous</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Permanent</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Périodique</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Installation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="6">
+    <widget class="QComboBox" name="tjm"/>
+   </item>
+   <item row="0" column="4">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Secteur</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Date début</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QgsDateTimeEdit" name="end_date">
+     <property name="displayFormat">
+      <string>dd.MM.yyyy </string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QComboBox" name="axe"/>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

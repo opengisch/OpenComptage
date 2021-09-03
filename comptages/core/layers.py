@@ -391,7 +391,7 @@ class Layers(QObject):
 
     def populate_list_of_highlighted_sections(
             self, start_date=None, end_date=None, permanent=None,
-            sensor_type_id=None):
+            sensor_type_id=None, tjm=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
 
@@ -410,6 +410,8 @@ class Layers(QObject):
             wheres.append("i.permanent = '{}'::bool".format(permanent))
         if sensor_type_id:
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
+        if tjm:
+            wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
 
         where_str = ''
         if wheres:
@@ -419,6 +421,8 @@ class Layers(QObject):
                      "inner join comptages.installation as i on "
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
+                     "inner join comptages.tjm as t on "
+                     "(l.id = t.lane_id) "
                      "{};".format(where_str))
 
         query.exec_(query_str)
@@ -427,7 +431,7 @@ class Layers(QObject):
             self.highlighted_sections.append(str(query.value(0)).strip())
 
     def apply_filter(
-            self, start_date, end_date, installation_choice, sensor_choice):
+            self, start_date, end_date, installation_choice, sensor_choice, tjm):
         if installation_choice == 0:
             permanent = None
         elif installation_choice == 1:
@@ -443,7 +447,7 @@ class Layers(QObject):
             sensor_type_id = self.get_sensor_type_id('Tube')
 
         self.populate_list_of_highlighted_sections(
-            start_date, end_date, permanent, sensor_type_id)
+            start_date, end_date, permanent, sensor_type_id, tjm)
         self.layers['section'].triggerRepaint()
 
     def is_connected(self):
