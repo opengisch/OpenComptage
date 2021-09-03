@@ -5,7 +5,7 @@ from datetime import datetime
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
-from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane
+from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
 
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
@@ -130,7 +130,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 lanes = self.layers.get_lanes_of_section(section_id)
                 for i, lane in enumerate(lanes):
                     tab.chartList.addItem(
-                        QListWidgetItem('Par TJM, voie {}'.format(
+                        QListWidgetItem('Par TJM voie {}'.format(
                             lane.attribute('number'))))
                     tab.charts.append(
                         ChartTjm(self.layers, count_id, section_id,
@@ -142,7 +142,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 directions = self.layers.get_directions_of_count(count_id)
                 for direction in directions:
                     tab.chartList.addItem(
-                        QListWidgetItem('Par TJM, direction {}'.format(
+                        QListWidgetItem('Par TJM direction {}'.format(
                             direction)))
                     tab.charts.append(
                         ChartTjm(self.layers, count_id, section_id, self.status,
@@ -406,9 +406,17 @@ class ChartTjm(Chart):
         self.direction_number = direction_number
 
     def get_div(self):
+        sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
+        sensor = sensor_type.attribute('name')
 
         x = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
-        y = get_tjm_data_by_lane(self.count_id, self.lane_id)
+        if sensor == 'Boucle':
+            y = get_tjm_data_by_lane(self.count_id, self.lane_id)
+            title = 'TJM voie {}'.format(self.lane_number)
+        else:
+            y = get_tjm_data_by_direction(self.count_id, self.direction_number)
+            title = 'TJM direction {}'.format(
+                self.direction_number)
 
         bar = go.Bar(
             x=x,
@@ -417,7 +425,7 @@ class ChartTjm(Chart):
         )
 
         layout = go.Layout(
-            title='TJM')
+            title=title)
         fig = go.Figure(data=[bar], layout=layout)
         return plotly.offline.plot(fig, output_type='div')
 
@@ -436,6 +444,6 @@ class ChartTjmTotal(Chart):
         )
 
         layout = go.Layout(
-            title='TJM')
+            title='TJM total')
         fig = go.Figure(data=[bar], layout=layout)
         return plotly.offline.plot(fig, output_type='div')

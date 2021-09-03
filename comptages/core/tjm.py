@@ -26,6 +26,16 @@ def get_tjm_data_by_lane(count_id, lane_id):
     return result
 
 
+def get_tjm_data_by_direction(count_id, direction):
+    qs = models.Tjm.objects.filter(count_id=count_id, lane__direction=direction)
+    result = [0] * 7
+
+    for i in qs:
+        result[i.week_day] += float(i.value)
+
+    return result
+
+
 def get_tjm_data_total(count_id):
     qs = models.Tjm.objects.filter(count_id=count_id)
     result = [0] * 7
