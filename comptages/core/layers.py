@@ -423,7 +423,7 @@ class Layers(QObject):
                      "inner join comptages.installation as i on "
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
-                     "inner join comptages.tjm as t on "
+                     "left join comptages.tjm as t on "
                      "(l.id = t.lane_id) "
                      "inner join comptages.section as s on"
                      "(l.id_section = s.id) "
