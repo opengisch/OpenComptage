@@ -44,6 +44,7 @@ class Comptages(QObject):
         self.filter_installation = None
         self.filter_sensor = None
         self.filter_tjm = None
+        self.filter_axe = None
         self.tm = QgsApplication.taskManager()
 
     def initGui(self):
@@ -300,6 +301,8 @@ class Comptages(QObject):
             dlg.sensor.setCurrentIndex(self.filter_sensor)
         if self.filter_tjm:
             dlg.tjm.setCurrentIndex(self.filter_tjm)
+        if self.filter_axe:
+            dlg.axe.setCurrentIndex(self.filter_axe)
 
         if dlg.exec_():
             self.filter_start_date = dlg.start_date.dateTime()
@@ -307,6 +310,7 @@ class Comptages(QObject):
             self.filter_installation = dlg.installation.currentIndex()
             self.filter_sensor = dlg.sensor.currentIndex()
             self.filter_tjm = dlg.tjm.currentIndex()
+            self.filter_axe = dlg.axe.currentIndex()
 
             self.layers.apply_filter(
                 dlg.start_date.dateTime().toString('yyyy-MM-dd'),
@@ -314,6 +318,7 @@ class Comptages(QObject):
                 dlg.installation.currentIndex(),
                 dlg.sensor.currentIndex(),
                 dlg.tjm.currentData(),
+                dlg.axe.currentText(),
             )
 
     def do_yearly_report_action(self):

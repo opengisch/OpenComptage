@@ -391,7 +391,7 @@ class Layers(QObject):
 
     def populate_list_of_highlighted_sections(
             self, start_date=None, end_date=None, permanent=None,
-            sensor_type_id=None, tjm=None):
+            sensor_type_id=None, tjm=None, axe=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
 
@@ -412,6 +412,8 @@ class Layers(QObject):
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
         if tjm:
             wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
+        if axe:
+            wheres.append("s.road ILIKE '{}%'".format(axe))
 
         where_str = ''
         if wheres:
@@ -423,15 +425,16 @@ class Layers(QObject):
                      "comptages.count as c on (i.id = c.id_installation) "
                      "inner join comptages.tjm as t on "
                      "(l.id = t.lane_id) "
+                     "inner join comptages.section as s on"
+                     "(l.id_section = s.id) "
                      "{};".format(where_str))
-
         query.exec_(query_str)
 
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
 
     def apply_filter(
-            self, start_date, end_date, installation_choice, sensor_choice, tjm):
+            self, start_date, end_date, installation_choice, sensor_choice, tjm, axe):
         if installation_choice == 0:
             permanent = None
         elif installation_choice == 1:
@@ -446,8 +449,11 @@ class Layers(QObject):
         elif sensor_choice == 2:
             sensor_type_id = self.get_sensor_type_id('Tube')
 
+        if axe.lower() == "tous":
+            axe = None
+
         self.populate_list_of_highlighted_sections(
-            start_date, end_date, permanent, sensor_type_id, tjm)
+            start_date, end_date, permanent, sensor_type_id, tjm, axe)
         self.layers['section'].triggerRepaint()
 
     def is_connected(self):
