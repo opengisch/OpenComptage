@@ -940,7 +940,7 @@ class Layers(QObject):
         query = QSqlQuery(self.db)
 
         query_str = (
-            "select distinct date_trunc('day', timestamp) as day "
+            "select distinct date_trunc('day', timestamp at time zone 'Europe/Zurich') as day "
             "from comptages.count_detail where id_count = {} "
             "order by day;".format(count_id))
 
