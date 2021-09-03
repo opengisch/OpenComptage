@@ -5,7 +5,7 @@ from datetime import datetime
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
-from comptages.core.tjm import calculate_tjm
+from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane
 
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
@@ -126,18 +126,32 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         if not approval_process:
             if(sensor == 'Boucle'):
-            # By lane
+            # By TJM
                 lanes = self.layers.get_lanes_of_section(section_id)
                 for i, lane in enumerate(lanes):
                     tab.chartList.addItem(
                         QListWidgetItem('Par TJM, voie {}'.format(
                             lane.attribute('number'))))
                     tab.charts.append(
-                        ChartTime(self.layers, count_id, section_id,
-                                  self.status,
-                                  (lane.attribute('number'),
-                                   lane.attribute('id')),
-                                  None).get_div())
+                        ChartTjm(self.layers, count_id, section_id,
+                                 self.status,
+                                 (lane.attribute('number'),
+                                  lane.attribute('id')),
+                                 None).get_div())
+            else:
+                directions = self.layers.get_directions_of_count(count_id)
+                for direction in directions:
+                    tab.chartList.addItem(
+                        QListWidgetItem('Par TJM, direction {}'.format(
+                            direction)))
+                    tab.charts.append(
+                        ChartTjm(self.layers, count_id, section_id, self.status,
+                                 None, direction).get_div())
+
+            tab.chartList.addItem(QListWidgetItem('Par TJM total'))
+            tab.charts.append(
+                ChartTjmTotal(self.layers, count_id, section_id,
+                              self.status).get_div())
 
         self.layers.select_and_zoom_on_section_of_count(count_id)
         if tab.chartList.currentRow() == 0:
@@ -377,3 +391,51 @@ class ChartTime(Chart):
                 self.count_id, self.status, self.direction_number,
                 self.section_id)
         return xs, ys, days
+
+
+class ChartTjm(Chart):
+    # TODO: by direction
+
+    def __init__(
+            self, layers, count_id, section_id,
+            status, lane, direction_number):
+        super().__init__(layers, count_id, section_id, status)
+        if lane:
+            self.lane_number = lane[0]
+            self.lane_id = lane[1]
+        self.direction_number = direction_number
+
+    def get_div(self):
+
+        x = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+        y = get_tjm_data_by_lane(self.count_id, self.lane_id)
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            textposition='auto'
+        )
+
+        layout = go.Layout(
+            title='TJM')
+        fig = go.Figure(data=[bar], layout=layout)
+        return plotly.offline.plot(fig, output_type='div')
+
+
+class ChartTjmTotal(Chart):
+
+    def get_div(self):
+
+        x = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+        y = get_tjm_data_total(self.count_id)
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            textposition='auto'
+        )
+
+        layout = go.Layout(
+            title='TJM')
+        fig = go.Figure(data=[bar], layout=layout)
+        return plotly.offline.plot(fig, output_type='div')
