@@ -413,7 +413,7 @@ class Layers(QObject):
         if tjm:
             wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
         if axe:
-            wheres.append("s.road ILIKE '{}%'".format(axe))
+            wheres.append("s.owner = '{}' and s.road = '{}'".format(axe[0], axe[1]))
 
         where_str = ''
         if wheres:
@@ -448,9 +448,6 @@ class Layers(QObject):
             sensor_type_id = self.get_sensor_type_id('Boucle')
         elif sensor_choice == 2:
             sensor_type_id = self.get_sensor_type_id('Tube')
-
-        if axe.lower() == "tous":
-            axe = None
 
         self.populate_list_of_highlighted_sections(
             start_date, end_date, permanent, sensor_type_id, tjm, axe)

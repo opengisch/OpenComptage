@@ -18,6 +18,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.tjm.addItem('10001-...', (10001, 99999999))
 
         # Populate axe filter
-        self.axe.addItem('Tous')
-        self.axe.addItems(
-            list(models.Section.objects.all().distinct().order_by('road').values_list('road', flat=True)))
+        self.axe.addItem('Tous', None)
+
+        for i in models.Section.objects.all().distinct('owner', 'road').order_by('owner'):
+            self.axe.addItem(i.owner + ':' + i.road, (i.owner, i.road))

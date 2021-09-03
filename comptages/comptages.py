@@ -318,7 +318,7 @@ class Comptages(QObject):
                 dlg.installation.currentIndex(),
                 dlg.sensor.currentIndex(),
                 dlg.tjm.currentData(),
-                dlg.axe.currentText(),
+                dlg.axe.currentData(),
             )
 
             if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
