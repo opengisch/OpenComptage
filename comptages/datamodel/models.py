@@ -186,7 +186,7 @@ class CountDetail(models.Model):
 
 class Tjm(models.Model):
     id = models.BigAutoField(primary_key=True)
-    day = models.DateField()
+    week_day = models.SmallIntegerField(default=0)
     lane = models.ForeignKey('Lane', models.DO_NOTHING)
     count = models.ForeignKey(Count, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2)

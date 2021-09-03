@@ -124,6 +124,21 @@ class ChartDock(QDockWidget, FORM_CLASS):
             ChartSpeed(
                 self.layers, count_id, section_id, self.status).get_div())
 
+        if not approval_process:
+            if(sensor == 'Boucle'):
+            # By lane
+                lanes = self.layers.get_lanes_of_section(section_id)
+                for i, lane in enumerate(lanes):
+                    tab.chartList.addItem(
+                        QListWidgetItem('Par TJM, voie {}'.format(
+                            lane.attribute('number'))))
+                    tab.charts.append(
+                        ChartTime(self.layers, count_id, section_id,
+                                  self.status,
+                                  (lane.attribute('number'),
+                                   lane.attribute('id')),
+                                  None).get_div())
+
         self.layers.select_and_zoom_on_section_of_count(count_id)
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
