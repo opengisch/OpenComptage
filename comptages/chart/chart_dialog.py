@@ -5,6 +5,7 @@ from datetime import datetime
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
+from comptages.core.tjm import calculate_tjm
 
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
@@ -143,6 +144,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.layers.change_status_of_count_data(
             self.count_id, tab.section_id,
             self.layers.IMPORT_STATUS_DEFINITIVE)
+        calculate_tjm(self.count_id)
         self.show_next_quarantined_chart()
 
     def refuse_count(self):
