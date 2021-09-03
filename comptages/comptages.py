@@ -321,6 +321,14 @@ class Comptages(QObject):
                 dlg.axe.currentText(),
             )
 
+            if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
+               (dlg.sensor.currentIndex() == 0) and (dlg.tjm.currentData() == None) and (dlg.axe.currentText() == 'Tous'):
+                self.filter_action.setIcon(
+                    QIcon(':/plugins/Comptages/images/filter.png'))
+            else:
+                self.filter_action.setIcon(
+                    QIcon(':/plugins/Comptages/images/filter_active.png'))
+
     def do_yearly_report_action(self):
 
         if self.tm.countActiveTasks() > 0:
