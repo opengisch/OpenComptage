@@ -394,7 +394,6 @@ class ChartTime(Chart):
 
 
 class ChartTjm(Chart):
-    # TODO: by direction
 
     def __init__(
             self, layers, count_id, section_id,
@@ -409,7 +408,7 @@ class ChartTjm(Chart):
         sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
         sensor = sensor_type.attribute('name')
 
-        x = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+        x = ['moyenne', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
         if sensor == 'Boucle':
             y = get_tjm_data_by_lane(self.count_id, self.lane_id)
             title = 'TJM voie {}'.format(self.lane_number)
@@ -418,10 +417,14 @@ class ChartTjm(Chart):
             title = 'TJM direction {}'.format(
                 self.direction_number)
 
+        colors = ['#636efa',] * 8
+        colors[0] = '#ea91bb'
+
         bar = go.Bar(
             x=x,
             y=y,
-            textposition='auto'
+            textposition='auto',
+            marker_color=colors,
         )
 
         layout = go.Layout(
@@ -434,13 +437,17 @@ class ChartTjmTotal(Chart):
 
     def get_div(self):
 
-        x = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+        x = ['moyenne', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
         y = get_tjm_data_total(self.count_id)
+
+        colors = ['#636efa',] * 8
+        colors[0] = '#ea91bb'
 
         bar = go.Bar(
             x=x,
             y=y,
-            textposition='auto'
+            textposition='auto',
+            marker_color=colors,
         )
 
         layout = go.Layout(
