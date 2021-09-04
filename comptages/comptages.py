@@ -26,6 +26,13 @@ from comptages.report.report_creator import ReportCreator
 from comptages.report.yearly_report_creator import YearlyReportCreator
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
+from comptages.datamodel import config
+
+try:
+    import qdmtk
+except ImportError:
+    pass
+
 
 
 class Comptages(QObject):
@@ -47,7 +54,15 @@ class Comptages(QObject):
         self.filter_axe = None
         self.tm = QgsApplication.taskManager()
 
+        # Register the datamodel
+        if 'qdmtk' in globals():
+            qdmtk.register_datamodel(config.DATAMODEL_NAME, config.INSTALLED_APPS, config.DATABASE)
+            self.iface.initializationCompleted.connect(qdmtk.prepare_django)
+        else:
+            self.iface.messageBar().pushMessage("Could not load QDMTK.", "You must install the QDMTK plugin prior to using Comptages", level=Qgis.Critical)
+
     def initGui(self):
+
         self.connect_db_action = QAction(
             QIcon(':/plugins/Comptages/images/power.png'),
             'Connection DB',
