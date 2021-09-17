@@ -1,11 +1,12 @@
 import os
 
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, QVariant
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
-    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils)
+    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils,
+    QgsField, QgsVectorLayerJoinInfo)
 from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
@@ -65,6 +66,8 @@ class Layers(QObject):
 
         self.apply_qml_styles()
         self.add_layer_actions()
+        self.create_virtual_fields()
+        self.create_joins()
         self.create_relations()
         iface.setActiveLayer(self.layers['section'])
 
@@ -82,6 +85,21 @@ class Layers(QObject):
             qml_file_path = os.path.join(
                 current_dir, os.pardir, 'qml', '{}.qml'.format(key))
             self.layers[key].loadNamedStyle(qml_file_path)
+
+    def create_virtual_fields(self):
+        # Total TJM
+        field = QgsField( 'total', QVariant.LongLong )
+        self.layers['tjm'].addExpressionField( 'sum( "value", group_by:="count_id")', field )
+
+    def create_joins(self):
+        # Join TJM (total virtual field) in count table
+        join = QgsVectorLayerJoinInfo()
+        join.setJoinLayer(self.layers['tjm'])
+        join.setJoinFieldName('count_id')
+        join.setTargetFieldName('id')
+        join.setUsingMemoryCache(False)
+        join.setJoinFieldNamesSubset(['total'])
+        self.layers['count'].addJoin(join)
 
     def create_relations(self):
         # Real relation

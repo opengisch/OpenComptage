@@ -117,4 +117,13 @@ LAYER_DEFINITIONS = {
         'epsg':         'EPSG:2056',
         'legend':       False
     },
+    'tjm': {
+        'table':        'tjm',
+        'display_name': 'tjm',
+        'geometry':     None,
+        'sql':          '',
+        'id':           'id',
+        'epsg':         'EPSG:2056',
+        'legend':       False
+    },
 }
