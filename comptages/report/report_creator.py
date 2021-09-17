@@ -298,6 +298,19 @@ class ReportCreator():
             new_hour[7] = hour[8] + hour[9] + hour[10] + hour[13] + hour[14]
             return new_hour
 
+        if count_data.attributes['class'] == 'SPCH-13':
+            new_hour = [0] * 8
+
+            new_hour[0] = hour[0]
+            new_hour[1] = hour[1]
+            new_hour[2] = hour[2] + hour[3]
+            new_hour[3] = hour[4] + hour[5] + hour[6]
+            new_hour[4] = hour[7]
+            new_hour[5] = hour[8]
+            new_hour[6] = hour[10] + hour[11]
+            new_hour[7] = hour[9] + hour[12] + hour[13]
+            return new_hour
+
         return hour
 
     def _translate_class_name(self, name):
@@ -316,3 +329,6 @@ class ReportCreator():
 
         if name is None:
             return 'Volume'
+
+        if name == 'SPCH-13':
+            return 'SWISS7'
