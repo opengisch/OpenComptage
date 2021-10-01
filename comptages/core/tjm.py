@@ -1,22 +1,27 @@
-from django.db.models import Count, Avg
-from django.db.models.functions import Extract
+from django.db.models import Count, Avg, Sum
+from django.db.models.functions import Extract, Cast
+from django.db.models.fields import DateField
+
 from comptages.datamodel import models
 from statistics import mean
 
 
 def calculate_tjm(count_id):
 
-    qs = models.CountDetail.objects.filter(id_count_id=count_id).annotate(week_day=Extract('timestamp', 'iso_week_day'))
+    count = models.Count.objects.get(id=count_id)
+    qs = models.CountDetail.objects.filter(
+        id_count_id=count_id,
+        timestamp__gte=count.start_process_date,
+        timestamp__lte=count.end_process_date,
+    ).annotate(date=Cast('timestamp', DateField()))
 
-    # FIXME: wrong on multiple weeks, should be average instead of sum of same days
-    for i in qs.values('week_day', 'id_lane').order_by('week_day').annotate(count=Count('times')):
+    for i in qs.values('date', 'id_lane').order_by('date').annotate(count=Count('times')):
         models.Tjm.objects.create(
-            week_day=i['week_day']-1,
+            day=i['date'],
             lane_id=i['id_lane'],
             count_id=count_id,
             value=i['count']
             )
-
 
 def get_tjm_data_by_lane(count_id, lane_id):
     qs = models.Tjm.objects.filter(count_id=count_id, lane_id=lane_id)
@@ -29,34 +34,37 @@ def get_tjm_data_by_direction(count_id, direction):
 
 
 def _get_tjm_data(qs):
-    """Return a list with the week's average at position 0 and then the
-    average of each week day"""
-    result = [[], [], [], [], [], [], [], []]
+    """Return a list with the average at position 0 and then the
+    average of each day"""
+    labels = ['moyenne']
+    result = [0]
 
     # First for each day of the week we store a list with all the values for this day
     for i in qs:
-        result[i.week_day + 1].append(float(i.value))
-
-    # Then we calculate the mean of the day or zero if there are no values
-    for count, value in enumerate(result):
-        if not value:
-            result[count] = 0
-        else:
-            result[count] = mean(value)
+        labels.append(i.day.strftime('%d/%m/%Y'))
+        result.append(float(i.value))
 
     # Then we calculate the first column of the chart with the average of the week
-    result[0] = mean(result[1:])
+    if len(result) > 1:
+        result[0] = mean(result[1:])
 
-    return result
+    return result, labels
 
 
 def get_tjm_data_total(count_id):
-
     qs = models.Tjm.objects.filter(count_id=count_id)
-    result = [0] * 8
 
-    for i in qs:
-        result[i.week_day + 1] += float(i.value)
+    labels = ['moyenne']
+    result = [0]
 
-    result[0] = mean(result[1:])
-    return result
+    # First for each day of the week we store a list with all the values for this day
+    for i in qs.values('day').order_by('day').annotate(tot=Sum('value')):
+        print(i)
+        labels.append(i['day'].strftime('%d/%m/%Y'))
+        result.append(float(i['tot']))
+
+    # Then we calculate the first column of the chart with the average of the week
+    if len(result) > 1:
+        result[0] = mean(result[1:])
+
+    return result, labels

@@ -408,16 +408,15 @@ class ChartTjm(Chart):
         sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
         sensor = sensor_type.attribute('name')
 
-        x = ['moyenne', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
         if sensor == 'Boucle':
-            y = get_tjm_data_by_lane(self.count_id, self.lane_id)
+            y, x = get_tjm_data_by_lane(self.count_id, self.lane_id)
             title = 'TJM voie {}'.format(self.lane_number)
         else:
-            y = get_tjm_data_by_direction(self.count_id, self.direction_number)
+            y, x = get_tjm_data_by_direction(self.count_id, self.direction_number)
             title = 'TJM direction {}'.format(
                 self.direction_number)
 
-        colors = ['#636efa',] * 8
+        colors = ['#636efa',] * len(x)
         colors[0] = '#ea91bb'
 
         bar = go.Bar(
@@ -430,6 +429,7 @@ class ChartTjm(Chart):
         layout = go.Layout(
             title=title)
         fig = go.Figure(data=[bar], layout=layout)
+
         return plotly.offline.plot(fig, output_type='div')
 
 
@@ -437,10 +437,9 @@ class ChartTjmTotal(Chart):
 
     def get_div(self):
 
-        x = ['moyenne', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
-        y = get_tjm_data_total(self.count_id)
+        y, x = get_tjm_data_total(self.count_id)
 
-        colors = ['#636efa',] * 8
+        colors = ['#636efa',] * len(x)
         colors[0] = '#ea91bb'
 
         bar = go.Bar(
