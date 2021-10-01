@@ -87,9 +87,9 @@ class Layers(QObject):
             self.layers[key].loadNamedStyle(qml_file_path)
 
     def create_virtual_fields(self):
-        # Total TJM
-        field = QgsField( 'total', QVariant.LongLong )
-        self.layers['tjm'].addExpressionField( 'sum( "value", group_by:="count_id")', field )
+        # TJM
+        field = QgsField( 'tjm', QVariant.LongLong )
+        self.layers['tjm'].addExpressionField( 'mean( "value", group_by:="count_id")', field )
 
     def create_joins(self):
         # Join TJM (total virtual field) in count table
@@ -98,7 +98,8 @@ class Layers(QObject):
         join.setJoinFieldName('count_id')
         join.setTargetFieldName('id')
         join.setUsingMemoryCache(False)
-        join.setJoinFieldNamesSubset(['total'])
+        join.setJoinFieldNamesSubset(['tjm'])
+        join.setPrefix('')
         self.layers['count'].addJoin(join)
 
     def create_relations(self):
