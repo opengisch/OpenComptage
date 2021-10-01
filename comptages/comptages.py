@@ -423,6 +423,7 @@ class Comptages(QObject):
         self.import_file(file_path, count_id)
 
     def do_generate_report_action(self, count_id):
+
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
@@ -430,7 +431,7 @@ class Comptages(QObject):
 
         # Show message if there are no data to process
         contains_data = self.layers.count_contains_data(count_id)
-        if not contains_data :
+        if not contains_data:
             push_info("Installation {}: Il n'y a pas de données à traiter pour "
                 "le comptage {}".format(
                 self.layers.get_installation_name_of_count(count_id),count_id))
@@ -482,6 +483,7 @@ class Comptages(QObject):
         self.layers.layers['section'].triggerRepaint()
 
     def do_generate_chart_action(self, count_id):
+
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))

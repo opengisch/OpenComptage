@@ -59,7 +59,6 @@ def get_tjm_data_total(count_id):
 
     # First for each day of the week we store a list with all the values for this day
     for i in qs.values('day').order_by('day').annotate(tot=Sum('value')):
-        print(i)
         labels.append(i['day'].strftime('%d/%m/%Y'))
         result.append(float(i['tot']))
 

@@ -234,7 +234,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Exporter la configuration',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_export_configuration_action([% $id %])")
+             "plugins['comptages'].do_export_configuration_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -243,7 +243,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Importation',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_import_single_file_action([% $id %])")
+             "plugins['comptages'].do_import_single_file_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -252,7 +252,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Creer un rapport',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_generate_report_action([% $id %])")
+             "plugins['comptages'].do_generate_report_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -261,7 +261,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Creer un plan',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_export_plan_action([% $id %])")
+             "plugins['comptages'].do_export_plan_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -270,7 +270,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Générer les graphiques',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_generate_chart_action([% $id %])")
+             "plugins['comptages'].do_generate_chart_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
