@@ -28,7 +28,7 @@ class DataImporterMC(DataImporter):
                         if line.startswith('20'):
                             self.write_row_into_db(line)
         except Exception as e:
-            self.exception = e
+            self.exception = f"Error reading line {i+1} ({line}). Value {e}"
             return False
 
         self.bulk_mgr.done()
