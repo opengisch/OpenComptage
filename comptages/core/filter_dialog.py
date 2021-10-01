@@ -1,4 +1,4 @@
-from qgis.PyQt.QtWidgets import QDialog, QCompleter, QComboBox
+from qgis.PyQt.QtWidgets import QDialog, QCompleter, QComboBox, QSlider, QDialogButtonBox
 from qgis.PyQt.QtCore import Qt
 from comptages.core.utils import get_ui_class
 from comptages.datamodel import models
@@ -11,12 +11,18 @@ class FilterDialog(QDialog, FORM_CLASS):
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        # Populate TJM filter
-        self.tjm.addItem('Tous', None)
-        self.tjm.addItem('0-100', (0, 100))
-        self.tjm.addItem('101-1000', (101, 1000))
-        self.tjm.addItem('1001-10000', (1001, 10000))
-        self.tjm.addItem('10001-...', (10001, 99999999))
+        def update_tjm_labels(min, max):
+            self.min_tjm.setNum(min)
+            self.max_tjm.setNum(max)
+            if max == 30000:
+                self.max_tjm.setText("∞")
+
+        self.tjm.setMinimum(0)
+        self.tjm.setMaximum(30000)
+        self.tjm.setSingleStep(100)
+        self.tjm.setTickInterval(5000)
+        self.tjm.setTickPosition(QSlider.TicksBothSides)
+        self.tjm.rangeChanged.connect(update_tjm_labels)
 
         # Populate axe filter
         self.axe.addItem('Tous', None)
@@ -26,3 +32,14 @@ class FilterDialog(QDialog, FORM_CLASS):
 
         for i in models.Section.objects.all().distinct('owner', 'road').order_by('owner'):
             self.axe.addItem(i.owner + ':' + i.road, (i.owner, i.road))
+
+        def reset_dialog(button):
+            self.start_date.clear()
+            self.end_date.clear()
+            self.installation.setCurrentIndex(0)
+            self.sensor.setCurrentIndex(0)
+            self.tjm.setRange(0, 90000)
+            self.axe.setCurrentIndex(0)
+
+        self.buttons.button(
+            QDialogButtonBox.Reset).clicked.connect(reset_dialog)

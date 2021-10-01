@@ -429,7 +429,10 @@ class Layers(QObject):
         if sensor_type_id:
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
         if tjm:
-            wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
+            if tjm[1] >= 30000:
+                wheres.append("t.value >= {}".format(tjm[0]))
+            else:
+                wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
         if axe:
             wheres.append("s.owner = '{}' and s.road = '{}'".format(axe[0], axe[1]))
 

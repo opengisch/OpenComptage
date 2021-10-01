@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1076</width>
-    <height>187</height>
+    <width>1252</width>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,29 +15,15 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="3">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Capteur</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Date début</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Date fin</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
+     <item row="0" column="1">
       <widget class="QgsDateTimeEdit" name="start_date">
        <property name="locale">
         <locale language="French" country="France"/>
@@ -47,40 +33,28 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Date fin</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
       <widget class="QgsDateTimeEdit" name="end_date">
        <property name="displayFormat">
         <string>dd.MM.yyyy </string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Installation</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
-      <widget class="QComboBox" name="sensor">
-       <item>
-        <property name="text">
-         <string>Tous</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Boucle</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Tube</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="4" column="2">
+     <item row="2" column="1">
       <widget class="QComboBox" name="installation">
        <item>
         <property name="text">
@@ -99,6 +73,96 @@
        </item>
       </widget>
      </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Capteur</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="sensor">
+       <item>
+        <property name="text">
+         <string>Tous</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Boucle</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tube</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>TJM</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2">
+        <widget class="QLabel" name="max_tjm">
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="min_tjm">
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QgsRangeSlider" name="tjm" native="true"/>
+       </item>
+      </layout>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Axe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QComboBox" name="axe">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Secteur</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QComboBox" name="secteur"/>
+     </item>
     </layout>
    </item>
    <item>
@@ -109,63 +173,12 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="2">
-      <widget class="QComboBox" name="secteur"/>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Secteur</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Axe</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>TJM</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QComboBox" name="tjm"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="axe">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="buttons">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>
@@ -177,11 +190,17 @@
    <extends>QDateTimeEdit</extends>
    <header>qgsdatetimeedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>QgsRangeSlider</class>
+   <extends>QWidget</extends>
+   <header>qgis.gui.QgsRangeSlider</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttons</sender>
    <signal>accepted()</signal>
    <receiver>Filter</receiver>
    <slot>accept()</slot>
@@ -197,7 +216,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>buttons</sender>
    <signal>rejected()</signal>
    <receiver>Filter</receiver>
    <slot>reject()</slot>
