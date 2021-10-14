@@ -48,7 +48,7 @@ class YearlyReportBike():
         # TODO: don't divide by 51 but actually aggregate first by the
         # real days (with sum) and then aggregate by weekday (with average)
 
-        # Total by day of the week (0->monday, 7->sunday) and by hour (0->23)
+        # Total by day of the week (0->monday, 6->sunday) and by hour (0->23)
         result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
                    .annotate(hour=ExtractHour('timestamp')) \
                    .values('weekday', 'hour') \
@@ -57,12 +57,13 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_hour_and_direction(self, direction):
+    def values_by_hour_and_direction(self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_lane__direction=direction,
+            timestamp__iso_week_day__in=weekdays,
         )
 
         # TODO: don't divide by 365
@@ -85,7 +86,7 @@ class YearlyReportBike():
         # TODO: don't divide by 12 but actually aggregate first by the
         # real days (with sum) and then aggregate by weekday (with average)
 
-        # Total by day of the week (0->monday, 7->sunday) and by month (1->12)
+        # Total by day of the week (0->monday, 6->sunday) and by month (1->12)
         result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
                    .annotate(month=ExtractMonth('timestamp')) \
                    .values('weekday', 'month') \
@@ -319,6 +320,33 @@ class YearlyReportBike():
         column_offset = 4
 
         data = self.values_by_hour_and_direction(2)
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
+
+        # Weekend days only
+        row_offset = 37
+        column_offset = 3
+
+        data = self.values_by_hour_and_direction(1, [5, 6])
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
+
+        row_offset = 37
+        column_offset = 4
+
+        data = self.values_by_hour_and_direction(2, [5, 6])
         row = row_offset
         for i in data:
             ws.cell(
