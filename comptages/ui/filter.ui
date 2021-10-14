@@ -117,7 +117,7 @@
           </size>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string>max</string>
          </property>
         </widget>
        </item>
@@ -130,12 +130,26 @@
           </size>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string>min</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QgsRangeSlider" name="tjm" native="true"/>
+        <widget class="QSpinBox" name="tjm_min">
+         <property name="maximum">
+          <number>30000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QSpinBox" name="tjm_max">
+         <property name="maximum">
+          <number>30000</number>
+         </property>
+         <property name="value">
+          <number>30000</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -189,12 +203,6 @@
    <class>QgsDateTimeEdit</class>
    <extends>QDateTimeEdit</extends>
    <header>qgsdatetimeedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QgsRangeSlider</class>
-   <extends>QWidget</extends>
-   <header>qgis.gui.QgsRangeSlider</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
