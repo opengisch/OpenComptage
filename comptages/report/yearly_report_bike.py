@@ -10,7 +10,7 @@ from django.db.models.functions import ExtractIsoWeekDay, ExtractHour, ExtractMo
 
 from openpyxl import load_workbook
 
-from comptages.datamodel.models import CountDetail
+from comptages.datamodel.models import CountDetail, Section
 
 
 class YearlyReportBike():
@@ -76,6 +76,39 @@ class YearlyReportBike():
 
         return result
 
+    def values_by_day(self):
+        # Get all the count details for section and the year
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+        )
+
+        # Group by date
+        result = qs.annotate(date=Cast('timestamp', DateField())) \
+                   .values('date') \
+                   .annotate(tjm=Sum('times')) \
+                   .values('date', 'tjm')
+
+        return result
+
+    def values_by_day_of_week(self):
+        # Get all the count details for section and the year
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+        )
+
+        # TODO: don't divide by 51 but actually aggregate first by the
+        # real days (with sum) and then aggregate by weekday (with average)
+
+        # Group by day of the week (0->monday, 7->sunday)
+        result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
+                   .values('weekday') \
+                   .annotate(tjm=Sum('times') / 51) \
+                   .values('weekday', 'tjm')
+
+        return result
+
     def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
 
         qs = CountDetail.objects.filter(
@@ -133,6 +166,47 @@ class YearlyReportBike():
         template = os.path.join(current_dir, 'template_yearly_bike.xlsx')
         workbook = load_workbook(filename=template)
 
+        ws = workbook['Data_count']
+
+        section = Section.objects.get(id=self.section_id)
+        ws['B3'] = ('Poste de comptage : {}  Axe : {}:{}{}  '
+                    'PR {} + {} m à PR {} + {} m').format(
+                        section.id,
+                        section.owner,
+                        section.road,
+                        section.way,
+                        section.start_pr,
+                        int(round(section.start_dist)),
+                        section.end_pr,
+                        int(round(section.end_dist)))
+
+        ws['B4'] = 'Periode de comptage du 01/01/{0} au 31/12/{0}'.format(
+            self.year)
+
+        ws['B5'] = 'Comptage {}'.format(self.year)
+
+        # ws['B6'] = 'Type de capteur : {}'.format(
+        #     count_data.attributes['sensor_type'])
+        # ws['B7'] = 'Modèle : {}'.format(
+        #     count_data.attributes['model'])
+        # ws['B8'] = 'Classification : {}'.format(
+        #     count_data.attributes['class'])
+
+        # ws['B9'] = 'Comptage véhicule par véhicule'
+        # if count_data.attributes['aggregate']:
+        #     ws['B9'] = 'Comptage par interval'
+
+        # ws['B11'] = count_data.attributes['place_name']
+
+        # ws['B12'] = 'Remarque : {}'.format(
+        #     count_data.attributes['remarks']
+        #     if type(count_data.attributes['remarks']) == str else '')
+
+        # ws['B13'] = count_data.attributes['dir1']
+
+        # if 'dir2' in count_data.attributes:
+        #     ws['B14'] = count_data.attributes['dir2']
+
         ws = workbook['AN_TE']
 
         row_offset = 14
@@ -175,6 +249,39 @@ class YearlyReportBike():
 
         ws['J41'] = self.min_month()[0]
         ws['k41'] = self.min_month()[1]
+
+        ws = workbook['Data_year']
+        row_offset = 4
+        column_offset = 1
+
+        data = self.values_by_day()
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['date']
+            )
+            ws.cell(
+                row=row,
+                column=column_offset + 1,
+                value=i['tjm']
+            )
+            row += 1
+
+        ws = workbook['Data_week']
+        row_offset = 4
+        column_offset = 2
+
+        data = self.values_by_day_of_week()
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
 
         # Save the file
         output = os.path.join(
