@@ -57,6 +57,24 @@ class YearlyReportBike():
 
         return result
 
+    def values_by_hour_and_direction(self, direction):
+        # Get all the count details for section and the year
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+            id_lane__direction=direction,
+        )
+
+        # TODO: don't divide by 365
+
+        # Total by hour (0->23)
+        result = qs.annotate(hour=ExtractHour('timestamp')) \
+                   .values('hour') \
+                   .annotate(tjm=Sum('times') / 365) \
+                   .values('hour', 'tjm')
+
+        return result
+
     def values_by_day_and_month(self):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
@@ -274,6 +292,33 @@ class YearlyReportBike():
         column_offset = 2
 
         data = self.values_by_day_of_week()
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
+
+        ws = workbook['Data_hour']
+        row_offset = 5
+        column_offset = 3
+
+        data = self.values_by_hour_and_direction(1)
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
+
+        row_offset = 5
+        column_offset = 4
+
+        data = self.values_by_hour_and_direction(2)
         row = row_offset
         for i in data:
             ws.cell(
