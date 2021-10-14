@@ -24,6 +24,7 @@ from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
 from comptages.report.yearly_report_creator import YearlyReportCreator
+from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
@@ -372,9 +373,14 @@ class Comptages(QObject):
             if not file_path:
                 return
 
-            yearly_report_creator = YearlyReportCreator(
-                file_path, self.layers, year, section_id, clazz)
-            yearly_report_creator.run()
+            if clazz.startswith("SPCH-MD"):
+                yrb = YearlyReportBike(file_path, year, section_id)
+                yrb.run()
+            else:
+                yearly_report_creator = YearlyReportCreator(
+                    file_path, self.layers, year, section_id, clazz)
+                yearly_report_creator.run()
+
 
             push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
                       .format(section_id, year))
