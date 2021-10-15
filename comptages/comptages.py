@@ -46,6 +46,7 @@ class Comptages(QObject):
         self.filter_sensor = None
         self.filter_tjm = None
         self.filter_axe = None
+        self.filter_sector = None
         self.tm = QgsApplication.taskManager()
 
     def initGui(self):
@@ -311,6 +312,9 @@ class Comptages(QObject):
         if self.filter_axe:
             dlg.axe.setCurrentIndex(self.filter_axe)
 
+        if self.filter_sector:
+            dlg.sector.setCurrentIndex(self.filter_sector)
+
         if dlg.exec_():
             self.filter_start_date = dlg.start_date.dateTime()
             self.filter_end_date = dlg.end_date.dateTime()
@@ -319,6 +323,7 @@ class Comptages(QObject):
             # self.filter_tjm = [dlg.tjm.lowerValue(), dlg.tjm.upperValue()]
             self.filter_tjm = [dlg.tjm_min.value(), dlg.tjm_max.value()]
             self.filter_axe = dlg.axe.currentIndex()
+            self.filter_sector = dlg.sector.currentIndex()
 
             self.layers.apply_filter(
                 dlg.start_date.dateTime().toString('yyyy-MM-dd'),
@@ -327,11 +332,12 @@ class Comptages(QObject):
                 dlg.sensor.currentIndex(),
                 [self.filter_tjm[0], self.filter_tjm[1]],
                 dlg.axe.currentData(),
+                dlg.sector.currentData(),
             )
 
             if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
                (dlg.sensor.currentIndex() == 0) and (dlg.tjm_min.value() == 0) and (dlg.tjm_max.value() == 30000) and \
-               (dlg.axe.currentText() == 'Tous'):
+               (dlg.axe.currentText() == 'Tous') and (dlg.sector.currentText() == 'Tous'):
                 self.filter_action.setIcon(
                     QIcon(':/plugins/Comptages/images/filter.png'))
             else:

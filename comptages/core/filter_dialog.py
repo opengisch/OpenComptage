@@ -35,6 +35,11 @@ class FilterDialog(QDialog, FORM_CLASS):
         for i in models.Section.objects.all().distinct('owner', 'road').order_by('owner'):
             self.axe.addItem(i.owner + ':' + i.road, (i.owner, i.road))
 
+        # Populate sector filter
+        self.sector.addItem('Tous', None)
+        for i in models.Sector.objects.all().order_by('id'):
+            self.sector.addItem(str(i.id), i.id)
+
         def reset_dialog(button):
             self.start_date.clear()
             self.end_date.clear()
@@ -44,6 +49,7 @@ class FilterDialog(QDialog, FORM_CLASS):
             self.tjm_min.setValue(0)
             self.tjm_max.setValue(30000)
             self.axe.setCurrentIndex(0)
+            self.sector.setCurrentIndex(0)
 
         self.buttons.button(
             QDialogButtonBox.Reset).clicked.connect(reset_dialog)

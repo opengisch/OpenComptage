@@ -360,3 +360,11 @@ class SpecialPeriod(models.Model):
 
     class Meta:
         db_table = 'special_period'
+
+
+class Sector(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    geometry = models.GeometryField(blank=True, null=True, srid=2056)
+
+    class Meta:
+        db_table = 'sector'

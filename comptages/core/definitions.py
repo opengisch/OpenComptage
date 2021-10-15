@@ -126,4 +126,13 @@ LAYER_DEFINITIONS = {
         'epsg':         'EPSG:2056',
         'legend':       False
     },
+    'sector': {
+        'table':        'sector',
+        'display_name': 'secteur',
+        'geometry':     'geometry',
+        'sql':          '',
+        'id':           'id',
+        'epsg':         'EPSG:2056',
+        'legend':       True
+    },
 }
