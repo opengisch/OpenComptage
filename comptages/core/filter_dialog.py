@@ -33,7 +33,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.axe.setInsertPolicy(QComboBox.NoInsert)
 
         for i in models.Section.objects.all().distinct('owner', 'road').order_by('owner'):
-            self.axe.addItem(i.owner + ':' + i.road, (i.owner, i.road))
+            self.axe.addItem(str(i.owner) + ':' + str(i.road), (i.owner, i.road))
 
         # Populate sector filter
         self.sector.addItem('Tous', None)
