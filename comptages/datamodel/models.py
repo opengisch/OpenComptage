@@ -80,6 +80,7 @@ class Count(models.Model):
     id_sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING, db_column='id_sensor_type')
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class', blank=True, null=True)
     id_installation = models.ForeignKey('Installation', models.DO_NOTHING, db_column='id_installation')
+    tjm = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
     class Meta:
         db_table = 'count'

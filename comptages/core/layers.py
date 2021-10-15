@@ -87,20 +87,10 @@ class Layers(QObject):
             self.layers[key].loadNamedStyle(qml_file_path)
 
     def create_virtual_fields(self):
-        # TJM
-        field = QgsField( 'tjm', QVariant.LongLong )
-        self.layers['tjm'].addExpressionField( 'mean( "value", group_by:="count_id")', field )
+        pass
 
     def create_joins(self):
-        # Join TJM (total virtual field) in count table
-        join = QgsVectorLayerJoinInfo()
-        join.setJoinLayer(self.layers['tjm'])
-        join.setJoinFieldName('count_id')
-        join.setTargetFieldName('id')
-        join.setUsingMemoryCache(False)
-        join.setJoinFieldNamesSubset(['tjm'])
-        join.setPrefix('')
-        self.layers['count'].addJoin(join)
+        pass
 
     def create_relations(self):
         # Real relation
@@ -431,9 +421,9 @@ class Layers(QObject):
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
         if tjm:
             if tjm[1] >= 30000:
-                wheres.append("t.value >= {}".format(tjm[0]))
+                wheres.append("c.tjm >= {}".format(tjm[0]))
             else:
-                wheres.append("t.value between {} and {}".format(tjm[0], tjm[1]))
+                wheres.append("c.tjm between {} and {}".format(tjm[0], tjm[1]))
         if axe:
             wheres.append("s.owner = '{}' and s.road = '{}'".format(axe[0], axe[1]))
 
@@ -445,8 +435,6 @@ class Layers(QObject):
                      "inner join comptages.installation as i on "
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
-                     "left join comptages.tjm as t on "
-                     "(l.id = t.lane_id) "
                      "inner join comptages.section as s on"
                      "(l.id_section = s.id) "
                      "{};".format(where_str))

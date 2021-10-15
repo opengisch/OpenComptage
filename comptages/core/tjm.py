@@ -15,13 +15,24 @@ def calculate_tjm(count_id):
         timestamp__lte=count.end_process_date,
     ).annotate(date=Cast('timestamp', DateField()))
 
-    for i in qs.values('date', 'id_lane').order_by('date').annotate(count=Count('times')):
+    values = qs.values('date', 'id_lane').order_by('date').annotate(count=Count('times'))
+
+    for i in values:
         models.Tjm.objects.create(
             day=i['date'],
             lane_id=i['id_lane'],
             count_id=count_id,
             value=i['count']
             )
+
+    # We store the total tjm into the count table
+    average = models.Tjm.objects.filter(count_id=count_id) \
+                                .values('day') \
+                                .annotate(part=Sum('value')) \
+                                .aggregate(tjm=Avg('part'))
+
+    count.tjm = average['tjm']
+    count.save()
 
 def get_tjm_data_by_lane(count_id, lane_id):
     qs = models.Tjm.objects.filter(count_id=count_id, lane_id=lane_id)
