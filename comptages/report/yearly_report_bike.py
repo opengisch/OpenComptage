@@ -10,7 +10,7 @@ from django.db.models.functions import ExtractIsoWeekDay, ExtractHour, ExtractMo
 
 from openpyxl import load_workbook
 
-from comptages.datamodel.models import CountDetail, Section
+from comptages.datamodel.models import CountDetail, Section, Lane
 
 
 class YearlyReportBike():
@@ -27,7 +27,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
-            id_category__code__in=[1, 2],
+            # id_category__code__in=[1, 2],
         )
 
         # Total by day of the week (0->monday, 7->sunday) and by direction
@@ -128,6 +128,17 @@ class YearlyReportBike():
 
         return result
 
+    def values_by_class(self):
+        # Get all the count details for section and the year
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+        )
+
+        # Group by day of the week (0->monday, 7->sunday)
+        result = qs.annotate(res=Sum('times')).values('res').annotate(cat='id_category').values('res', 'cat.code')
+        return result
+
     def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
 
         qs = CountDetail.objects.filter(
@@ -204,27 +215,27 @@ class YearlyReportBike():
 
         ws['B5'] = 'Comptage {}'.format(self.year)
 
-        # ws['B6'] = 'Type de capteur : {}'.format(
-        #     count_data.attributes['sensor_type'])
-        # ws['B7'] = 'Modèle : {}'.format(
-        #     count_data.attributes['model'])
-        # ws['B8'] = 'Classification : {}'.format(
-        #     count_data.attributes['class'])
+        # Get one count for the section and the year to get the base data
+        count_detail = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+        )[0]
+        count = count_detail.id_count
 
-        # ws['B9'] = 'Comptage véhicule par véhicule'
-        # if count_data.attributes['aggregate']:
-        #     ws['B9'] = 'Comptage par interval'
+        ws['B6'] = 'Type de capteur : {}'.format(count.id_sensor_type.name)
+        ws['B7'] = 'Modèle : {}'.format(count.id_model.name)
+        ws['B8'] = 'Classification : {}'.format(count.id_class.name)
+        ws['B9'] = 'Comptage véhicule par véhicule'
 
-        # ws['B11'] = count_data.attributes['place_name']
+        ws['B12'] = 'Remarque : {}'.format(count.remarks)
 
-        # ws['B12'] = 'Remarque : {}'.format(
-        #     count_data.attributes['remarks']
-        #     if type(count_data.attributes['remarks']) == str else '')
+        lanes = Lane.objects.filter(id_installation=count.id_installation)
 
-        # ws['B13'] = count_data.attributes['dir1']
+        ws['B13'] = lanes[0].direction_desc
+        if(len(lanes) > 1):
+            ws['B14'] = lanes[1].direction_desc
 
-        # if 'dir2' in count_data.attributes:
-        #     ws['B14'] = count_data.attributes['dir2']
+        ws['B11'] = lanes[0].id_section.place_name
 
         ws = workbook['AN_TE']
 
@@ -355,6 +366,21 @@ class YearlyReportBike():
                 value=i['tjm']
             )
             row += 1
+
+        # ws = workbook['Data_class']
+        # row_offset = 4
+        # column_offset = 1
+
+        # data = self.values_by_class()
+        # print(data)
+        # row = row_offset
+        # for i in data:
+        #     ws.cell(
+        #         row=row,
+        #         column=column_offset,
+        #         value=i['tjm']
+        #     )
+        #     row += 1
 
         # Save the file
         output = os.path.join(
