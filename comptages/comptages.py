@@ -345,6 +345,9 @@ class Comptages(QObject):
                     QIcon(':/plugins/Comptages/images/filter_active.png'))
 
     def do_yearly_report_action(self):
+        QgsMessageLog.logMessage(
+            'Generate yearly report action started {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
@@ -398,6 +401,10 @@ class Comptages(QObject):
 
             # TODO: check if there are comptages for this section and year
 
+        QgsMessageLog.logMessage(
+            'Generate yearly report action ended {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
     def do_import_ics_action(self):
         IcsImporter(self.layers)
 
@@ -440,6 +447,9 @@ class Comptages(QObject):
         self.import_file(file_path, count_id)
 
     def do_generate_report_action(self, count_id):
+        QgsMessageLog.logMessage(
+            'Generate report action started {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
@@ -468,6 +478,10 @@ class Comptages(QObject):
         report_creator.run()
         push_info("Installation {} (count={}): Génération du rapport terminée."
          .format(self.layers.get_installation_name_of_count(count_id),count_id))
+
+        QgsMessageLog.logMessage(
+            'Generate report action ended {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
@@ -500,12 +514,19 @@ class Comptages(QObject):
         self.layers.layers['section'].triggerRepaint()
 
     def do_generate_chart_action(self, count_id):
+        QgsMessageLog.logMessage(
+            'Generate chart action started {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
         self.chart_dock.set_attributes(count_id)
+
+        QgsMessageLog.logMessage(
+            'Generate chart action ended {}'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
