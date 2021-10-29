@@ -15,8 +15,8 @@ def calculate_tjm(count_id):
 
     qs = models.CountDetail.objects.filter(
         id_count_id=count_id,
-        timestamp__gte=count.start_process_date,
-        timestamp__lte=count.end_process_date,
+        timestamp__date__gte=count.start_process_date,
+        timestamp__date__lte=count.end_process_date,
     ).annotate(date=Cast('timestamp', DateField()))
 
     values = qs.values('date', 'id_lane').order_by('date').annotate(count=Count('times'))
