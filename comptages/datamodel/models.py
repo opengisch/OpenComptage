@@ -364,7 +364,7 @@ class SpecialPeriod(models.Model):
 
 class Sector(models.Model):
     id = models.BigAutoField(primary_key=True)
-    geometry = models.GeometryField(blank=True, null=True, srid=2056)
+    geometry = models.PolygonField(blank=True, null=True, srid=2056)
 
     class Meta:
         db_table = 'sector'
