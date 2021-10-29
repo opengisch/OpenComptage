@@ -12,6 +12,7 @@ from qgis.utils import iface
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
 from comptages.core.utils import push_info, connect_to_db
+from comptages.datamodel import models
 
 
 class Layers(QObject):
@@ -170,18 +171,22 @@ class Layers(QObject):
         index = data_provider.fieldNameIndex('id_device')
         self.layers['count'].setEditorWidgetSetup(index, widget)
 
+        models_1 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(1))+")"
+        models_2 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(2))+")"
+        models_3 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(3))+")"
+
         widget = QgsEditorWidgetSetup(
             'ValueRelation',
             {
                 'AllowMulti':       False,
                 'AllowNull':        False,
-                'FilterExpression': '',
-                # """
-                # CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN ('1', '2', '4', '6', '7')
-                # WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN ('1', '3', '5')
-                # WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN ('12')
-                # ELSE \"id\"
-                # END""",
+                'FilterExpression':
+                f"""
+                CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN {models_1}
+                WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN {models_2}
+                WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN {models_3}
+                ELSE \"id\"
+                END""",
                 'Key':              'id',
                 'Layer':            self.layers['model'].id(),
                 'OrderByValue':     False,
@@ -1497,3 +1502,13 @@ class Layers(QObject):
         if query.next():
             return query.value(0)
         return None
+
+    def get_models_by_sensor_type(self, sensor_type):
+        qs = models.SensorTypeModel.objects.filter(
+            id_sensor_type=sensor_type)
+
+        result = []
+        for i in qs:
+            result.append(i.id_model.id)
+        return result
+
