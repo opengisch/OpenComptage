@@ -218,6 +218,10 @@ class Comptages(QObject):
             self.import_file(file_path)
 
     def import_file(self, file_path, count_id=None):
+        QgsMessageLog.logMessage(
+            '{} - Prepare import file {} started'.format(
+                datetime.now(), os.path.basename(file_path)),
+            'Comptages', Qgis.Info)
 
         # Manage binary files
         with open(file_path, 'rb') as fd:
@@ -251,7 +255,13 @@ class Comptages(QObject):
             return
 
         QgsMessageLog.logMessage(
-            'Importation {}'.format(os.path.basename(file_path)),
+            '{} - Prepare import file {}'.format(
+                datetime.now(), os.path.basename(file_path)),
+            'Comptages', Qgis.Info)
+
+        QgsMessageLog.logMessage(
+            '{} - Import file {} started'.format(
+                datetime.now(), os.path.basename(file_path)),
             'Comptages', Qgis.Info)
 
         file_format = file_header['FORMAT']
@@ -276,6 +286,10 @@ class Comptages(QObject):
         self.tm.allTasksFinished.disconnect(self.task_finished)
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
+        QgsMessageLog.logMessage(
+            '{} - All tasks ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         self.chart_dock.show_next_quarantined_chart()
 
     def do_validate_imported_files_action(self):
@@ -346,7 +360,7 @@ class Comptages(QObject):
 
     def do_yearly_report_action(self):
         QgsMessageLog.logMessage(
-            'Generate yearly report action started {}'.format(datetime.now()),
+            '{} - Generate yearly report action started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
@@ -402,7 +416,7 @@ class Comptages(QObject):
             # TODO: check if there are comptages for this section and year
 
         QgsMessageLog.logMessage(
-            'Generate yearly report action ended {}'.format(datetime.now()),
+            '{} - Generate yearly report action ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
     def do_import_ics_action(self):
@@ -448,7 +462,7 @@ class Comptages(QObject):
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
-            'Generate report action started {}'.format(datetime.now()),
+            '{} - Generate report action started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
@@ -480,7 +494,7 @@ class Comptages(QObject):
          .format(self.layers.get_installation_name_of_count(count_id),count_id))
 
         QgsMessageLog.logMessage(
-            'Generate report action ended {}'.format(datetime.now()),
+            '{} - Generate report action'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
@@ -515,7 +529,7 @@ class Comptages(QObject):
 
     def do_generate_chart_action(self, count_id):
         QgsMessageLog.logMessage(
-            'Generate chart action started {}'.format(datetime.now()),
+            '{} - Generate chart action started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
@@ -525,7 +539,7 @@ class Comptages(QObject):
         self.chart_dock.set_attributes(count_id)
 
         QgsMessageLog.logMessage(
-            'Generate chart action ended {}'.format(datetime.now()),
+            '{} - Generate chart action ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
     def enable_actions_if_needed(self):

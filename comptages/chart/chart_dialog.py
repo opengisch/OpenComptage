@@ -3,6 +3,7 @@ import plotly.graph_objs as go
 from datetime import datetime
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
+from qgis.core import QgsMessageLog, Qgis
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
 from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
@@ -169,6 +170,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.chart_selection_changed(0)
 
     def validate_count(self):
+        QgsMessageLog.logMessage(
+            '{} - Accept data started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         tab = self.tabWidget.currentWidget()
         self.layers.change_status_of_count_data(
             self.count_id, tab.section_id,
@@ -176,14 +181,30 @@ class ChartDock(QDockWidget, FORM_CLASS):
         calculate_tjm(self.count_id)
         self.show_next_quarantined_chart()
 
+        QgsMessageLog.logMessage(
+            '{} - Accept data ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
     def refuse_count(self):
+        QgsMessageLog.logMessage(
+            '{} - Reject data started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         tab = self.tabWidget.currentWidget()
         self.layers.delete_count_data(
             self.count_id, tab.section_id,
             self.layers.IMPORT_STATUS_QUARANTINE)
         self.show_next_quarantined_chart()
 
+        QgsMessageLog.logMessage(
+            '{} - Reject data ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
     def show_next_quarantined_chart(self):
+        QgsMessageLog.logMessage(
+            '{} - Generate validation chart started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         quarantined_counts = self.layers.get_quarantined_counts()
         if not quarantined_counts:
             self.hide()
@@ -193,6 +214,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.set_attributes(quarantined_counts[0], True)
         self.show()
 
+        QgsMessageLog.logMessage(
+            '{} - Generate validation chart ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
 TAB_CLASS = get_ui_class('chart_tab.ui')
 

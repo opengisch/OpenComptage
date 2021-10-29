@@ -32,13 +32,15 @@ class DataImporter(QgsTask):
     def finished(self, result):
         if result:
             QgsMessageLog.logMessage(
-                'Importation terminée {}'.format(self.basename),
+                '{} - Import file {} ended'.format(
+                    datetime.now(), self.basename),
                 'Comptages', Qgis.Info)
+
         else:
             QgsMessageLog.logMessage(
-                'Importation terminée avec des erreurs {}: {}'.format(
-                    self.basename, self.exception),
-                'Comptages', Qgis.Critical)
+                '{} - Import file {} ended with errors: {}'.format(
+                    datetime.now(), self.basename, self.exception),
+                'Comptages', Qgis.Info)
 
         self.db.close()
         del self.db
