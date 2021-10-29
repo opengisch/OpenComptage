@@ -9,6 +9,10 @@ from statistics import mean
 def calculate_tjm(count_id):
 
     count = models.Count.objects.get(id=count_id)
+
+    # Delete previous values for this count
+    models.Tjm.objects.filter(count_id=count_id).delete()
+
     qs = models.CountDetail.objects.filter(
         id_count_id=count_id,
         timestamp__gte=count.start_process_date,
