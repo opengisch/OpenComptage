@@ -39,12 +39,12 @@ def calculate_tjm(count_id):
     count.save()
 
 def get_tjm_data_by_lane(count_id, lane_id):
-    qs = models.Tjm.objects.filter(count_id=count_id, lane_id=lane_id)
+    qs = models.Tjm.objects.filter(count_id=count_id, lane_id=lane_id).order_by('day')
     return _get_tjm_data(qs)
 
 
 def get_tjm_data_by_direction(count_id, direction):
-    qs = models.Tjm.objects.filter(count_id=count_id, lane__direction=direction)
+    qs = models.Tjm.objects.filter(count_id=count_id, lane__direction=direction).order_by('day')
     return _get_tjm_data(qs)
 
 
