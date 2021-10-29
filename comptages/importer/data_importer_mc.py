@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlQuery
@@ -66,7 +66,8 @@ class DataImporterMC(DataImporter):
             self.numbering += 1
             parsed_line['numbering'] = self.numbering
             parsed_line['timestamp'] = datetime.strptime(
-                line[0:19], "%Y-%m-%d %H:%M:%S")
+                line[0:19], "%Y-%m-%d %H:%M:%S").replace(
+                    tzinfo=timezone.utc)
 
             # On MetroCount files, the direction is 0-1 instead of 1-2
             parsed_line['lane'] = int(line[22:23]) + 1

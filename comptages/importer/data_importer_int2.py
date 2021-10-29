@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from qgis.PyQt.QtSql import QSqlQuery
 
@@ -60,11 +60,13 @@ class DataImporterInt2(DataImporter):
         if line[7:9] == '24':
             line = line[:7] + '00' + line[9:]
             end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M")
+                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
+                    tzinfo=timezone.utc)
             end += timedelta(days=1)
         else:
             end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M")
+                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
+                    tzinfo=timezone.utc)
 
         parsed_line['end'] = end
         parsed_line['start'] = parsed_line['end'] - timedelta(
