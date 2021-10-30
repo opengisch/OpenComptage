@@ -7,8 +7,8 @@ from comptages.importer.data_importer import DataImporter
 
 
 class DataImporterInt2(DataImporter):
-    def __init__(self, file_path, count_id):
-        super().__init__(file_path, count_id)
+    def __init__(self, file_path, count_id, db):
+        super().__init__(file_path, count_id, db)
         self.intspec = self.get_intspec()
         self.number_of_lines = self.get_number_of_lines()
 

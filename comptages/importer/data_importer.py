@@ -10,13 +10,13 @@ from comptages.core.utils import connect_to_db
 
 class DataImporter(QgsTask):
 
-    def __init__(self, file_path, count_id):
+    def __init__(self, file_path, count_id, db):
         self.basename = os.path.basename(file_path)
         super().__init__(
             'Importation fichier {}'.format(self.basename))
         self.file_path = file_path
         self.count_id = count_id
-        self.db = connect_to_db()
+        self.db = db
         self.file_header = self.parse_file_header(self.file_path)
         self.lanes = dict()
         self.populate_lane_dict()
@@ -42,8 +42,6 @@ class DataImporter(QgsTask):
                     datetime.now(), self.basename, self.exception),
                 'Comptages', Qgis.Info)
 
-        self.db.close()
-        del self.db
 
     def cancel(self):
         # TODO: Cancel needed?
@@ -64,6 +62,8 @@ class DataImporter(QgsTask):
         query.exec_(query_str)
         while query.next():
             self.lanes[int(query.value(0))] = int(query.value(1))
+
+        # e.g. self.lanes = {1: 435, 2: 436}
 
     def populate_category_dict(self):
         if 'CLASS' not in self.file_header:
@@ -86,6 +86,8 @@ class DataImporter(QgsTask):
         query.exec_(query_str)
         while query.next():
             self.categories[int(query.value(0))] = int(query.value(1))
+
+        # e.g. self.categories = {0: 922, 1: 22, 2: 23, 3: 24, 4: 25, 5: 26, 6: 27, 7: 28, 8: 29, 9: 30, 10: 31}
 
     @staticmethod
     def parse_file_header(file_path):
