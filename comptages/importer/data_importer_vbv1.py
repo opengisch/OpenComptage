@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
@@ -8,8 +8,8 @@ from .bulk_create_manager import BulkCreateManager
 
 class DataImporterVbv1(DataImporter):
 
-    def __init__(self, file_path, count_id):
-        super().__init__(file_path, count_id)
+    def __init__(self, file_path, count_id, db):
+        super().__init__(file_path, count_id, db)
         self.instances = []
         self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
@@ -55,6 +55,7 @@ class DataImporterVbv1(DataImporter):
             )
         )
 
+
     def parse_data_line(self, line):
         parsed_line = None
         try:
@@ -62,7 +63,8 @@ class DataImporterVbv1(DataImporter):
 
             parsed_line['numbering'] = line[0:6]
             parsed_line['timestamp'] = datetime.strptime(
-                "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f")
+                "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f").replace(
+                    tzinfo=timezone.utc)
             parsed_line['reserve_code'] = line[25:31]
             parsed_line['lane'] = int(line[32:34])
             parsed_line['direction'] = int(line[35:36])

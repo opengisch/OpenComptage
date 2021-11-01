@@ -3,8 +3,10 @@ import plotly.graph_objs as go
 from datetime import datetime
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
+from qgis.core import QgsMessageLog, Qgis
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
+from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
 
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
@@ -123,6 +125,35 @@ class ChartDock(QDockWidget, FORM_CLASS):
             ChartSpeed(
                 self.layers, count_id, section_id, self.status).get_div())
 
+        if not approval_process:
+            if(sensor == 'Boucle'):
+            # By TJM
+                lanes = self.layers.get_lanes_of_section(section_id)
+                for i, lane in enumerate(lanes):
+                    tab.chartList.addItem(
+                        QListWidgetItem('Par TJM voie {}'.format(
+                            lane.attribute('number'))))
+                    tab.charts.append(
+                        ChartTjm(self.layers, count_id, section_id,
+                                 self.status,
+                                 (lane.attribute('number'),
+                                  lane.attribute('id')),
+                                 None).get_div())
+            else:
+                directions = self.layers.get_directions_of_count(count_id)
+                for direction in directions:
+                    tab.chartList.addItem(
+                        QListWidgetItem('Par TJM direction {}'.format(
+                            direction)))
+                    tab.charts.append(
+                        ChartTjm(self.layers, count_id, section_id, self.status,
+                                 None, direction).get_div())
+
+            tab.chartList.addItem(QListWidgetItem('Par TJM total'))
+            tab.charts.append(
+                ChartTjmTotal(self.layers, count_id, section_id,
+                              self.status).get_div())
+
         self.layers.select_and_zoom_on_section_of_count(count_id)
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
@@ -139,20 +170,41 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.chart_selection_changed(0)
 
     def validate_count(self):
+        QgsMessageLog.logMessage(
+            '{} - Accept data started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         tab = self.tabWidget.currentWidget()
         self.layers.change_status_of_count_data(
             self.count_id, tab.section_id,
             self.layers.IMPORT_STATUS_DEFINITIVE)
+        calculate_tjm(self.count_id)
         self.show_next_quarantined_chart()
 
+        QgsMessageLog.logMessage(
+            '{} - Accept data ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
     def refuse_count(self):
+        QgsMessageLog.logMessage(
+            '{} - Reject data started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         tab = self.tabWidget.currentWidget()
         self.layers.delete_count_data(
             self.count_id, tab.section_id,
             self.layers.IMPORT_STATUS_QUARANTINE)
         self.show_next_quarantined_chart()
 
+        QgsMessageLog.logMessage(
+            '{} - Reject data ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
     def show_next_quarantined_chart(self):
+        QgsMessageLog.logMessage(
+            '{} - Generate validation chart started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         quarantined_counts = self.layers.get_quarantined_counts()
         if not quarantined_counts:
             self.hide()
@@ -162,6 +214,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.set_attributes(quarantined_counts[0], True)
         self.show()
 
+        QgsMessageLog.logMessage(
+            '{} - Generate validation chart ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
 TAB_CLASS = get_ui_class('chart_tab.ui')
 
@@ -360,3 +415,65 @@ class ChartTime(Chart):
                 self.count_id, self.status, self.direction_number,
                 self.section_id)
         return xs, ys, days
+
+
+class ChartTjm(Chart):
+
+    def __init__(
+            self, layers, count_id, section_id,
+            status, lane, direction_number):
+        super().__init__(layers, count_id, section_id, status)
+        if lane:
+            self.lane_number = lane[0]
+            self.lane_id = lane[1]
+        self.direction_number = direction_number
+
+    def get_div(self):
+        sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
+        sensor = sensor_type.attribute('name')
+
+        if sensor == 'Boucle':
+            y, x = get_tjm_data_by_lane(self.count_id, self.lane_id)
+            title = 'TJM voie {}'.format(self.lane_number)
+        else:
+            y, x = get_tjm_data_by_direction(self.count_id, self.direction_number)
+            title = 'TJM direction {}'.format(
+                self.direction_number)
+
+        colors = ['#636efa',] * len(x)
+        colors[0] = '#ea91bb'
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            textposition='auto',
+            marker_color=colors,
+        )
+
+        layout = go.Layout(
+            title=title)
+        fig = go.Figure(data=[bar], layout=layout)
+
+        return plotly.offline.plot(fig, output_type='div')
+
+
+class ChartTjmTotal(Chart):
+
+    def get_div(self):
+
+        y, x = get_tjm_data_total(self.count_id)
+
+        colors = ['#636efa',] * len(x)
+        colors[0] = '#ea91bb'
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            textposition='auto',
+            marker_color=colors,
+        )
+
+        layout = go.Layout(
+            title='TJM total')
+        fig = go.Figure(data=[bar], layout=layout)
+        return plotly.offline.plot(fig, output_type='div')

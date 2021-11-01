@@ -21,6 +21,9 @@
         <file>../images/filter.png</file>
     </qresource>    
     <qresource prefix="/plugins/Comptages/" >
+        <file>../images/filter_active.png</file>
+    </qresource>    
+    <qresource prefix="/plugins/Comptages/" >
         <file>../images/import.png</file>
     </qresource>    
     <qresource prefix="/plugins/Comptages/" >

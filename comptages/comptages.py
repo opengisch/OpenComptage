@@ -9,12 +9,11 @@ from qgis.core import (
     QgsProject)
 from qgis.utils import qgsfunction, plugins
 
-
 from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
-from comptages.core.utils import push_info
+from comptages.core.utils import push_info, connect_to_db
 from comptages.importer.data_importer import DataImporter
 from comptages.importer.data_importer_vbv1 import DataImporterVbv1
 from comptages.importer.data_importer_int2 import DataImporterInt2
@@ -24,6 +23,7 @@ from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.report_creator import ReportCreator
 from comptages.report.yearly_report_creator import YearlyReportCreator
+from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
@@ -43,6 +43,9 @@ class Comptages(QObject):
         self.filter_end_date = None
         self.filter_installation = None
         self.filter_sensor = None
+        self.filter_tjm = None
+        self.filter_axe = None
+        self.filter_sector = None
         self.tm = QgsApplication.taskManager()
 
     def initGui(self):
@@ -210,10 +213,22 @@ class Comptages(QObject):
             file_dialog, title, path,
             "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
 
+        self.tm.allTasksFinished.connect(self.task_finished)
+
+        self.db = connect_to_db()
+
+        tasks = []
         for file_path in files:
-            self.import_file(file_path)
+            tasks.append(self.import_file(file_path))
+
+        for t in tasks:
+            self.tm.addTask(t)
 
     def import_file(self, file_path, count_id=None):
+        QgsMessageLog.logMessage(
+            '{} - Prepare import file {} started'.format(
+                datetime.now(), os.path.basename(file_path)),
+            'Comptages', Qgis.Info)
 
         # Manage binary files
         with open(file_path, 'rb') as fd:
@@ -247,32 +262,43 @@ class Comptages(QObject):
             return
 
         QgsMessageLog.logMessage(
-            'Importation {}'.format(os.path.basename(file_path)),
+            '{} - Prepare import file {}'.format(
+                datetime.now(), os.path.basename(file_path)),
+            'Comptages', Qgis.Info)
+
+        QgsMessageLog.logMessage(
+            '{} - Import file {} started'.format(
+                datetime.now(), os.path.basename(file_path)),
             'Comptages', Qgis.Info)
 
         file_format = file_header['FORMAT']
 
         if file_format == 'VBV-1':
-            task = DataImporterVbv1(file_path, count_id)
+            task = DataImporterVbv1(file_path, count_id, self.db)
         elif file_format == 'INT-2':
-            task = DataImporterInt2(file_path, count_id)
+            task = DataImporterInt2(file_path, count_id, self.db)
         elif file_format == 'MC':
-            task = DataImporterMC(file_path, count_id)
+            task = DataImporterMC(file_path, count_id, self.db)
         else:
             push_info('Format {} of {} not supported'.format(
                 file_format,
                 os.path.basename(file_path)))
             return
 
-        self.tm.allTasksFinished.connect(self.task_finished)
-        self.tm.addTask(task)
         return task
 
     def task_finished(self):
         self.tm.allTasksFinished.disconnect(self.task_finished)
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
+        QgsMessageLog.logMessage(
+            '{} - All tasks ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         self.chart_dock.show_next_quarantined_chart()
+
+        self.db.close()
+        del self.db
 
     def do_validate_imported_files_action(self):
         if self.tm.countActiveTasks() > 0:
@@ -297,20 +323,53 @@ class Comptages(QObject):
             dlg.installation.setCurrentIndex(self.filter_installation)
         if self.filter_sensor:
             dlg.sensor.setCurrentIndex(self.filter_sensor)
+        if self.filter_tjm:
+            # dlg.tjm.setRange(self.filter_tjm[0], self.filter_tjm[1])
+            dlg.tjm_min.setValue(self.filter_tjm[0])
+            dlg.tjm_max.setValue(self.filter_tjm[1])
+        else:
+            # dlg.tjm.setRange(0, 30000)
+            dlg.tjm_min.setValue(0)
+            dlg.tjm_max.setValue(30000)
+        if self.filter_axe:
+            dlg.axe.setCurrentIndex(self.filter_axe)
+
+        if self.filter_sector:
+            dlg.sector.setCurrentIndex(self.filter_sector)
 
         if dlg.exec_():
             self.filter_start_date = dlg.start_date.dateTime()
             self.filter_end_date = dlg.end_date.dateTime()
             self.filter_installation = dlg.installation.currentIndex()
             self.filter_sensor = dlg.sensor.currentIndex()
+            # self.filter_tjm = [dlg.tjm.lowerValue(), dlg.tjm.upperValue()]
+            self.filter_tjm = [dlg.tjm_min.value(), dlg.tjm_max.value()]
+            self.filter_axe = dlg.axe.currentIndex()
+            self.filter_sector = dlg.sector.currentIndex()
 
             self.layers.apply_filter(
                 dlg.start_date.dateTime().toString('yyyy-MM-dd'),
                 dlg.end_date.dateTime().toString('yyyy-MM-dd'),
                 dlg.installation.currentIndex(),
-                dlg.sensor.currentIndex())
+                dlg.sensor.currentIndex(),
+                [self.filter_tjm[0], self.filter_tjm[1]],
+                dlg.axe.currentData(),
+                dlg.sector.currentData(),
+            )
+
+            if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
+               (dlg.sensor.currentIndex() == 0) and (dlg.tjm_min.value() == 0) and (dlg.tjm_max.value() == 30000) and \
+               (dlg.axe.currentText() == 'Tous') and (dlg.sector.currentText() == 'Tous'):
+                self.filter_action.setIcon(
+                    QIcon(':/plugins/Comptages/images/filter.png'))
+            else:
+                self.filter_action.setIcon(
+                    QIcon(':/plugins/Comptages/images/filter_active.png'))
 
     def do_yearly_report_action(self):
+        QgsMessageLog.logMessage(
+            '{} - Generate yearly report action started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
@@ -350,14 +409,23 @@ class Comptages(QObject):
             if not file_path:
                 return
 
-            yearly_report_creator = YearlyReportCreator(
-                file_path, self.layers, year, section_id, clazz)
-            yearly_report_creator.run()
+            if clazz.startswith("SPCH-MD"):
+                yrb = YearlyReportBike(file_path, year, section_id)
+                yrb.run()
+            else:
+                yearly_report_creator = YearlyReportCreator(
+                    file_path, self.layers, year, section_id, clazz)
+                yearly_report_creator.run()
+
 
             push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
                       .format(section_id, year))
 
             # TODO: check if there are comptages for this section and year
+
+        QgsMessageLog.logMessage(
+            '{} - Generate yearly report action ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
     def do_import_ics_action(self):
         IcsImporter(self.layers)
@@ -398,9 +466,17 @@ class Comptages(QObject):
         if not file_path:
             return
 
-        self.import_file(file_path, count_id)
+        self.tm.allTasksFinished.connect(self.task_finished)
+
+        self.db = connect_to_db()
+
+        self.tm.addTask(self.import_file(file_path, count_id))
 
     def do_generate_report_action(self, count_id):
+        QgsMessageLog.logMessage(
+            '{} - Generate report action started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
@@ -408,7 +484,7 @@ class Comptages(QObject):
 
         # Show message if there are no data to process
         contains_data = self.layers.count_contains_data(count_id)
-        if not contains_data :
+        if not contains_data:
             push_info("Installation {}: Il n'y a pas de données à traiter pour "
                 "le comptage {}".format(
                 self.layers.get_installation_name_of_count(count_id),count_id))
@@ -428,6 +504,10 @@ class Comptages(QObject):
         report_creator.run()
         push_info("Installation {} (count={}): Génération du rapport terminée."
          .format(self.layers.get_installation_name_of_count(count_id),count_id))
+
+        QgsMessageLog.logMessage(
+            '{} - Generate report action'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
@@ -460,11 +540,19 @@ class Comptages(QObject):
         self.layers.layers['section'].triggerRepaint()
 
     def do_generate_chart_action(self, count_id):
+        QgsMessageLog.logMessage(
+            '{} - Generate chart action started'.format(datetime.now()),
+            'Comptages', Qgis.Info)
+
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
         self.chart_dock.set_attributes(count_id)
+
+        QgsMessageLog.logMessage(
+            '{} - Generate chart action ended'.format(datetime.now()),
+            'Comptages', Qgis.Info)
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from qgis.PyQt.QtSql import QSqlQuery
 
@@ -9,8 +9,8 @@ from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterInt2(DataImporter):
-    def __init__(self, file_path, count_id):
-        super().__init__(file_path, count_id)
+    def __init__(self, file_path, count_id, db):
+        super().__init__(file_path, count_id, db)
         self.intspec = self.get_intspec()
         self.number_of_lines = self.get_number_of_lines()
         self.bulk_mgr = BulkCreateManager(chunk_size=1000)
@@ -65,11 +65,13 @@ class DataImporterInt2(DataImporter):
         if line[7:9] == '24':
             line = line[:7] + '00' + line[9:]
             end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M")
+                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
+                    tzinfo=timezone.utc)
             end += timedelta(days=1)
         else:
             end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M")
+                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
+                    tzinfo=timezone.utc)
 
         parsed_line['end'] = end
         parsed_line['start'] = parsed_line['end'] - timedelta(

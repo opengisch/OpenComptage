@@ -2,6 +2,7 @@
 #   * Rearrange models' order
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 
+import uuid
 from django.contrib.gis.db import models
 
 
@@ -19,7 +20,6 @@ class Category(models.Model):
     name = models.TextField()
     code = models.SmallIntegerField()
     light = models.BooleanField()
-    id_category = models.ForeignKey('self', models.DO_NOTHING, db_column='id_category')
 
     class Meta:
         db_table = 'category'
@@ -35,12 +35,13 @@ class Class(models.Model):
 
 
 class ClassCategory(models.Model):
-    id_class = models.OneToOneField(Class, models.DO_NOTHING, db_column='id_class', primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')
     id_category = models.ForeignKey(Category, models.DO_NOTHING, db_column='id_category')
 
     class Meta:
         db_table = 'class_category'
-        unique_together = (('id_class', 'id_category'),)
+        # unique_together = (('id_class', 'id_category'),)
 
 
 class CoreBuilding(models.Model):
@@ -79,6 +80,7 @@ class Count(models.Model):
     id_sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING, db_column='id_sensor_type')
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class', blank=True, null=True)
     id_installation = models.ForeignKey('Installation', models.DO_NOTHING, db_column='id_installation')
+    tjm = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
     class Meta:
         db_table = 'count'
@@ -174,11 +176,24 @@ class CountDetail(models.Model):
     file_name = models.TextField()
     import_status = models.SmallIntegerField()
     id_lane = models.ForeignKey('Lane', models.DO_NOTHING, db_column='id_lane')
-    id_count = models.ForeignKey(Count, models.DO_NOTHING, db_column='id_count')
+    id_count = models.ForeignKey(Count, models.CASCADE, db_column='id_count')
     id_category = models.ForeignKey(Category, models.DO_NOTHING, db_column='id_category')
+    times = models.IntegerField(default=1)
+    from_aggregate = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'count_detail'
+
+
+class Tjm(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    day = models.DateField(null=True)
+    lane = models.ForeignKey('Lane', models.DO_NOTHING)
+    count = models.ForeignKey(Count, on_delete=models.CASCADE)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        db_table = "tjm"
 
 
 class DamageLog(models.Model):
@@ -201,7 +216,6 @@ class Device(models.Model):
 
     class Meta:
         db_table = 'device'
-
 
 
 class Installation(models.Model):
@@ -297,30 +311,33 @@ class SensorType(models.Model):
 
 
 class SensorTypeClass(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')
 
     class Meta:
         db_table = 'sensor_type_class'
-        unique_together = (('id_sensor_type', 'id_class'),)
+        # unique_together = (('id_sensor_type', 'id_class'),)
 
 
 class SensorTypeInstallation(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_installation = models.ForeignKey(Installation, models.DO_NOTHING, db_column='id_installation')
 
     class Meta:
         db_table = 'sensor_type_installation'
-        unique_together = (('id_sensor_type', 'id_installation'),)
+        # unique_together = (('id_sensor_type', 'id_installation'),)
 
 
 class SensorTypeModel(models.Model):
-    id_sensor_type = models.OneToOneField(SensorType, models.DO_NOTHING, db_column='id_sensor_type', primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    id_sensor_type = models.ForeignKey(SensorType, models.DO_NOTHING, db_column='id_sensor_type')
     id_model = models.ForeignKey(Model, models.DO_NOTHING, db_column='id_model')
 
     class Meta:
         db_table = 'sensor_type_model'
-        unique_together = (('id_sensor_type', 'id_model'),)
+        # unique_together = (('id_sensor_type', 'id_model'),)
 
 
 class SensorTypeSection(models.Model):
@@ -343,3 +360,11 @@ class SpecialPeriod(models.Model):
 
     class Meta:
         db_table = 'special_period'
+
+
+class Sector(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    geometry = models.PolygonField(blank=True, null=True, srid=2056)
+
+    class Meta:
+        db_table = 'sector'

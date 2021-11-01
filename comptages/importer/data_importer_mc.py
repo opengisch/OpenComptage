@@ -1,17 +1,20 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlQuery
 
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
+from comptages.datamodel import models
+from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterMC(DataImporter):
 
-    def __init__(self, file_path, count_id):
-        super().__init__(file_path, count_id)
+    def __init__(self, file_path, count_id, db):
+        super().__init__(file_path, count_id, db)
         self.numbering = 0
+        self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
         try:
@@ -25,39 +28,35 @@ class DataImporterMC(DataImporter):
                         if line.startswith('20'):
                             self.write_row_into_db(line)
         except Exception as e:
-            self.exception = e
+            self.exception = f"Error reading line {i+1} ({line}). Value {e}"
             return False
+
+        self.bulk_mgr.done()
         return True
 
     def write_row_into_db(self, line):
-
         row = self.parse_data_line(line)
         if not row:
             return
 
-        query = QSqlQuery(self.db)
+        cat_bins = list(self.categories.values())
 
-        query_str = ("insert into comptages.count_detail ("
-                     "numbering, timestamp, "
-                     "distance_front_front, distance_front_back, "
-                     "speed, length, height, "
-                     "file_name, import_status, "
-                     "id_lane, id_count, id_category) values ("
-                     "{}, '{}', {}, {}, {}, {}, '{}', '{}', {}, {}, "
-                     "{}, {})".format(
-                         row['numbering'],
-                         row['timestamp'],
-                         row['distance_front_front'],
-                         row['distance_front_back'],
-                         row['speed'],
-                         row['length'],
-                         row['height'],
-                         self.basename,
-                         Layers.IMPORT_STATUS_QUARANTINE,
-                         self.lanes[int(row['lane'])+1],
-                         self.count_id,
-                         self.categories[row['category']]))
-        query.exec_(query_str)
+        self.bulk_mgr.add(
+            models.CountDetail(
+                numbering=row['numbering'],
+                timestamp=row['timestamp'],
+                distance_front_front=row['distance_front_front'],
+                distance_front_back=row['distance_front_back'],
+                speed=row['speed'],
+                length=row['length'],
+                height=row['height'],
+                file_name=self.basename,
+                import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                id_lane_id=self.lanes[int(row['lane'])],
+                id_count_id=self.count_id,
+                id_category_id=cat_bins[row['category']]
+            )
+        )
 
     def parse_data_line(self, line):
         parsed_line = None
@@ -67,9 +66,12 @@ class DataImporterMC(DataImporter):
             self.numbering += 1
             parsed_line['numbering'] = self.numbering
             parsed_line['timestamp'] = datetime.strptime(
-                line[0:19], "%Y-%m-%d %H:%M:%S")
-            parsed_line['lane'] = int(line[22:23])
-            parsed_line['direction'] = int(line[22:23])
+                line[0:19], "%Y-%m-%d %H:%M:%S").replace(
+                    tzinfo=timezone.utc)
+
+            # On MetroCount files, the direction is 0-1 instead of 1-2
+            parsed_line['lane'] = int(line[22:23]) + 1
+            parsed_line['direction'] = int(line[22:23]) + 1
             parsed_line['distance_front_front'] = float(line[24:31])
             if parsed_line['distance_front_front'] > 99.9:
                 parsed_line['distance_front_front'] = 99.9

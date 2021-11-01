@@ -1,16 +1,18 @@
 import os
 
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, QVariant
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
-    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils)
+    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils,
+    QgsField, QgsVectorLayerJoinInfo)
 from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
 from comptages.core.utils import push_info, connect_to_db
+from comptages.datamodel import models
 
 
 class Layers(QObject):
@@ -65,6 +67,8 @@ class Layers(QObject):
 
         self.apply_qml_styles()
         self.add_layer_actions()
+        self.create_virtual_fields()
+        self.create_joins()
         self.create_relations()
         iface.setActiveLayer(self.layers['section'])
 
@@ -82,6 +86,12 @@ class Layers(QObject):
             qml_file_path = os.path.join(
                 current_dir, os.pardir, 'qml', '{}.qml'.format(key))
             self.layers[key].loadNamedStyle(qml_file_path)
+
+    def create_virtual_fields(self):
+        pass
+
+    def create_joins(self):
+        pass
 
     def create_relations(self):
         # Real relation
@@ -161,18 +171,22 @@ class Layers(QObject):
         index = data_provider.fieldNameIndex('id_device')
         self.layers['count'].setEditorWidgetSetup(index, widget)
 
+        models_1 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(1))+")"
+        models_2 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(2))+")"
+        models_3 = "("+",".join("'"+str(i)+"'" for i in self.get_models_by_sensor_type(3))+")"
+
         widget = QgsEditorWidgetSetup(
             'ValueRelation',
             {
                 'AllowMulti':       False,
                 'AllowNull':        False,
-                'FilterExpression': '',
-                # """
-                # CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN ('1', '2', '4', '6', '7')
-                # WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN ('1', '3', '5')
-                # WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN ('12')
-                # ELSE \"id\"
-                # END""",
+                'FilterExpression':
+                f"""
+                CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN {models_1}
+                WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN {models_2}
+                WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN {models_3}
+                ELSE \"id\"
+                END""",
                 'Key':              'id',
                 'Layer':            self.layers['model'].id(),
                 'OrderByValue':     False,
@@ -216,7 +230,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Exporter la configuration',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_export_configuration_action([% $id %])")
+             "plugins['comptages'].do_export_configuration_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -225,7 +239,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Importation',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_import_single_file_action([% $id %])")
+             "plugins['comptages'].do_import_single_file_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -234,7 +248,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Creer un rapport',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_generate_report_action([% $id %])")
+             "plugins['comptages'].do_generate_report_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -243,7 +257,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Creer un plan',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_export_plan_action([% $id %])")
+             "plugins['comptages'].do_export_plan_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -252,7 +266,7 @@ class Layers(QObject):
             QgsAction.GenericPython,
             'Générer les graphiques',
             ("from qgis.utils import plugins\n"
-             "plugins['comptages'].do_generate_chart_action([% $id %])")
+             "plugins['comptages'].do_generate_chart_action([% attribute( $currentfeature, 'id' ) %])")
         )
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
@@ -391,7 +405,7 @@ class Layers(QObject):
 
     def populate_list_of_highlighted_sections(
             self, start_date=None, end_date=None, permanent=None,
-            sensor_type_id=None):
+            sensor_type_id=None, tjm=None, axe=None, sector=None):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
 
@@ -410,6 +424,16 @@ class Layers(QObject):
             wheres.append("i.permanent = '{}'::bool".format(permanent))
         if sensor_type_id:
             wheres.append("c.id_sensor_type = {}".format(sensor_type_id))
+        if tjm:
+            if tjm[1] >= 30000:
+                wheres.append("c.tjm >= {}".format(tjm[0]))
+            else:
+                wheres.append("c.tjm between {} and {}".format(tjm[0], tjm[1]))
+        if axe:
+            wheres.append("s.owner = '{}' and s.road = '{}'".format(axe[0], axe[1]))
+
+        if sector:
+            wheres.append("ST_Intersects(s.geometry, sec.geometry) and sec.id = {}".format(sector))
 
         where_str = ''
         if wheres:
@@ -419,15 +443,16 @@ class Layers(QObject):
                      "inner join comptages.installation as i on "
                      "(l.id_installation = i.id) inner join "
                      "comptages.count as c on (i.id = c.id_installation) "
+                     "inner join comptages.section as s on"
+                     "(l.id_section = s.id), comptages.sector as sec "
                      "{};".format(where_str))
-
         query.exec_(query_str)
 
         while query.next():
             self.highlighted_sections.append(str(query.value(0)).strip())
 
     def apply_filter(
-            self, start_date, end_date, installation_choice, sensor_choice):
+            self, start_date, end_date, installation_choice, sensor_choice, tjm, axe, sector):
         if installation_choice == 0:
             permanent = None
         elif installation_choice == 1:
@@ -443,7 +468,7 @@ class Layers(QObject):
             sensor_type_id = self.get_sensor_type_id('Tube')
 
         self.populate_list_of_highlighted_sections(
-            start_date, end_date, permanent, sensor_type_id)
+            start_date, end_date, permanent, sensor_type_id, tjm, axe, sector)
         self.layers['section'].triggerRepaint()
 
     def is_connected(self):
@@ -940,7 +965,7 @@ class Layers(QObject):
         query = QSqlQuery(self.db)
 
         query_str = (
-            "select distinct date_trunc('day', timestamp) as day "
+            "select distinct date_trunc('day', timestamp at time zone 'Europe/Zurich') as day "
             "from comptages.count_detail where id_count = {} "
             "order by day;".format(count_id))
 
@@ -1477,3 +1502,13 @@ class Layers(QObject):
         if query.next():
             return query.value(0)
         return None
+
+    def get_models_by_sensor_type(self, sensor_type):
+        qs = models.SensorTypeModel.objects.filter(
+            id_sensor_type=sensor_type)
+
+        result = []
+        for i in qs:
+            result.append(i.id_model.id)
+        return result
+
