@@ -15,16 +15,6 @@ class Brand(models.Model):
         db_table = 'brand'
 
 
-class Category(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.TextField()
-    code = models.SmallIntegerField()
-    light = models.BooleanField()
-
-    class Meta:
-        db_table = 'category'
-
-
 class Class(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
@@ -34,6 +24,18 @@ class Class(models.Model):
         db_table = 'class'
 
 
+class Category(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.TextField()
+    code = models.SmallIntegerField()
+    light = models.BooleanField()
+    id_class = models.ForeignKey(Class, models.CASCADE, db_column='id_class', null=True)
+
+    class Meta:
+        db_table = 'category'
+
+
+# TODO: prepare data migration and then delete it...
 class ClassCategory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')

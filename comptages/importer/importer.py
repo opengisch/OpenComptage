@@ -1,9 +1,11 @@
 import pytz
 from datetime import datetime, timezone
 
+from comptages.datamodel import models
+
 
 def get_file_format(file_path):
-    """Return the file format on None if not identified."""
+    """Return the file format."""
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
         for line in f:
             line = f.readline()
@@ -12,7 +14,7 @@ def get_file_format(file_path):
             elif line.startswith("MetroCount"):
                 return "MC"
 
-        return None
+        raise NotImplementedError()
 
 
 def get_file_encoding(file_path):
@@ -51,8 +53,7 @@ def get_file_header(file_path):
                 result.append(line)
         return result
 
-    else:
-        return None
+    raise NotImplementedError(file_format)
 
 
 def get_first_record_date(file_path):
@@ -87,8 +88,8 @@ def get_first_record_date(file_path):
                     result = datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S").replace(
                         tzinfo=tz)
                     return result
-    else:
-        return None
+
+    raise NotImplementedError(file_format)
 
 
 def get_last_record_date(file_path):
@@ -125,8 +126,8 @@ def get_last_record_date(file_path):
                     result = datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S").replace(
                         tzinfo=tz)
             return result
-    else:
-        return None
+
+    raise NotImplementedError(file_format)
 
 
 def parse_file_header(file_header, file_format):
@@ -170,5 +171,41 @@ def parse_file_header(file_header, file_format):
                     result['CLASS'] = 'SPCH-MD 5C'
         return result
 
-    else:
-        return None
+    raise NotImplementedError(file_format)
+
+
+def guess_count(site, class_, start, end):
+    """Try to identify the count related to an imported file."""
+
+    result = models.Count.objects.filter(
+        id_installation__name=site,
+        id_installation__active=True,
+        id_class__name=class_,
+        start_service_date__lte=start,
+        end_service_date__gte=end,
+        )
+
+    return result
+
+
+def get_lane_dict(count):
+    """Return a dictionary with the id of the lanes of a count.
+
+    e.g. {1: 435, 2: 436}"""
+
+    lanes = models.Lane.objects.filter(
+        id_installation__count=count,
+    ).order_by("number")
+
+    return {x.number: x.id for x in lanes}
+
+
+def get_category_dict(count):
+    """Return a dictionary with the id of the categories of a count.
+
+    e.g. self.categories = {0: 922, 1: 22, 2: 23, 3: 24, 4: 25}"""
+
+    # categories = models.Category
+
+def get_file_length():
+    pass
