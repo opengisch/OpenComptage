@@ -1,0 +1,40 @@
+
+MetroCount Traffic Executive
+_SPCH-export
+
+ListPerso-154 -- français (FRS)
+
+Ensembles de données: 
+Place:	[0005-6270] Ave. Longueville 17
+Attribut:	
+Sens:	7 - Vers le nord A>B, Vers le sud B>A. Voie: 0
+Durée D'Enquête:	14:06 mardi, 13 novembre 2018 => 14:36 mardi, 11 décembre 2018,
+Zone:	
+Fichier:	MC5900_0005-6270 0 2018-12-11 1436.EC0 (Plus )
+Identificateur:	MQ068S5G MC5900-X10 (c)MetroCount 18Jul16 
+Algorithme:	Factory default axle (v5.06)
+Type de données:	Capteurs d'essieu  - paire (classe, vitesse, débit)
+
+Profil:	Le filtre n'est pas activé
+Intervalle:	Distance inter-véhicule impulsion 1 veh 1 à impulsion 2 veh précédentX > 0 sec, Span# 0 - 100 mètre
+Nom:	Default Profile
+Type de Catégorisation:	Comptage catégoriel (FHWA SC 2)
+Unités:	Métrique (mètre, kilomètre, m/s, km/h, kilogramme, tonne)
+
+Légende De Colonne:
+ 0  [Date-Heure] 	Date et heure complètes
+ 1  [Dir] 	Code sens de circulation
+ 2  [Hdwy] 	Espace inter-véhicule
+ 3  [Gap] 	Espace inter-véhicules
+ 4  [Vit] 	Vitesse des véhicules
+ 5  [Span] 	Vehicle span#
+ 6  [Cat] 	Catégorie de véhicule
+
+
+         Date-Heure Dir   Hdwy    Gap   Vit  Span Cat
+                <--                                  
+2018-11-13 14:08:11   0    0.0    0.0   1.7   0.0   0
+2018-11-13 14:08:22   0   11.4    0.0   2.4   0.0   0
+2018-12-11 14:07:39   0    0.0    0.0 360.0   0.0   0
+
+Dans le profil:	Véhicules = 65620 / 65620 (100.00%)
