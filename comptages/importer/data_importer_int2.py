@@ -1,16 +1,17 @@
-from datetime import datetime, timedelta, timezone
 
-from qgis.PyQt.QtSql import QSqlQuery
+from datetime import datetime, timedelta, timezone
 
 from comptages.core.layers import Layers
 from comptages.importer.data_importer import DataImporter
+from comptages.datamodel import models
+from .bulk_create_manager import BulkCreateManager
 
 
 class DataImporterInt2(DataImporter):
     def __init__(self, file_path, count_id, db):
         super().__init__(file_path, count_id, db)
         self.intspec = self.get_intspec()
-        self.number_of_lines = self.get_number_of_lines()
+        self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
         try:
@@ -24,8 +25,10 @@ class DataImporterInt2(DataImporter):
                         if not line.startswith('* '):
                             self.write_row_into_db(line)
         except Exception as e:
-            self.exception = e
+            self.exception = f"Error reading line {i+1} ({line}). Value {e}"
             return False
+
+        self.bulk_mgr.done()
         return True
 
     def get_intspec(self):
@@ -47,7 +50,7 @@ class DataImporterInt2(DataImporter):
         elif code == 'LEN':
             values = self.file_header['LENBINS'].split()
         elif code == 'CLS':
-            values = list(self.categories.values())
+            values = list(self.categories.values())[1:]  # [1:] is because 0 is trash
         else:
             values = self.data_header[self.intspec.index(code)]
         return values
@@ -93,50 +96,30 @@ class DataImporterInt2(DataImporter):
 
         row_type = self.intspec[int(row['info_code'])-1]
 
-        query = QSqlQuery(self.db)
-
-        query_str = ("insert into comptages.count_aggregate ("
-                     "type, \"start\", \"end\", file_name, import_status, "
-                     "id_count, id_lane) "
-                     "values ("
-                     "'{}', '{}', '{}', '{}', {}, {}, {})".format(
-                         row_type,
-                         row['start'],
-                         row['end'],
-                         self.basename,
-                         Layers.IMPORT_STATUS_QUARANTINE,
-                         self.count_id,
-                         self.lanes[int(row['channel'])]))
-
-        query.exec_(query_str)
-
         bins = self.get_bins(row_type)
-        query_str_value = ""
+
         if row_type == 'SPD':
-            query_str_value = self._create_query_str_aggregate_spd(
-                row, bins)
+            self._create_query_str_aggregate_spd(row, bins)
         elif row_type == 'LEN':
-            query_str_value = self._create_query_str_aggregate_len(
-                row, bins)
+            self._create_query_str_aggregate_len(row, bins)
         elif row_type == 'CLS':
-            query_str_value = self._create_query_str_aggregate_cls(
-                row, bins)
+            self._create_query_str_aggregate_cls(row, bins)
         elif row_type == 'SDS':
             # Insert the values in the SPD table and only the
             # mean and the deviation in the SDS table
-            query_str_value = self._create_query_str_aggregate_spd(
-                row, bins)
-            query_str_value.append(self._create_query_str_aggregate_sds(
-                row, bins))
+            pass
+            # query_str_value = self._create_query_str_aggregate_spd(
+            #     row, bins)
+            # query_str_value.append(self._create_query_str_aggregate_sds(
+            #     row, bins))
         elif row_type == 'DRN':
-            query_str_value = self._create_query_str_aggregate_drn(
-                row, bins)
+            pass
+            # query_str_value = self._create_query_str_aggregate_drn(
+            #     row, bins)
         elif row_type == 'CNT':
-            query_str_value = self._create_query_str_aggregate_cnt(
-                row, bins)
-
-        for _ in query_str_value:
-            query.exec_(_)
+            pass
+            # query_str_value = self._create_query_str_aggregate_cnt(
+            #     row, bins)
 
     def _create_query_str_aggregate_spd(self, row, spdbins):
         queries = []
@@ -145,17 +128,25 @@ class DataImporterInt2(DataImporter):
             if not data == '':
                 speed_low = spdbins[i-1]
                 speed_high = spdbins[i]
-                queries.append(
-                    ("insert into comptages.count_aggregate_value_spd ("
-                     "value, low, high, "
-                     "id_count_aggregate) values ("
-                     "{}, {}, {}, "
-                     "(select currval('comptages.count_aggregate_id_seq'))"
-                     ")".format(
-                         data,
-                         speed_low,
-                         speed_high)))
-        return queries
+                speed = int(int(speed_low) + int(speed_high) / 2)
+
+                self.bulk_mgr.add(
+                    models.CountDetail(
+                        numbering=1, # TODO: improve
+                        timestamp=row['start'],
+                        # distance_front_front=row['distance_front_front'],
+                        # distance_front_back=row['distance_front_back'],
+                        speed=speed,
+                        # length=length,
+                        # height=row['height'],
+                        file_name=self.basename,
+                        import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                        id_lane_id=self.lanes[int(row['channel'])],
+                        id_count_id=self.count_id,
+                        # id_category_id=category,
+                        times=data,
+                    )
+                )
 
     def _create_query_str_aggregate_sds(self, row, spdbins):
         query = ''
@@ -180,18 +171,25 @@ class DataImporterInt2(DataImporter):
             if not data == '':
                 length_low = lenbins[i-1]
                 length_high = lenbins[i]
-                queries.append(
-                    ("insert into comptages.count_aggregate_value_len ("
-                     "value, low, high, "
-                     "id_count_aggregate) values ("
-                     "{}, {}, {}, "
-                     "(select currval('comptages.count_aggregate_id_seq'))"
-                     ")".format(
-                         data,
-                         length_low,
-                         length_high)))
+                length = int(int(length_low) + int(length_high) / 2)
 
-        return queries
+                self.bulk_mgr.add(
+                    models.CountDetail(
+                        numbering=1, # TODO: improve
+                        timestamp=row['start'],
+                        # distance_front_front=row['distance_front_front'],
+                        # distance_front_back=row['distance_front_back'],
+                        # speed=row['speed'],
+                        length=length,
+                        # height=row['height'],
+                        file_name=self.basename,
+                        import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                        id_lane_id=self.lanes[int(row['channel'])],
+                        id_count_id=self.count_id,
+                        # id_category_id=category,
+                        times=data,
+                    )
+                )
 
     def _create_query_str_aggregate_cls(self, row, catbins):
         queries = []
@@ -199,17 +197,25 @@ class DataImporterInt2(DataImporter):
         for i in range(1, len(catbins)+1):
             data = row['data_{}'.format(i)]
             if not data == '':
-                category = catbins[i]
-                queries.append(
-                    ("insert into comptages.count_aggregate_value_cls ("
-                     "value, id_category, "
-                     "id_count_aggregate) values ("
-                     "{}, {}, "
-                     "(select currval('comptages.count_aggregate_id_seq'))"
-                     ")".format(
-                         data,
-                         category)))
-        return queries
+                category = catbins[i-1]
+
+                self.bulk_mgr.add(
+                    models.CountDetail(
+                        numbering=1, # TODO: improve
+                        timestamp=row['start'],
+                        # distance_front_front=row['distance_front_front'],
+                        # distance_front_back=row['distance_front_back'],
+                        # speed=row['speed'],
+                        # length=row['length'],
+                        # height=row['height'],
+                        file_name=self.basename,
+                        import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                        id_lane_id=self.lanes[int(row['channel'])],
+                        id_count_id=self.count_id,
+                        id_category_id=category,
+                        times=data,
+                    )
+                )
 
     def _create_query_str_aggregate_drn(self, row, dirbins):
         queries = []
