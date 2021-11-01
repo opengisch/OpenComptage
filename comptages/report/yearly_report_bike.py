@@ -12,6 +12,7 @@ from openpyxl import load_workbook
 
 from comptages.datamodel.models import CountDetail, Section, Lane
 
+# TODO: only status_definitive!!
 
 class YearlyReportBike():
     def __init__(self, file_path, year, section_id):
