@@ -12,7 +12,7 @@ class DataImporterInt2(DataImporter):
     def __init__(self, file_path, count_id, db):
         super().__init__(file_path, count_id, db)
         self.intspec = self.get_intspec()
-        self.number_of_lines = self.get_number_of_lines()
+        # self.number_of_lines = self.get_number_of_lines()
         self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 
     def run(self):
@@ -98,50 +98,91 @@ class DataImporterInt2(DataImporter):
 
         row_type = self.intspec[int(row['info_code'])-1]
 
-        query = QSqlQuery(self.db)
+        # TODO: manage other types too
+        if not row_type == 'CLS':
+            return
 
-        query_str = ("insert into comptages.count_aggregate ("
-                     "type, \"start\", \"end\", file_name, import_status, "
-                     "id_count, id_lane) "
-                     "values ("
-                     "'{}', '{}', '{}', '{}', {}, {}, {})".format(
-                         row_type,
-                         row['start'],
-                         row['end'],
-                         self.basename,
-                         Layers.IMPORT_STATUS_QUARANTINE,
-                         self.count_id,
-                         self.lanes[int(row['channel'])]))
+        catbins = self.get_bins('CLS') # TODO: with django
 
-        query.exec_(query_str)
+        for i in range(1, len(catbins)+1):
+            data = row['data_{}'.format(i)]
+            if not data == '':
 
-        bins = self.get_bins(row_type)
-        query_str_value = ""
-        if row_type == 'SPD':
-            query_str_value = self._create_query_str_aggregate_spd(
-                row, bins)
-        elif row_type == 'LEN':
-            query_str_value = self._create_query_str_aggregate_len(
-                row, bins)
-        elif row_type == 'CLS':
-            query_str_value = self._create_query_str_aggregate_cls(
-                row, bins)
-        elif row_type == 'SDS':
-            # Insert the values in the SPD table and only the
-            # mean and the deviation in the SDS table
-            query_str_value = self._create_query_str_aggregate_spd(
-                row, bins)
-            query_str_value.append(self._create_query_str_aggregate_sds(
-                row, bins))
-        elif row_type == 'DRN':
-            query_str_value = self._create_query_str_aggregate_drn(
-                row, bins)
-        elif row_type == 'CNT':
-            query_str_value = self._create_query_str_aggregate_cnt(
-                row, bins)
+                # queries.append(
+                #     ("insert into comptages.count_aggregate_value_cls ("
+                #      "value, id_category, "
+                #      "id_count_aggregate) values ("
+                #      "{}, {}, "
+                #      "(select currval('comptages.count_aggregate_id_seq'))"
+                #      ")".format(
+                #          data,
+                #          category)))
 
-        for _ in query_str_value:
-            query.exec_(_)
+                self.bulk_mgr.add(
+                    models.CountDetail(
+                        numbering=1, # TODO: improve
+                        timestamp=row['start'],
+                        # distance_front_front=row['distance_front_front'],
+                        # distance_front_back=row['distance_front_back'],
+                        # speed=row['speed'],
+                        # length=row['length'],
+                        # height=row['height'],
+                        file_name=self.basename,
+                        import_status=Layers.IMPORT_STATUS_QUARANTINE,
+                        id_lane_id=self.lanes[int(row['channel'])],
+                        id_count_id=self.count_id,
+                        id_category_id=catbins[i],
+                        times=data,
+                    )
+                )
+
+
+        # row_type = self.intspec[int(row['info_code'])-1]
+
+        # query = QSqlQuery(self.db)
+
+        # query_str = ("insert into comptages.count_aggregate ("
+        #              "type, \"start\", \"end\", file_name, import_status, "
+        #              "id_count, id_lane) "
+        #              "values ("
+        #              "'{}', '{}', '{}', '{}', {}, {}, {})".format(
+        #                  row_type,
+        #                  row['start'],
+        #                  row['end'],
+        #                  self.basename,
+        #                  Layers.IMPORT_STATUS_QUARANTINE,
+        #                  self.count_id,
+        #                  self.lanes[int(row['channel'])]))
+
+        # query.exec_(query_str)
+
+        # bins = self.get_bins(row_type)
+        # query_str_value = ""
+        # if row_type == 'SPD':
+        #     query_str_value = self._create_query_str_aggregate_spd(
+        #         row, bins)
+        # elif row_type == 'LEN':
+        #     query_str_value = self._create_query_str_aggregate_len(
+        #         row, bins)
+        # elif row_type == 'CLS':
+        #     query_str_value = self._create_query_str_aggregate_cls(
+        #         row, bins)
+        # elif row_type == 'SDS':
+        #     # Insert the values in the SPD table and only the
+        #     # mean and the deviation in the SDS table
+        #     query_str_value = self._create_query_str_aggregate_spd(
+        #         row, bins)
+        #     query_str_value.append(self._create_query_str_aggregate_sds(
+        #         row, bins))
+        # elif row_type == 'DRN':
+        #     query_str_value = self._create_query_str_aggregate_drn(
+        #         row, bins)
+        # elif row_type == 'CNT':
+        #     query_str_value = self._create_query_str_aggregate_cnt(
+        #         row, bins)
+
+        # for _ in query_str_value:
+        #     query.exec_(_)
 
     def _create_query_str_aggregate_spd(self, row, spdbins):
         queries = []
