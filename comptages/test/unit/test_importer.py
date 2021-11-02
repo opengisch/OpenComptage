@@ -151,3 +151,23 @@ class TestData(TransactionTestCase):
         lane_dict = importer.get_lane_dict(count)
 
         self.assertEqual(len(lane_dict), 2)
+        # TODO: implement better test
+
+    def test_category_dict(self):
+        count = utils.create_test_count(
+            '00056132',
+            'MB1',
+            datetime(2020, 1, 1),
+            datetime(2020, 1, 14),
+            lanes=2,
+        )
+
+        cat_dict = importer.get_category_dict(count)
+        self.assertEqual(len(cat_dict), 3)
+        # TODO: implement better test
+
+    def test_file_lines(self):
+        self.assertEqual(
+            importer.get_file_lines(utils.test_data_path("format_int_2.txt")),
+            28
+        )

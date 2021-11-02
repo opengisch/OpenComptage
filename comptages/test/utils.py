@@ -34,6 +34,25 @@ def create_test_count(
         name=class_,
     )
 
+    models.Category.objects.create(
+        name="car",
+        code=1,
+        light=True,
+        id_class=class_,
+    )
+    models.Category.objects.create(
+        name="truck",
+        code=2,
+        light=False,
+        id_class=class_,
+    )
+    models.Category.objects.create(
+        name="UFO",
+        code=3,
+        light=True,
+        id_class=class_,
+    )
+
     sensor_type = models.SensorType.objects.create(
         name="test sensor type",
     )

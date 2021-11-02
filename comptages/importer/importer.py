@@ -205,7 +205,16 @@ def get_category_dict(count):
 
     e.g. self.categories = {0: 922, 1: 22, 2: 23, 3: 24, 4: 25}"""
 
-    # categories = models.Category
+    categories = models.Category.objects.filter(
+        id_class=count.id_class,
+        ).order_by('code')
 
-def get_file_length():
-    pass
+    return {x.code: x.id for x in categories}
+
+def get_file_lines(file_path):
+    """Return the lines of a file.
+
+    Store the result in a variable and avoid to call it multiple times
+    because it will read all the file every time."""
+    return sum(1 for line in open(
+        file_path, "r", encoding=get_file_encoding(file_path)))
