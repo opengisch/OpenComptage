@@ -2,14 +2,14 @@ import pytz
 
 from django.test import TransactionTestCase, override_settings
 from datetime import datetime
+from qgis.core import (QgsApplication)
+
 from comptages.test import utils
 from comptages.importer import importer
 from comptages.datamodel import models
+from comptages import parser
 
 
-# run from main repo directory `python -m unittest comptages/test/unit/test_importer.py`
-
-@override_settings(MY_SETTING='NPIWTLYA')
 class TestData(TransactionTestCase):
 
     @classmethod
@@ -171,3 +171,17 @@ class TestData(TransactionTestCase):
             importer.get_file_lines(utils.test_data_path("format_int_2.txt")),
             28
         )
+
+    def test_task(self):
+        application = QgsApplication([], True)
+        task_manager = application.taskManager()
+
+        task = importer.ImporterTask(utils.test_data_path("format_mc.txt"))
+
+        task_manager.addTask(task)
+
+    def test_parser(self):
+        p = parser.Parser(utils.test_data_path("format_mc.txt"))
+
+        for line in p.lines():
+            print(line)
