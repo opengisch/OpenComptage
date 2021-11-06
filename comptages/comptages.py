@@ -213,7 +213,7 @@ class Comptages(QObject):
             file_dialog, title, path,
             "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
 
-        self.tm.allTasksFinished.connect(self.task_finished)
+        self.tm.allTasksFinished.connect(self.all_tasks_finished)
 
         self.db = connect_to_db()
 
@@ -287,8 +287,18 @@ class Comptages(QObject):
 
         return task
 
-    def task_finished(self):
-        self.tm.allTasksFinished.disconnect(self.task_finished)
+    def all_tasks_finished(self):
+
+        # Check if actually all tasks are finished because apparently it doesn't
+        # work the same on all systems
+        if not self.tm.countActiveTasks() == 0:
+            QgsMessageLog.logMessage(
+                '{} - all_tasks_finished signal raised, but active tasks still exist, ignoring it'.format(datetime.now()),
+                'Comptages', Qgis.Warning)
+
+            return
+
+        self.tm.allTasksFinished.disconnect(self.all_tasks_finished)
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
         QgsMessageLog.logMessage(
@@ -466,7 +476,7 @@ class Comptages(QObject):
         if not file_path:
             return
 
-        self.tm.allTasksFinished.connect(self.task_finished)
+        self.tm.allTasksFinished.connect(self.all_tasks_finished)
 
         self.db = connect_to_db()
 
