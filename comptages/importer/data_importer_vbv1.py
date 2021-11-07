@@ -9,8 +9,8 @@ from .bulk_create_manager import BulkCreateManager
 
 class DataImporterVbv1(DataImporter):
 
-    def __init__(self, file_path, count_id, db):
-        super().__init__(file_path, count_id, db)
+    def __init__(self, file_path, count_id):
+        super().__init__(file_path, count_id)
         self.instances = []
         self.bulk_mgr = BulkCreateManager(chunk_size=1000)
 

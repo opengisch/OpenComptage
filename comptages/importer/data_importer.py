@@ -5,18 +5,17 @@ from datetime import datetime
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlQuery
 
-from comptages.core.utils import connect_to_db
+from comptages.datamodel import models
 
 
 class DataImporter(QgsTask):
 
-    def __init__(self, file_path, count_id, db):
+    def __init__(self, file_path, count_id):
         self.basename = os.path.basename(file_path)
         super().__init__(
             'Importation fichier {}'.format(self.basename))
         self.file_path = file_path
         self.count_id = count_id
-        self.db = db
         self.file_header = self.parse_file_header(self.file_path)
         self.lanes = dict()
         self.populate_lane_dict()
@@ -51,43 +50,31 @@ class DataImporter(QgsTask):
         return sum(1 for line in open(self.file_path))
 
     def populate_lane_dict(self):
-        query = QSqlQuery(self.db)
-
-        query_str = (
-            "select l.number, l.id from comptages.count as c "
-            "join comptages.installation as i on i.id = c.id_installation "
-            "join comptages.lane as l on l.id_installation = i.id "
-            "where c.id = {};".format(self.count_id))
-
-        query.exec_(query_str)
-        while query.next():
-            self.lanes[int(query.value(0))] = int(query.value(1))
-
         # e.g. self.lanes = {1: 435, 2: 436}
+
+        count = models.Count.objects.get(id=self.count_id)
+        lanes = models.Lane.objects.filter(
+            id_installation__count=count,
+        ).order_by("number")
+
+        self.lanes = {x.number: x.id for x in lanes}
 
     def populate_category_dict(self):
         if 'CLASS' not in self.file_header:
             return
         class_name = self.file_header['CLASS']
-        query = QSqlQuery(self.db)
 
         # Use customized SWISS7 class for Marksmann devices
         # because they manage this class in a wrong way
         if self.file_header['FORMAT'] in ['INT-2', 'VBV-1'] and class_name == 'SWISS7':
             class_name = 'SWISS7-MM'
 
-        query_str = (
-            "select cat.code, cc.id_category from "
-            "comptages.class_category as cc "
-            "join comptages.category as cat on cc.id_category = cat.id "
-            "join comptages.class as cl on cl.id = cc.id_class "
-            "where cl.name = '{}';".format(class_name))
-
-        query.exec_(query_str)
-        while query.next():
-            self.categories[int(query.value(0))] = int(query.value(1))
-
         # e.g. self.categories = {0: 922, 1: 22, 2: 23, 3: 24, 4: 25, 5: 26, 6: 27, 7: 28, 8: 29, 9: 30, 10: 31}
+        categories = models.Category.objects.filter(
+            classcategory__id_class__name=class_name
+        ).order_by('code')
+
+        self.categories = {x.code: x.id for x in categories}
 
     @staticmethod
     def parse_file_header(file_path):

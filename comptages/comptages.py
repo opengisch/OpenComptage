@@ -215,8 +215,6 @@ class Comptages(QObject):
 
         self.tm.allTasksFinished.connect(self.all_tasks_finished)
 
-        self.db = connect_to_db()
-
         tasks = []
         for file_path in files:
             tasks.append(self.import_file(file_path))
@@ -274,11 +272,11 @@ class Comptages(QObject):
         file_format = file_header['FORMAT']
 
         if file_format == 'VBV-1':
-            task = DataImporterVbv1(file_path, count_id, self.db)
+            task = DataImporterVbv1(file_path, count_id)
         elif file_format == 'INT-2':
-            task = DataImporterInt2(file_path, count_id, self.db)
+            task = DataImporterInt2(file_path, count_id)
         elif file_format == 'MC':
-            task = DataImporterMC(file_path, count_id, self.db)
+            task = DataImporterMC(file_path, count_id)
         else:
             push_info('Format {} of {} not supported'.format(
                 file_format,
@@ -306,9 +304,6 @@ class Comptages(QObject):
             'Comptages', Qgis.Info)
 
         self.chart_dock.show_next_quarantined_chart()
-
-        self.db.close()
-        del self.db
 
     def do_validate_imported_files_action(self):
         if self.tm.countActiveTasks() > 0:
@@ -477,8 +472,6 @@ class Comptages(QObject):
             return
 
         self.tm.allTasksFinished.connect(self.all_tasks_finished)
-
-        self.db = connect_to_db()
 
         self.tm.addTask(self.import_file(file_path, count_id))
 
