@@ -1,3 +1,4 @@
+
 from comptages.datamodel import config
 from comptages.core.settings import Settings
 
@@ -16,8 +17,8 @@ try:
 
     from qdmtk import register_datamodel
     register_datamodel(config.DATAMODEL_NAME, config.INSTALLED_APPS, DATABASE)
-except ImportError:
-    pass
+except Exception as e:
+    print(e)
     #    self.iface.messageBar().pushMessage("Could not load QDMTK.", "You must install the QDMTK plugin prior to using Comptages", level=Qgis.Critical)
 
 
