@@ -17,14 +17,12 @@ class FilterDialog(QDialog, FORM_CLASS):
             if max == 30000:
                 self.max_tjm.setText("∞")
 
-        # self.tjm_min.setValue(0)
-        # self.tjm_max.setValue(30000)
-        # self.tjm.setMinimum(0)
-        # self.tjm.setMaximum(30000)
-        # self.tjm.setSingleStep(100)
-        # self.tjm.setTickInterval(5000)
-        # self.tjm.setTickPosition(QSlider.TicksBothSides)
-        # self.tjm.rangeChanged.connect(update_tjm_labels)
+        self.tjm.setMinimum(0)
+        self.tjm.setMaximum(30000)
+        self.tjm.setSingleStep(100)
+        self.tjm.setTickInterval(5000)
+        self.tjm.setTickPosition(QSlider.TicksBothSides)
+        self.tjm.rangeChanged.connect(update_tjm_labels)
 
         # Populate axe filter
         self.axe.addItem('Tous', None)
@@ -45,9 +43,7 @@ class FilterDialog(QDialog, FORM_CLASS):
             self.end_date.clear()
             self.installation.setCurrentIndex(0)
             self.sensor.setCurrentIndex(0)
-            # self.tjm.setRange(0, 90000)
-            self.tjm_min.setValue(0)
-            self.tjm_max.setValue(30000)
+            self.tjm.setRange(0, 90000)
             self.axe.setCurrentIndex(0)
             self.sector.setCurrentIndex(0)
 

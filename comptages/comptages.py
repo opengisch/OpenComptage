@@ -329,13 +329,9 @@ class Comptages(QObject):
         if self.filter_sensor:
             dlg.sensor.setCurrentIndex(self.filter_sensor)
         if self.filter_tjm:
-            # dlg.tjm.setRange(self.filter_tjm[0], self.filter_tjm[1])
-            dlg.tjm_min.setValue(self.filter_tjm[0])
-            dlg.tjm_max.setValue(self.filter_tjm[1])
+            dlg.tjm.setRange(self.filter_tjm[0], self.filter_tjm[1])
         else:
-            # dlg.tjm.setRange(0, 30000)
-            dlg.tjm_min.setValue(0)
-            dlg.tjm_max.setValue(30000)
+            dlg.tjm.setRange(0, 30000)
         if self.filter_axe:
             dlg.axe.setCurrentIndex(self.filter_axe)
 
@@ -347,8 +343,7 @@ class Comptages(QObject):
             self.filter_end_date = dlg.end_date.dateTime()
             self.filter_installation = dlg.installation.currentIndex()
             self.filter_sensor = dlg.sensor.currentIndex()
-            # self.filter_tjm = [dlg.tjm.lowerValue(), dlg.tjm.upperValue()]
-            self.filter_tjm = [dlg.tjm_min.value(), dlg.tjm_max.value()]
+            self.filter_tjm = [dlg.tjm.lowerValue(), dlg.tjm.upperValue()]
             self.filter_axe = dlg.axe.currentIndex()
             self.filter_sector = dlg.sector.currentIndex()
 
@@ -363,7 +358,7 @@ class Comptages(QObject):
             )
 
             if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
-               (dlg.sensor.currentIndex() == 0) and (dlg.tjm_min.value() == 0) and (dlg.tjm_max.value() == 30000) and \
+               (dlg.sensor.currentIndex() == 0) and (dlg.tjm.lowerValue() == 0) and (dlg.tjm.upperValue() == 30000) and \
                (dlg.axe.currentText() == 'Tous') and (dlg.sector.currentText() == 'Tous'):
                 self.filter_action.setIcon(
                     QIcon(':/plugins/Comptages/images/filter.png'))
