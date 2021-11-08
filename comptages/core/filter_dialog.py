@@ -17,8 +17,6 @@ class FilterDialog(QDialog, FORM_CLASS):
             if max == 30000:
                 self.max_tjm.setText("∞")
 
-        # self.tjm_min.setValue(0)
-        # self.tjm_max.setValue(30000)
         self.tjm.setMinimum(0)
         self.tjm.setMaximum(30000)
         self.tjm.setSingleStep(100)
@@ -46,8 +44,6 @@ class FilterDialog(QDialog, FORM_CLASS):
             self.installation.setCurrentIndex(0)
             self.sensor.setCurrentIndex(0)
             self.tjm.setRange(0, 90000)
-            # self.tjm_min.setValue(0)
-            # self.tjm_max.setValue(30000)
             self.axe.setCurrentIndex(0)
             self.sector.setCurrentIndex(0)
 
