@@ -64,9 +64,8 @@ class DataImporterVbv1(DataImporter):
             parsed_line = dict()
 
             parsed_line['numbering'] = line[0:6]
-            parsed_line['timestamp'] = datetime.strptime(
-                "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f").replace(
-                    tzinfo=tz)
+            parsed_line['timestamp'] = tz.localize(datetime.strptime(
+                "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f"))
             parsed_line['reserve_code'] = line[25:31]
             parsed_line['lane'] = int(line[32:34])
             parsed_line['direction'] = int(line[35:36])

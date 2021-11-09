@@ -66,10 +66,8 @@ class DataImporterMC(DataImporter):
             tz = pytz.timezone('Europe/Zurich')
             self.numbering += 1
             parsed_line['numbering'] = self.numbering
-            parsed_line['timestamp'] = datetime.strptime(
-                line[0:19], "%Y-%m-%d %H:%M:%S").replace(
-                    tzinfo=tz)
-
+            parsed_line['timestamp'] = tz.localize(datetime.strptime(
+                line[0:19], "%Y-%m-%d %H:%M:%S"))
             # On MetroCount files, the direction is 0-1 instead of 1-2
             parsed_line['lane'] = int(line[22:23]) + 1
             parsed_line['direction'] = int(line[22:23]) + 1

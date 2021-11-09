@@ -1,4 +1,5 @@
 
+import pytz
 from datetime import datetime, timedelta, timezone
 
 from comptages.core.layers import Layers
@@ -57,19 +58,17 @@ class DataImporterInt2(DataImporter):
 
     def parse_data_line(self, line):
         parsed_line = dict()
-
+        tz = pytz.timezone('Europe/Zurich')
         # In the data files midnight is 2400 of the current day
         # instead of 0000 of the next day
         if line[7:9] == '24':
             line = line[:7] + '00' + line[9:]
-            end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
-                    tzinfo=timezone.utc)
+            end = tz.localize(datetime.strptime(
+                "{}".format(line[0:11]), "%d%m%y %H%M"))
             end += timedelta(days=1)
         else:
-            end = datetime.strptime(
-                "{}".format(line[0:11]), "%d%m%y %H%M").replace(
-                    tzinfo=timezone.utc)
+            end = tz.localize(datetime.strptime(
+                "{}".format(line[0:11]), "%d%m%y %H%M"))
 
         parsed_line['end'] = end
         parsed_line['start'] = parsed_line['end'] - timedelta(
