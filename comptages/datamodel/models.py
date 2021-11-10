@@ -189,7 +189,7 @@ class Tjm(models.Model):
     id = models.BigAutoField(primary_key=True)
     day = models.DateField(null=True)
     lane = models.ForeignKey('Lane', models.DO_NOTHING)
-    count = models.ForeignKey(Count, on_delete=models.CASCADE)
+    count = models.ForeignKey(Count, on_delete=models.CASCADE, related_name='tjms')
     value = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
