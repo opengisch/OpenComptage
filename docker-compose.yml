@@ -1,13 +1,9 @@
 version: '3'
-#volumes:
-#  postgis-data:
 
 services:
 
   db:
     image: postgis/postgis:12-2.5
-#    volumes:
-#      - 'postgis-data:/var/lib/postgresql'
     environment:
       - POSTGRES_DB=comptages
       - POSTGRES_USER=postgres
@@ -15,16 +11,4 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
     ports:
       - 5432:5432
-    restart: "no"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=info@opengis.ch
-      - PGADMIN_DEFAULT_PASSWORD=postgres
-      - PGADMIN_LISTEN_PORT=5052
-    ports:
-      - 5052:5052
-    depends_on:
-      - db
     restart: "no"
