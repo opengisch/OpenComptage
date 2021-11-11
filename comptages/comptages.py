@@ -13,11 +13,9 @@ from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
-from comptages.core.utils import push_info, connect_to_db
-from comptages.importer.data_importer import DataImporter
-from comptages.importer.data_importer_vbv1 import DataImporterVbv1
-from comptages.importer.data_importer_int2 import DataImporterInt2
-from comptages.importer.data_importer_mc import DataImporterMC
+from comptages.core.utils import push_info
+from comptages.datamodel import models
+from comptages.core import importer, importer_task
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
@@ -239,24 +237,15 @@ class Comptages(QObject):
                 formatter, file_path, file_path_formatted))
             file_path = file_path_formatted
 
-        file_header = DataImporter.parse_file_header(file_path)
+        if count_id:
+            count = models.Count.objects.get(id=count_id)
+        else:
+            count = importer.guess_count(file_path)
 
-        if not count_id:
-            count_id = self.layers.guess_count_id(
-                file_header['SITE'],
-                datetime.strptime(file_header['STARTREC'], "%H:%M %d/%m/%y"),
-                datetime.strptime(file_header['STOPREC'], "%H:%M %d/%m/%y"))
-
-        if not count_id:
+        if not count:
             QgsMessageLog.logMessage(
-                """Impossible de trouver le comptage associé {}:
-                section: {} start: {} end: {}""".format(
-                    file_path,
-                    file_header['SITE'],
-                    datetime.strptime(file_header['STARTREC'], "%H:%M %d/%m/%y"),
-                    datetime.strptime(file_header['STOPREC'], "%H:%M %d/%m/%y")
-                ),
-                'Comptages', Qgis.Critical)
+                "Impossible de trouver le comptage associé {}".format(
+                    file_path,), 'Comptages', Qgis.Critical)
             return
 
         QgsMessageLog.logMessage(
@@ -269,20 +258,7 @@ class Comptages(QObject):
                 datetime.now(), os.path.basename(file_path)),
             'Comptages', Qgis.Info)
 
-        file_format = file_header['FORMAT']
-
-        if file_format == 'VBV-1':
-            task = DataImporterVbv1(file_path, count_id)
-        elif file_format == 'INT-2':
-            task = DataImporterInt2(file_path, count_id)
-        elif file_format == 'MC':
-            task = DataImporterMC(file_path, count_id)
-        else:
-            push_info('Format {} of {} not supported'.format(
-                file_format,
-                os.path.basename(file_path)))
-            return
-
+        task = importer_task.ImporterTask(file_path, count)
         return task
 
     def all_tasks_finished(self):
