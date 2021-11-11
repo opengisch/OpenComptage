@@ -3,4 +3,3 @@ psycopg2-binary==2.8.6
 icalendar==4.0.3
 openpyxl==2.6.2
 django==3.2.5
-qdmtk==0.0.1a2
