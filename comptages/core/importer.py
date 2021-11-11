@@ -93,9 +93,15 @@ def _parse_line_vbv1(line, **kwargs):
         return None
 
     parsed_line = None
+    tz = pytz.timezone('Europe/Zurich')
     try:
-        tz = pytz.timezone('Europe/Zurich')
         parsed_line = dict()
+        parsed_line['distance_front_front'] = 0
+        parsed_line['distance_front_back'] = 0
+        parsed_line['speed'] = -1
+        parsed_line['length'] = 0
+        parsed_line['category'] = 0
+        parsed_line['height'] = 'NA'
 
         parsed_line['numbering'] = line[0:6]
         parsed_line['timestamp'] = tz.localize(datetime.strptime(
@@ -103,13 +109,22 @@ def _parse_line_vbv1(line, **kwargs):
         parsed_line['reserve_code'] = line[25:31]
         parsed_line['lane'] = int(line[32:34])
         parsed_line['direction'] = int(line[35:36])
+
+        # Default values that are used in case some values are missed from a line
+        parsed_line['distance_front_front'] = 0
+        parsed_line['distance_front_back'] = 0
+        parsed_line['speed'] = -1
+        parsed_line['length'] = 0
+        parsed_line['category'] = 0
+        parsed_line['height'] = 'NA'
+        parsed_line['times'] = 1
+
         parsed_line['distance_front_front'] = float(line[37:41])
         parsed_line['distance_front_back'] = float(line[42:46])
         parsed_line['speed'] = int(line[47:50])
         parsed_line['length'] = int(line[52:56])
         parsed_line['category'] = int(line[60:62].strip())
         parsed_line['height'] = line[63:65].strip()
-        parsed_line['times'] = 1
 
         # If the speed of a vehicle is 0, we put it in the category 0
         if parsed_line['speed'] == 0:
@@ -121,24 +136,10 @@ def _parse_line_vbv1(line, **kwargs):
             parsed_line['category'] = 0
 
     except ValueError:
-        # This can happen when some values are missed from a line
-
         if 'lane' not in parsed_line:
             return None
         if 'direction' not in parsed_line:
             return None
-        if 'distance_front_front' not in parsed_line:
-            parsed_line['distance_front_front'] = 0
-        if 'distance_front_back' not in parsed_line:
-            parsed_line['distance_front_back'] = 0
-        if 'speed' not in parsed_line:
-            parsed_line['speed'] = -1
-        if 'length' not in parsed_line:
-            parsed_line['length'] = 0
-        if 'category' not in parsed_line:
-            parsed_line['category'] = 0
-        if 'height ' not in parsed_line:
-            parsed_line['height'] = 'NA'
 
     return [parsed_line]
 
