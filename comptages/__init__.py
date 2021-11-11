@@ -52,14 +52,12 @@ def prepare_django(default_db=None, **additional_settings):
     django.setup()
 
 
-prepare_django()
-
-
 def classFactory(iface):
     """Load Comptages class from file comptages.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
+    prepare_django()
     from .comptages import Comptages
     return Comptages(iface)
