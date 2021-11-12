@@ -295,14 +295,23 @@ class ChartTime(Chart):
         elif self.direction is not None:
             title = 'Véhicules par heure, direction {}'.format(self.direction)
 
+        labels = {'thm': 'Véhicules', 'date': 'Jour', 'hour': 'Heure'}
+
         fig = px.line(
             df,
             x='hour',
             y='thm',
             color='date',
             render_mode='svg',
+            labels=labels,
+
             title=title)
 
+        fig.update_layout(
+            xaxis = dict(
+                tickmode = 'linear',
+            )
+        )
         return plotly.offline.plot(fig, output_type='div')
 
 

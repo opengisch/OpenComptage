@@ -35,6 +35,7 @@ def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None,
            .values('date', 'hour', 'thm')
 
     df = pd.DataFrame.from_records(qs)
+    df['date'] = df['date'].dt.strftime('%a %d.%m.%Y')
     return df
 
 
