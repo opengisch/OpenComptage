@@ -25,9 +25,6 @@ from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
-IMPORT_STATUS_QUARANTINE = 1
-IMPORT_STATUS_DEFINITIVE = 0
-
 
 class Comptages(QObject):
 

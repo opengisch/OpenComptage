@@ -2,7 +2,7 @@ import pytz
 import os
 from datetime import datetime, timedelta
 
-from comptages import comptages
+from comptages.core import definitions
 from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
 
@@ -46,7 +46,6 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
     cat_bins = _populate_category_dict(count)
     line_count = get_line_count(file_path)
     previous_progress = 0
-    print(cat_bins)
     try:
         with open(file_path, encoding=get_file_encoding(file_path)) as f:
             for i, line in enumerate(f):
@@ -72,7 +71,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                             length=row['length'],
                             height=row['height'],
                             file_name=basename,
-                            import_status=comptages.IMPORT_STATUS_QUARANTINE,
+                            import_status=definitions.IMPORT_STATUS_QUARANTINE,
                             id_lane_id=lanes[int(row['lane'])],
                             id_count_id=count.id,
                             id_category_id=category,
