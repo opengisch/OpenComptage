@@ -8,7 +8,7 @@ from comptages.datamodel import models
 from comptages.core import importer
 
 
-class OpenComptageTest(TransactionTestCase):
+class ImportTest(TransactionTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -162,3 +162,32 @@ class OpenComptageTest(TransactionTestCase):
         speed20 = models.CountDetail.objects.filter(speed=20)
         self.assertEqual(speed20[0].times, 3)
         self.assertEqual(speed20[1].times, 4)
+
+    def test_cat_bin(self):
+        model = models.Model.objects.all()[0]
+        device = models.Device.objects.all()[0]
+        sensor_type = models.SensorType.objects.all()[0]
+        class_ = models.Class.objects.get(name="SWISS10")
+        installation = models.Installation.objects.get(name="64080011")
+
+        count = models.Count.objects.create(
+            start_service_date=datetime(2018, 9, 24),
+            end_service_date=datetime(2018, 9, 24),
+            start_process_date=datetime(2018, 9, 24),
+            end_process_date=datetime(2018, 9, 24),
+            start_put_date=datetime(2018, 9, 24),
+            end_put_date=datetime(2018, 9, 24),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        self.assertEqual(
+            importer._populate_category_dict(count),
+            {0: 922, 1: 22, 2: 23, 3: 24, 4: 25, 5: 26, 6: 27, 7: 28, 8: 29, 9: 30, 10: 31}
+        )
+
+    def test_lane_dict(self):
+        pass

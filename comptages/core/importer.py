@@ -2,11 +2,9 @@ import pytz
 import os
 from datetime import datetime, timedelta
 
+from comptages import comptages
 from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
-
-IMPORT_STATUS_QUARANTINE = 1
-IMPORT_STATUS_DEFINITIVE = 0
 
 
 def simple_print_callback(progress):
@@ -48,6 +46,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
     cat_bins = _populate_category_dict(count)
     line_count = get_line_count(file_path)
     previous_progress = 0
+    print(cat_bins)
     try:
         with open(file_path, encoding=get_file_encoding(file_path)) as f:
             for i, line in enumerate(f):
@@ -62,7 +61,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                     previous_progress = progress
 
                 for row in rows:
-                    category = cat_bins[row['category']] if row['category'] else None
+                    category = cat_bins[row['category']] if 'category' in row else None
                     bulk_mgr.add(
                         models.CountDetail(
                             numbering=row['numbering'],
@@ -73,7 +72,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                             length=row['length'],
                             height=row['height'],
                             file_name=basename,
-                            import_status=IMPORT_STATUS_QUARANTINE,
+                            import_status=comptages.IMPORT_STATUS_QUARANTINE,
                             id_lane_id=lanes[int(row['lane'])],
                             id_count_id=count.id,
                             id_category_id=category,
@@ -96,13 +95,6 @@ def _parse_line_vbv1(line, **kwargs):
     tz = pytz.timezone('Europe/Zurich')
     try:
         parsed_line = dict()
-        parsed_line['distance_front_front'] = 0
-        parsed_line['distance_front_back'] = 0
-        parsed_line['speed'] = -1
-        parsed_line['length'] = 0
-        parsed_line['category'] = 0
-        parsed_line['height'] = 'NA'
-
         parsed_line['numbering'] = line[0:6]
         parsed_line['timestamp'] = tz.localize(datetime.strptime(
             "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f"))
