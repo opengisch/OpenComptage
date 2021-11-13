@@ -9,7 +9,6 @@ from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from qgis.core import QgsMessageLog, Qgis
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
-from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
 from comptages.core import statistics, definitions
 from comptages.datamodel import models
 
@@ -53,14 +52,14 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.tabWidget.clear()
         self.tabWidget.currentChanged.connect(self.current_tab_changed)
 
-        # TODO: deve essere per section? per i casi speciali?
-        # sections = models.Section.objects.filter(lane__id_installation__count=count)
-        # for section in sections:
-        tab = ChartTab()
-        self.tabWidget.addTab(tab, "NPLA")
-        self._populate_tab(tab, count, approval_process)
+        # We do by section and not by count because of special cases.
+        sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
+        for section in sections:
+            tab = ChartTab()
+            self.tabWidget.addTab(tab, section.id)
+            self._populate_tab(tab, section, count, approval_process)
 
-    def _populate_tab(self, tab, count, approval_process):
+    def _populate_tab(self, tab, section, count, approval_process):
         # Remove previous items
         try:
             tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
@@ -83,7 +82,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
         sensor_type = count.id_sensor_type
-        lanes = models.Lane.objects.filter(id_installation__count=count)
+        lanes = models.Lane.objects.filter(id_section=section)
         directions = lanes.values('direction').distinct().values_list('direction', flat=True)
 
         if(sensor_type.name == 'Boucle'):
@@ -95,7 +94,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 tab.charts.append(
                     ChartTime(
                         count=count,
-                        status=self.status,
+                        section=section,
                         lane=lane,
                     ).get_div())
 
@@ -108,20 +107,22 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 tab.charts.append(
                     ChartTime(
                         count=count,
-                        status=self.status,
+                        section=section,
                         direction=direction,
                     ).get_div())
 
         tab.chartList.addItem(QListWidgetItem('Par catégorie'))
         tab.charts.append(
             ChartCat(
-                count=count, status=self.status,
+                count=count,
+                section=section,
             ).get_div())
 
         tab.chartList.addItem(QListWidgetItem('Par vitesse'))
         tab.charts.append(
             ChartSpeed(
-                count=count, status=self.status,
+                count=count,
+                section=section,
             ).get_div())
 
         if(sensor_type.name == 'Boucle'):
@@ -133,7 +134,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 tab.charts.append(
                     ChartTjm(
                         count=count,
-                        status=self.status,
+                        section=section,
                         lane=lane,
                     ).get_div())
 
@@ -146,7 +147,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 tab.charts.append(
                     ChartTjm(
                         count=count,
-                        status=self.status,
+                        section=section,
                         direction=direction,
                     ).get_div())
 
@@ -155,7 +156,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         tab.charts.append(
             ChartTjm(
                 count=count,
-                status=self.status,
+                section=section,
             ).get_div())
 
         self.layers.select_and_zoom_on_section_of_count(count.id)
@@ -182,7 +183,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         # FIXME: only one section not all the count!!!
         models.CountDetail.objects.filter(
-            id_count=self.count
+            id_count=self.count,
+            # id_lane__id_section=section
         ).update(
             import_status=definitions.IMPORT_STATUS_DEFINITIVE)
 
@@ -205,7 +207,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
         # FIXME: only one section not all the count!!!
         models.CountDetail.objects.filter(
             id_count=self.count,
-            import_status=definitions.IMPORT_STATUS_QUARANTINE
+            import_status=definitions.IMPORT_STATUS_QUARANTINE,
+            # id_lane__id_section=section
         ).delete()
 
         self.show_next_quarantined_chart()
@@ -246,9 +249,9 @@ class ChartTab(QTabWidget, TAB_CLASS):
 
 class Chart():
 
-    def __init__(self, count, status, lane=None, direction=None):
+    def __init__(self, count, section, lane=None, direction=None):
         self.count = count
-        self.status = status
+        self.section = section
         self.lane = lane
         self.direction = direction
 
@@ -260,7 +263,7 @@ class ChartTjm(Chart):
 
         df, mean = statistics.get_day_data(
             self.count,
-            self.status,
+            self.section,
             self.lane,
             self.direction,
         )
@@ -302,7 +305,7 @@ class ChartTime(Chart):
 
         df = statistics.get_time_data(
             self.count,
-            self.status,
+            self.section,
             self.lane,
             self.direction,
         )
@@ -342,8 +345,14 @@ class ChartCat(Chart):
 
     def get_div(self):
 
-        df_existing = statistics.get_category_data(self.count, definitions.IMPORT_STATUS_DEFINITIVE)
-        df_new = statistics.get_category_data(self.count, definitions.IMPORT_STATUS_QUARANTINE)
+        df_existing = statistics.get_category_data(
+            self.count,
+            self.section,
+            definitions.IMPORT_STATUS_DEFINITIVE)
+        df_new = statistics.get_category_data(
+            self.count,
+            self.section,
+            definitions.IMPORT_STATUS_QUARANTINE)
 
         if df_existing.empty and df_new.empty:
             return
@@ -394,7 +403,9 @@ class ChartSpeed(Chart):
 
     def get_div(self):
 
-        df = statistics.get_speed_data(self.count, self.status)
+        df = statistics.get_speed_data(
+            self.count,
+            self.section)
         if df.empty:
             return
 

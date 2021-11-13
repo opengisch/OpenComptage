@@ -8,7 +8,7 @@ from django.db.models.functions import (
 from comptages.core import definitions
 from comptages.datamodel import models
 
-def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, direction=None):
+def get_time_data(count, section, lane=None, direction=None):
 
     start = count.start_process_date
     end = count.end_process_date
@@ -17,7 +17,7 @@ def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None,
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        # import_status=status,
+        id_lane__id_section=section,
         timestamp__range=(start, end)
     )
 
@@ -41,14 +41,14 @@ def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None,
     return df
 
 
-def get_day_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, direction=None):
+def get_day_data(count, section, lane=None, direction=None):
 
     start = count.start_process_date
     end = count.end_process_date
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        # import_status=status,
+        id_lane__id_section=section,
         timestamp__range=(start, end)
     )
 
@@ -70,13 +70,14 @@ def get_day_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, 
     return df, mean
 
 
-def get_category_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
+def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE):
 
     start = count.start_process_date
     end = count.end_process_date
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
+        id_lane__id_section=section,
         import_status=status,
         timestamp__range=(start, end)
     )
@@ -99,14 +100,14 @@ def get_category_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
     return df
 
 
-def get_speed_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
+def get_speed_data(count, section):
 
     start = count.start_process_date
     end = count.end_process_date
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        # import_status=status,
+        id_lane__id_section=section,
         timestamp__range=(start, end)
     )
 
@@ -140,5 +141,4 @@ def get_speed_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
     df = df.reset_index(col_fill='NPLA_')
     df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
 
-    print(df)
     return df
