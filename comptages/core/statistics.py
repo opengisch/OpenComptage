@@ -1,8 +1,9 @@
 import pandas as pd
 
-from django.db.models import F
+from django.db.models import F, CharField, Value
 from django.db.models import Count, Sum, Avg, Max
-from django.db.models.functions import ExtractIsoWeekDay, ExtractHour, ExtractMonth, ExtractDay, Trunc
+from django.db.models.functions import (
+    ExtractIsoWeekDay, ExtractHour, ExtractMonth, ExtractDay, Trunc, Concat)
 
 from comptages.core import definitions
 from comptages.datamodel import models
@@ -63,7 +64,8 @@ def get_day_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, 
         .values('date', 'tj')
 
     df = pd.DataFrame.from_records(qs)
-    return df
+    mean = df["tj"].mean()
+    return df, mean
 
 
 def get_category_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
@@ -79,10 +81,17 @@ def get_category_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
 
     qs = qs.annotate(cat_name=F('id_category__name')) \
            .annotate(cat_code=F('id_category__code')) \
-           .values('cat_name', 'cat_code', 'times') \
+           .annotate(
+               cat_name_code=Concat(
+                   F('id_category__name'),
+                   Value(' ('),
+                   F('id_category__code'),
+                   Value(')'),
+                   output_field=CharField())) \
+           .values('cat_name', 'cat_code', 'cat_name_code', 'times') \
            .annotate(value=Sum('times')) \
            .order_by('cat_code') \
-           .values('cat_name', 'cat_code', 'value')
+           .values('cat_name', 'cat_code', 'cat_name_code', 'value')
 
     df = pd.DataFrame.from_records(qs)
     return df

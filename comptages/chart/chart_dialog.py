@@ -257,7 +257,7 @@ class Chart():
 class ChartTjm(Chart):
     def get_div(self):
 
-        df = statistics.get_day_data(
+        df, mean = statistics.get_day_data(
             self.count,
             self.status,
             self.lane,
@@ -267,12 +267,30 @@ class ChartTjm(Chart):
         if df.empty:
             return
 
+        labels = {'tj': 'Véhicules', 'date': 'Jour'}
+
         fig = px.bar(
             df,
             x='date',
             y='tj',
-            title="Véhicules ...")
+            title="Véhicules par jour",
+            labels=labels,
+        )
 
+        fig.update_layout(
+            xaxis = dict(
+                tickmode = 'auto',
+                tickangle = -45,
+            )
+        )
+
+        fig.add_hline(
+            y=mean,
+            line_width=3,
+            line_dash="dash",
+            line_color="red",
+            annotation_text=int(mean),
+        )
         return plotly.offline.plot(fig, output_type='div')
 
 
@@ -309,7 +327,10 @@ class ChartTime(Chart):
 
         fig.update_layout(
             xaxis = dict(
-                tickmode = 'linear',
+                tickmode = 'array',
+                tickvals = [x for x in range(24)],
+                ticktext = [f"{x}h-{x+1}h" for x in range(24)],
+                tickangle = -45,
             )
         )
         return plotly.offline.plot(fig, output_type='div')
@@ -324,12 +345,17 @@ class ChartCat(Chart):
         if df.empty:
             return
 
+        labels = {'value': 'Véhicules', 'cat_name_code': 'Catégorie'}
+
         fig = px.pie(
             df,
             values='value',
-            names='cat_name',
-            title="Véhicules groupés par catégorie")
+            names='cat_name_code',
+            title="Véhicules groupés par catégorie",
+            labels=labels,
+        )
 
+        fig.update_traces(textposition='inside', textinfo='label+percent')
         return plotly.offline.plot(fig, output_type='div')
 
 
@@ -341,10 +367,15 @@ class ChartSpeed(Chart):
         if df.empty:
             return
 
+        labels = {'times': 'Véhicules', 'bins': 'Vitesse'}
+
         fig = px.bar(
             df,
             x='bins',
             y='times',
-            title="Véhicules groupés par vitesse")
+            title="Véhicules groupés par vitesse",
+            text='times',
+            labels=labels,
+        )
 
         return plotly.offline.plot(fig, output_type='div')
