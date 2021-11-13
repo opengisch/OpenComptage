@@ -1,6 +1,7 @@
 import plotly
 import plotly.graph_objs as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 
 from datetime import datetime
 
@@ -11,7 +12,6 @@ from comptages.ui.resources import *
 from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
 from comptages.core import statistics, definitions
 from comptages.datamodel import models
-
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
 
@@ -36,12 +36,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         self.setWindowTitle("Comptage: {}, installation: {}".format(count.id, count.id_installation.name))
 
-        status = definitions.IMPORT_STATUS_DEFINITIVE
-        if approval_process:
-            status = definitions.IMPORT_STATUS_QUARANTINE
-
         # Exit and show message if there are no data to show
-        if not models.CountDetail.objects.filter(id_count=count, import_status=status).exists():
+        if not models.CountDetail.objects.filter(id_count=count).exists():
             self.hide()
             push_info("Installation {}: Il n'y a pas de données à montrer pour "
                       "le comptage {}".format(count.id_installation.name, count.id))
@@ -51,11 +47,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
             id_count=count,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE
         ).exists()
-
-        if approval_process and contains_definitive_data:
-            # Show message if data for this count already exists in the db
-            push_warning(('La base de données contient déjà des données '
-                          'pour ce comptage.'))
 
         self.show()
 
@@ -213,7 +204,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         # FIXME: only one section not all the count!!!
         models.CountDetail.objects.filter(
-            id_count=self.count
+            id_count=self.count,
+            import_status=definitions.IMPORT_STATUS_QUARANTINE
         ).delete()
 
         self.show_next_quarantined_chart()
@@ -276,7 +268,7 @@ class ChartTjm(Chart):
         if df.empty:
             return
 
-        labels = {'tj': 'Véhicules', 'date': 'Jour'}
+        labels = {'tj': 'Véhicules', 'date': 'Jour', 'import_status': 'État'}
 
         fig = px.bar(
             df,
@@ -284,6 +276,7 @@ class ChartTjm(Chart):
             y='tj',
             title="Véhicules par jour",
             labels=labels,
+            color='import_status',
         )
 
         fig.update_layout(
@@ -322,7 +315,7 @@ class ChartTime(Chart):
         elif self.direction is not None:
             title = 'Véhicules par heure, direction {}'.format(self.direction)
 
-        labels = {'thm': 'Véhicules', 'date': 'Jour', 'hour': 'Heure'}
+        labels = {'thm': 'Véhicules', 'date': 'Jour', 'hour': 'Heure', 'import_status': 'État'}
 
         fig = px.line(
             df,
@@ -331,7 +324,7 @@ class ChartTime(Chart):
             color='date',
             render_mode='svg',
             labels=labels,
-
+            line_dash='import_status',
             title=title)
 
         fig.update_layout(
@@ -349,22 +342,51 @@ class ChartCat(Chart):
 
     def get_div(self):
 
-        df = statistics.get_category_data(self.count, self.status)
+        df_existing = statistics.get_category_data(self.count, definitions.IMPORT_STATUS_DEFINITIVE)
+        df_new = statistics.get_category_data(self.count, definitions.IMPORT_STATUS_QUARANTINE)
 
-        if df.empty:
+        if df_existing.empty and df_new.empty:
             return
 
-        labels = {'value': 'Véhicules', 'cat_name_code': 'Catégorie'}
+        num_of_charts = 0
 
-        fig = px.pie(
-            df,
-            values='value',
-            names='cat_name_code',
-            title="Véhicules groupés par catégorie",
-            labels=labels,
-        )
+        if not df_existing.empty:
+            num_of_charts += 1
 
-        fig.update_traces(textposition='inside', textinfo='label+percent')
+        if not df_new.empty:
+            num_of_charts += 1
+
+        specs = [[]]
+        for i in range(num_of_charts):
+            specs[0].append({'type': 'domain'})
+
+        fig = make_subplots(rows=1, cols=num_of_charts, specs=specs)
+
+        if not df_existing.empty:
+            fig.add_trace(
+                go.Pie(
+                    values = df_existing['value'],
+                    labels = df_existing['cat_name_code'],
+                    textposition='inside',
+                    textinfo='label+percent',
+                    title="Existant",
+                    name="Existant"),
+                1, 1)
+
+        if not df_new.empty:
+            fig.add_trace(
+                go.Pie(
+                    values= df_new['value'],
+                    labels = df_new['cat_name_code'],
+                    textposition='inside',
+                    textinfo='label+percent',
+                    title='Nouveau',
+                    name="Nouveau"),
+                1, num_of_charts)
+
+        fig.update_traces(hoverinfo="label+percent+name")
+        fig.update_layout(title_text="Véhicules groupés par catégorie")
+
         return plotly.offline.plot(fig, output_type='div')
 
 
@@ -376,15 +398,17 @@ class ChartSpeed(Chart):
         if df.empty:
             return
 
-        labels = {'times': 'Véhicules', 'bins': 'Vitesse'}
+        labels = {'times': 'Véhicules', 'bins': 'Vitesse', 'import_status': 'État'}
 
         fig = px.bar(
             df,
-            x='bins',
+            x='speed',
             y='times',
             title="Véhicules groupés par vitesse",
             text='times',
             labels=labels,
+            barmode='group',
+            color='import_status',
         )
 
         return plotly.offline.plot(fig, output_type='div')

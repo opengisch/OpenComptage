@@ -17,7 +17,7 @@ def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None,
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        import_status=status,
+        # import_status=status,
         timestamp__range=(start, end)
     )
 
@@ -33,10 +33,11 @@ def get_time_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None,
            .values('date', 'hour', 'times') \
            .order_by('date', 'hour') \
            .annotate(thm=Sum('times')) \
-           .values('date', 'hour', 'thm')
+           .values('import_status', 'date', 'hour', 'thm')
 
     df = pd.DataFrame.from_records(qs)
     df['date'] = df['date'].dt.strftime('%a %d.%m.%Y')
+    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
     return df
 
 
@@ -47,7 +48,7 @@ def get_day_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, 
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        import_status=status,
+        # import_status=status,
         timestamp__range=(start, end)
     )
 
@@ -59,12 +60,13 @@ def get_day_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE, lane=None, 
 
     qs = qs.annotate(date=Trunc('timestamp', 'day')) \
         .order_by('date') \
-        .values('date', 'times') \
+        .values('date', 'times', 'import_status') \
         .annotate(tj=Sum('times')) \
-        .values('date', 'tj')
+        .values('date', 'tj', 'import_status')
 
     df = pd.DataFrame.from_records(qs)
     mean = df["tj"].mean()
+    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
     return df, mean
 
 
@@ -104,30 +106,39 @@ def get_speed_data(count, status=definitions.IMPORT_STATUS_DEFINITIVE):
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        import_status=status,
+        # import_status=status,
         timestamp__range=(start, end)
     )
 
-    df = pd.DataFrame.from_records(qs.values('speed', 'times'))
+    df = pd.DataFrame.from_records(qs.values('speed', 'times', 'import_status'))
     df = df.groupby(
-        pd.cut(
-            df['speed'],
-            bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 999],
-            right=False,  # Don't include rightmost edge (e.g. bin 10-20 is actually 10-19.9999999...)
-        )).sum('times')
-    df = df.assign(bins=[
-        '0-10',
-        '10-20',
-        '20-30',
-        '30-40',
-        '40-50',
-        '50-60',
-        '60-70',
-        '70-80',
-        '80-90',
-        '90-100',
-        '100-110',
-        '110-120',
-        '120-999'])
+        ['import_status',
+         pd.cut(
+             df['speed'],
+             bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 999],
+             labels=[
+                 '0-10',
+                 '10-20',
+                 '20-30',
+                 '30-40',
+                 '40-50',
+                 '50-60',
+                 '60-70',
+                 '70-80',
+                 '80-90',
+                 '90-100',
+                 '100-110',
+                 '110-120',
+                 '120-999',
+             ],
+             right=False,  # Don't include rightmost edge (e.g. bin 10-20 is actually 10-19.9999999...)
+         )
+         ]).sum('times')
 
+    df = df.rename(columns={'speed': 'speedNP'})
+
+    df = df.reset_index(col_fill='NPLA_')
+    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+
+    print(df)
     return df
