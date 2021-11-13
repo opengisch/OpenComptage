@@ -22,53 +22,54 @@ class ChartDock(QDockWidget, FORM_CLASS):
         QDockWidget.__init__(self, parent)
         self.setupUi(self)
         self.layers = layers
-        self.count_id = None
+        self.count = None
         self.sensor = None
         self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
-    def set_attributes(self, count_id, approval_process=False):
+    def set_attributes(self, count, approval_process=False):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
             pass
 
-        self.count_id = count_id
+        self.count = count
 
-        self.setWindowTitle("Comptage: {}, installation: {}".format(
-             count_id, self.layers.get_installation_name_of_count(count_id)))
+        self.setWindowTitle("Comptage: {}, installation: {}".format(count.id, count.id_installation.name))
 
-        contains_data = self.layers.count_contains_data(count_id)
-
-        # Show message if there are no data to show
-        if not contains_data and not approval_process:
-            self.hide()
-            push_info("Installation {}: Il n'y a pas de données à montrer pour "
-                "le comptage {}".format(
-                self.layers.get_installation_name_of_count(count_id),count_id))
-            return
-
-        self.show()
-
-        # Show message if data for this count already exists in the db
-        if contains_data and approval_process:
-            push_warning(('La base de données contient déjà des données '
-                          'pour ce comptage.'))
-
-        self.tabWidget.clear()
-        self.tabWidget.currentChanged.connect(self.current_tab_changed)
         status = definitions.IMPORT_STATUS_DEFINITIVE
         if approval_process:
             status = definitions.IMPORT_STATUS_QUARANTINE
 
-        section_ids = self.layers.get_sections_with_data_of_count(
-            count_id, status)
+        # Exit and show message if there are no data to show
+        if not models.CountDetail.objects.filter(id_count=count, import_status=status).exists():
+            self.hide()
+            push_info("Installation {}: Il n'y a pas de données à montrer pour "
+                      "le comptage {}".format(count.id_installation.name, count.id))
+            return
 
-        for section_id in section_ids:
-            tab = ChartTab(section_id)
-            self.tabWidget.addTab(tab, section_id)
-            self.populate_tab(tab, count_id, section_id, approval_process)
+        contains_definitive_data = models.CountDetail.objects.filter(
+            id_count=count,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE
+        ).exists()
 
-    def populate_tab(self, tab, count_id, section_id, approval_process):
+        if approval_process and contains_definitive_data:
+            # Show message if data for this count already exists in the db
+            push_warning(('La base de données contient déjà des données '
+                          'pour ce comptage.'))
+
+        self.show()
+
+        self.tabWidget.clear()
+        self.tabWidget.currentChanged.connect(self.current_tab_changed)
+
+        # TODO: deve essere per section? per i casi speciali?
+        # sections = models.Section.objects.filter(lane__id_installation__count=count)
+        # for section in sections:
+        tab = ChartTab()
+        self.tabWidget.addTab(tab, "NPLA")
+        self._populate_tab(tab, count, approval_process)
+
+    def _populate_tab(self, tab, count, approval_process):
         # Remove previous items
         try:
             tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
@@ -90,7 +91,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.buttonRefuse.hide()
             self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
-        count = models.Count.objects.get(id=count_id)
         sensor_type = count.id_sensor_type
         lanes = models.Lane.objects.filter(id_installation__count=count)
         directions = lanes.values('direction').distinct().values_list('direction', flat=True)
@@ -167,7 +167,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 status=self.status,
             ).get_div())
 
-        self.layers.select_and_zoom_on_section_of_count(count_id)
+        self.layers.select_and_zoom_on_section_of_count(count.id)
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
         else:
@@ -188,10 +188,16 @@ class ChartDock(QDockWidget, FORM_CLASS):
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
-        self.layers.change_status_of_count_data(
-            self.count_id, tab.section_id,
-            definitions.IMPORT_STATUS_DEFINITIVE)
-        calculate_tjm(self.count_id)
+
+        # FIXME: only one section not all the count!!!
+        models.CountDetail.objects.filter(
+            id_count=self.count
+        ).update(
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE)
+
+        # calculate_tjm(self.count_id)
+        # TODO tjm?
+
         self.show_next_quarantined_chart()
 
         QgsMessageLog.logMessage(
@@ -204,9 +210,12 @@ class ChartDock(QDockWidget, FORM_CLASS):
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
-        self.layers.delete_count_data(
-            self.count_id, tab.section_id,
-            definitions.IMPORT_STATUS_QUARANTINE)
+
+        # FIXME: only one section not all the count!!!
+        models.CountDetail.objects.filter(
+            id_count=self.count
+        ).delete()
+
         self.show_next_quarantined_chart()
 
         QgsMessageLog.logMessage(
@@ -218,8 +227,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
             '{} - Generate validation chart started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
-        quarantined_counts = self.layers.get_quarantined_counts()
-        if not quarantined_counts:
+        quarantined_counts = models.Count.objects.filter(
+            countdetail__import_status=definitions.IMPORT_STATUS_QUARANTINE
+        ).distinct()
+        if not quarantined_counts.exists():
             self.hide()
             push_info("Il n'y a pas de données à valider")
             return
@@ -236,12 +247,10 @@ TAB_CLASS = get_ui_class('chart_tab.ui')
 
 class ChartTab(QTabWidget, TAB_CLASS):
 
-    def __init__(self, section_id, parent=None):
+    def __init__(self, parent=None):
         QTabWidget.__init__(self, parent)
         self.setupUi(self)
         self.charts = []
-        self.section_id = section_id
-
 
 class Chart():
 
