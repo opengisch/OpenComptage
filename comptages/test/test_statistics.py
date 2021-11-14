@@ -26,14 +26,15 @@ class StatisticsTest(TransactionTestCase):
         sensor_type = models.SensorType.objects.all()[0]
         class_ = models.Class.objects.get(name="SWISS10")
         installation = models.Installation.objects.get(name="00056520")
+        tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
-            start_service_date=datetime(2021, 10, 15),
-            end_service_date=datetime(2021, 10, 16),
-            start_process_date=datetime(2021, 10, 15),
-            end_process_date=datetime(2021, 10, 16),
-            start_put_date=datetime(2021, 10, 15),
-            end_put_date=datetime(2021, 10, 16),
+            start_service_date=tz.localize(datetime(2021, 10, 15)),
+            end_service_date=tz.localize(datetime(2021, 10, 16)),
+            start_process_date=tz.localize(datetime(2021, 10, 15)),
+            end_process_date=tz.localize(datetime(2021, 10, 16)),
+            start_put_date=tz.localize(datetime(2021, 10, 15)),
+            end_put_date=tz.localize(datetime(2021, 10, 16)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
@@ -45,8 +46,44 @@ class StatisticsTest(TransactionTestCase):
             utils.test_data_path("00056520.V01"),
             count)
 
-        # self.assertEqual(models.CountDetail.objects.count(), 18114)
+        self.assertEqual(models.CountDetail.objects.count(), 18114)
 
-        # print(statistics.get_time_data(count))
-        print(statistics.get_category_data(count, status=definitions.IMPORT_STATUS_QUARANTINE))
+        section = models.Section.objects.filter(lane__id_installation__count=count).distinct()[0]
 
+        df = statistics.get_time_data(count, section)
+
+        self.assertEqual(df['thm'][0], 305)
+        self.assertEqual(df['thm'][1], 1306)
+
+        df, mean = statistics.get_day_data(count, section, direction=1)
+        self.assertEqual(df['tj'][0], 9871)
+        df, mean = statistics.get_day_data(count, section, direction=2)
+        self.assertEqual(mean, 8243)
+
+        df = statistics.get_category_data(count, section, status=definitions.IMPORT_STATUS_QUARANTINE)
+        self.assertEqual(df['value'][0], 1)
+        self.assertEqual(df['value'][1], 93)
+        self.assertEqual(df['value'][2], 1)
+        self.assertEqual(df['value'][3], 17315)
+        self.assertEqual(df['value'][4], 16)
+        self.assertEqual(df['value'][5], 570)
+        self.assertEqual(df['value'][6], 15)
+        self.assertEqual(df['value'][7], 4)
+        self.assertEqual(df['value'][8], 70)
+        self.assertEqual(df['value'][9], 12)
+        self.assertEqual(df['value'][10], 17)
+
+        df = statistics.get_speed_data(count, section)
+        self.assertEqual(df['times'][0], 0)
+        self.assertEqual(df['times'][1], 1)
+        self.assertEqual(df['times'][2], 13)
+        self.assertEqual(df['times'][3], 638)
+        self.assertEqual(df['times'][4], 11331)
+        self.assertEqual(df['times'][5], 5792)
+        self.assertEqual(df['times'][6], 304)
+        self.assertEqual(df['times'][7], 29)
+        self.assertEqual(df['times'][8], 5)
+        self.assertEqual(df['times'][9], 0)
+        self.assertEqual(df['times'][10], 0)
+        self.assertEqual(df['times'][11], 0)
+        self.assertEqual(df['times'][12], 1)
