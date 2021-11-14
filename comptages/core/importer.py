@@ -60,7 +60,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                     previous_progress = progress
 
                 for row in rows:
-                    category = cat_bins[row['category']] if row['category'] else None
+                    category = cat_bins[row['category']] if row['category'] is not None else None
                     bulk_mgr.add(
                         models.CountDetail(
                             numbering=row['numbering'],
