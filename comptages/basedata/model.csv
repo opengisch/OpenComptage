@@ -1,10 +1,48 @@
-id,name,card_name,configuration,id_brand
-"1",M660_LT,8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity),,"1"
-"2",M660_L,8 Loop Card (HP),,"1"
-"3",M660_T,Tube/Switch Input Card (Rev Polarity),,"1"
-"4",M660_L2,2 x 8 Loop Card (HP),,"1"
-"5",M660_T2,2 x Tube/Switch Input Card (Rev Polarity),,"1"
-"6",M680_L,16 Loop Sensor,,"1"
-"7",M720_L,Loop Sensor,,"1"
-"11",MC5900_T,Tube,,"2"
-"12",MC5720_P,Piezo,,"2"
+"id","name","card_name","configuration","id_brand"
+0,"MK3_T","Tube",NULL,1
+1,"M660_LT","8 Loop Card (HP) + Tube/Switch Input Card (Rev Polarity)","",1
+2,"M660_L","8 Loop Card (HP)","",1
+3,"M660_T","Tube/Switch Input Card (Rev Polarity)","",1
+4,"M660_L2","2 x 8 Loop Card (HP)","",1
+5,"M660_T2","2 x Tube/Switch Input Card (Rev Polarity)","",1
+6,"M680_L","16 Loop Sensor","REM MARKSMAN FRONT-END VERSION 3.0
+REM MACHINE TYPE = M680IVSig
+REM CONFIGURATION TYPE = Marksman
+REM RECORDING TYPE = VbV
+REM PROMPT FOR SITE DETAILS = No
+REM POLLUTION MONITOR = 
+REM SWITCH OUTPUT = 
+
+GRIDREF = 
+UNITS = Metric
+PRUNITS = M1
+DATEFORM = DD/MM/YY
+SUMMER = off
+WINTER = off
+TIMEZONE = +1:0
+HEADINGS = 
+
+INTERVAL = 60
+PEAKTIME = off
+PEAKINT = 5
+BREAK = daily
+MEMFULL = overwrite
+INTSPEC = LEN + CLS + SPD
+LENBINS = 0 270 700 1300 9999
+SPDBINS = 0 20 30 40 50 60 70 80 90 100 110 120 999
+LPNONOVERLAP = ON 50 1000
+LPSTRADDLE = off
+VBVFORMAT = 4294967295
+
+VBVFILTER = ALL
+INTFILTER = ALL
+
+REM ADDITIONAL COMMANDS
+
+REM INPUT_UNITS = 0
+REM AXSEPS = 400
+REM SPEEDLIMIT = 60
+REM ROADTYPE = 2_pistes",1
+7,"M720_L","Loop Sensor","",1
+11,"MC5900_T","Tube","",2
+12,"MC5720_P","Piezo","",2
