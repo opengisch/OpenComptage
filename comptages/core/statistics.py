@@ -41,16 +41,27 @@ def get_time_data(count, section, lane=None, direction=None):
     return df
 
 
-def get_day_data(count, section, lane=None, direction=None):
+def get_day_data(count, section=None, lane=None, direction=None, status=None):
 
     start = count.start_process_date
     end = count.end_process_date
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
-        id_lane__id_section=section,
+
         timestamp__range=(start, end)
     )
+
+    # Can be None if we are calculating the total TJM of a special case's count
+    if section is not None:
+        qs = qs.filter(
+            id_lane__id_section=section
+        )
+
+    if status is not None:
+        qs = qs.filter(
+            import_status=status
+        )
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
@@ -65,8 +76,12 @@ def get_day_data(count, section, lane=None, direction=None):
         .values('date', 'tj', 'import_status')
 
     df = pd.DataFrame.from_records(qs)
-    mean = df["tj"].mean()
-    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+
+    mean = 0
+    if not df.empty:
+        mean = df["tj"].mean()
+        df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+
     return df, mean
 
 

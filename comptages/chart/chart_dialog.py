@@ -188,8 +188,14 @@ class ChartDock(QDockWidget, FORM_CLASS):
         ).update(
             import_status=definitions.IMPORT_STATUS_DEFINITIVE)
 
-        # calculate_tjm(self.count_id)
-        # TODO: tjm?
+        # Calculate tjm of count
+        df, tjm = statistics.get_day_data(
+            self.count,
+            section=None,
+            status=definitions.IMPORT_STATUS_DEFINITIVE)
+
+        self.count.tjm = tjm
+        self.count.save(update_fields=['tjm'])
 
         self.show_next_quarantined_chart()
 

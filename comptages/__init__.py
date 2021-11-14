@@ -3,8 +3,6 @@ import django
 
 from django.conf import settings as django_settings
 
-from comptages.core.settings import Settings as PluginSettings
-
 
 def prepare_django(default_db=None, **additional_settings):
     if django_settings.configured:
@@ -13,12 +11,13 @@ def prepare_django(default_db=None, **additional_settings):
     if not additional_settings:
         additional_settings = {}
 
-    plugin_settings = PluginSettings()
-
     # If the default db doesn't arrives from the manage.py script
     # (i.e. the command is lauched from the QGIS python console), we
     # use the one in the plugin settings
     if not default_db:
+
+        from comptages.core.settings import Settings as PluginSettings
+        plugin_settings = PluginSettings()
         default_db = {
             "ENGINE": "django.contrib.gis.db.backends.postgis",
             "HOST": plugin_settings.value("db_host"),
