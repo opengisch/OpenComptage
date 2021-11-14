@@ -23,9 +23,8 @@ jobs:
 
       - name: Install QGIS
         run: |
-          apt update
-          apt install -y qgis
-          
+          sudo apt update && sudo apt install -y qgis
+
       - name: Start docker stack
         run: docker-compose up --build -d
 
