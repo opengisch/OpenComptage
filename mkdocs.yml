@@ -18,7 +18,7 @@ theme:
 nav:
   - Home: index.md
   - Manuel de l'utilisateur: user_manual.md
-  - Installation (en): installation.md
+  - Installation & maintenance (en): installation.md
   - Development (en): development.md
 
 markdown_extensions:
