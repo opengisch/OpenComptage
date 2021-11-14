@@ -74,8 +74,10 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None):
         .values('date', 'tj', 'import_status')
 
     df = pd.DataFrame.from_records(qs)
-    mean = df["tj"].mean()
-    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+    mean = 0
+    if not df.empty:
+        mean = df["tj"].mean()
+        df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
     return df, mean
 
 
