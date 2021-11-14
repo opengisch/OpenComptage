@@ -41,8 +41,7 @@ def get_time_data(count, section, lane=None, direction=None):
     return df
 
 
-def get_day_data(count, section, lane=None, direction=None, status=None):
-
+def get_day_data(count, section=None, lane=None, direction=None, status=None):
     start = count.start_process_date
     end = count.end_process_date
 
