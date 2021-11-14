@@ -25,9 +25,6 @@ from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
 
-IMPORT_STATUS_QUARANTINE = 1
-IMPORT_STATUS_DEFINITIVE = 0
-
 
 class Comptages(QObject):
 
@@ -525,7 +522,8 @@ class Comptages(QObject):
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
-        self.chart_dock.set_attributes(count_id)
+        count = models.Count.objects.get(id=count_id)
+        self.chart_dock.set_attributes(count)
 
         QgsMessageLog.logMessage(
             '{} - Generate chart action ended'.format(datetime.now()),

@@ -1,13 +1,17 @@
 import plotly
 import plotly.graph_objs as go
+import plotly.express as px
+from plotly.subplots import make_subplots
+
 from datetime import datetime
+from functools import partial
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from qgis.core import QgsMessageLog, Qgis
 from comptages.core.utils import get_ui_class, push_warning, push_info
 from comptages.ui.resources import *
-from comptages.core.tjm import calculate_tjm, get_tjm_data_total, get_tjm_data_by_lane, get_tjm_data_by_direction
-
+from comptages.core import statistics, definitions
+from comptages.datamodel import models
 
 FORM_CLASS = get_ui_class('chart_dock.ui')
 
@@ -18,53 +22,45 @@ class ChartDock(QDockWidget, FORM_CLASS):
         QDockWidget.__init__(self, parent)
         self.setupUi(self)
         self.layers = layers
-        self.count_id = None
+        self.count = None
         self.sensor = None
-        self.status = self.layers.IMPORT_STATUS_DEFINITIVE
+        self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
-    def set_attributes(self, count_id, approval_process=False):
+    def set_attributes(self, count, approval_process=False):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
             pass
 
-        self.count_id = count_id
+        self.count = count
 
-        self.setWindowTitle("Comptage: {}, installation: {}".format(
-             count_id, self.layers.get_installation_name_of_count(count_id)))
+        self.setWindowTitle("Comptage: {}, installation: {}".format(count.id, count.id_installation.name))
 
-        contains_data = self.layers.count_contains_data(count_id)
-
-        # Show message if there are no data to show
-        if not contains_data and not approval_process:
+        # Exit and show message if there are no data to show
+        if not models.CountDetail.objects.filter(id_count=count).exists():
             self.hide()
             push_info("Installation {}: Il n'y a pas de données à montrer pour "
-                "le comptage {}".format(
-                self.layers.get_installation_name_of_count(count_id),count_id))
+                      "le comptage {}".format(count.id_installation.name, count.id))
             return
+
+        contains_definitive_data = models.CountDetail.objects.filter(
+            id_count=count,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE
+        ).exists()
 
         self.show()
 
-        # Show message if data for this count already exists in the db
-        if contains_data and approval_process:
-            push_warning(('La base de données contient déjà des données '
-                          'pour ce comptage.'))
-
         self.tabWidget.clear()
         self.tabWidget.currentChanged.connect(self.current_tab_changed)
-        status = self.layers.IMPORT_STATUS_DEFINITIVE
-        if approval_process:
-            status = self.layers.IMPORT_STATUS_QUARANTINE
 
-        section_ids = self.layers.get_sections_with_data_of_count(
-            count_id, status)
+        # We do by section and not by count because of special cases.
+        sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
+        for section in sections:
+            tab = ChartTab()
+            self.tabWidget.addTab(tab, section.id)
+            self._populate_tab(tab, section, count, approval_process)
 
-        for section_id in section_ids:
-            tab = ChartTab(section_id)
-            self.tabWidget.addTab(tab, section_id)
-            self.populate_tab(tab, count_id, section_id, approval_process)
-
-    def populate_tab(self, tab, count_id, section_id, approval_process):
+    def _populate_tab(self, tab, section, count, approval_process):
         # Remove previous items
         try:
             tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
@@ -77,84 +73,94 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         if approval_process:
             tab.buttonValidate.show()
-            tab.buttonValidate.clicked.connect(self.validate_count)
-            tab.buttonRefuse.clicked.connect(self.refuse_count)
+            tab.buttonValidate.clicked.connect(partial(self.validate_count, section))
+            tab.buttonRefuse.clicked.connect(partial(self.refuse_count, section))
             tab.buttonRefuse.show()
-            self.status = self.layers.IMPORT_STATUS_QUARANTINE
+            self.status = definitions.IMPORT_STATUS_QUARANTINE
         else:
             tab.buttonValidate.hide()
             tab.buttonRefuse.hide()
-            self.status = self.layers.IMPORT_STATUS_DEFINITIVE
+            self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
-        sensor_type = self.layers.get_sensor_type_of_count(count_id)
-        sensor = sensor_type.attribute('name')
+        sensor_type = count.id_sensor_type
+        lanes = models.Lane.objects.filter(id_section=section)
+        directions = lanes.values('direction').distinct().values_list('direction', flat=True)
 
-        if(sensor == 'Boucle'):
+        if(sensor_type.name == 'Boucle'):
             # By lane
-            lanes = self.layers.get_lanes_of_section(section_id)
             for i, lane in enumerate(lanes):
                 tab.chartList.addItem(
                     QListWidgetItem('Par heure, voie {}'.format(
-                        lane.attribute('number'))))
+                        lane.number)))
                 tab.charts.append(
-                    ChartTime(self.layers, count_id, section_id,
-                              self.status,
-                              (lane.attribute('number'),
-                               lane.attribute('id')),
-                              None).get_div())
+                    ChartTime(
+                        count=count,
+                        section=section,
+                        lane=lane,
+                    ).get_div())
+
         else:
             # By direction
-            # TODO: better get_directions_of_section or doesnt matter
-            # i.e. special cases are always 'Boucle'?
-            directions = self.layers.get_directions_of_count(count_id)
-            for direction in directions:
+            for i, direction in enumerate(directions):
                 tab.chartList.addItem(
                     QListWidgetItem('Par heure, direction {}'.format(
                         direction)))
                 tab.charts.append(
-                    ChartTime(self.layers, count_id, section_id, self.status,
-                              None, direction).get_div())
+                    ChartTime(
+                        count=count,
+                        section=section,
+                        direction=direction,
+                    ).get_div())
 
         tab.chartList.addItem(QListWidgetItem('Par catégorie'))
         tab.charts.append(
-            ChartCategory(
-                self.layers, count_id, section_id, self.status).get_div())
+            ChartCat(
+                count=count,
+                section=section,
+            ).get_div())
 
         tab.chartList.addItem(QListWidgetItem('Par vitesse'))
         tab.charts.append(
             ChartSpeed(
-                self.layers, count_id, section_id, self.status).get_div())
+                count=count,
+                section=section,
+            ).get_div())
 
-        if not approval_process:
-            if(sensor == 'Boucle'):
-            # By TJM
-                lanes = self.layers.get_lanes_of_section(section_id)
-                for i, lane in enumerate(lanes):
-                    tab.chartList.addItem(
-                        QListWidgetItem('Par TJM voie {}'.format(
-                            lane.attribute('number'))))
-                    tab.charts.append(
-                        ChartTjm(self.layers, count_id, section_id,
-                                 self.status,
-                                 (lane.attribute('number'),
-                                  lane.attribute('id')),
-                                 None).get_div())
-            else:
-                directions = self.layers.get_directions_of_count(count_id)
-                for direction in directions:
-                    tab.chartList.addItem(
-                        QListWidgetItem('Par TJM direction {}'.format(
-                            direction)))
-                    tab.charts.append(
-                        ChartTjm(self.layers, count_id, section_id, self.status,
-                                 None, direction).get_div())
+        if(sensor_type.name == 'Boucle'):
+            # By lane
+            for i, lane in enumerate(lanes):
+                tab.chartList.addItem(
+                    QListWidgetItem('Par TJM, voie {}'.format(
+                        lane.number)))
+                tab.charts.append(
+                    ChartTjm(
+                        count=count,
+                        section=section,
+                        lane=lane,
+                    ).get_div())
 
-            tab.chartList.addItem(QListWidgetItem('Par TJM total'))
-            tab.charts.append(
-                ChartTjmTotal(self.layers, count_id, section_id,
-                              self.status).get_div())
+        else:
+            # By direction
+            for i, direction in enumerate(directions):
+                tab.chartList.addItem(
+                    QListWidgetItem('Par TJM, direction {}'.format(
+                        direction)))
+                tab.charts.append(
+                    ChartTjm(
+                        count=count,
+                        section=section,
+                        direction=direction,
+                    ).get_div())
 
-        self.layers.select_and_zoom_on_section_of_count(count_id)
+        tab.chartList.addItem(
+            QListWidgetItem('Par TJM total'))
+        tab.charts.append(
+            ChartTjm(
+                count=count,
+                section=section,
+            ).get_div())
+
+        self.layers.select_and_zoom_on_section_of_count(count.id)
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
         else:
@@ -169,31 +175,41 @@ class ChartDock(QDockWidget, FORM_CLASS):
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
 
-    def validate_count(self):
+    def validate_count(self, section):
         QgsMessageLog.logMessage(
             '{} - Accept data started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
-        self.layers.change_status_of_count_data(
-            self.count_id, tab.section_id,
-            self.layers.IMPORT_STATUS_DEFINITIVE)
-        calculate_tjm(self.count_id)
+
+        models.CountDetail.objects.filter(
+            id_count=self.count,
+            id_lane__id_section=section
+        ).update(
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE)
+
+        # calculate_tjm(self.count_id)
+        # TODO: tjm?
+
         self.show_next_quarantined_chart()
 
         QgsMessageLog.logMessage(
             '{} - Accept data ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
-    def refuse_count(self):
+    def refuse_count(self, section):
         QgsMessageLog.logMessage(
             '{} - Reject data started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
-        self.layers.delete_count_data(
-            self.count_id, tab.section_id,
-            self.layers.IMPORT_STATUS_QUARANTINE)
+
+        models.CountDetail.objects.filter(
+            id_count=self.count,
+            import_status=definitions.IMPORT_STATUS_QUARANTINE,
+            id_lane__id_section=section
+        ).delete()
+
         self.show_next_quarantined_chart()
 
         QgsMessageLog.logMessage(
@@ -205,8 +221,10 @@ class ChartDock(QDockWidget, FORM_CLASS):
             '{} - Generate validation chart started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
-        quarantined_counts = self.layers.get_quarantined_counts()
-        if not quarantined_counts:
+        quarantined_counts = models.Count.objects.filter(
+            countdetail__import_status=definitions.IMPORT_STATUS_QUARANTINE
+        ).distinct()
+        if not quarantined_counts.exists():
             self.hide()
             push_info("Il n'y a pas de données à valider")
             return
@@ -223,257 +241,184 @@ TAB_CLASS = get_ui_class('chart_tab.ui')
 
 class ChartTab(QTabWidget, TAB_CLASS):
 
-    def __init__(self, section_id, parent=None):
+    def __init__(self, parent=None):
         QTabWidget.__init__(self, parent)
         self.setupUi(self)
         self.charts = []
-        self.section_id = section_id
-
 
 class Chart():
 
-    def __init__(self, layers, count_id, section_id, status):
-        self.layers = layers
-        self.count_id = count_id
-        self.section_id = section_id
-        self.status = status
+    def __init__(self, count, section, lane=None, direction=None):
+        self.count = count
+        self.section = section
+        self.lane = lane
+        self.direction = direction
 
     def get_div(self):
         pass
+
+class ChartTjm(Chart):
+    def get_div(self):
+
+        df, mean = statistics.get_day_data(
+            self.count,
+            self.section,
+            self.lane,
+            self.direction,
+        )
+
+        if df.empty:
+            return
+
+        labels = {'tj': 'Véhicules', 'date': 'Jour', 'import_status': 'État'}
+
+        fig = px.bar(
+            df,
+            x='date',
+            y='tj',
+            title="Véhicules par jour",
+            labels=labels,
+            color='import_status',
+        )
+
+        fig.update_layout(
+            xaxis = dict(
+                tickmode = 'auto',
+                tickangle = -45,
+            )
+        )
+
+        fig.add_hline(
+            y=mean,
+            line_width=3,
+            line_dash="dash",
+            line_color="red",
+            annotation_text=int(mean),
+        )
+        return plotly.offline.plot(fig, output_type='div')
+
+
+class ChartTime(Chart):
+
+    def get_div(self):
+
+        df = statistics.get_time_data(
+            self.count,
+            self.section,
+            self.lane,
+            self.direction,
+        )
+        if df.empty:
+            return
+
+        title = 'Véhicules par heure'
+        if self.lane is not None:
+            title = 'Véhicules par heure, voie {}'.format(self.lane.number)
+        elif self.direction is not None:
+            title = 'Véhicules par heure, direction {}'.format(self.direction)
+
+        labels = {'thm': 'Véhicules', 'date': 'Jour', 'hour': 'Heure', 'import_status': 'État'}
+
+        fig = px.line(
+            df,
+            x='hour',
+            y='thm',
+            color='date',
+            render_mode='svg',
+            labels=labels,
+            line_dash='import_status',
+            title=title)
+
+        fig.update_layout(
+            xaxis = dict(
+                tickmode = 'array',
+                tickvals = [x for x in range(24)],
+                ticktext = [f"{x}h-{x+1}h" for x in range(24)],
+                tickangle = -45,
+            )
+        )
+        return plotly.offline.plot(fig, output_type='div')
+
+
+class ChartCat(Chart):
+
+    def get_div(self):
+
+        df_existing = statistics.get_category_data(
+            self.count,
+            self.section,
+            definitions.IMPORT_STATUS_DEFINITIVE)
+        df_new = statistics.get_category_data(
+            self.count,
+            self.section,
+            definitions.IMPORT_STATUS_QUARANTINE)
+
+        if df_existing.empty and df_new.empty:
+            return
+
+        num_of_charts = 0
+
+        if not df_existing.empty:
+            num_of_charts += 1
+
+        if not df_new.empty:
+            num_of_charts += 1
+
+        specs = [[]]
+        for i in range(num_of_charts):
+            specs[0].append({'type': 'domain'})
+
+        fig = make_subplots(rows=1, cols=num_of_charts, specs=specs)
+
+        if not df_existing.empty:
+            fig.add_trace(
+                go.Pie(
+                    values = df_existing['value'],
+                    labels = df_existing['cat_name_code'],
+                    textposition='inside',
+                    textinfo='label+percent',
+                    title="Existant",
+                    name="Existant"),
+                1, 1)
+
+        if not df_new.empty:
+            fig.add_trace(
+                go.Pie(
+                    values= df_new['value'],
+                    labels = df_new['cat_name_code'],
+                    textposition='inside',
+                    textinfo='label+percent',
+                    title='Nouveau',
+                    name="Nouveau"),
+                1, num_of_charts)
+
+        fig.update_traces(hoverinfo="label+percent+name")
+        fig.update_layout(title_text="Véhicules groupés par catégorie")
+
+        return plotly.offline.plot(fig, output_type='div')
 
 
 class ChartSpeed(Chart):
 
     def get_div(self):
 
-        x = []
-        y = []
+        df = statistics.get_speed_data(
+            self.count,
+            self.section)
+        if df.empty:
+            return
 
-        is_aggregate = self.layers.is_data_aggregate(self.count_id)
+        labels = {'times': 'Véhicules', 'bins': 'Vitesse', 'import_status': 'État'}
 
-        if is_aggregate:
-            x, y = self.get_aggregate_data()
-        else:
-            x, y = self.get_detail_data()
-
-        total_y = sum(y)
-        percent_y = 0
-        if not total_y == 0:
-            percent_y = ['{}%'.format(
-                round((i / total_y) * 100, 2)) for i in y]
-
-        bar = go.Bar(
-            x=x,
-            y=y,
-            text=percent_y,
-            textposition='auto'
+        fig = px.bar(
+            df,
+            x='speed',
+            y='times',
+            title="Véhicules groupés par vitesse",
+            text='times',
+            labels=labels,
+            barmode='group',
+            color='import_status',
         )
 
-        layout = go.Layout(
-            title='Véhicules groupés par vitesse')
-        fig = go.Figure(data=[bar], layout=layout)
-        return plotly.offline.plot(fig, output_type='div')
-
-    def get_aggregate_data(self):
-        x, y = self.layers.get_aggregate_speed_chart_data(
-            self.count_id, self.status, self.section_id)
-        return x, y
-
-    def get_detail_data(self):
-        x, y = self.layers.get_detail_speed_chart_data(
-            self.count_id, self.status, self.section_id)
-        return x, y
-
-
-class ChartCategory(Chart):
-
-    def get_div(self):
-
-        labels = []
-        values = []
-
-        is_aggregate = self.layers.is_data_aggregate(self.count_id)
-
-        if is_aggregate:
-            labels, values = self.get_aggregate_data()
-        else:
-            labels, values = self.get_detail_data()
-
-        pie = go.Pie(labels=labels, values=values)
-
-        layout = go.Layout(title="Véhicules groupés par catégorie")
-        fig = go.Figure(data=[pie], layout=layout)
-        return plotly.offline.plot(fig, output_type='div')
-
-    def get_aggregate_data(self):
-        labels, values = self.layers.get_aggregate_category_chart_data(
-            self.count_id, self.status, self.section_id)
-
-        if not labels and not values:
-            labels = ['Volume']
-            values = [
-                self.layers.get_aggregate_total(
-                    self.count_id, self.status, self.section_id)]
-        return labels, values
-
-    def get_detail_data(self):
-        labels, values = self.layers.get_detail_category_chart_data(
-            self.count_id, self.status, self.section_id)
-        return labels, values
-
-
-class ChartTime(Chart):
-
-    def __init__(
-            self, layers, count_id, section_id,
-            status, lane, direction_number):
-        super().__init__(layers, count_id, section_id, status)
-        if lane:
-            self.lane_number = lane[0]
-            self.lane_id = lane[1]
-        self.direction_number = direction_number
-
-    def get_div(self):
-        is_aggregate = self.layers.is_data_aggregate(self.count_id)
-        sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
-        sensor = sensor_type.attribute('name')
-
-        xs = []
-        ys = []
-        days = []
-        title = ''
-
-        if is_aggregate and sensor == 'Boucle':
-            xs, ys, days = self.get_aggregate_data_by_lane()
-            title = 'Véhicules par heure, voie {}'.format(self.lane_number)
-        elif is_aggregate and sensor == 'Tube':
-            xs, ys, days = self.get_aggregate_data_by_direction()
-            title = 'Véhicules par heure, direction {}'.format(
-                self.direction_number)
-        elif not is_aggregate and sensor == 'Boucle':
-            xs, ys, days = self.get_detail_data_by_lane()
-            title = 'Véhicules par heure, voie {}'.format(self.lane_number)
-        else:
-            xs, ys, days = self.get_detail_data_by_direction()
-            title = 'Véhicules par heure, direction {}'.format(
-                self.direction_number)
-
-        data = []
-        # In reverse order so if the first day is not complete, the
-        # missing hours are added at the beginning of the chart
-        for i in range(len(xs)-1, -1, -1):
-            day = datetime.strptime(
-                days[i], '%Y-%m-%d %H:%M:%S').strftime('%a %d.%m.%Y')
-
-            mode = 'lines'
-            if sum(y is not None for y in ys[i]) < 24:
-                mode = 'lines+markers'
-
-            data.append(
-                go.Scatter(
-                    x=xs[i],
-                    y=ys[i],
-                    name=day,
-                    showlegend=True,
-                    mode=mode
-                )
-            )
-
-        layout = go.Layout(
-            title=title,
-            xaxis=dict(tickangle=-45),
-            barmode='group'
-        )
-
-        fig = go.Figure(data=data, layout=layout)
-        return plotly.offline.plot(fig, output_type='div')
-
-    def get_aggregate_data_by_lane(self):
-        xs, ys, days = \
-            self.layers.get_aggregate_time_chart_data_by_lane(
-                self.count_id, self.status, self.lane_id,
-                self.section_id)
-        return xs, ys, days
-
-    def get_aggregate_data_by_direction(self):
-        xs, ys, days = \
-            self.layers.get_aggregate_time_chart_data_by_direction(
-                self.count_id, self.status, self.direction_number,
-                self.section_id)
-        return xs, ys, days
-
-    def get_detail_data_by_lane(self):
-        xs, ys, days = \
-            self.layers.get_detail_time_chart_data_by_lane(
-                self.count_id, self.status, self.lane_id,
-                self.section_id)
-        return xs, ys, days
-
-    def get_detail_data_by_direction(self):
-        xs, ys, days = \
-            self.layers.get_detail_time_chart_data_by_direction(
-                self.count_id, self.status, self.direction_number,
-                self.section_id)
-        return xs, ys, days
-
-
-class ChartTjm(Chart):
-
-    def __init__(
-            self, layers, count_id, section_id,
-            status, lane, direction_number):
-        super().__init__(layers, count_id, section_id, status)
-        if lane:
-            self.lane_number = lane[0]
-            self.lane_id = lane[1]
-        self.direction_number = direction_number
-
-    def get_div(self):
-        sensor_type = self.layers.get_sensor_type_of_count(self.count_id)
-        sensor = sensor_type.attribute('name')
-
-        if sensor == 'Boucle':
-            y, x = get_tjm_data_by_lane(self.count_id, self.lane_id)
-            title = 'TJM voie {}'.format(self.lane_number)
-        else:
-            y, x = get_tjm_data_by_direction(self.count_id, self.direction_number)
-            title = 'TJM direction {}'.format(
-                self.direction_number)
-
-        colors = ['#636efa',] * len(x)
-        colors[0] = '#ea91bb'
-
-        bar = go.Bar(
-            x=x,
-            y=y,
-            textposition='auto',
-            marker_color=colors,
-        )
-
-        layout = go.Layout(
-            title=title)
-        fig = go.Figure(data=[bar], layout=layout)
-
-        return plotly.offline.plot(fig, output_type='div')
-
-
-class ChartTjmTotal(Chart):
-
-    def get_div(self):
-
-        y, x = get_tjm_data_total(self.count_id)
-
-        colors = ['#636efa',] * len(x)
-        colors[0] = '#ea91bb'
-
-        bar = go.Bar(
-            x=x,
-            y=y,
-            textposition='auto',
-            marker_color=colors,
-        )
-
-        layout = go.Layout(
-            title='TJM total')
-        fig = go.Figure(data=[bar], layout=layout)
         return plotly.offline.plot(fig, output_type='div')

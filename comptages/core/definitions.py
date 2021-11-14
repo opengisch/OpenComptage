@@ -1,3 +1,7 @@
+IMPORT_STATUS_QUARANTINE = 1
+IMPORT_STATUS_DEFINITIVE = 0
+
+
 # Definitions of the layers
 LAYER_DEFINITIONS = {
     'installation':        {
