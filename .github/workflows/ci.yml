@@ -21,6 +21,11 @@ jobs:
         run: |
           pip3 install -r requirements.txt
 
+      - name: Install QGIS
+        run: |
+          apt update
+          apt install -y qgis
+          
       - name: Start docker stack
         run: docker-compose up --build -d
 
