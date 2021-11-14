@@ -4,6 +4,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 
 from datetime import datetime
+from functools import partial
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from qgis.core import QgsMessageLog, Qgis
@@ -72,8 +73,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         if approval_process:
             tab.buttonValidate.show()
-            tab.buttonValidate.clicked.connect(self.validate_count)
-            tab.buttonRefuse.clicked.connect(self.refuse_count)
+            tab.buttonValidate.clicked.connect(partial(self.validate_count, section))
+            tab.buttonRefuse.clicked.connect(partial(self.refuse_count, section))
             tab.buttonRefuse.show()
             self.status = definitions.IMPORT_STATUS_QUARANTINE
         else:
@@ -174,22 +175,21 @@ class ChartDock(QDockWidget, FORM_CLASS):
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
 
-    def validate_count(self):
+    def validate_count(self, section):
         QgsMessageLog.logMessage(
             '{} - Accept data started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
 
-        # FIXME: only one section not all the count!!!
         models.CountDetail.objects.filter(
             id_count=self.count,
-            # id_lane__id_section=section
+            id_lane__id_section=section
         ).update(
             import_status=definitions.IMPORT_STATUS_DEFINITIVE)
 
         # calculate_tjm(self.count_id)
-        # TODO tjm?
+        # TODO: tjm?
 
         self.show_next_quarantined_chart()
 
@@ -197,18 +197,17 @@ class ChartDock(QDockWidget, FORM_CLASS):
             '{} - Accept data ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
-    def refuse_count(self):
+    def refuse_count(self, section):
         QgsMessageLog.logMessage(
             '{} - Reject data started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
         tab = self.tabWidget.currentWidget()
 
-        # FIXME: only one section not all the count!!!
         models.CountDetail.objects.filter(
             id_count=self.count,
             import_status=definitions.IMPORT_STATUS_QUARANTINE,
-            # id_lane__id_section=section
+            id_lane__id_section=section
         ).delete()
 
         self.show_next_quarantined_chart()
