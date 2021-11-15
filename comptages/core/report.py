@@ -228,7 +228,7 @@ def _data_speed(count, section, monday, workbook):
         res = statistics.get_speed_data_by_hour(
             count,
             section,
-            direction=1,
+            direction=2,
             start=monday,
             end=monday + timedelta(days=7),
             speed_low=range_[0],

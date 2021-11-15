@@ -194,16 +194,25 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
 
 
 def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None, end=None, speed_low=0, speed_high=15):
-    start = count.start_process_date
-    end = count.end_process_date
+
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
         id_lane__id_section=section,
         timestamp__range=(start, end),
-        speed__gt=speed_low,
+        speed__gte=speed_low,
         speed__lt=speed_high,
     )
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
 
     qs = qs.annotate(hour=ExtractHour('timestamp')) \
            .values('hour', 'times') \
