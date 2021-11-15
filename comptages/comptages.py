@@ -15,11 +15,10 @@ from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.utils import push_info
 from comptages.datamodel import models
-from comptages.core import importer, importer_task
+from comptages.core import importer, importer_task, report
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
-from comptages.report.report_creator import ReportCreator
 from comptages.report.yearly_report_creator import YearlyReportCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
@@ -451,17 +450,19 @@ class Comptages(QObject):
             '{} - Generate report action started'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
+        count = models.Count.objects.get(id=count_id)
+
         if self.tm.countActiveTasks() > 0:
             push_info(("Veuillez patienter jusqu'à ce que l'importation "
                        "soit terminée."))
             return
 
         # Show message if there are no data to process
-        contains_data = self.layers.count_contains_data(count_id)
-        if not contains_data:
+        if not models.CountDetail.objects.filter(id_count=count).exists():
             push_info("Installation {}: Il n'y a pas de données à traiter pour "
                 "le comptage {}".format(
-                self.layers.get_installation_name_of_count(count_id),count_id))
+                    count.id_installation.name,
+                    count.id))
             return
 
         file_dialog = QFileDialog()
@@ -474,10 +475,12 @@ class Comptages(QObject):
         if not file_path:
             return
 
-        report_creator = ReportCreator(count_id, file_path, self.layers)
-        report_creator.run()
+        report.prepare_reports(count, file_path)
+
         push_info("Installation {} (count={}): Génération du rapport terminée."
-         .format(self.layers.get_installation_name_of_count(count_id),count_id))
+         .format(
+             count.id_installation.name,
+             count.id))
 
         QgsMessageLog.logMessage(
             '{} - Generate report action'.format(datetime.now()),
