@@ -1,5 +1,7 @@
 import pandas as pd
 
+from datetime import timedelta
+
 from django.db.models import F, CharField, Value
 from django.db.models import Count, Sum, Avg, Max
 from django.db.models.functions import (
@@ -13,7 +15,7 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
     if not start:
         start = count.start_process_date
     if not end:
-        end = count.end_process_date
+        end = count.end_process_date + timedelta(days=1)
 
     # By lane/direction grouped per hour
 
@@ -47,7 +49,7 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
 def get_day_data(count, section=None, lane=None, direction=None, status=None):
 
     start = count.start_process_date
-    end = count.end_process_date
+    end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -91,7 +93,7 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None):
 def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE):
 
     start = count.start_process_date
-    end = count.end_process_date
+    end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -121,7 +123,7 @@ def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIV
 def get_speed_data(count, section):
 
     start = count.start_process_date
-    end = count.end_process_date
+    end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -167,7 +169,7 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
     if not start:
         start = count.start_process_date
     if not end:
-        end = count.end_process_date
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -197,7 +199,7 @@ def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None
     if not start:
         start = count.start_process_date
     if not end:
-        end = count.end_process_date
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -225,7 +227,7 @@ def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, 
     if not start:
         start = count.start_process_date
     if not end:
-        end = count.end_process_date
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -253,7 +255,7 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
     if not start:
         start = count.start_process_date
     if not end:
-        end = count.end_process_date
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
