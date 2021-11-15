@@ -43,11 +43,6 @@ class ChartDock(QDockWidget, FORM_CLASS):
                       "le comptage {}".format(count.id_installation.name, count.id))
             return
 
-        contains_definitive_data = models.CountDetail.objects.filter(
-            id_count=count,
-            import_status=definitions.IMPORT_STATUS_DEFINITIVE
-        ).exists()
-
         self.show()
 
         self.tabWidget.clear()

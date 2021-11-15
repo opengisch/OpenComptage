@@ -87,3 +87,64 @@ class StatisticsTest(TransactionTestCase):
         self.assertEqual(df['times'][10], 0)
         self.assertEqual(df['times'][11], 0)
         self.assertEqual(df['times'][12], 1)
+
+    def test_special_period(self):
+        # Add a special period
+        models.SpecialPeriod.objects.create(
+            start_date=datetime(2020, 1, 1),
+            end_date=datetime(2020, 1, 31)
+        )
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2020, 1, 1),
+                datetime(2020, 1, 1))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2020, 1, 1),
+                datetime(2020, 1, 31))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2020, 1, 31),
+                datetime(2020, 1, 31))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2019, 12, 25),
+                datetime(2020, 1, 1))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2019, 12, 25),
+                datetime(2020, 1, 10))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2019, 12, 25),
+                datetime(2019, 12, 26))),
+            0)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2021, 12, 25),
+                datetime(2021, 12, 26))),
+            0)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2020, 1, 10),
+                datetime(2020, 1, 15))),
+            1)
+
+        self.assertEqual(
+            len(statistics.get_special_periods(
+                datetime(2020, 1, 10),
+                datetime(2020, 2, 15))),
+            1)
