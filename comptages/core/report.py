@@ -9,7 +9,7 @@ from comptages.datamodel import models
 from comptages.core import statistics, definitions
 
 
-def prepare_reports(count, file_path, template='default'):
+def prepare_reports(count, file_path, template='default', year=None):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     if template == 'default':
         template_name = 'template.xlsx'
