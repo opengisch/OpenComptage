@@ -147,7 +147,7 @@ def _data_day(count, section, monday, workbook):
     # Monthly coefficients
     row_offset = 31
     col_offset = 2
-    monthly_coefficients = [93, 96, 100, 102, 101, 104, 98, 98, 104, 103, 102, 98]
+    monthly_coefficients = [0.93, 0.96, 1.00, 1.02, 1.01, 1.04, 0.98, 0.98, 1.04, 1.03, 1.02, 0.98]
 
     for i in range(7):
         day = monday + timedelta(days=i)
