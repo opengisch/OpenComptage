@@ -34,7 +34,7 @@ def prepare_reports(count, file_path, template='default'):
             _data_day(count, section, monday, workbook)
             _data_speed(count, section, monday, workbook)
             _data_category(count, section, monday, workbook)
-
+            _remove_useless_sheets(count, workbook)
             output = os.path.join(
                 file_path, '{}_{}_r.xlsx'.format(
                     section.id,
@@ -89,16 +89,10 @@ def _data_count(count, section, monday, workbook):
     ws['B7'] = 'Modèle : {}'.format(
         count.id_model.name)
     ws['B8'] = 'Classification : {}'.format(
-        count.id_class.name)
-
-    from_aggregate = models. \
-        CountDetail.objects. \
-        filter(id_count=count) \
-        .distinct('from_aggregate') \
-        .values('from_aggregate')[0]['from_aggregate']
+        _t_cl(count.id_class.name))
 
     ws['B9'] = 'Comptage véhicule par véhicule'
-    if from_aggregate:
+    if _is_aggregate(count):
         ws['B9'] = 'Comptage par interval'
 
     special_periods = statistics.get_special_periods(
@@ -243,12 +237,6 @@ def _data_day(count, section, monday, workbook):
 def _data_speed(count, section, monday, workbook):
     ws = workbook['Data_speed']
 
-    from_aggregate = models. \
-        CountDetail.objects. \
-        filter(id_count=count) \
-        .distinct('from_aggregate') \
-        .values('from_aggregate')[0]['from_aggregate']
-
     speed_ranges = [
         (0, 10),
         (10, 20),
@@ -265,7 +253,7 @@ def _data_speed(count, section, monday, workbook):
         (120, 999),
     ]
 
-    if from_aggregate:
+    if _is_aggregate(count):
         speed_ranges = [
             (0, 30),
             (30, 40),
@@ -304,7 +292,7 @@ def _data_speed(count, section, monday, workbook):
                 value=row[1]
             )
 
-    if not from_aggregate:
+    if not _is_aggregate(count):
         # Characteristic speed direction 1
         row_offset = 5
         col_offset = 16
@@ -362,7 +350,7 @@ def _data_speed(count, section, monday, workbook):
                 value=row[1]
             )
 
-    if not from_aggregate:
+    if not _is_aggregate(count):
         # Characteristic speed direction 2
         row_offset = 33
         col_offset = 16
@@ -423,7 +411,7 @@ def _data_category(count, section, monday, workbook):
         for row in res:
             ws.cell(
                 row=row_offset + row[0],
-                column=col_offset + category.code -1,
+                column=col_offset + _t_cat(count, category.code) -1,
                 value=row[1]
             )
 
@@ -445,6 +433,109 @@ def _data_category(count, section, monday, workbook):
         for row in res:
             ws.cell(
                 row=row_offset + row[0],
-                column=col_offset + category.code -1,
+                column=col_offset + _t_cat(count, category.code) -1,
                 value=row[1]
             )
+
+
+def _remove_useless_sheets(count, workbook):
+    class_name = _t_cl(count.id_class.name)
+
+    if class_name == 'SWISS10':
+        workbook.remove_sheet(workbook['SWISS7_H'])
+        workbook.remove_sheet(workbook['SWISS7_G'])
+    elif class_name == 'SWISS7':
+        workbook.remove_sheet(workbook['SWISS10_H'])
+        workbook.remove_sheet(workbook['SWISS10_G'])
+    elif class_name == 'Volume':
+        workbook.remove_sheet(workbook['SWISS7_H'])
+        workbook.remove_sheet(workbook['SWISS7_G'])
+        workbook.remove_sheet(workbook['SWISS10_H'])
+        workbook.remove_sheet(workbook['SWISS10_G'])
+
+    if _is_aggregate(count):
+        workbook.remove_sheet(workbook['Vit_Hd'])
+    else:
+        workbook.remove_sheet(workbook['Vit_H'])
+
+
+def _t_cl(class_name):
+    """Translate class name"""
+
+    if class_name == 'FHWA13':
+        return 'SWISS7'
+
+    if class_name is None:
+        return 'Volume'
+
+    if class_name == 'SPCH-13':
+        return 'SWISS7'
+
+    return class_name
+
+
+def _t_cat(count, cat_id):
+    """Convert categories of a class into the ones of another class e.g.
+       FHWA13 should be converted in SWISS7 in order to fill the
+       report cells
+    """
+
+    if _t_cl(count.id_class.name) == 'SWISS10':
+        return cat_id
+
+    if _t_cl(count.id_class.name) == 'SWISS7':
+        return cat_id
+
+    if _t_cl(count.id_class.name) == 'ARX Cycle':
+        # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
+        new_hour = [0] * 7
+        return new_hour
+
+    if _t_cl(count.id_class.name) == 'FHWA13':
+        conv = {
+            0: 0,
+            1: 2,
+            2: 3,
+            3: 4,
+            4: 1,
+            5: 5,
+            6: 5,
+            7: 5,
+            8: 7,
+            9: 7,
+            10: 7,
+            11: 7,
+            12: 7,
+            13: 7,
+            14: 7,
+        }
+        return conv[cat_id]
+
+    if _t_cl(count.id_class) == 'SPCH-13':
+        conv = {
+            0: 0,
+            1: 2,
+            2: 3,
+            3: 3,
+            4: 4,
+            5: 4,
+            6: 4,
+            7: 1,
+            8: 5,
+            9: 7,
+            10: 6,
+            11: 7,
+            12: 7,
+            13: 7,
+        }
+        return conv[cat_id]
+
+
+def _is_aggregate(count):
+    from_aggregate = models. \
+        CountDetail.objects. \
+        filter(id_count=count) \
+        .distinct('from_aggregate') \
+        .values('from_aggregate')[0]['from_aggregate']
+
+    return from_aggregate
