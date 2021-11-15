@@ -23,21 +23,24 @@ def prepare_reports(count, file_path, template='default'):
         os.pardir,
         'report',
         template_name)
-    workbook = load_workbook(filename=template_path)
 
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
 
     for section in sections:
         for monday in _mondays_of_count(count):
+            workbook = load_workbook(filename=template_path)
             _data_count(count, section, monday, workbook)
             _data_day(count, section, monday, workbook)
             _data_speed(count, section, monday, workbook)
+            _data_category(count, section, monday, workbook)
 
-    output = os.path.join(
-        file_path, '{}_{}_r.xlsx'.format(section.id, "NPLA"))
+            output = os.path.join(
+                file_path, '{}_{}_r.xlsx'.format(
+                    section.id,
+                    monday.strftime("%Y%m%d")))
 
-    workbook.save(filename=output)
+            workbook.save(filename=output)
 
 
 def _mondays_of_count(count):
@@ -57,12 +60,68 @@ def _mondays_of_count(count):
         yield monday
 
 
-# TODO: Data_speed
-# TODO: Data_category
-
 def _data_count(count, section, monday, workbook):
     ws = workbook['Data_count']
-    pass
+    ws['B3'] = (
+        'Poste de comptage : {}  Axe : {}:{}{}  '
+        'PR {} + {} m à PR {} + {} m').format(
+            section.id,
+            section.owner,
+            section.road,
+            section.way,
+            section.start_pr,
+            int(section.start_dist),
+            section.end_pr,
+            int(section.end_dist)
+    )
+
+    ws['B4'] = 'Periode de comptage du {} au {}'.format(
+        monday.strftime("%d/%m/%Y"),
+        (monday + timedelta(days=7)).strftime("%d/%m/%Y"),
+    )
+
+    ws['B5'] = 'Comptage {}'.format(
+        monday.strftime("%Y")
+    )
+    ws['B6'] = 'Type de capteur : {}'.format(
+        count.id_sensor_type.name
+    )
+    ws['B7'] = 'Modèle : {}'.format(
+        count.id_model.name)
+    ws['B8'] = 'Classification : {}'.format(
+        count.id_class.name)
+
+    from_aggregate = models. \
+        CountDetail.objects. \
+        filter(id_count=count) \
+        .distinct('from_aggregate') \
+        .values('from_aggregate')[0]['from_aggregate']
+
+    ws['B9'] = 'Comptage véhicule par véhicule'
+    if from_aggregate:
+        ws['B9'] = 'Comptage par interval'
+
+    special_periods = statistics.get_special_periods(
+        monday,
+        monday + timedelta(days=6))
+    texts = []
+    for i in special_periods:
+        texts.append(f"{i.start_date} - {i.end_date}: {i.description}")
+    ws['B10'] = 'Periode speciales : {}'.format(
+        ", ".join(texts)
+    )
+
+    ws['B11'] = section.place_name
+
+    if count.remarks:
+        ws['B12'] = 'Remarque : {}'.format(count.remarks)
+
+    lanes = models.Lane.objects.filter(id_section=section).order_by('direction')
+    if lanes:
+        ws['B13'] = lanes[0].direction_desc
+    if len(lanes) > 1:
+        ws['B14'] = lanes[1].direction_desc
+
 
 def _data_day(count, section, monday, workbook):
     ws = workbook['Data_day']
@@ -338,4 +397,54 @@ def _data_speed(count, section, monday, workbook):
                 row=row_offset + row.Index,
                 column=col_offset,
                 value=row.speed
+            )
+
+
+def _data_category(count, section, monday, workbook):
+    ws = workbook['Data_category']
+
+    categories = models.Category.objects.filter(countdetail__id_count=count).distinct().order_by('code')
+
+    # Direction 1
+    row_offset = 5
+    col_offset = 2
+    for category in categories:
+        if category.code == 0:
+            continue  # We don't put TRASH category in report
+        res = statistics.get_category_data_by_hour(
+            count,
+            section,
+            category=category,
+            direction=1,
+            start=monday,
+            end=monday + timedelta(days=7),
+        )
+
+        for row in res:
+            ws.cell(
+                row=row_offset + row[0],
+                column=col_offset + category.code -1,
+                value=row[1]
+            )
+
+    # Direction 2
+    row_offset = 33
+    col_offset = 2
+    for category in categories:
+        if category.code == 0:
+            continue  # We don't put TRASH category in report
+        res = statistics.get_category_data_by_hour(
+            count,
+            section,
+            category=category,
+            direction=2,
+            start=monday,
+            end=monday + timedelta(days=7),
+        )
+
+        for row in res:
+            ws.cell(
+                row=row_offset + row[0],
+                column=col_offset + category.code -1,
+                value=row[1]
             )

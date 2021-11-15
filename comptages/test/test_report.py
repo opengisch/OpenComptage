@@ -50,4 +50,3 @@ class ImportTest(TransactionTestCase):
             count)
 
         report.prepare_reports(count, "/tmp/")
-

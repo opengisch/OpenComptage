@@ -2,7 +2,7 @@ import pandas as pd
 
 from datetime import timedelta
 
-from django.db.models import F, CharField, Value
+from django.db.models import F, CharField, Value, Q
 from django.db.models import Count, Sum, Avg, Max
 from django.db.models.functions import (
     ExtractIsoWeekDay, ExtractHour, ExtractMonth, ExtractDay, Trunc, Concat)
@@ -277,3 +277,41 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
     df = df.groupby('hour').mean('speed')
 
     return df
+
+
+def get_category_data_by_hour(count, section, category, lane=None, direction=None, start=None, end=None):
+
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date + timedelta(days=1)
+
+    qs = models.CountDetail.objects.filter(
+        id_count=count,
+        id_lane__id_section=section,
+        timestamp__range=(start, end),
+        id_category=category,
+    )
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    qs = qs.annotate(hour=ExtractHour('timestamp')) \
+           .values('hour', 'times') \
+           .annotate(value=Sum('times')) \
+           .values('hour', 'value') \
+           .values_list('hour', 'value')
+
+    return qs
+
+def get_special_periods(first_day, last_day):
+    qs = models.SpecialPeriod.objects.filter(
+        Q(
+            (Q(start_date__lte=first_day) & \
+             Q(end_date__gte=last_day))) | \
+            (Q(start_date__lte=last_day) & \
+             Q(end_date__gte=first_day)))
+    return qs
