@@ -220,3 +220,58 @@ def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None
            .values_list('hour', 'value')
 
     return qs
+
+def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, start=None, end=None, v=0.15):
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date
+
+    qs = models.CountDetail.objects.filter(
+        id_count=count,
+        id_lane__id_section=section,
+        timestamp__range=(start, end))
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    qs = qs.annotate(hour=ExtractHour('timestamp')) \
+           .order_by('hour', 'speed') \
+           .values('hour', 'speed')
+
+    df = pd.DataFrame.from_records(qs.values('hour', 'speed'))
+    df = df.set_index('hour')
+    df = df.groupby('hour').quantile(v, interpolation='lower')
+
+    return df
+
+
+def get_average_speed_by_hour(count, section, lane=None, direction=None, start=None, end=None, v=0.15):
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date
+
+    qs = models.CountDetail.objects.filter(
+        id_count=count,
+        id_lane__id_section=section,
+        timestamp__range=(start, end))
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    qs = qs.annotate(hour=ExtractHour('timestamp')) \
+           .order_by('hour', 'speed') \
+           .values('hour', 'speed')
+
+    df = pd.DataFrame.from_records(qs.values('hour', 'speed'))
+    df = df.set_index('hour')
+    df = df.groupby('hour').mean('speed')
+
+    return df

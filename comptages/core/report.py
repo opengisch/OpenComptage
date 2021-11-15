@@ -184,6 +184,12 @@ def _data_day(count, section, monday, workbook):
 def _data_speed(count, section, monday, workbook):
     ws = workbook['Data_speed']
 
+    from_aggregate = models. \
+        CountDetail.objects. \
+        filter(id_count=count) \
+        .distinct('from_aggregate') \
+        .values('from_aggregate')[0]['from_aggregate']
+
     speed_ranges = [
         (0, 10),
         (10, 20),
@@ -199,6 +205,25 @@ def _data_speed(count, section, monday, workbook):
         (110, 120),
         (120, 999),
     ]
+
+    if from_aggregate:
+        speed_ranges = [
+            (0, 30),
+            (30, 40),
+            (40, 50),
+            (50, 60),
+            (60, 70),
+            (70, 80),
+            (80, 90),
+            (90, 100),
+            (100, 110),
+            (110, 120),
+            (120, 130),
+            (130, 999),
+        ]
+
+    characteristic_speeds = [0.15, 0.5, 0.85]
+
     # Direction 1
     row_offset = 5
     col_offset = 2
@@ -220,6 +245,43 @@ def _data_speed(count, section, monday, workbook):
                 value=row[1]
             )
 
+    if not from_aggregate:
+        # Characteristic speed direction 1
+        row_offset = 5
+        col_offset = 16
+        for i, v in enumerate(characteristic_speeds):
+            df = statistics.get_characteristic_speed_by_hour(
+                count,
+                section,
+                direction=1,
+                start=monday,
+                end=monday + timedelta(days=7),
+                v=v
+            )
+            for row in df.itertuples():
+                ws.cell(
+                    row=row_offset + row.Index,
+                    column=col_offset + i,
+                    value=row.speed
+                )
+
+        # Average speed direction 1
+        row_offset = 5
+        col_offset = 19
+
+        df = statistics.get_average_speed_by_hour(
+            count,
+            section,
+            direction=1,
+            start=monday,
+            end=monday + timedelta(days=7))
+        for row in df.itertuples():
+            ws.cell(
+                row=row_offset + row.Index,
+                column=col_offset,
+                value=row.speed
+            )
+
     # Direction 2
     row_offset = 33
     col_offset = 2
@@ -239,4 +301,41 @@ def _data_speed(count, section, monday, workbook):
                 row=row_offset + row[0],
                 column=col_offset + i,
                 value=row[1]
+            )
+
+    if not from_aggregate:
+        # Characteristic speed direction 2
+        row_offset = 33
+        col_offset = 16
+        for i, v in enumerate(characteristic_speeds):
+            df = statistics.get_characteristic_speed_by_hour(
+                count,
+                section,
+                direction=2,
+                start=monday,
+                end=monday + timedelta(days=7),
+                v=v
+            )
+            for row in df.itertuples():
+                ws.cell(
+                    row=row_offset + row.Index,
+                    column=col_offset + i,
+                    value=row.speed
+                )
+
+        # Average speed direction 1
+        row_offset = 33
+        col_offset = 19
+
+        df = statistics.get_average_speed_by_hour(
+            count,
+            section,
+            direction=2,
+            start=monday,
+            end=monday + timedelta(days=7))
+        for row in df.itertuples():
+            ws.cell(
+                row=row_offset + row.Index,
+                column=col_offset,
+                value=row.speed
             )
