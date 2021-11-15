@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     id=Decimal(feat["id"].value),
                     name=feat["name"],
                     code=Decimal(feat["code"].value),
-                    light=bool(feat["light"]),
+                    light=str(feat["light"]).lower() in ("yes", "true", "t", "1"),
                 )
             )
         Category.objects.bulk_create(categories)
@@ -171,10 +171,10 @@ class Command(BaseCommand):
                 Installation(
                     geometry=feat.geom.wkt,
                     id=Decimal(feat["id"].value),
-                    permanent=bool(feat["permanent"]),
+                    permanent=str(feat["permanent"]).lower() in ("yes", "true", "t", "1"),
                     name=feat["name"],
                     picture=feat["picture"],
-                    active=bool(feat["active"]),
+                    active=str(feat["active"]).lower() in ("yes", "true", "t", "1"),
                 )
             )
         Installation.objects.bulk_create(objects)
@@ -250,7 +250,7 @@ class Command(BaseCommand):
                 SensorType(
                     id=Decimal(feat["id"].value),
                     name=feat["name"],
-                    permanent=bool(feat["permanent"])
+                    permanent=str(feat["permanent"]).lower() in ("yes", "true", "t", "1"),
                 )
             )
         SensorType.objects.bulk_create(objects)
