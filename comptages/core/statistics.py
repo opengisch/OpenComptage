@@ -187,7 +187,6 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
 
     res = {}
     for r in qs:
-        print(r)
         res[r[0]] = r[1]
 
     return res

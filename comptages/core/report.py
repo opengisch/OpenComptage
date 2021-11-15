@@ -214,7 +214,6 @@ def _data_speed(count, section, monday, workbook):
         )
 
         for row in res:
-            print(row)
             ws.cell(
                 row=row_offset + row[0],
                 column=col_offset + i,
@@ -236,7 +235,6 @@ def _data_speed(count, section, monday, workbook):
         )
 
         for row in res:
-            print(row)
             ws.cell(
                 row=row_offset + row[0],
                 column=col_offset + i,
