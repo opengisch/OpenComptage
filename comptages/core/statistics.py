@@ -8,10 +8,12 @@ from django.db.models.functions import (
 from comptages.core import definitions
 from comptages.datamodel import models
 
-def get_time_data(count, section, lane=None, direction=None):
+def get_time_data(count, section, lane=None, direction=None, start=None, end=None):
 
-    start = count.start_process_date
-    end = count.end_process_date
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date
 
     # By lane/direction grouped per hour
 
@@ -36,8 +38,9 @@ def get_time_data(count, section, lane=None, direction=None):
            .values('import_status', 'date', 'hour', 'thm')
 
     df = pd.DataFrame.from_records(qs)
-    df['date'] = df['date'].dt.strftime('%a %d.%m.%Y')
-    df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+    if not df.empty:
+        df['date'] = df['date'].dt.strftime('%a %d.%m.%Y')
+        df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
     return df
 
 
@@ -157,3 +160,55 @@ def get_speed_data(count, section):
     df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
 
     return df
+
+
+def get_light_numbers(count, section, lane=None, direction=None, start=None, end=None):
+
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date
+
+    qs = models.CountDetail.objects.filter(
+        id_count=count,
+        id_lane__id_section=section,
+        timestamp__range=(start, end)
+    )
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    qs = qs.values('id_category__light') \
+           .annotate(value=Sum('times')) \
+           .values_list('id_category__light', 'value')
+
+    res = {}
+    for r in qs:
+        print(r)
+        res[r[0]] = r[1]
+
+    return res
+
+
+def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None, end=None, speed_low=0, speed_high=15):
+    start = count.start_process_date
+    end = count.end_process_date
+
+    qs = models.CountDetail.objects.filter(
+        id_count=count,
+        id_lane__id_section=section,
+        timestamp__range=(start, end),
+        speed__gt=speed_low,
+        speed__lt=speed_high,
+    )
+
+    qs = qs.annotate(hour=ExtractHour('timestamp')) \
+           .values('hour', 'times') \
+           .annotate(value=Sum('times')) \
+           .values('hour', 'value') \
+           .values_list('hour', 'value')
+
+    return qs
