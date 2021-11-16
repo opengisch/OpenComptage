@@ -15,7 +15,7 @@ from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.utils import push_info
 from comptages.datamodel import models
-from comptages.core import importer, importer_task, report
+from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
@@ -475,12 +475,18 @@ class Comptages(QObject):
         if not file_path:
             return
 
-        report.prepare_reports(count, file_path)
+        self.tm.allTasksFinished.connect(self.all_tasks_finished)
+        self.tm.addTask(
+            report_task.ReportTask(
+                count,
+                file_path,
+        ))
 
-        push_info("Installation {} (count={}): Génération du rapport terminée."
-         .format(
-             count.id_installation.name,
-             count.id))
+        # report.prepare_reports(count, file_path)
+
+        push_info("Installation {} (count={}): Génération du rapport terminée.".format(
+            count.id_installation.name,
+            count.id))
 
         QgsMessageLog.logMessage(
             '{} - Generate report action'.format(datetime.now()),

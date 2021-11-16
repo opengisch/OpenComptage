@@ -9,7 +9,11 @@ from comptages.datamodel import models
 from comptages.core import statistics, definitions
 
 
-def prepare_reports(count, file_path, template='default'):
+def simple_print_callback(progress):
+    print(f"Generating report... {progress}%")
+
+
+def prepare_reports(count, file_path, template='default', year=None, callback_progress=simple_print_callback):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     if template == 'default':
         template_name = 'template.xlsx'
@@ -27,8 +31,13 @@ def prepare_reports(count, file_path, template='default'):
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
 
+    mondays_qty = len(list(_mondays_of_count(count)))
+    mondays = _mondays_of_count(count)
     for section in sections:
-        for monday in _mondays_of_count(count):
+        for i, monday in enumerate(mondays):
+            progress = int(100 / mondays_qty * (i - 1))
+            callback_progress(progress)
+
             workbook = load_workbook(filename=template_path)
             _data_count(count, section, monday, workbook)
             _data_day(count, section, monday, workbook)

@@ -1,25 +1,26 @@
 import os
-
 from datetime import datetime
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 
-from comptages.core import importer
+from comptages.core import report
 
 
-class ImporterTask(QgsTask):
+class ReportTask(QgsTask):
 
-    def __init__(self, file_path, count):
+    def __init__(self, count, file_path, template="default", year=None):
         self.basename = os.path.basename(file_path)
         super().__init__(
-            'Importation fichier {}'.format(self.basename))
+            'Génération du rapport: {}'.format(self.basename))
 
-        self.file_path = file_path
         self.count = count
+        self.file_path = file_path
+        self.template = template
+        self.year = year
 
     def run(self):
         try:
-            importer.import_file(self.file_path, self.count, callback_progress=self.setProgress)
+            report.prepare_reports(self.count, self.file_path, self.template, self.year, callback_progress=self.setProgress)
             return True
         except Exception as e:
             raise e
@@ -29,12 +30,12 @@ class ImporterTask(QgsTask):
     def finished(self, result):
         if result:
             QgsMessageLog.logMessage(
-                '{} - Import file {} ended'.format(
+                '{} - Report generation {} ended'.format(
                     datetime.now(), self.basename),
                 'Comptages', Qgis.Info)
 
         else:
             QgsMessageLog.logMessage(
-                '{} - Import file {} ended with errors: {}'.format(
+                '{} - Report generation {} ended with errors: {}'.format(
                     datetime.now(), self.basename, self.exception),
                 'Comptages', Qgis.Info)
