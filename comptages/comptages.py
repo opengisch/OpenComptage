@@ -480,17 +480,7 @@ class Comptages(QObject):
             report_task.ReportTask(
                 count,
                 file_path,
-        ))
-
-        # report.prepare_reports(count, file_path)
-
-        push_info("Installation {} (count={}): Génération du rapport terminée.".format(
-            count.id_installation.name,
-            count.id))
-
-        QgsMessageLog.logMessage(
-            '{} - Generate report action'.format(datetime.now()),
-            'Comptages', Qgis.Info)
+            ))
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
