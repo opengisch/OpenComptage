@@ -108,7 +108,7 @@ La fenêtre de validation des données peut être appelée à l'aide du bouton a
   <img src="../assets/filter.png" width="60" />
   <figcaption>Bouton filtrage</figcaption>
 </figure>
-Le bouton "filtrage" de la barre d'outils permet de filtrer les "comptages" qui sont affichés sur la carte (couche "comptage"). Vous pouvez filtrer par date de début, date de fin, type d'installation (permanente ou périodique) et type de capteur (tube ou boucle).
+Le bouton "filtrage" de la barre d'outils permet de filtrer les "comptages" qui sont affichés sur la carte (couche "comptage"). Vous pouvez filtrer par date de début, date de fin, type d'installation (permanente ou périodique), type de capteur (tube, boucle, ...), TJM, axe et secteur.
 <figure>
   <img src="../assets/filter_dialog.png" width="500" />
   <figcaption>Options filtrage</figcaption>
