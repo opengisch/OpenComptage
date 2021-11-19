@@ -418,10 +418,14 @@ def _data_category(count, section, monday, workbook):
         )
 
         for row in res:
+            row_num = row_offset + row[0]
+            col_num = col_offset + _t_cat(count, category.code) - 1
+            value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
+
             ws.cell(
-                row=row_offset + row[0],
-                column=col_offset + _t_cat(count, category.code) -1,
-                value=row[1]
+                row=row_num,
+                column=col_num,
+                value=value
             )
 
     # Direction 2
@@ -440,10 +444,14 @@ def _data_category(count, section, monday, workbook):
         )
 
         for row in res:
+            row_num = row_offset + row[0]
+            col_num = col_offset + _t_cat(count, category.code) - 1
+            value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
+
             ws.cell(
-                row=row_offset + row[0],
-                column=col_offset + _t_cat(count, category.code) -1,
-                value=row[1]
+                row=row_num,
+                column=col_num,
+                value=value
             )
 
 
@@ -489,18 +497,18 @@ def _t_cat(count, cat_id):
        report cells
     """
 
-    if _t_cl(count.id_class.name) == 'SWISS10':
+    if count.id_class.name == 'SWISS10':
         return cat_id
 
-    if _t_cl(count.id_class.name) == 'SWISS7':
+    if count.id_class.name == 'SWISS7':
         return cat_id
 
-    if _t_cl(count.id_class.name) == 'ARX Cycle':
+    if count.id_class.name == 'ARX Cycle':
         # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
         new_hour = [0] * 7
         return new_hour
 
-    if _t_cl(count.id_class.name) == 'FHWA13':
+    if count.id_class.name == 'FHWA13':
         conv = {
             0: 0,
             1: 2,
@@ -520,7 +528,7 @@ def _t_cat(count, cat_id):
         }
         return conv[cat_id]
 
-    if _t_cl(count.id_class) == 'SPCH-13':
+    if count.id_class.name == 'SPCH-13':
         conv = {
             0: 0,
             1: 2,
