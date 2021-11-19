@@ -198,6 +198,33 @@ class Layers(QObject):
         index = data_provider.fieldNameIndex('id_model')
         self.layers['count'].setEditorWidgetSetup(index, widget)
 
+        model_objs = models.Model.objects.all()
+        filter_expression = "CASE "
+        for model in model_objs:
+            devices = list(models.Device.objects.filter(id_model__id = model.id).values_list('id', flat=True))
+            if not devices:
+                devices = " "
+            devices_exp = "(" + ",".join("'" + str(i) + "'" for i in devices) + ")"
+            filter_expression += f" WHEN current_value('id_model') = {model.id} THEN \"id\" IN {devices_exp} "
+
+        filter_expression += " ELSE \"id\" END"
+        widget = QgsEditorWidgetSetup(
+            'ValueRelation',
+            {
+                'AllowMulti':       False,
+                'AllowNull':        False,
+                'FilterExpression': filter_expression,
+                'Key':              'id',
+                'Layer':            self.layers['device'].id(),
+                'OrderByValue':     False,
+                'UseCompleter':     False,
+                'Value':            'name'
+            }
+        )
+        data_provider = self.layers['count'].dataProvider()
+        index = data_provider.fieldNameIndex('id_device')
+        self.layers['count'].setEditorWidgetSetup(index, widget)
+
     def load_layer(
             self, schema, layer_name, geometry, sql, display_name, id_col='',
             epsg=None):
