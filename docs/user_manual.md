@@ -194,5 +194,22 @@ Des graphiques sont générés et affichés dans une fenêtre.
 La table `device` (chargée dans la couche automate de QGIS), contient la liste des dispositifs disponibles. Chaque dispositif doit avoir une référence à un modèle défini dans la table `model`. Pour ajouter un nouveau dispositif, il suffit d'ajouter dans QGIS un élément à la table `automate` (et éventuellement à la table `model`).
 
 ### Cas spéciaux
-Les installations considérées comme des `cas speciaux`, sont des installations où plusieurs voies de sections différentes sont mesurées à partir de la même installation. Chaque voie a une relation (Foreign Key) avec une installation. En attribuant plusieurs voies à la même installation, il est possible de créer des cas speciaux. 
+Les installations considérées comme des `cas speciaux`, sont des installations où plusieurs voies de sections différentes sont mesurées à partir de la même installation. Chaque voie a une relation (foreign key) avec une installation. En attribuant plusieurs voies à la même installation, il est possible de créer des cas speciaux. 
 Ces tables ne sont normalement pas chargées comme des couches dans QGIS, donc normalement ces changements sont faits directement dans la base de données.
+
+Par exemple, l'installation `53409999` est composée de 4 voies sur 4 tronçons différentes. Les tronçons sont: `53410005`, `53420005`, `53430005` et `53440005`.
+Dans la base de données, les 4 voies ont une relation (foreign key dans le champ id_installation) avec la même installation.
+Si nous regardons les données de ce cas spécial dans la base de données, nous verrons quelque chose comme ceci :
+
+``` postgres
+select l.id, l.id_section, l.id_installation, i."name"from lane as l
+join installation as i
+    on l.id_installation = i.id
+    where i.name = '53409999'
+```
+| id    | id_section | id_installation | name     |
+|-------|------------|-----------------|----------|
+| 17526 | 53410005   | 8770            | 53409999 |
+| 17527 | 53420005   | 8770            | 53409999 |
+| 17528 | 53430005   | 8770            | 53409999 |
+| 17529 | 53440005   | 8770            | 53409999 |
