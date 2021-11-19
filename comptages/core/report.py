@@ -130,7 +130,7 @@ def _data_day(count, section, monday, workbook):
     ws = workbook['Data_day']
 
     # Total
-    row_offset = 5
+    row_offset = 65
     col_offset = 2
     for i in range(7):
         df = statistics.get_time_data(
@@ -148,7 +148,7 @@ def _data_day(count, section, monday, workbook):
             )
 
     # Monthly coefficients
-    row_offset = 31
+    row_offset = 2
     col_offset = 2
     monthly_coefficients = [0.93, 0.96, 1.00, 1.02, 1.01, 1.04, 0.98, 0.98, 1.04, 1.03, 1.02, 0.98]
 
@@ -161,7 +161,7 @@ def _data_day(count, section, monday, workbook):
         )
 
     # Direction 1
-    row_offset = 35
+    row_offset = 5
     col_offset = 2
     for i in range(7):
         df = statistics.get_time_data(
@@ -180,7 +180,7 @@ def _data_day(count, section, monday, workbook):
             )
 
     # Light heavy direction 1
-    row_offset = 61
+    row_offset = 30
     col_offset = 2
     for i in range(7):
         light = statistics.get_light_numbers(
@@ -202,7 +202,7 @@ def _data_day(count, section, monday, workbook):
         )
 
     # Direction 2
-    row_offset = 66
+    row_offset = 35
     col_offset = 2
     for i in range(7):
         df = statistics.get_time_data(
@@ -221,7 +221,7 @@ def _data_day(count, section, monday, workbook):
             )
 
     # Light heavy direction 2
-    row_offset = 92
+    row_offset = 60
     col_offset = 2
     for i in range(7):
         light = statistics.get_light_numbers(

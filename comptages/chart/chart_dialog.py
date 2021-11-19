@@ -41,6 +41,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.hide()
             push_info("Installation {}: Il n'y a pas de données à montrer pour "
                       "le comptage {}".format(count.id_installation.name, count.id))
+            QgsMessageLog.logMessage(
+                '{} - Generate chart action : No data for count {}'.format(datetime.now(), count.id),
+                'Comptages', Qgis.Info)            
             return
 
         self.show()
@@ -61,6 +64,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
         except Exception:
             pass
+        QgsMessageLog.logMessage(
+            '{} - Debug_GL: Graphique démarré'.format(datetime.now()), 'Comptages', Qgis.Info)
 
         for i in range(tab.chartList.count()):
             tab.chartList.takeItem(0)
@@ -161,6 +166,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         else:
             tab.chartList.setCurrentRow(0)
 
+        QgsMessageLog.logMessage(
+            '{} - Debug_GL: Graphique terminé'.format(datetime.now()), 'Comptages', Qgis.Info)
+
     def chart_selection_changed(self, row):
         tab = self.tabWidget.currentWidget()
         tab.webView.setHtml(tab.charts[row])
@@ -228,6 +236,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
         if not quarantined_counts.exists():
             self.hide()
             push_info("Il n'y a pas de données à valider")
+            QgsMessageLog.logMessage(
+                '{} - Generate validation chart ended : No data to validate'.format(datetime.now()),
+                'Comptages', Qgis.Info)
             return
 
         self.set_attributes(quarantined_counts[0], True)

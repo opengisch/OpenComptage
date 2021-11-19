@@ -463,6 +463,9 @@ class Comptages(QObject):
                 "le comptage {}".format(
                     count.id_installation.name,
                     count.id))
+            QgsMessageLog.logMessage(
+                '{} - Generate report action ended: No data for count {}'.format(datetime.now(), count.id),
+                'Comptages', Qgis.Info)            
             return
 
         file_dialog = QFileDialog()
@@ -473,14 +476,30 @@ class Comptages(QObject):
         print(file_path)
 
         if not file_path:
+            QgsMessageLog.logMessage(
+                '{} - Generate report action ended: No file_path given'.format(datetime.now()),
+                'Comptages', Qgis.Info)            
             return
+        QgsMessageLog.logMessage(
+            '{} - Generate report action can really begin now for count {} with file_path: {}'.format(
+            datetime.now(), count.id, file_path), 'Comptages', Qgis.Info)            
 
         self.tm.allTasksFinished.connect(self.all_tasks_finished)
         self.tm.addTask(
             report_task.ReportTask(
                 count,
                 file_path,
-            ))
+        ))
+
+        # report.prepare_reports(count, file_path)
+
+        push_info("Installation {} (count={}): Génération du rapport terminée.".format(
+            count.id_installation.name,
+            count.id))
+
+        QgsMessageLog.logMessage(
+            '{} - Generate report action ended for count {}'.format(datetime.now(), count.id),
+            'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
