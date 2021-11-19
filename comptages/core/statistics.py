@@ -245,9 +245,9 @@ def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, 
            .values('hour', 'speed')
 
     df = pd.DataFrame.from_records(qs.values('hour', 'speed'))
-    df = df.set_index('hour')
-    df = df.groupby('hour').quantile(v, interpolation='lower')
-
+    if not df.empty:
+        df = df.set_index('hour')
+        df = df.groupby('hour').quantile(v, interpolation='lower')
     return df
 
 
@@ -273,8 +273,9 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
            .values('hour', 'speed')
 
     df = pd.DataFrame.from_records(qs.values('hour', 'speed'))
-    df = df.set_index('hour')
-    df = df.groupby('hour').mean('speed')
+    if not df.empty:
+        df = df.set_index('hour')
+        df = df.groupby('hour').mean('speed')
 
     return df
 
