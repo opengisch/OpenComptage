@@ -1,14 +1,15 @@
 import pandas as pd
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.db.models import F, CharField, Value, Q
-from django.db.models import Count, Sum, Avg, Max
+from django.db.models import Sum
 from django.db.models.functions import (
-    ExtractIsoWeekDay, ExtractHour, ExtractMonth, ExtractDay, Trunc, Concat)
+    ExtractHour, Trunc, Concat)
 
 from comptages.core import definitions
 from comptages.datamodel import models
+
 
 def get_time_data(count, section, lane=None, direction=None, start=None, end=None):
 
@@ -43,6 +44,39 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
     if not df.empty:
         df['date'] = df['date'].dt.strftime('%a %d.%m.%Y')
         df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
+    return df
+
+
+def get_time_data_yearly(year, section, lane=None, direction=None):
+    """Vehicles by hour and day of the week"""
+    start = datetime(year, 1, 1)
+    end = datetime(year + 1, 1, 1)
+
+    # By lane/direction grouped per hour
+
+    qs = models.CountDetail.objects.filter(
+        id_lane__id_section=section,
+        timestamp__range=(start, end)
+    )
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    # Vehicles by day and hour
+    qs = qs.annotate(date=Trunc('timestamp', 'day'), hour=ExtractHour('timestamp')) \
+           .order_by('hour') \
+           .values('date', 'hour', 'times') \
+           .order_by('date', 'hour') \
+           .annotate(thm=Sum('times')) \
+           .values('import_status', 'date', 'hour', 'thm')
+
+    df = pd.DataFrame.from_records(qs)
+    df = df.groupby([df['date'].dt.dayofweek, 'hour']).thm.sum()
+    df = df.reset_index()
+
     return df
 
 
@@ -190,8 +224,29 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
     res = {}
     for r in qs:
         res[r[0]] = r[1]
-
     return res
+
+
+def get_light_numbers_yearly(section, lane=None, direction=None, start=None, end=None):
+
+    qs = models.CountDetail.objects.filter(
+        id_lane__id_section=section,
+        timestamp__range=(start, end)
+    )
+
+    if lane is not None:
+        qs = qs.filter(id_lane=lane)
+
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
+    qs = qs.annotate(date=Trunc('timestamp', 'day'))
+    qs = qs.values('date', 'id_category__light').annotate(value=Sum('times'))
+
+    df = pd.DataFrame.from_records(qs)
+    df = df.groupby([df['date'].dt.dayofweek, 'id_category__light']).value.sum()
+
+    return df.reset_index()
 
 
 def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None, end=None, speed_low=0, speed_high=15):
@@ -202,12 +257,14 @@ def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None
         end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
-        id_count=count,
         id_lane__id_section=section,
         timestamp__range=(start, end),
         speed__gte=speed_low,
         speed__lt=speed_high,
     )
+
+    if count is not None:
+        qs = qs.filter(id_count=count)
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
@@ -223,6 +280,7 @@ def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None
 
     return qs
 
+
 def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, start=None, end=None, v=0.15):
     if not start:
         start = count.start_process_date
@@ -230,9 +288,11 @@ def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, 
         end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
-        id_count=count,
         id_lane__id_section=section,
         timestamp__range=(start, end))
+
+    if count is not None:
+        qs = qs.filter(id_count=count)
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
@@ -258,9 +318,11 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
         end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
-        id_count=count,
         id_lane__id_section=section,
         timestamp__range=(start, end))
+
+    if count is not None:
+        qs = qs.filter(id_count=count)
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
@@ -288,11 +350,13 @@ def get_category_data_by_hour(count, section, category, lane=None, direction=Non
         end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
-        id_count=count,
         id_lane__id_section=section,
         timestamp__range=(start, end),
         id_category=category,
     )
+
+    if count is not None:
+        qs = qs.filter(id_count=count)
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
@@ -308,6 +372,7 @@ def get_category_data_by_hour(count, section, category, lane=None, direction=Non
 
     return qs
 
+
 def get_special_periods(first_day, last_day):
     qs = models.SpecialPeriod.objects.filter(
         Q(
@@ -316,3 +381,18 @@ def get_special_periods(first_day, last_day):
             (Q(start_date__lte=last_day) & \
              Q(end_date__gte=first_day)))
     return qs
+
+
+def get_month_data(section, start, end):
+    qs = models.CountDetail.objects.filter(
+        id_lane__id_section=section,
+        timestamp__range=(start, end))
+
+    qs = qs.annotate(month=Trunc('timestamp', 'month')) \
+           .order_by('month') \
+           .values('month', 'times', 'import_status') \
+           .annotate(tm=Sum('times')) \
+           .values('month', 'tm', 'import_status')
+
+    df = pd.DataFrame.from_records(qs)
+    return df

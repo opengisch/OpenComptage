@@ -388,9 +388,15 @@ class Comptages(QObject):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
             else:
-                yearly_report_creator = YearlyReportCreator(
-                    file_path, self.layers, year, section_id, clazz)
-                yearly_report_creator.run()
+                self.tm.allTasksFinished.connect(self.all_tasks_finished)
+
+                # TODO: consider the chosed class too
+                self.tm.addTask(
+                    report_task.ReportTask(
+                        file_path=file_path,
+                        template="yearly",
+                        year=year
+                    ))
 
             push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
                       .format(section_id, year))
@@ -472,7 +478,6 @@ class Comptages(QObject):
         path = self.settings.value('report_export_directory')
         file_path = QFileDialog.getExistingDirectory(
             file_dialog, title, path)
-        print(file_path)
 
         if not file_path:
             QgsMessageLog.logMessage(
@@ -486,9 +491,10 @@ class Comptages(QObject):
         self.tm.allTasksFinished.connect(self.all_tasks_finished)
         self.tm.addTask(
             report_task.ReportTask(
-                count,
-                file_path,
+                file_path=file_path,
+                count=count,
             ))
+
 
         push_info("Installation {} (count={}): Génération du rapport terminée.".format(
             count.id_installation.name,
