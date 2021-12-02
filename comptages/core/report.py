@@ -1,12 +1,10 @@
 import os
-import pytz
 
-from datetime import datetime, timedelta
-from openpyxl.utils.dataframe import dataframe_to_rows
+from datetime import timedelta
 from openpyxl import load_workbook
 
 from comptages.datamodel import models
-from comptages.core import statistics, definitions
+from comptages.core import statistics
 
 
 def simple_print_callback(progress):
