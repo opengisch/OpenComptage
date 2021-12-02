@@ -392,7 +392,6 @@ class Comptages(QObject):
                     file_path, self.layers, year, section_id, clazz)
                 yearly_report_creator.run()
 
-
             push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
                       .format(section_id, year))
 
@@ -460,12 +459,12 @@ class Comptages(QObject):
         # Show message if there are no data to process
         if not models.CountDetail.objects.filter(id_count=count).exists():
             push_info("Installation {}: Il n'y a pas de données à traiter pour "
-                "le comptage {}".format(
-                    count.id_installation.name,
-                    count.id))
+                      "le comptage {}".format(
+                          count.id_installation.name,
+                          count.id))
             QgsMessageLog.logMessage(
                 '{} - Generate report action ended: No data for count {}'.format(datetime.now(), count.id),
-                'Comptages', Qgis.Info)            
+                'Comptages', Qgis.Info)
             return
 
         file_dialog = QFileDialog()
@@ -478,20 +477,18 @@ class Comptages(QObject):
         if not file_path:
             QgsMessageLog.logMessage(
                 '{} - Generate report action ended: No file_path given'.format(datetime.now()),
-                'Comptages', Qgis.Info)            
+                'Comptages', Qgis.Info)
             return
         QgsMessageLog.logMessage(
             '{} - Generate report action can really begin now for count {} with file_path: {}'.format(
-            datetime.now(), count.id, file_path), 'Comptages', Qgis.Info)            
+                datetime.now(), count.id, file_path), 'Comptages', Qgis.Info)
 
         self.tm.allTasksFinished.connect(self.all_tasks_finished)
         self.tm.addTask(
             report_task.ReportTask(
                 count,
                 file_path,
-        ))
-
-        # report.prepare_reports(count, file_path)
+            ))
 
         push_info("Installation {} (count={}): Génération du rapport terminée.".format(
             count.id_installation.name,
