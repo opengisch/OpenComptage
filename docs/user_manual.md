@@ -213,3 +213,12 @@ join installation as i
 | 17527 | 53420005   | 8770            | 53409999 |
 | 17528 | 53430005   | 8770            | 53409999 |
 | 17529 | 53440005   | 8770            | 53409999 |
+
+### Ajouter une nouvelle class
+
+<figure>
+  <img src="../assets/class_category_relation.png" width="800" />
+  <figcaption>Relation entre classe et catégorie</figcaption>
+</figure>
+
+Pour créer une nouvelle classe, il faut créer un élément dans la table `class` et des catégories dans la classe `category`, puis il faut les relier dans la table `class_category`.
