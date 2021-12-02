@@ -217,7 +217,7 @@ join installation as i
 ### Ajouter une nouvelle class
 
 <figure>
-  <img src="../assets/class_category_relations.png" width="800" />
+  <img src="../assets/class_category_relations.png" width="500" />
   <figcaption>Relation entre classe et catégorie</figcaption>
 </figure>
 
