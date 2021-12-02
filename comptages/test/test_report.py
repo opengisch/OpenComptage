@@ -49,4 +49,4 @@ class ImportTest(TransactionTestCase):
             utils.test_data_path("00056520.V02"),
             count)
 
-        report.prepare_reports(count, "/tmp/")
+        report.prepare_reports("/tmp/", count)

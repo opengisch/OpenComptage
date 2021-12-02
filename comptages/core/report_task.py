@@ -8,7 +8,7 @@ from comptages.core import report
 
 class ReportTask(QgsTask):
 
-    def __init__(self, count, file_path, template="default", year=None):
+    def __init__(self, file_path, count=None, year=None, template="default"):
         self.basename = os.path.basename(file_path)
         super().__init__(
             'Génération du rapport: {}'.format(self.basename))
@@ -20,7 +20,7 @@ class ReportTask(QgsTask):
 
     def run(self):
         try:
-            report.prepare_reports(self.count, self.file_path, self.template, self.year, callback_progress=self.setProgress)
+            report.prepare_reports(self.file_path, self.count, self.year, self.template, callback_progress=self.setProgress)
             return True
         except Exception as e:
             raise e
