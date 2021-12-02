@@ -20,7 +20,6 @@ from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
 from comptages.plan.plan_creator import PlanCreator
-from comptages.report.yearly_report_creator import YearlyReportCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
