@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from functools import partial
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
@@ -210,7 +211,7 @@ class Comptages(QObject):
             file_dialog, title, path,
             "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
 
-        self.tm.allTasksFinished.connect(self.all_tasks_finished)
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'import'))
 
         tasks = []
         for file_path in files:
@@ -260,8 +261,7 @@ class Comptages(QObject):
         task = importer_task.ImporterTask(file_path, count)
         return task
 
-    def all_tasks_finished(self):
-
+    def all_tasks_finished(self, task='import'):
         # Check if actually all tasks are finished because apparently it doesn't
         # work the same on all systems
         if not self.tm.countActiveTasks() == 0:
@@ -271,14 +271,15 @@ class Comptages(QObject):
 
             return
 
-        self.tm.allTasksFinished.disconnect(self.all_tasks_finished)
+        self.tm.allTasksFinished.disconnect()
         push_info(('Toutes les tâches sont terminées. Consultez le journal '
                    'pour plus de détails.'))
         QgsMessageLog.logMessage(
             '{} - All tasks ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
 
-        self.chart_dock.show_next_quarantined_chart()
+        if task == 'import':
+            self.chart_dock.show_next_quarantined_chart()
 
     def do_validate_imported_files_action(self):
         if self.tm.countActiveTasks() > 0:
@@ -388,7 +389,7 @@ class Comptages(QObject):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
             else:
-                self.tm.allTasksFinished.connect(self.all_tasks_finished)
+                self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, report))
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
@@ -397,15 +398,7 @@ class Comptages(QObject):
                         template="yearly",
                         year=year
                     ))
-
-            push_info("Tronçon {} (année={}): Génération du rapport annuel terminée."
-                      .format(section_id, year))
-
             # TODO: check if there are comptages for this section and year
-
-        QgsMessageLog.logMessage(
-            '{} - Generate yearly report action ended'.format(datetime.now()),
-            'Comptages', Qgis.Info)
 
     def do_import_ics_action(self):
         IcsImporter(self.layers)
@@ -446,7 +439,7 @@ class Comptages(QObject):
         if not file_path:
             return
 
-        self.tm.allTasksFinished.connect(self.all_tasks_finished)
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'import'))
 
         self.tm.addTask(self.import_file(file_path, count_id))
 
@@ -488,21 +481,12 @@ class Comptages(QObject):
             '{} - Generate report action can really begin now for count {} with file_path: {}'.format(
                 datetime.now(), count.id, file_path), 'Comptages', Qgis.Info)
 
-        self.tm.allTasksFinished.connect(self.all_tasks_finished)
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'report'))
         self.tm.addTask(
             report_task.ReportTask(
                 file_path=file_path,
                 count=count,
             ))
-
-
-        push_info("Installation {} (count={}): Génération du rapport terminée.".format(
-            count.id_installation.name,
-            count.id))
-
-        QgsMessageLog.logMessage(
-            '{} - Generate report action ended for count {}'.format(datetime.now(), count.id),
-            'Comptages', Qgis.Info)
 
     def do_export_plan_action(self, count_id):
         plan_creator = PlanCreator(self.layers)
