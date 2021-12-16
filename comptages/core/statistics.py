@@ -121,7 +121,7 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None):
         mean = df["tj"].mean()
         df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
 
-    return df, mean
+    return df, int(mean)
 
 
 def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE):
