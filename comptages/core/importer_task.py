@@ -22,9 +22,9 @@ class ImporterTask(QgsTask):
             importer.import_file(self.file_path, self.count, callback_progress=self.setProgress)
             return True
         except Exception as e:
-            raise e
             self.exception = e
-            return False
+            raise e
+            # return False
 
     def finished(self, result):
         if result:

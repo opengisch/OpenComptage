@@ -238,7 +238,7 @@ def _data_day(count, section, monday, workbook):
         ws.cell(
             row=row_offset,
             column=col_offset + i,
-            value=monthly_coefficients[day.month]
+            value=monthly_coefficients[day.month-1]
         )
 
     # Direction 1

@@ -23,9 +23,9 @@ class ReportTask(QgsTask):
             report.prepare_reports(self.file_path, self.count, self.year, self.template, callback_progress=self.setProgress)
             return True
         except Exception as e:
-            raise e
             self.exception = e
-            return False
+            raise e
+            # return False
 
     def finished(self, result):
         if result:
