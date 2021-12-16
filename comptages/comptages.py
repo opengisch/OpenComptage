@@ -382,7 +382,13 @@ class Comptages(QObject):
             print(file_path)
 
             if not file_path:
+                QgsMessageLog.logMessage(
+                    '{} - Generate yearly report action ended: No file_path given'.format(datetime.now()),
+                    'Comptages', Qgis.Info)
                 return
+            QgsMessageLog.logMessage(
+                '{} - Generate yearly report action can really begin now for count {} with file_path: {}'.format(
+                    datetime.now(), selected_count, file_path), 'Comptages', Qgis.Info)
 
             if clazz.startswith("SPCH-MD"):
                 yrb = YearlyReportBike(file_path, year, section_id)
