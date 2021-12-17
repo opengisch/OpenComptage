@@ -75,15 +75,22 @@ call_command('migrate', 'comptages')
 
 6. Revert ownership of database if required
 
-## Recalculate TJM of all counts
+## Recalculate TJM of the counts
 
-Tjm field of `count` model is calculated automatically every time new data of the comptage are accepted from the chart dialog. There is also a command to force the plugin to recalculate the Tjm of all counts.
+Tjm field of `count` model is calculated automatically every time new data of the comptage are accepted from the chart dialog. There is also a command to force the plugin to recalculate the Tjm of the counts.
 
 Open Python console in QGIS:
 
 ```python
 from django.core.management import call_command
 call_command('tjmreset')
+```
+
+It is possible to recalculate only a subset of the counts using the options `--min_id` and `--max_id`. For example this command will recalculate only the Tjm of the counts with `5 <= id <= 10`. Both options are inclusive and can be used alone or together.
+
+```python
+from django.core.management import call_command
+call_command('tjmreset', '--min_id', '5', '--max_id', '10')
 ```
 
 ## Constraint option
