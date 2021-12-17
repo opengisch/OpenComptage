@@ -298,6 +298,15 @@ class Layers(QObject):
         action.setActionScopes(['Feature'])
         action_manager.addAction(action)
 
+        action = QgsAction(
+            QgsAction.GenericPython,
+            'Effacer des données',
+            ("from qgis.utils import plugins\n"
+             "plugins['comptages'].do_delete_data_action([% attribute( $currentfeature, 'id' ) %])")
+        )
+        action.setActionScopes(['Feature'])
+        action_manager.addAction(action)
+
     def create_count(self):
 
         layer = self.layers['section']

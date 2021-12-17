@@ -1,9 +1,10 @@
 import os
-from datetime import datetime
+import pytz
+from datetime import datetime, timedelta
 from functools import partial
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QMessageBox
 from qgis.PyQt.QtCore import QObject, Qt, QDateTime
 from qgis.core import (
     QgsMessageLog, Qgis, QgsApplication, QgsExpressionContextUtils,
@@ -14,6 +15,7 @@ from comptages.core.settings import Settings, SettingsDialog
 from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
+from comptages.core.delete_dialog import DeleteDialog
 from comptages.core.utils import push_info
 from comptages.datamodel import models
 from comptages.core import importer, importer_task, report, report_task
@@ -23,6 +25,7 @@ from comptages.plan.plan_creator import PlanCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
+from comptages.core import definitions
 
 
 class Comptages(QObject):
@@ -538,6 +541,47 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             '{} - Generate chart action ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
+
+
+    def do_delete_data_action(self, count_id):
+        dlg = DeleteDialog(self.iface)
+        tz = pytz.timezone("Europe/Zurich")
+
+        if dlg.exec_():
+            start = tz.localize(dlg.start_date.dateTime().toPyDateTime())
+            end = tz.localize(dlg.end_date.dateTime().toPyDateTime())
+            definitive = dlg.definitive.isChecked()
+            quarantine = dlg.quarantine.isChecked()
+            count = models.Count.objects.get(id=count_id)
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Effacement des données")
+            # msg.setInformativeText(f"Effacement des données")
+            msg.setDetailedText(
+                "Les données suivantes seront supprimées:\n"
+                f"comptage: {count_id}\n"
+                f"de: {start.strftime('%d.%m.%Y')}\n"
+                f"à: {end.strftime('%d.%m.%Y')} inclus\n"
+                f"provisoires: {quarantine}\n"
+                f"définitives: {definitive}"
+            )
+            msg.setWindowTitle("Effacement des données")
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            retval = msg.exec_()
+            if retval == QMessageBox.Ok:
+                qs = models.CountDetail.objects.filter(
+                    id_count=count,
+                    timestamp__range=(start, end + timedelta(days=1)),
+                )
+
+                if not definitive:
+                    qs = qs.filter(status=definitions.IMPORT_STATUS_QUARANTINE)
+
+                if not quarantine:
+                    qs = qs.filter(status=definitions.IMPORT_STATUS_DEFINITIVE)
+
+                qs.delete()
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
