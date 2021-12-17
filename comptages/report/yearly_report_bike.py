@@ -10,9 +10,9 @@ from django.db.models.functions import ExtractIsoWeekDay, ExtractHour, ExtractMo
 
 from openpyxl import load_workbook
 
+from comptages.core import definitions
 from comptages.datamodel.models import CountDetail, Section, Lane
 
-# TODO: only status_definitive!!
 
 class YearlyReportBike():
     def __init__(self, file_path, year, section_id):
@@ -29,6 +29,7 @@ class YearlyReportBike():
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             # id_category__code__in=[1, 2],
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # Total by day of the week (0->monday, 7->sunday) and by direction
@@ -44,6 +45,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 51 but actually aggregate first by the
@@ -65,6 +67,7 @@ class YearlyReportBike():
             timestamp__year=self.year,
             id_lane__direction=direction,
             timestamp__iso_week_day__in=weekdays,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 365
@@ -82,6 +85,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 12 but actually aggregate first by the
@@ -101,6 +105,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # Group by date
@@ -134,6 +139,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # Group by day of the week (0->monday, 7->sunday)
@@ -148,6 +154,7 @@ class YearlyReportBike():
             timestamp__iso_week_day__in=weekdays,
             id_category__code__in=categories,
             id_lane__direction=direction,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: avoid the division?
@@ -158,6 +165,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         return qs.aggregate(res=Sum('times'))['res']
@@ -167,6 +175,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         ).annotate(
             date=Cast('timestamp', DateField())).values('date').annotate(total=Sum('times')).order_by('-total')
 
@@ -177,6 +186,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         ).annotate(
             month=ExtractMonth('timestamp')).values('month').annotate(total=Sum('times')).order_by('-total')
 
@@ -187,6 +197,7 @@ class YearlyReportBike():
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         ).annotate(
             month=ExtractMonth('timestamp')).values('month').annotate(total=Sum('times')).order_by('total')
 
@@ -220,6 +231,7 @@ class YearlyReportBike():
         count_detail = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )[0]
         count = count_detail.id_count
 
