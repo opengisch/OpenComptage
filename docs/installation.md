@@ -86,4 +86,25 @@ from django.core.management import call_command
 call_command('tjmreset')
 ```
 
+## Constraint option
 
+When an object referenced by a ForeignKey is deleted, Django will emulate the behavior of the SQL constraint specified by the `on_delete` argument. Django `on_delete` doesn’t create an actual SQL constraint in the database. Support for database-level cascade options may be implemented later (see https://code.djangoproject.com/ticket/21961 ).
+
+That means setting the `on_delete` contraint on the actual database should be done manually.
+
+To get the name of the constraint:
+
+```SQL
+select constraint_name from information_schema.key_column_usage where position_in_unique_constraint is not null and table_name = 'count_detail' and column_name = 'id_count'
+```
+
+To replace the constraint and set `on_delete` option (replace `<CONSTRAINT_NAME>` with the actual name received from the previous query):
+
+```SQL
+alter table comptages.count_detail 
+drop constraint <CONSTRAINT_NAME>,
+add constraint <CONSTRAINT_NAME>
+   foreign key ("id_count")
+   references "count"(id)
+   on delete cascade;
+```
