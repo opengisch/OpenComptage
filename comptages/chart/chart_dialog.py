@@ -43,7 +43,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                       "le comptage {}".format(count.id_installation.name, count.id))
             QgsMessageLog.logMessage(
                 '{} - Generate chart action : No data for count {}'.format(datetime.now(), count.id),
-                'Comptages', Qgis.Info)            
+                'Comptages', Qgis.Info)
             return
 
         self.show()
