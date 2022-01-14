@@ -195,7 +195,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
         df, tjm = statistics.get_day_data(
             self.count,
             section=None,
-            status=definitions.IMPORT_STATUS_DEFINITIVE)
+            status=definitions.IMPORT_STATUS_DEFINITIVE,
+            exclude_trash=True)
 
         self.count.tjm = tjm
         self.count.save(update_fields=['tjm'])
@@ -277,6 +278,7 @@ class ChartTjm(Chart):
             self.section,
             self.lane,
             self.direction,
+            exclude_trash=True
         )
 
         if df.empty:
@@ -319,6 +321,7 @@ class ChartTime(Chart):
             self.section,
             self.lane,
             self.direction,
+            exclude_trash=True,
         )
         if df.empty:
             return
@@ -416,7 +419,8 @@ class ChartSpeed(Chart):
 
         df = statistics.get_speed_data(
             self.count,
-            self.section)
+            self.section,
+            exclude_trash=True)
         if df.empty:
             return
 

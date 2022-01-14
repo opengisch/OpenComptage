@@ -11,7 +11,7 @@ from comptages.core import definitions
 from comptages.datamodel import models
 
 
-def get_time_data(count, section, lane=None, direction=None, start=None, end=None):
+def get_time_data(count, section, lane=None, direction=None, start=None, end=None, exclude_trash=False):
 
     if not start:
         start = count.start_process_date
@@ -31,6 +31,9 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
 
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
+
+    if exclude_trash:
+        qs = qs.exclude(id_category__code=0)
 
     # Vehicles by day and hour
     qs = qs.annotate(date=Trunc('timestamp', 'day'), hour=ExtractHour('timestamp')) \
@@ -80,7 +83,7 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
     return df
 
 
-def get_day_data(count, section=None, lane=None, direction=None, status=None):
+def get_day_data(count, section=None, lane=None, direction=None, status=None, exclude_trash=False):
 
     start = count.start_process_date
     end = count.end_process_date + timedelta(days=1)
@@ -90,6 +93,10 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None):
 
         timestamp__range=(start, end)
     )
+
+    if exclude_trash:
+        qs = qs.exclude(id_category__code=0)
+
 
     # Can be None if we are calculating the total TJM of a special case's count
     if section is not None:
@@ -154,7 +161,7 @@ def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIV
     return df
 
 
-def get_speed_data(count, section):
+def get_speed_data(count, section, exclude_trash=False):
 
     start = count.start_process_date
     end = count.end_process_date + timedelta(days=1)
@@ -164,6 +171,9 @@ def get_speed_data(count, section):
         id_lane__id_section=section,
         timestamp__range=(start, end)
     )
+
+    if exclude_trash:
+        qs = qs.exclude(id_category__code=0)
 
     df = pd.DataFrame.from_records(qs.values('speed', 'times', 'import_status'))
     df = df.groupby(
