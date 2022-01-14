@@ -382,7 +382,6 @@ class Comptages(QObject):
             path = self.settings.value('report_export_directory')
             file_path = QFileDialog.getExistingDirectory(
                 file_dialog, title, path)
-            print(file_path)
 
             if not file_path:
                 QgsMessageLog.logMessage(
@@ -404,7 +403,8 @@ class Comptages(QObject):
                     report_task.ReportTask(
                         file_path=file_path,
                         template="yearly",
-                        year=year
+                        year=year,
+                        section_id=section_id
                     ))
             # TODO: check if there are comptages for this section and year
 

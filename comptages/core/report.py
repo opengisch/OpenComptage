@@ -11,7 +11,7 @@ def simple_print_callback(progress):
     print(f"Generating report... {progress}%")
 
 
-def prepare_reports(file_path, count=None, year=None, template='default', callback_progress=simple_print_callback):
+def prepare_reports(file_path, count=None, year=None, template='default', section_id=None, callback_progress=simple_print_callback):
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if template == 'default':
@@ -29,7 +29,7 @@ def prepare_reports(file_path, count=None, year=None, template='default', callba
             os.pardir,
             'report',
             template_name)
-        _prepare_yearly_report(file_path, year, template_path, callback_progress)
+        _prepare_yearly_report(file_path, year, template_path, section_id, callback_progress)
     elif template == 'yearly_bike':
         pass
 
@@ -60,18 +60,13 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
             workbook.save(filename=output)
 
 
-def _prepare_yearly_report(file_path, year, template_path, callback_progress):
+def _prepare_yearly_report(file_path, year, template_path, section_id, callback_progress):
 
-    # TODO: section
-    section = models.Section.objects.get(id__contains="00107695")
-
+    section = models.Section.objects.get(id__contains=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(id_installation__lane__id_section=section, start_process_date__year=year)
     if not count_qs:
-        print("NO COUNTS")
-        # TODO:
         return
-    print(count_qs[0])
     count = count_qs[0]
 
     workbook = load_workbook(filename=template_path)
