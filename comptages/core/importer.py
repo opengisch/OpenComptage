@@ -1,6 +1,7 @@
 import pytz
 import os
 from datetime import datetime, timedelta
+from django.db.models import Q
 
 from comptages.core import definitions
 from comptages.datamodel import models
@@ -404,7 +405,8 @@ def guess_count(file_path):
     header = _parse_file_header(file_path)
 
     result = models.Count.objects.filter(
-        id_installation__name=header['SITE'],
+        Q(id_installation__name=header['SITE']) | Q(id_installation__alias=header['SITE']))
+    result = result.filter(
         id_installation__active=True,
         id_class__name=header['CLASS'],
         start_service_date__lte=header['STARTREC'],
@@ -415,5 +417,3 @@ def guess_count(file_path):
         return result[0]
     else:
         return None
-
-    # TODO: what to do if multiple results?

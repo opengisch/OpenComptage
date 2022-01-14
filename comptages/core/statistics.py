@@ -36,7 +36,7 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
     qs = qs.annotate(date=Trunc('timestamp', 'day'), hour=ExtractHour('timestamp')) \
            .order_by('hour') \
            .values('date', 'hour', 'times') \
-           .order_by('date', 'hour') \
+           .order_by('-date', 'hour') \
            .annotate(thm=Sum('times')) \
            .values('import_status', 'date', 'hour', 'thm')
 
