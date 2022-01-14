@@ -772,8 +772,6 @@ def _data_category(count, section, monday, workbook):
     row_offset = 5
     col_offset = 2
     for category in categories:
-        if category.code == 0:
-            continue  # We don't put TRASH category in report
         res = statistics.get_category_data_by_hour(
             count,
             section,
@@ -785,7 +783,7 @@ def _data_category(count, section, monday, workbook):
 
         for row in res:
             row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code) - 1
+            col_num = col_offset + _t_cat(count, category.code)
             value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
 
             ws.cell(
@@ -798,8 +796,6 @@ def _data_category(count, section, monday, workbook):
     row_offset = 33
     col_offset = 2
     for category in categories:
-        if category.code == 0:
-            continue  # We don't put TRASH category in report
         res = statistics.get_category_data_by_hour(
             count,
             section,
@@ -811,7 +807,7 @@ def _data_category(count, section, monday, workbook):
 
         for row in res:
             row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code) - 1
+            col_num = col_offset + _t_cat(count, category.code)
             value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
 
             ws.cell(
@@ -832,8 +828,6 @@ def _data_category_yearly(count, section, year, workbook):
     row_offset = 5
     col_offset = 2
     for category in categories:
-        if category.code == 0:
-            continue  # We don't put TRASH category in report
         res = statistics.get_category_data_by_hour(
             None,
             section,
@@ -845,7 +839,7 @@ def _data_category_yearly(count, section, year, workbook):
 
         for row in res:
             row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code) - 1
+            col_num = col_offset + _t_cat(count, category.code)
             value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
 
             ws.cell(
@@ -858,8 +852,6 @@ def _data_category_yearly(count, section, year, workbook):
     row_offset = 33
     col_offset = 2
     for category in categories:
-        if category.code == 0:
-            continue  # We don't put TRASH category in report
         res = statistics.get_category_data_by_hour(
             None,
             section,
@@ -871,7 +863,7 @@ def _data_category_yearly(count, section, year, workbook):
 
         for row in res:
             row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code) - 1
+            col_num = col_offset + _t_cat(count, category.code)
             value = ws.cell(row_num, col_num).value + row[1]  # Add to previous value because with class convertions multiple categories can converge into a single one
 
             ws.cell(
