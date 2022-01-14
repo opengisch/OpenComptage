@@ -135,6 +135,7 @@ class Installation(models.Model):
     qdmtk_addlayer = True
 
     id = models.BigAutoField(primary_key=True)
+    alias = models.CharField(blank=True, null=True, max_length=200)
     permanent = models.BooleanField()
     name = models.TextField()
     picture = models.TextField(blank=True, null=True)
