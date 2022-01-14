@@ -404,7 +404,7 @@ class ChartCat(Chart):
                     name="Nouveau"),
                 1, num_of_charts)
 
-        fig.update_traces(hoverinfo="label+percent+name")
+        fig.update_traces(hoverinfo="label+percent+name+value")
         fig.update_layout(title_text="Véhicules groupés par catégorie")
 
         return plotly.offline.plot(fig, output_type='div')
