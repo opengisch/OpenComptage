@@ -3,7 +3,7 @@ import os
 
 from string import ascii_uppercase
 
-from django.db.models import Sum, Avg, Max
+from django.db.models import Sum, Avg, Max, Count
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import ExtractIsoWeekDay, ExtractHour, ExtractMonth, ExtractDay
@@ -38,7 +38,6 @@ class YearlyReportBike():
                    .annotate(total=Sum('times')) \
                    .values('weekday', 'id_lane__direction', 'total')
 
-        print(result)
 
     def values_by_day_and_hour(self):
         # Get all the count details for section and the year
@@ -142,8 +141,7 @@ class YearlyReportBike():
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        # Group by day of the week (0->monday, 7->sunday)
-        result = qs.annotate(res=Sum('times')).values('res').annotate(cat='id_category').values('res', 'cat.code')
+        result = qs.annotate(res=Sum('times')).values('res').values('id_category__code').annotate(tjm=Count('id_category__code'))
         return result
 
     def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
@@ -380,20 +378,19 @@ class YearlyReportBike():
             )
             row += 1
 
-        # ws = workbook['Data_class']
-        # row_offset = 4
-        # column_offset = 1
+        ws = workbook['Data_class']
+        row_offset = 4
+        column_offset = 2
 
-        # data = self.values_by_class()
-        # print(data)
-        # row = row_offset
-        # for i in data:
-        #     ws.cell(
-        #         row=row,
-        #         column=column_offset,
-        #         value=i['tjm']
-        #     )
-        #     row += 1
+        data = self.values_by_class()
+        row = row_offset
+        for i in data:
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=i['tjm']
+            )
+            row += 1
 
         # Save the file
         output = os.path.join(
