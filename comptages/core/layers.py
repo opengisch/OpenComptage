@@ -120,12 +120,22 @@ class Layers(QObject):
         index = data_provider.fieldNameIndex('id_installation')
         self.layers['count'].setEditorWidgetSetup(index, widget)
 
+        classes_1 = "("+",".join("'"+str(i)+"'" for i in self.get_classes_by_sensor_type(1))+")"
+        classes_2 = "("+",".join("'"+str(i)+"'" for i in self.get_classes_by_sensor_type(2))+")"
+        classes_3 = "("+",".join("'"+str(i)+"'" for i in self.get_classes_by_sensor_type(3))+")"
+
         widget = QgsEditorWidgetSetup(
             'ValueRelation',
             {
                 'AllowMulti':       False,
                 'AllowNull':        True,
-                'FilterExpression': '',
+                'FilterExpression':
+                f"""
+                CASE WHEN current_value('id_sensor_type') = 1 THEN \"id\" IN {classes_1}
+                WHEN current_value('id_sensor_type') = 2 THEN \"id\" IN {classes_2}
+                WHEN current_value('id_sensor_type') = 3 THEN \"id\" IN {classes_3}
+                ELSE \"id\"
+                END""",
                 'Key':              'id',
                 'Layer':            self.layers['class'].id(),
                 'OrderByValue':     False,
@@ -957,3 +967,12 @@ class Layers(QObject):
             result.append(i.id_model.id)
         return result
 
+
+    def get_classes_by_sensor_type(self, sensor_type):
+        qs = models.SensorTypeClass.objects.filter(
+            id_sensor_type=sensor_type)
+
+        result = []
+        for i in qs:
+            result.append(i.id_class.id)
+        return result
