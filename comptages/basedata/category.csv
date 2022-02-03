@@ -1,120 +1,120 @@
-id,name,code,light,id_category
-902,TRASH,0,true,902
-2,PF,1,true,2
-3,MFZ,2,false,2
-904,TRASH,0,true,2
-4,CAR,1,false,2
-5,MR,2,true,2
-6,PW,3,true,2
-7,LIE,4,true,2
-8,SGF,5,false,2
-909,TRASH,0,true,2
-9,CAR,1,false,2
-10,MR,2,true,2
-11,PW,3,true,2
-12,LIE,4,true,2
-13,LW,5,false,2
-14,LZ+SZ,6,false,2
-915,TRASH,0,true,2
-15,CAR,1,false,2
-16,MR,2,true,2
-17,PW,3,true,2
-18,LIE,4,true,2
-19,LW,5,false,2
-20,LZ,6,false,2
-21,SZ,7,false,2
-922,TRASH,0,true,2
-22,CAR,1,false,2
-23,MR,2,true,2
-24,PW,3,true,2
-25,PW+ANH,4,true,2
-26,LIE,5,true,2
-27,LIE+ANH,6,true,2
-28,LIE+AUFL,7,true,2
-29,LW,8,false,2
-30,LZ,9,false,2
-31,SZ,10,false,2
-32,ANY,0,true,2
-33,CYCLE,1,true,2
-34,MC,2,true,2
-35,SV,3,true,2
-36,SVT,4,true,2
-37,TB2,5,false,2
-38,TB3,6,false,2
-39,T4,7,false,2
-40,ART3,8,false,2
-41,ART4,9,false,2
-42,ART5,10,false,2
-43,ART6,11,false,2
-44,BD,12,false,2
-45,DRT,13,false,2
-46,ELSE,14,false,2
-47,TRASH,0,true,2
-48,NZTA 1,1,true,2
-49,NZTA 2,2,true,2
-50,NZTA 3,3,true,2
-51,NZTA 4,4,true,2
-52,NZTA 5,5,false,2
-53,NZTA 6,6,false,2
-54,NZTA 7,7,false,2
-55,NZTA 8,8,false,2
-56,NZTA 9,9,false,2
-57,NZTA 10,10,false,2
-58,NZTA 11,11,false,2
-59,NZTA 12,12,false,2
-60,NZTA 13,13,false,2
-61,ANY,14,false,2
-62,TRASH,0,false,2
-63,FHW01,1,true,2
-64,FHW02,2,true,2
-65,FHW03,3,true,2
-66,FHW04,4,false,2
-67,FHW05,5,false,2
-68,FHW06,6,false,2
-69,FHW07,7,false,2
-70,FHW08,8,false,2
-71,FHW09,9,false,2
-72,FHW10,10,false,2
-73,FHW11,11,false,2
-74,FHW12,12,false,2
-75,FHW13,13,false,2
-76,ELSE,14,false,2
-77,TRASH,0,false,2
-78,Bicycle,1,true,2
-79,ELSE,2,false,2
-80,PW,1,true,2
-81,CAR,2,false,2
-82,LIE,3,true,2
-83,LW,4,false,2
-84,LZ,5,false,2
-85,SZ,6,false,2
-86,MR,7,true,2
-87,TRASH,0,true,2
-88,CAR,1,false,2
-89,MR,2,true,2
-90,PW,3,true,2
-91,LIE,4,true,2
-92,LW,5,false,2
-93,LZ,6,false,2
-94,SZ,7,false,2
-95,TRASH,0,false,2
-96,VELO,1,true,2
-97,MONO,2,true,2
-98,SHORT,3,true,2
-99,SPECIAL,4,true,2
-100,MULTI,5,true,2
-101,ELSE,2,false,2
-102,TRASH,0,false,2
-103,MC,1,true,2
-104,VL,2,true,2
-105,UT,3,true,2
-106,BUS,4,false,2
-107,PL,5,false,2
-108,PL-R,6,false,2
-109,SL-R,7,false,2
-110,SL-X,8,false,2
-111,TR-R,9,false,2
-112,TR-X,10,false,2
-113,AX6,11,false,2
-114,EUR2-3,12,false,2
-115,GRP3-8,13,false,2
+id,name,code,light,id_category,trash
+902,TRASH,0,true,902,true
+2,PF,1,true,2,false
+3,MFZ,2,false,2,false
+904,TRASH,0,true,2,true
+4,CAR,1,false,2,false
+5,MR,2,true,2,false
+6,PW,3,true,2,false
+7,LIE,4,true,2,false
+8,SGF,5,false,2,false
+909,TRASH,0,true,2,true
+9,CAR,1,false,2,false
+10,MR,2,true,2,false
+11,PW,3,true,2,false
+12,LIE,4,true,2,false
+13,LW,5,false,2,false
+14,LZ+SZ,6,false,2,false
+915,TRASH,0,true,2,true
+15,CAR,1,false,2,false
+16,MR,2,true,2,false
+17,PW,3,true,2,false
+18,LIE,4,true,2,false
+19,LW,5,false,2,false
+20,LZ,6,false,2,false
+21,SZ,7,false,2,false
+922,TRASH,0,true,2,true
+22,CAR,1,false,2,false
+23,MR,2,true,2,false
+24,PW,3,true,2,false
+25,PW+ANH,4,true,2,false
+26,LIE,5,true,2,false
+27,LIE+ANH,6,true,2,false
+28,LIE+AUFL,7,true,2,false
+29,LW,8,false,2,false
+30,LZ,9,false,2,false
+31,SZ,10,false,2,false
+32,ANY,0,true,2,false
+33,CYCLE,1,true,2,false
+34,MC,2,true,2,false
+35,SV,3,true,2,false
+36,SVT,4,true,2,false
+37,TB2,5,false,2,false
+38,TB3,6,false,2,false
+39,T4,7,false,2,false
+40,ART3,8,false,2,false
+41,ART4,9,false,2,false
+42,ART5,10,false,2,false
+43,ART6,11,false,2,false
+44,BD,12,false,2,false
+45,DRT,13,false,2,false
+46,ELSE,14,false,2,true
+47,TRASH,0,true,2,true
+48,NZTA 1,1,true,2,false
+49,NZTA 2,2,true,2,false
+50,NZTA 3,3,true,2,false
+51,NZTA 4,4,true,2,false
+52,NZTA 5,5,false,2,false
+53,NZTA 6,6,false,2,false
+54,NZTA 7,7,false,2,false
+55,NZTA 8,8,false,2,false
+56,NZTA 9,9,false,2,false
+57,NZTA 10,10,false,2,false
+58,NZTA 11,11,false,2,false
+59,NZTA 12,12,false,2,false
+60,NZTA 13,13,false,2,false
+61,ANY,14,false,2,false
+62,TRASH,0,false,2,true
+63,FHW01,1,true,2,false
+64,FHW02,2,true,2,false
+65,FHW03,3,true,2,false
+66,FHW04,4,false,2,false
+67,FHW05,5,false,2,false
+68,FHW06,6,false,2,false
+69,FHW07,7,false,2,false
+70,FHW08,8,false,2,false
+71,FHW09,9,false,2,false
+72,FHW10,10,false,2,false
+73,FHW11,11,false,2,false
+74,FHW12,12,false,2,false
+75,FHW13,13,false,2,false
+76,ELSE,14,false,2,true
+77,TRASH,0,false,2,true
+78,Bicycle,1,true,2,false
+79,ELSE,2,false,2,false
+80,PW,1,true,2,false
+81,CAR,2,false,2,false
+82,LIE,3,true,2,false
+83,LW,4,false,2,false
+84,LZ,5,false,2,false
+85,SZ,6,false,2,false
+86,MR,7,true,2,false
+87,TRASH,0,true,2,true
+88,CAR,1,false,2,false
+89,MR,2,true,2,false
+90,PW,3,true,2,false
+91,LIE,4,true,2,false
+92,LW,5,false,2,false
+93,LZ,6,false,2,false
+94,SZ,7,false,2,false
+95,TRASH,0,false,2,true
+96,VELO,1,true,2,false
+97,MONO,2,true,2,false
+98,SHORT,3,true,2,false
+99,SPECIAL,4,true,2,false
+100,MULTI,5,true,2,false
+101,ELSE,2,false,2,true
+102,TRASH,0,false,2,true
+103,MC,1,true,2,false
+104,VL,2,true,2,false
+105,UT,3,true,2,false
+106,BUS,4,false,2,false
+107,PL,5,false,2,false
+108,PL-R,6,false,2,false
+109,SL-R,7,false,2,false
+110,SL-X,8,false,2,false
+111,TR-R,9,false,2,false
+112,TR-X,10,false,2,false
+113,AX6,11,false,2,false
+114,EUR2-3,12,false,2,false
+115,GRP3-8,13,false,2,false

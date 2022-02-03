@@ -119,6 +119,7 @@ class Command(BaseCommand):
                     name=feat["name"],
                     code=Decimal(feat["code"].value),
                     light=str(feat["light"]).lower() in ("yes", "true", "t", "1"),
+                    trash=str(feat["trash"]).lower() in ("yes", "true", "t", "1"),
                 )
             )
         Category.objects.bulk_create(categories)

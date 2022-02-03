@@ -33,7 +33,7 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
         qs = qs.filter(id_lane__direction=direction)
 
     if exclude_trash:
-        qs = qs.exclude(id_category__code=0)
+        qs = qs.exclude(id_category__trash=True)
 
     # Vehicles by day and hour
     qs = qs.annotate(date=Trunc('timestamp', 'day'), hour=ExtractHour('timestamp')) \
@@ -95,7 +95,7 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None, ex
     )
 
     if exclude_trash:
-        qs = qs.exclude(id_category__code=0)
+        qs = qs.exclude(id_category__trash=True)
 
 
     # Can be None if we are calculating the total TJM of a special case's count
@@ -173,7 +173,7 @@ def get_speed_data(count, section, exclude_trash=False):
     )
 
     if exclude_trash:
-        qs = qs.exclude(id_category__code=0)
+        qs = qs.exclude(id_category__trash=True)
 
     df = pd.DataFrame.from_records(qs.values('speed', 'times', 'import_status'))
     df = df.groupby(

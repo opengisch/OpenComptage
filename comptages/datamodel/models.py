@@ -20,6 +20,7 @@ class Category(models.Model):
     name = models.TextField()
     code = models.SmallIntegerField()
     light = models.BooleanField()
+    trash = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'category'
