@@ -168,12 +168,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.RunPython(migrate_data),
-        # migrations.DeleteModel(name='CountAggregateValueCls'),
-        # migrations.DeleteModel(name='CountAggregateValueCnt'),
-        # migrations.DeleteModel(name='CountAggregateValueDrn'),
-        # migrations.DeleteModel(name='CountAggregateValueLen'),
-        # migrations.DeleteModel(name='CountAggregateValueSpd'),
-        # migrations.DeleteModel(name='CountAggregateValueSds'),
-        # migrations.DeleteModel(name='CountAggregate'),
+        migrations.RunPython(migrate_data),
+        migrations.DeleteModel(name='CountAggregateValueCls'),
+        migrations.DeleteModel(name='CountAggregateValueCnt'),
+        migrations.DeleteModel(name='CountAggregateValueDrn'),
+        migrations.DeleteModel(name='CountAggregateValueLen'),
+        migrations.DeleteModel(name='CountAggregateValueSpd'),
+        migrations.DeleteModel(name='CountAggregateValueSds'),
+        migrations.DeleteModel(name='CountAggregate'),
     ]
