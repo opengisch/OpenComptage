@@ -24,9 +24,8 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.layers = layers
         self.count = None
         self.sensor = None
-        self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
-    def set_attributes(self, count, approval_process=False):
+    def set_attributes(self, count):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
@@ -56,9 +55,14 @@ class ChartDock(QDockWidget, FORM_CLASS):
         for section in sections:
             tab = ChartTab()
             self.tabWidget.addTab(tab, section.id)
-            self._populate_tab(tab, section, count, approval_process)
+            self._populate_tab(tab, section, count)
 
-    def _populate_tab(self, tab, section, count, approval_process):
+    def _populate_tab(self, tab, section, count):
+
+        # Check if there is data to be validated
+        approval_process = False
+        if models.CountDetail.objects.filter(id_count=count, import_status=definitions.IMPORT_STATUS_QUARANTINE).exists():
+            approval_process = True
         # Remove previous items
         try:
             tab.chartList.currentRowChanged.disconnect(self.chart_list_changed)
@@ -76,11 +80,9 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.buttonValidate.clicked.connect(partial(self.validate_count, section))
             tab.buttonRefuse.clicked.connect(partial(self.refuse_count, section))
             tab.buttonRefuse.show()
-            self.status = definitions.IMPORT_STATUS_QUARANTINE
         else:
             tab.buttonValidate.hide()
             tab.buttonRefuse.hide()
-            self.status = definitions.IMPORT_STATUS_DEFINITIVE
 
         sensor_type = count.id_sensor_type
         lanes = models.Lane.objects.filter(id_section=section)
@@ -242,7 +244,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
                 'Comptages', Qgis.Info)
             return
 
-        self.set_attributes(quarantined_counts[0], True)
+        self.set_attributes(quarantined_counts[0])
         self.show()
 
         QgsMessageLog.logMessage(
