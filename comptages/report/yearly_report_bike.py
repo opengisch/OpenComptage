@@ -392,6 +392,12 @@ class YearlyReportBike():
             )
             row += 1
 
+        ws = workbook['AN_GR']
+        ws.print_area = 'A1:Z62'
+
+        ws = workbook['CAT']
+        ws.print_area = 'A1:Z62'
+
         # Save the file
         output = os.path.join(
             self.file_path, '{}_{}_r.xlsx'.format(self.section_id, self.year))
