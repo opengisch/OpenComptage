@@ -42,7 +42,6 @@ class ClassCategory(models.Model):
 
     class Meta:
         db_table = 'class_category'
-        # unique_together = (('id_class', 'id_category'),)
 
 
 class CoreBuilding(models.Model):
@@ -171,12 +170,12 @@ class Model(models.Model):
 
 
 class ModelClass(models.Model):
-    id_model = models.OneToOneField(Model, models.DO_NOTHING, db_column='id_model', primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id_model = models.ForeignKey(Model, models.DO_NOTHING, db_column='id_model')
     id_class = models.ForeignKey(Class, models.DO_NOTHING, db_column='id_class')
 
     class Meta:
         db_table = 'model_class'
-        unique_together = (('id_model', 'id_class'),)
 
 
 class Section(models.Model):
@@ -232,7 +231,6 @@ class SensorTypeClass(models.Model):
 
     class Meta:
         db_table = 'sensor_type_class'
-        # unique_together = (('id_sensor_type', 'id_class'),)
 
 
 class SensorTypeInstallation(models.Model):
@@ -242,7 +240,6 @@ class SensorTypeInstallation(models.Model):
 
     class Meta:
         db_table = 'sensor_type_installation'
-        # unique_together = (('id_sensor_type', 'id_installation'),)
 
 
 class SensorTypeModel(models.Model):
@@ -252,7 +249,6 @@ class SensorTypeModel(models.Model):
 
     class Meta:
         db_table = 'sensor_type_model'
-        # unique_together = (('id_sensor_type', 'id_model'),)
 
 
 class SensorTypeSection(models.Model):
