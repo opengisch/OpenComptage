@@ -176,6 +176,7 @@ class ModelClass(models.Model):
 
     class Meta:
         db_table = 'model_class'
+        unique_together = (('id_model', 'id_class'),)
 
 
 class Section(models.Model):
