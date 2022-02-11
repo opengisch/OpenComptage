@@ -9,8 +9,7 @@ from django.db import migrations, transaction
 
 def get_console_logger():
     logger = logging.getLogger(__name__)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.flush = sys.stdout.flush
+    handler = logging.FileHandler('migration_0022.log')
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
