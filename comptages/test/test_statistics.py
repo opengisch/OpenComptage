@@ -1,5 +1,5 @@
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.test import TransactionTestCase
 from django.core.management import call_command
 
@@ -148,3 +148,64 @@ class StatisticsTest(TransactionTestCase):
                 datetime(2020, 1, 10),
                 datetime(2020, 2, 15))),
             1)
+
+    def test_light_numbers(self):
+        # Create count and import some data
+        model = models.Model.objects.all()[0]
+        device = models.Device.objects.all()[0]
+        sensor_type = models.SensorType.objects.all()[0]
+        class_ = models.Class.objects.get(name="SWISS10")
+        installation = models.Installation.objects.get(name="00056365")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2017, 3, 27)),
+            end_service_date=tz.localize(datetime(2017, 4, 4)),
+            start_process_date=tz.localize(datetime(2017, 3, 27)),
+            end_process_date=tz.localize(datetime(2017, 4, 4)),
+            start_put_date=tz.localize(datetime(2017, 3, 27)),
+            end_put_date=tz.localize(datetime(2017, 4, 4)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        importer.import_file(
+            utils.test_data_path("00056365.A00"),
+            count)
+
+        section = models.Section.objects.filter(lane__id_installation__count=count).distinct()[0]
+        res = statistics.get_light_numbers(
+            count,
+            section,
+            start=tz.localize(datetime(2017, 3, 27)),
+            end=tz.localize(datetime(2017, 3, 28)),
+        )
+
+        self.assertEqual(res, {False: 15, True: 492})
+
+        res = statistics.get_time_data(
+            count,
+            section,
+            start=tz.localize(datetime(2017, 3, 27)),
+            end=tz.localize(datetime(2017, 3, 28)),
+        )
+
+        self.assertEqual(res['thm'][0], 252)
+        self.assertEqual(res['thm'][1], 255)
+
+        monday = tz.localize(datetime(2017, 3, 27))
+
+        res = statistics.get_speed_data_by_hour(
+            count,
+            section,
+            start=monday,
+            end=monday + timedelta(days=7),
+            speed_low=0,
+            speed_high=30,
+        )
+
+        self.assertEqual((10, 5), res[0])
+        self.assertEqual((11, 1), res[1])

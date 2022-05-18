@@ -33,6 +33,7 @@ def import_file(file_path, count, callback_progress=simple_print_callback):
             data_header=data_header,
             file_header=file_header,
             categories=cat_bins,
+            from_aggregate=True,
         )
     elif file_format == "MC":
         _parse_and_write(file_path, count, _parse_line_mc, callback_progress)
@@ -40,7 +41,7 @@ def import_file(file_path, count, callback_progress=simple_print_callback):
         raise NotImplementedError("file format not recognized")
 
 
-def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs):
+def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggregate=False, **kwargs):
     basename = os.path.basename(file_path)
     bulk_mgr = BulkCreateManager(chunk_size=1000)
     lanes = _populate_lane_dict(count)
@@ -77,6 +78,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                             id_count_id=count.id,
                             id_category_id=category,
                             times=row['times'],
+                            from_aggregate=from_aggregate,
                         )
                     )
 
@@ -207,7 +209,7 @@ def _parse_line_int2(line, **kwargs):
     parsed_line['length'] = None
     parsed_line['height'] = None
     parsed_line['category'] = None
-    parsed_line['lane'] = 1
+    parsed_line['lane'] = parsed_line['channel']
     parsed_line['times'] = 1
 
     intspec = kwargs['intspec']
@@ -220,23 +222,29 @@ def _parse_line_int2(line, **kwargs):
         row_type)
     if row_type == 'SPD':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             speed_low = bins[i]
             speed = int(int(speed_low) + 5)
             parsed_line['speed'] = speed
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'LEN':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             lenght_low = bins[i]
             lenght_high = bins[i + 1]
             lenght = int(int(lenght_low) + int(lenght_high) / 2)
             parsed_line['lenght'] = lenght
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'CLS':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             parsed_line['category'] = i + 1
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'SDS':
         # Insert the values in the SPD table and only the

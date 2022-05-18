@@ -114,8 +114,6 @@ class ImportTest(TransactionTestCase):
             utils.test_data_path("10020260.A01"),
             count)
 
-        self.assertEqual(models.CountDetail.objects.count(), 22568)
-
         tz = pytz.timezone("Europe/Zurich")
 
         first = tz.normalize(models.CountDetail.objects.first().timestamp)
