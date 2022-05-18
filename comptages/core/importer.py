@@ -33,6 +33,7 @@ def import_file(file_path, count, callback_progress=simple_print_callback):
             data_header=data_header,
             file_header=file_header,
             categories=cat_bins,
+            from_aggregate=True,
         )
     elif file_format == "MC":
         _parse_and_write(file_path, count, _parse_line_mc, callback_progress)
@@ -40,7 +41,7 @@ def import_file(file_path, count, callback_progress=simple_print_callback):
         raise NotImplementedError("file format not recognized")
 
 
-def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs):
+def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggregate=False, **kwargs):
     basename = os.path.basename(file_path)
     bulk_mgr = BulkCreateManager(chunk_size=1000)
     lanes = _populate_lane_dict(count)
@@ -77,6 +78,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, **kwargs)
                             id_count_id=count.id,
                             id_category_id=category,
                             times=row['times'],
+                            from_aggregate=from_aggregate,
                         )
                     )
 
@@ -207,7 +209,7 @@ def _parse_line_int2(line, **kwargs):
     parsed_line['length'] = None
     parsed_line['height'] = None
     parsed_line['category'] = None
-    parsed_line['lane'] = 1
+    parsed_line['lane'] = parsed_line['channel']
     parsed_line['times'] = 1
 
     intspec = kwargs['intspec']
