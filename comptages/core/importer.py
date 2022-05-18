@@ -220,23 +220,29 @@ def _parse_line_int2(line, **kwargs):
         row_type)
     if row_type == 'SPD':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             speed_low = bins[i]
             speed = int(int(speed_low) + 5)
             parsed_line['speed'] = speed
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'LEN':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             lenght_low = bins[i]
             lenght_high = bins[i + 1]
             lenght = int(int(lenght_low) + int(lenght_high) / 2)
             parsed_line['lenght'] = lenght
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'CLS':
         for i, data in enumerate(line[20:].split()):
+            if int(data) == 0:
+                continue
             parsed_line['category'] = i + 1
-            parsed_line['times'] = data
+            parsed_line['times'] = int(data)
             yield parsed_line
     elif row_type == 'SDS':
         # Insert the values in the SPD table and only the
