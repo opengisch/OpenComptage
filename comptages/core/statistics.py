@@ -180,6 +180,10 @@ def get_speed_data(count, section, exclude_trash=False):
         qs = qs.exclude(id_category__trash=True)
 
     df = pd.DataFrame.from_records(qs.values('speed', 'times', 'import_status'))
+
+    if df.empty:
+        return df
+
     df = df.groupby(
         ['import_status',
          pd.cut(

@@ -209,3 +209,42 @@ class StatisticsTest(TransactionTestCase):
 
         self.assertEqual((10, 5), res[0])
         self.assertEqual((11, 1), res[1])
+
+    def test_get_speed_data_empty(self):
+        # Create count and import some data
+        model = models.Model.objects.all()[0]
+        device = models.Device.objects.all()[0]
+        sensor_type = models.SensorType.objects.all()[0]
+        class_ = models.Class.objects.get(name="SWISS10")
+        installation = models.Installation.objects.get(name="53409999")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2022, 4, 25)),
+            end_service_date=tz.localize(datetime(2022, 4, 27)),
+            start_process_date=tz.localize(datetime(2022, 4, 25)),
+            end_process_date=tz.localize(datetime(2022, 4, 27)),
+            start_put_date=tz.localize(datetime(2022, 4, 25)),
+            end_put_date=tz.localize(datetime(2022, 4, 27)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        importer.import_file(
+            utils.test_data_path("53409999.V04"),
+            count)
+
+        # This is a special case and there are no data for the first 2 sections
+        sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
+        self.assertTrue(
+            statistics.get_speed_data(
+                count,
+                sections[0]).empty)
+
+        self.assertFalse(
+            statistics.get_speed_data(
+                count,
+                sections[2]).empty)
