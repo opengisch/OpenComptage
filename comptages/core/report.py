@@ -973,7 +973,7 @@ def _t_cat(count, cat_id):
         }
         return conv[cat_id]
 
-    return cat_id if cat_id<11 else 10
+    return cat_id if cat_id < 11 else 10
 
 
 def _is_aggregate(count):
