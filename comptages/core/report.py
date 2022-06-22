@@ -917,12 +917,6 @@ def _t_cat(count, cat_id):
        report cells
     """
 
-    # if count.id_class.name == 'SWISS10':
-        # return cat_id
-
-    # if count.id_class.name == 'SWISS7':
-        # return cat_id
-
     if count.id_class.name == 'ARX Cycle':
         # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
         new_hour = [0] * 7
