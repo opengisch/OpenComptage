@@ -129,8 +129,7 @@ def _data_count(count, section, monday, workbook):
     )
     ws['B7'] = 'Modèle : {}'.format(
         count.id_model.name)
-    ws['B8'] = 'Classification : {}'.format(
-        _t_cl(count.id_class.name))
+    ws['B8'] = 'Classification : {}'.format(count.id_class.name)
 
     ws['B9'] = 'Comptage véhicule par véhicule'
     if _is_aggregate(count):
@@ -173,22 +172,19 @@ def _data_count_yearly(count, section, year, workbook):
             int(section.end_dist)
     )
 
-    ws['B4'] = 'Periode de comptage du 01/01/{0} au 31/12/{0}'.format(
-        year)
+    ws['B4'] = 'Periode de comptage du 01/01/{0} au 31/12/{0}'.format(year)
 
     ws['B5'] = 'Comptage {}'.format(year)
 
-    ws['B6'] = 'Type de capteur : {}'.format(
-        count.id_sensor_type.name
-    )
-    ws['B7'] = 'Modèle : {}'.format(
-        count.id_model.name)
-    ws['B8'] = 'Classification : {}'.format(
-        _t_cl(count.id_class.name))
+    ws['B6'] = 'Type de capteur : {}'.format(count.id_sensor_type.name)
+
+    ws['B7'] = 'Modèle : {}'.format(count.id_model.name)
+
+    ws['B8'] = 'Classification : {}'.format(count.id_class.name)
 
     ws['B9'] = 'Comptage véhicule par véhicule'
     if _is_aggregate(count):
-        ws['B9'] = 'Comptage par interval'
+        ws['B9'] = 'Comptage par intervale'
 
     ws['B11'] = section.place_name
 
@@ -874,14 +870,25 @@ def _remove_useless_sheets(count, workbook):
     if class_name == 'SWISS10':
         workbook.remove_sheet(workbook['SWISS7_H'])
         workbook.remove_sheet(workbook['SWISS7_G'])
+        workbook.remove_sheet(workbook['EUR6_H'])
+        workbook.remove_sheet(workbook['EUR6_G'])
     elif class_name == 'SWISS7':
         workbook.remove_sheet(workbook['SWISS10_H'])
         workbook.remove_sheet(workbook['SWISS10_G'])
+        workbook.remove_sheet(workbook['EUR6_H'])
+        workbook.remove_sheet(workbook['EUR6_G'])
+    elif class_name == 'EUR6':
+        workbook.remove_sheet(workbook['SWISS10_H'])
+        workbook.remove_sheet(workbook['SWISS10_G'])
+        workbook.remove_sheet(workbook['SWISS7_H'])
+        workbook.remove_sheet(workbook['SWISS7_G'])
     elif class_name == 'Volume':
         workbook.remove_sheet(workbook['SWISS7_H'])
         workbook.remove_sheet(workbook['SWISS7_G'])
         workbook.remove_sheet(workbook['SWISS10_H'])
         workbook.remove_sheet(workbook['SWISS10_G'])
+        workbook.remove_sheet(workbook['EUR6_H'])
+        workbook.remove_sheet(workbook['EUR6_G'])
 
     if _is_aggregate(count):
         workbook.remove_sheet(workbook['Vit_Hd'])
@@ -898,7 +905,7 @@ def _t_cl(class_name):
     if class_name is None:
         return 'Volume'
 
-    if class_name == 'SPCH-13':
+    if class_name == 'SPCH13':
         return 'SWISS7'
 
     return class_name
@@ -909,12 +916,6 @@ def _t_cat(count, cat_id):
        FHWA13 should be converted in SWISS7 in order to fill the
        report cells
     """
-
-    if count.id_class.name == 'SWISS10':
-        return cat_id
-
-    if count.id_class.name == 'SWISS7':
-        return cat_id
 
     if count.id_class.name == 'ARX Cycle':
         # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
@@ -941,7 +942,7 @@ def _t_cat(count, cat_id):
         }
         return conv[cat_id]
 
-    if count.id_class.name == 'SPCH-13':
+    if count.id_class.name == 'SPCH13':
         conv = {
             0: 0,
             1: 2,
@@ -954,11 +955,25 @@ def _t_cat(count, cat_id):
             8: 5,
             9: 6,
             10: 7,
-            11: 7,
+            11: 6,
             12: 6,
             13: 7,
         }
         return conv[cat_id]
+
+    if count.id_class.name == 'EUR6':
+        conv = {
+            0: 0,
+            1: 2,
+            2: 3,
+            3: 4,
+            4: 5,
+            5: 6,
+            6: 1,
+        }
+        return conv[cat_id]
+
+    return cat_id if cat_id < 11 else 10
 
 
 def _is_aggregate(count):

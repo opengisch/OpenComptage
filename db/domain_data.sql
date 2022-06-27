@@ -10,7 +10,7 @@ INSERT INTO comptages.class VALUES (21, 'Bicycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (22, 'ARX Cycle', 'Vélos seul');
 INSERT INTO comptages.class VALUES (13, 'FHWA13', 'Federal HighWay Administration 13 category');
 INSERT INTO comptages.class VALUES (14, 'SWISS7-MM', 'SWISS 7 modified for Marksmann devices');
-INSERT INTO comptages.class VALUES (15, 'SPCH-13', 'SPCH-13');
+INSERT INTO comptages.class VALUES (15, 'SPCH13', 'SPCH13');
 INSERT INTO comptages.class VALUES (16, 'SPCH-MD 5C', 'SPCH-MD 5C');
 
 -- category
@@ -124,7 +124,7 @@ INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (84, 
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (85, 'SZ', 6, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (86, 'MR', 7, 2, TRUE);
 
-  -- SPCH-13
+  -- SPCH13
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (87, 'TRASH', 0, 2, TRUE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (88, 'CAR', 1, 2, FALSE);
 INSERT INTO comptages.category (id, name, code, id_category, light) VALUES (89, 'MR', 2, 2, TRUE);
@@ -255,7 +255,7 @@ INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 84);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 85);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (14, 86);
 
-  -- SPCH-13
+  -- SPCH13
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 87);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 88);
 INSERT INTO comptages.class_category (id_class, id_category) VALUES (15, 89);
