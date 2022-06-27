@@ -177,9 +177,9 @@ def _data_count_yearly(count, section, year, workbook):
     ws['B5'] = 'Comptage {}'.format(year)
 
     ws['B6'] = 'Type de capteur : {}'.format(count.id_sensor_type.name)
-    
+
     ws['B7'] = 'Modèle : {}'.format(count.id_model.name)
-    
+
     ws['B8'] = 'Classification : {}'.format(count.id_class.name)
 
     ws['B9'] = 'Comptage véhicule par véhicule'
