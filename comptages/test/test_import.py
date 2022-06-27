@@ -58,7 +58,7 @@ class ImportTest(TransactionTestCase):
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
         sensor_type = models.SensorType.objects.all()[0]
-        class_ = models.Class.objects.get(name="SPCH-13")
+        class_ = models.Class.objects.get(name="SPCH13")
         installation = models.Installation.objects.get(name="64210836")
 
         count = models.Count.objects.create(
