@@ -45,6 +45,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggr
     basename = os.path.basename(file_path)
     bulk_mgr = BulkCreateManager(chunk_size=1000)
     lanes = _populate_lane_dict(count)
+    directions = _populate_direction_dict(count)
     cat_bins = _populate_category_dict(count)
     line_count = get_line_count(file_path)
     previous_progress = 0
@@ -63,6 +64,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggr
 
                 for row in rows:
                     category = cat_bins[row['category']] if row['category'] is not None else None
+                    id_lane = lanes[int(row['lane'])] if row['lane'] else directions[int(row['direction'])]
                     bulk_mgr.add(
                         models.CountDetail(
                             numbering=row['numbering'],
@@ -74,7 +76,7 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggr
                             height=row['height'],
                             file_name=basename,
                             import_status=definitions.IMPORT_STATUS_QUARANTINE,
-                            id_lane_id=lanes[int(row['lane'])],
+                            id_lane_id=id_lane,
                             id_count_id=count.id,
                             id_category_id=category,
                             times=row['times'],
@@ -152,7 +154,7 @@ def _parse_line_mc(line, **kwargs):
         parsed_line['timestamp'] = tz.localize(datetime.strptime(
             line[0:19], "%Y-%m-%d %H:%M:%S"))
         # On MetroCount files, the direction is 0-1 instead of 1-2
-        parsed_line['lane'] = int(line[22:23]) + 1
+        parsed_line['lane'] = None
         parsed_line['direction'] = int(line[22:23]) + 1
         parsed_line['distance_front_front'] = float(line[24:31])
         if parsed_line['distance_front_front'] > 99.9:
@@ -344,6 +346,17 @@ def _populate_lane_dict(count):
     ).order_by("number")
 
     return {x.number: x.id for x in lanes}
+
+
+def _populate_direction_dict(count):
+    # e.g. lanes = {1: 406, 2: 408}
+    # It will return only one lane per direction
+
+    directions = models.Lane.objects.filter(
+        id_installation__count=count
+    ).order_by("-number")
+
+    return {x.direction: x.id for x in directions}
 
 
 def _populate_category_dict(count):
