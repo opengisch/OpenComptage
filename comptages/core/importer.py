@@ -107,7 +107,7 @@ def _parse_line_vbv1(line, **kwargs):
         parsed_line['direction'] = int(line[35:36])
 
         # Default values that are used in case some values are missed from a line
-        parsed_line['distance_frofnt_front'] = 0
+        parsed_line['distance_front_front'] = 0
         parsed_line['distance_front_back'] = 0
         parsed_line['speed'] = -1
         parsed_line['length'] = 0
