@@ -418,7 +418,7 @@ def guess_count(file_path):
         id_installation__active=True,
         id_class__name=header['CLASS'],
         start_service_date__lte=header['STARTREC'],
-        end_service_date__gte=header['STOPREC'],
+        end_service_date__gte=header['STOPREC'] - timedelta(seconds=1),  # To manage datetimes like 01.01.2022 00.00 that should be equal to 31.12.2021
     )
 
     if len(result) > 0:
