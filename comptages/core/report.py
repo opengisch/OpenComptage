@@ -882,7 +882,7 @@ def _remove_useless_sheets(count, workbook):
         workbook.remove_sheet(workbook['SWISS10_G'])
         workbook.remove_sheet(workbook['SWISS7_H'])
         workbook.remove_sheet(workbook['SWISS7_G'])
-    elif class_name == 'Volume':
+    elif class_name == 'Volume1':
         workbook.remove_sheet(workbook['SWISS7_H'])
         workbook.remove_sheet(workbook['SWISS7_G'])
         workbook.remove_sheet(workbook['SWISS10_H'])
@@ -903,7 +903,7 @@ def _t_cl(class_name):
         return 'SWISS7'
 
     if class_name is None:
-        return 'Volume'
+        return 'Volume1'
 
     if class_name == 'SPCH13':
         return 'SWISS7'
@@ -917,7 +917,7 @@ def _t_cat(count, cat_id):
        report cells
     """
 
-    if count.id_class.name == 'ARX Cycle':
+    if count.id_class.name == 'ARXCycle13':
         # FIXME: implement real conversiont between ARX Cycle and SWISS7 or 10
         new_hour = [0] * 7
         return new_hour
