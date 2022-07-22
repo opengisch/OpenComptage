@@ -39,9 +39,9 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(lane__id_installation__count=count).distinct()
 
-    mondays_qty = len(list(_mondays_of_count(count)))
-    mondays = _mondays_of_count(count)
     for section in sections:
+        mondays_qty = len(list(_mondays_of_count(count)))
+        mondays = _mondays_of_count(count)
         for i, monday in enumerate(mondays):
             progress = int(100 / mondays_qty * (i - 1))
             callback_progress(progress)
