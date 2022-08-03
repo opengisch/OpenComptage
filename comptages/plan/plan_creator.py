@@ -62,6 +62,19 @@ class PlanCreator():
         self.set_text_item('f_14', '')
         self.set_text_item('f_15', '')
 
+        direction_desc = ''
+        if models.Lane.objects.filter(id_installation__count=count, direction=1).first():
+            direction_desc = models.Lane.objects.filter(id_installation__count=count, direction=1).first().direction_desc
+        self.set_text_item(
+            'f_30',
+            direction_desc)
+
+        direction_desc = ''
+        if models.Lane.objects.filter(id_installation__count=count, direction=2).first():
+            direction_desc = models.Lane.objects.filter(id_installation__count=count, direction=2).first().direction_desc
+        self.set_text_item(
+            'f_31',
+            direction_desc)
 
         # Page 2
         self.set_text_item('f_17', 'Campagne de comptage')
