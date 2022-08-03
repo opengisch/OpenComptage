@@ -85,10 +85,12 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
     return df
 
 
-def get_day_data(count, section=None, lane=None, direction=None, status=None, exclude_trash=False):
+def get_day_data(count, section=None, lane=None, direction=None, status=None, exclude_trash=False, start=None, end=None):
 
-    start = count.start_process_date
-    end = count.end_process_date + timedelta(days=1)
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -133,10 +135,12 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None, ex
     return df, int(mean)
 
 
-def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE):
+def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE, start=None, end=None):
 
-    start = count.start_process_date
-    end = count.end_process_date + timedelta(days=1)
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -164,10 +168,12 @@ def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIV
     return df
 
 
-def get_speed_data(count, section, exclude_trash=False):
+def get_speed_data(count, section, exclude_trash=False, start=None, end=None):
 
-    start = count.start_process_date
-    end = count.end_process_date + timedelta(days=1)
+    if not start:
+        start = count.start_process_date
+    if not end:
+        end = count.end_process_date + timedelta(days=1)
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
