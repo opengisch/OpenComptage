@@ -5,14 +5,14 @@ from qgis.core import (
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
 from comptages.core.settings import Settings
+from comptages.datamodel import models
 
 
 class PlanCreator():
-    def __init__(self, layers):
-        self.layers = layers
+    def __init__(self):
         self.settings = Settings()
 
-    def export_pdf(self, count_id, file_name):
+    def export_pdf(self, count, file_name):
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
         qpt_file_path = os.path.join(
@@ -20,9 +20,8 @@ class PlanCreator():
         self.layout = PlanCreator.create_layout_from_template(
             qpt_file_path)
 
-        self.set_fields(count_id)
+        self.set_fields(count)
 
-        # self.layers.select_and_zoom_on_section_of_count(count_id)
         canvas = iface.mapCanvas()
 
         map_item = self.layout.itemById('map')
@@ -33,54 +32,53 @@ class PlanCreator():
         exporter.exportToPdf(
             file_name, exporter.PdfExportSettings())
 
-    def set_fields(self, count_id):
-        count = self.layers.get_count(count_id)
-        installation = self.layers.get_installation_of_count(count_id)
-        sections = self.layers.get_sections_of_count(count_id)
+    def set_fields(self, count):
+        section = models.Section.objects.filter(lane__id_installation__count=count).distinct()[0]
 
-        self.set_text_item('f_01', installation.attribute('name'))
+        self.set_text_item('f_01', count.id_installation.name)
         self.set_text_item('f_03', '')
-        self.set_text_item('f_04', sections[0].attribute('owner'))
-        self.set_text_item('f_05', sections[0].attribute('road'))
-        self.set_text_item('f_06', sections[0].attribute('way'))
+        self.set_text_item('f_04', section.owner)
+        self.set_text_item('f_05', section.road)
+        self.set_text_item('f_06', section.way)
         self.set_text_item(
             'f_07',
             '{} + {} m'.format(
-                sections[0].attribute('start_pr'),
-                sections[0].attribute('start_dist')))
+                section.start_pr,
+                round(section.start_dist, 3)))
         self.set_text_item(
             'f_08',
             '{} + {} m'.format(
-                sections[0].attribute('end_pr'),
-                sections[0].attribute('end_dist')))
-        self.set_text_item('f_09', sections[0].attribute('place_name'))
+                section.end_pr,
+                round(section.end_dist, 3)))
+        self.set_text_item('f_09', section.place_name)
         self.set_text_item(
             'f_10',
-            count.attribute('start_process_date').toString(
-                'dd.MM.yyyy (dddd)'))
+            count.start_process_date.strftime(
+                '%d.%m.%Y (%A)'))
         self.set_text_item(
             'f_11',
-            count.attribute('end_process_date').toString(
-                'dd.MM.yyyy (dddd)'))
+            count.end_process_date.strftime(
+                '%d.%m.%Y (%A)'))
         self.set_text_item('f_14', '')
         self.set_text_item('f_15', '')
+
 
         # Page 2
         self.set_text_item('f_17', 'Campagne de comptage')
         self.set_text_item(
             'f_18',
-            'Pose {}'.format(count.attribute('start_put_date').toString(
-                'dddd dd.MM.yyyy')))
+            'Pose {}'.format(count.start_put_date.strftime(
+                '%A %d.%m.%Y')))
         self.set_text_item(
             'f_19',
-            'Dépose {}'.format(count.attribute('end_put_date').toString(
-                'dddd dd.MM.yyyy')))
-        self.set_text_item('f_20', sections[0].attribute('place_name'))
-        self.set_text_item('f_21', installation.attribute('name'))
+            'Dépose {}'.format(count.end_put_date.strftime(
+                '%A %d.%m.%Y')))
+        self.set_text_item('f_20', section.place_name)
+        self.set_text_item('f_21', count.id_installation.name)
         self.set_text_item('f_22', '')
         self.set_text_item('f_23', '')
 
-        self.set_picture_item('picture_1', installation.attribute('picture'))
+        self.set_picture_item('picture_1', count.id_installation.picture)
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.set_picture_item(
             'logo',

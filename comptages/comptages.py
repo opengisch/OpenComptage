@@ -497,7 +497,8 @@ class Comptages(QObject):
             ))
 
     def do_export_plan_action(self, count_id):
-        plan_creator = PlanCreator(self.layers)
+        count = models.Count.objects.get(id=count_id)
+        plan_creator = PlanCreator()
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('*.PDF')
         title = 'Exporter plan de pose'
@@ -518,7 +519,7 @@ class Comptages(QObject):
             QgsProject.instance(), 'highlighted_installation',
             self.layers.get_installation_name_of_count(count_id))
 
-        plan_creator.export_pdf(count_id, file)
+        plan_creator.export_pdf(count, file)
 
         self.layers.highlighted_sections = previous_highlightes_sections
         QgsExpressionContextUtils.setProjectVariable(
