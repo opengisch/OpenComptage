@@ -211,11 +211,22 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def set_dates(self):
         self._create_tabs(self.count)
 
+        start = self.startDate.date().toPyDate()
+        if not start == self.count.start_process_date:
+            self.startDate.setStyleSheet("background-color:orange;")
+
+        end = self.endDate.date().toPyDate()
+        if not end == self.count.end_process_date:
+            self.endDate.setStyleSheet("background-color:orange;")
+
     def reset_dates(self):
         start_process_datetime = datetime.combine(self.count.start_process_date, datetime.min.time())
         end_process_datetime = datetime.combine(self.count.end_process_date, datetime.min.time())
         self.startDate.setDateTime(start_process_datetime)
         self.endDate.setDateTime(end_process_datetime)
+
+        self.startDate.setStyleSheet("background-color:white;")
+        self.endDate.setStyleSheet("background-color:white")
 
         self._create_tabs(self.count)
 
