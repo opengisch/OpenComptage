@@ -237,10 +237,17 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         tab = self.tabWidget.currentWidget()
 
-        models.CountDetail.objects.filter(
+        start = self.startDate.date().toPyDate()
+        end = self.endDate.date().toPyDate() + timedelta(days=1)
+
+        qs = models.CountDetail.objects.filter(
             id_count=self.count,
-            id_lane__id_section=section
-        ).update(
+            id_lane__id_section=section,
+            timestamp__gte=start,
+            timestamp__lt=end,
+        )
+
+        qs.update(
             import_status=definitions.IMPORT_STATUS_DEFINITIVE)
 
         # Calculate tjm of count
