@@ -214,10 +214,14 @@ class ChartDock(QDockWidget, FORM_CLASS):
         start = self.startDate.date().toPyDate()
         if not start == self.count.start_process_date:
             self.startDate.setStyleSheet("background-color:orange;")
+        else:
+            self.startDate.setStyleSheet("background-color:white;")
 
         end = self.endDate.date().toPyDate()
         if not end == self.count.end_process_date:
             self.endDate.setStyleSheet("background-color:orange;")
+        else:
+            self.endDate.setStyleSheet("background-color:white;")
 
     def reset_dates(self):
         start_process_datetime = datetime.combine(self.count.start_process_date, datetime.min.time())
@@ -273,10 +277,15 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         tab = self.tabWidget.currentWidget()
 
+        start = self.startDate.date().toPyDate()
+        end = self.endDate.date().toPyDate() + timedelta(days=1)
+
         models.CountDetail.objects.filter(
             id_count=self.count,
             import_status=definitions.IMPORT_STATUS_QUARANTINE,
-            id_lane__id_section=section
+            id_lane__id_section=section,
+            timestamp__gte=start,
+            timestamp__lt=end,
         ).delete()
 
         self.show_next_quarantined_chart()
