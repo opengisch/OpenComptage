@@ -36,7 +36,12 @@ class PlanCreator():
         section = models.Section.objects.filter(lane__id_installation__count=count).distinct()[0]
 
         self.set_text_item('f_01', count.id_installation.name)
-        self.set_text_item('f_03', '')
+        municipality = count.id_installation.municipality
+        municipality_name = ''
+        if municipality:
+            municipality_name = municipality.name
+
+        self.set_text_item('f_03', municipality_name)
         self.set_text_item('f_04', section.owner)
         self.set_text_item('f_05', section.road)
         self.set_text_item('f_06', section.way)
