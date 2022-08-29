@@ -31,6 +31,15 @@ LAYER_DEFINITIONS = {
         'epsg':         'EPSG:2056',
         'legend':       True
     },
+    'municipality': {
+        'table':        'municipality',
+        'display_name': 'commune',
+        'geometry':     'geometry',
+        'sql':          '',
+        'id':           'id',
+        'epsg':         'EPSG:2056',
+        'legend':       True
+    },
     'sector': {
         'table':        'sector',
         'display_name': 'secteur',

@@ -145,6 +145,13 @@ class Installation(models.Model):
     class Meta:
         db_table = 'installation'
 
+    @property
+    def municipality(self):
+        qs = Municipality.objects.filter(geometry__contains=self.geometry)
+        if len(qs) >= 1:
+            return qs[0]
+        return None
+
 
 class Lane(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -280,3 +287,12 @@ class Sector(models.Model):
 
     class Meta:
         db_table = 'sector'
+
+
+class Municipality(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    geometry = models.MultiPolygonField(blank=False, null=False, srid=2056)
+    name = models.TextField(blank=False, null=False)
+
+    class Meta:
+        db_table = 'municipality'
