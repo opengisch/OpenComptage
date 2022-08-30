@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from ...models import (
     Section, Lane, Brand, Category, Class, ClassCategory, Device, Installation,
     Model, ModelClass, SensorType, SensorTypeClass, SensorTypeInstallation,
-    SensorTypeModel, Count, Sector)
+    SensorTypeModel, Count, Sector, Municipality)
 
 logger = logging.getLogger("main")
 
@@ -38,6 +38,7 @@ class Command(BaseCommand):
                 Installation.objects.all().delete()
                 Section.objects.all().delete()
                 Sector.objects.all().delete()
+                Municipality.objects.all().delete()
             except Exception as e:
                 # TODO: Do something
                 print(e)
@@ -57,6 +58,7 @@ class Command(BaseCommand):
         self.import_sensor_type_models(self.file_path("sensor_type_model.csv"))
         self.import_devices(self.file_path("device.csv"))
         self.import_sectors(self.file_path("sector.csv"))
+        self.import_municipalities(self.file_path("municipality.csv"))
         print("🚓")
 
     def file_path(self, filename):
@@ -344,3 +346,21 @@ class Command(BaseCommand):
             )
         Sector.objects.bulk_create(objects)
         print(f"Inserted {len(objects)} sectors.")
+
+    def import_municipalities(self, csv_file):
+        print("Importing municipalities...")
+
+        ds = DataSource(csv_file)
+
+        objects = []
+
+        for feat in ds[0]:
+            objects.append(
+                Municipality(
+                    id=Decimal(feat["id"].value),
+                    name=feat["name"],
+                    geometry=feat.geom.wkt,
+                )
+            )
+        Municipality.objects.bulk_create(objects)
+        print(f"Inserted {len(objects)} municipalities.")
