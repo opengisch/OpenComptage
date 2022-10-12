@@ -6,6 +6,7 @@ services:
 
   db:
     image: postgis/postgis:12-2.5
+    container_name: comptages-db
 #    volumes:
 #      - 'postgis-data:/var/lib/postgresql'
     environment:
