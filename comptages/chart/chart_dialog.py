@@ -45,10 +45,12 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.buttonSet.clicked.connect(self.set_dates)
         self.buttonReset.clicked.connect(self.reset_dates)
 
-        start_process_datetime = datetime.combine(count.start_process_date, datetime.min.time())
-        end_process_datetime = datetime.combine(count.end_process_date, datetime.min.time())
-        self.startDate.setDateTime(start_process_datetime)
-        self.endDate.setDateTime(end_process_datetime)
+        qs = models.CountDetail.objects.filter(
+            id_count=self.count,
+        )
+
+        self.startDate.setDateTime(qs.earliest('timestamp').timestamp)
+        self.endDate.setDateTime(qs.latest('timestamp').timestamp)
 
         self._create_tabs(count)
 
@@ -211,23 +213,29 @@ class ChartDock(QDockWidget, FORM_CLASS):
     def set_dates(self):
         self._create_tabs(self.count)
 
+        qs = models.CountDetail.objects.filter(
+            id_count=self.count,
+        )
+
         start = self.startDate.date().toPyDate()
-        if not start == self.count.start_process_date:
+        if not start == qs.earliest('timestamp').timestamp.date():
             self.startDate.setStyleSheet("background-color:orange;")
         else:
             self.startDate.setStyleSheet("background-color:white;")
 
         end = self.endDate.date().toPyDate()
-        if not end == self.count.end_process_date:
+        if not end == qs.latest('timestamp').timestamp.date():
             self.endDate.setStyleSheet("background-color:orange;")
         else:
             self.endDate.setStyleSheet("background-color:white;")
 
     def reset_dates(self):
-        start_process_datetime = datetime.combine(self.count.start_process_date, datetime.min.time())
-        end_process_datetime = datetime.combine(self.count.end_process_date, datetime.min.time())
-        self.startDate.setDateTime(start_process_datetime)
-        self.endDate.setDateTime(end_process_datetime)
+        qs = models.CountDetail.objects.filter(
+            id_count=self.count,
+        )
+
+        self.startDate.setDateTime(qs.earliest('timestamp').timestamp)
+        self.endDate.setDateTime(qs.latest('timestamp').timestamp)
 
         self.startDate.setStyleSheet("background-color:white;")
         self.endDate.setStyleSheet("background-color:white")
@@ -241,8 +249,12 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         tab = self.tabWidget.currentWidget()
 
-        start = self.startDate.date().toPyDate()
-        end = self.endDate.date().toPyDate() + timedelta(days=1)
+        # Currently displayed dates
+        # start = self.startDate.date().toPyDate()
+        # end = self.endDate.date().toPyDate() + timedelta(days=1)
+
+        start = self.count.start_process_date
+        end = self.count.end_process_date
 
         qs = models.CountDetail.objects.filter(
             id_count=self.count,
@@ -253,6 +265,13 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         qs.update(
             import_status=definitions.IMPORT_STATUS_DEFINITIVE)
+
+        # Delete not imported data of the count
+        models.CountDetail.objects.filter(
+            id_count=self.count,
+            import_status=definitions.IMPORT_STATUS_QUARANTINE,
+            id_lane__id_section=section,
+        ).delete()
 
         # Calculate tjm of count
         df, tjm = statistics.get_day_data(
