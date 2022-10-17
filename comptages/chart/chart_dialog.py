@@ -254,7 +254,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         # end = self.endDate.date().toPyDate() + timedelta(days=1)
 
         start = self.count.start_process_date
-        end = self.count.end_process_date
+        end = self.count.end_process_date + timedelta(days=1)
 
         qs = models.CountDetail.objects.filter(
             id_count=self.count,
