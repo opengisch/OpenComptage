@@ -159,9 +159,10 @@ class YearlyReportBike():
         # TODO: avoid the division?
         return qs.aggregate(res=Sum('times'))['res'] #/ 365
 
-    def total(self, categories=[1]):
+    def total(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -169,9 +170,10 @@ class YearlyReportBike():
 
         return qs.aggregate(res=Sum('times'))['res']
 
-    def max_day(self, categories=[1]):
+    def max_day(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -180,9 +182,10 @@ class YearlyReportBike():
 
         return qs[0]['total'], qs[0]['date']
 
-    def max_month(self, categories=[1]):
+    def max_month(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -191,9 +194,10 @@ class YearlyReportBike():
 
         return qs[0]['total'], qs[0]['month']
 
-    def min_month(self, categories=[1]):
+    def min_month(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
