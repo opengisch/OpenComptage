@@ -251,7 +251,7 @@ class Comptages(QObject):
             return
 
         QgsMessageLog.logMessage(
-            '{} - Prepare import file {}'.format(
+            '{} - Prepare import file {} ended'.format(
                 datetime.now(), os.path.basename(file_path)),
             'Comptages', Qgis.Info)
 

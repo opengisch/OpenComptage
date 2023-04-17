@@ -176,6 +176,7 @@ def _parse_line_mc(line, **kwargs):
 
     return [parsed_line]
 
+
 def _parse_line_int2(line, **kwargs):
     if line.startswith('* '):
         return None
@@ -315,7 +316,9 @@ def _parse_file_header(file_path):
                 elif file_header['CLASS'][:5] == 'FHWA ':
                     file_header['CLASS'] = 'FHWA13'
                 elif file_header['CLASS'] == 'CAT-Cycle_dist-empat':
-                    file_header['CLASS'] = 'SPCH-MD 5C'
+                    file_header['CLASS'] = 'SPCH-MD5C'
+                elif file_header['CLASS'] == 'SPCH-MD_5C':
+                    file_header['CLASS'] = 'SPCH-MD5C'
 
     return file_header
 
@@ -427,12 +430,20 @@ def guess_count(file_path):
 
     result = models.Count.objects.filter(
         Q(id_installation__name=header['SITE']) | Q(id_installation__alias=header['SITE']))
-    result = result.filter(
-        id_installation__active=True,
-        id_class__name=header['CLASS'],
-        start_service_date__lte=header['STARTREC'],
-        end_service_date__gte=header['STOPREC'] - timedelta(seconds=1),  # To manage datetimes like 01.01.2022 00.00 that should be equal to 31.12.2021
-    )
+    if header['FORMAT'] != "MC":
+        result = result.filter(
+            id_installation__active=True,
+            id_class__name=header['CLASS'],
+            start_service_date__lte=header['STARTREC'],
+            end_service_date__gte=header['STOPREC'] - timedelta(seconds=1),  # To manage datetimes like 01.01.2022 00.00 that should be equal to 31.12.2021
+        )
+    else:
+        result = result.filter(
+            id_installation__active=True,
+            id_class__name=header['CLASS'],
+            start_service_date__gte=header['STARTREC'],
+            end_service_date__lte=header['STOPREC'],
+        )
 
     if len(result) > 0:
         return result[0]
