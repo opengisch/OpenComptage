@@ -391,11 +391,10 @@ class YearlyReportBike():
         row = row_offset
         for i in data:
             ws.cell(
-                row=row,
+                row=row_offset + i['id_category__code'],
                 column=column_offset,
                 value=i['tjm']
             )
-            row += 1
 
         # ws = workbook['AN_GR']
         # ws.print_area = 'A1:Z62'
