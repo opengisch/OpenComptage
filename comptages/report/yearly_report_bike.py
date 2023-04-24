@@ -40,11 +40,12 @@ class YearlyReportBike():
 
     #     return result
 
-    def values_by_day_and_hour(self):
+    def values_by_day_and_hour(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
@@ -60,13 +61,14 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_hour_and_direction(self, direction, weekdays=[1, 2, 3, 4, 5, 6, 7]):
+    def values_by_hour_and_direction(self, direction, weekdays=[1, 2, 3, 4, 5, 6, 7], categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_lane__direction=direction,
             timestamp__iso_week_day__in=weekdays,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
@@ -80,11 +82,12 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_day_and_month(self):
+    def values_by_day_and_month(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
@@ -100,11 +103,12 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_day(self):
+    def values_by_day(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
@@ -116,11 +120,13 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_day_of_week(self):
+    def values_by_day_of_week(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 51 but actually aggregate first by the
