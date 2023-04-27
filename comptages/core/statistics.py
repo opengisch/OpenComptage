@@ -24,6 +24,7 @@ def get_time_data(count, section, lane=None, direction=None, start=None, end=Non
         id_count=count,
         id_lane__id_section=section,
         id_category__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -60,7 +61,8 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
-        id_category__isnull=False,
+        id_category__trash=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -101,20 +103,15 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None, ex
     if exclude_trash:
         qs = qs.exclude(id_category__trash=True)
 
-
-    # Can be None if we are calculating the total TJM of a special case's count
-    if section is not None:
-        qs = qs.filter(
-            id_lane__id_section=section
-        )
-
-    if status is not None:
-        qs = qs.filter(
-            import_status=status
-        )
-
     if lane is not None:
         qs = qs.filter(id_lane=lane)
+    else:
+        # Can be None if we are calculating the total TJM of a special case's count
+        if section is not None:
+            qs = qs.filter(id_lane__id_section=section)
+
+    if status is not None:
+        qs = qs.filter(import_status=status)
 
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
@@ -132,7 +129,7 @@ def get_day_data(count, section=None, lane=None, direction=None, status=None, ex
         mean = df["tj"].mean()
         df['import_status'].replace({0: 'Existant', 1: 'Nouveau'}, inplace=True)
 
-    return df, int(mean)
+    return df, mean
 
 
 def get_category_data(count, section, status=definitions.IMPORT_STATUS_DEFINITIVE, start=None, end=None):
@@ -179,6 +176,7 @@ def get_speed_data(count, section, exclude_trash=False, start=None, end=None):
         id_count=count,
         id_lane__id_section=section,
         speed__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -233,6 +231,7 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
         id_count=count,
         id_lane__id_section=section,
         id_category__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -257,6 +256,7 @@ def get_light_numbers_yearly(section, lane=None, direction=None, start=None, end
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         id_category__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -286,6 +286,7 @@ def get_speed_data_by_hour(count, section, lane=None, direction=None, start=None
         id_lane__id_section=section,
         speed__gte=speed_low,
         speed__lt=speed_high,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -316,6 +317,7 @@ def get_characteristic_speed_by_hour(count, section, lane=None, direction=None, 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         speed__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -348,6 +350,7 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         speed__isnull=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -382,6 +385,8 @@ def get_category_data_by_hour(count, section, category, lane=None, direction=Non
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         id_category=category,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
+        id_category__trash=False,
         timestamp__gte=start, timestamp__lt=end
     )
 
@@ -410,14 +415,18 @@ def get_special_periods(first_day, last_day):
              Q(end_date__gte=last_day))) | \
             (Q(start_date__lte=last_day) & \
              Q(end_date__gte=first_day)))
-    return qs
+    return qs.order_by('start_date')
 
 
-def get_month_data(section, start, end):
+def get_month_data(section, start, end, direction=None):
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
+        id_category__trash=False,
+        import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         timestamp__gte=start, timestamp__lt=end
     )
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
 
     qs = qs.annotate(month=Trunc('timestamp', 'month')) \
            .order_by('month') \
