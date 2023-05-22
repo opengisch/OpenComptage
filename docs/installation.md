@@ -14,7 +14,11 @@ Install python requirements
 
     pip install -r requirements.txt
 
-Initialize the datamodel from the QGIS's Python Console (use "--fake" flag if the database already exists)
+Make sure the database connection is configured correctly in the QGIS plugin settings (Use `127.0.0.1` for development).
+Restart QGIS after changing the settings.
+
+Initialize the datamodel from the QGIS's Python Console (use "--fake" flag if the database already exists,
+for development purpose on a vanilla postgres database, remove the `--fake`)
 
     from django.core.management import call_command
     call_command('migrate', '--fake', 'comptages', '0001_initial')
@@ -23,6 +27,9 @@ Upgrade the datamodel
 
     from django.core.management import call_command
     call_command('migrate', 'comptages')
+
+!!! note
+    You may need to restart between these commands
 
 Import initial data (use "--clear" flag to delete data before import)
 
