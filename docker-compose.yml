@@ -1,19 +1,30 @@
-version: '3'
-#volumes:
-#  postgis-data:
+version: '3.7'
 
 services:
+  qgis:
+    build: ./
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix ro
+      - ./comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
+      - ./test_data:/test_data
+    command:
+      - qgis
+    environment:
+      - DISPLAY=${DISPLAY}
+    privileged: true
+    network_mode: host
 
   db:
     image: postgis/postgis:12-2.5
-    container_name: comptages-db
-#    volumes:
-#      - 'postgis-data:/var/lib/postgresql'
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=comptages
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - ALLOW_IP_RANGE=0.0.0.0/0
-    ports:
-      - 5432:5432
+    volumes:
+      - 'postgis-data:/var/lib/postgresql'
     restart: "no"
+
+volumes:
+  postgis-data:
