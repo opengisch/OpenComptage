@@ -22,88 +22,93 @@ class YearlyReportBike():
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self):
+    # def values_by_direction(self):
 
+    #     # Get all the count details for section and the year
+    #     qs = CountDetail.objects.filter(
+    #         id_lane__id_section__id=self.section_id,
+    #         timestamp__year=self.year,
+    #         # id_category__code__in=[1, 2],
+    #         import_status=definitions.IMPORT_STATUS_DEFINITIVE,
+    #     )
+
+    #     # Total by day of the week (0->monday, 7->sunday) and by direction
+    #     result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
+    #                .values('weekday') \
+    #                .annotate(total=Sum('times')) \
+    #                .values('weekday', 'id_lane__direction', 'total')
+
+    #     return result
+
+    def values_by_day_and_hour(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
-            # id_category__code__in=[1, 2],
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        # Total by day of the week (0->monday, 7->sunday) and by direction
-        result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
-                   .values('weekday') \
-                   .annotate(total=Sum('times')) \
-                   .values('weekday', 'id_lane__direction', 'total')
-
-
-    def values_by_day_and_hour(self):
-        # Get all the count details for section and the year
-        qs = CountDetail.objects.filter(
-            id_lane__id_section__id=self.section_id,
-            timestamp__year=self.year,
-            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
-        )
-
-        # TODO: don't divide by 51 but actually aggregate first by the
+        # TODO: don't divide by 51 in .annotate(tjm=Sum('times') / 51) but actually aggregate first by the
         # real days (with sum) and then aggregate by weekday (with average)
 
         # Total by day of the week (0->monday, 6->sunday) and by hour (0->23)
         result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
                    .annotate(hour=ExtractHour('timestamp')) \
                    .values('weekday', 'hour') \
-                   .annotate(tjm=Sum('times') / 51) \
+                   .annotate(tjm=Sum('times')) \
                    .values('weekday', 'hour', 'tjm')
 
         return result
 
-    def values_by_hour_and_direction(self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
+    def values_by_hour_and_direction(self, direction, weekdays=[1, 2, 3, 4, 5, 6, 7], categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_lane__direction=direction,
             timestamp__iso_week_day__in=weekdays,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        # TODO: don't divide by 365
+        # TODO: don't divide by 365 in .annotate(tjm=Sum('times') / 365)
 
         # Total by hour (0->23)
         result = qs.annotate(hour=ExtractHour('timestamp')) \
                    .values('hour') \
-                   .annotate(tjm=Sum('times') / 365) \
+                   .annotate(tjm=Sum('times')) \
                    .values('hour', 'tjm')
 
         return result
 
-    def values_by_day_and_month(self):
+    def values_by_day_and_month(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        # TODO: don't divide by 12 but actually aggregate first by the
+        # TODO: don't divide by 12 in .annotate(tjm=Sum('times') / 12) but actually aggregate first by the
         # real days (with sum) and then aggregate by weekday (with average)
 
         # Total by day of the week (0->monday, 6->sunday) and by month (1->12)
         result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
                    .annotate(month=ExtractMonth('timestamp')) \
                    .values('weekday', 'month') \
-                   .annotate(tjm=Sum('times') / 12) \
+                   .annotate(tjm=Sum('times')) \
                    .values('weekday', 'month', 'tjm')
 
         return result
 
-    def values_by_day(self):
+    def values_by_day(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
@@ -115,11 +120,13 @@ class YearlyReportBike():
 
         return result
 
-    def values_by_day_of_week(self):
+    def values_by_day_of_week(self, categories=[1, 2, 3, 4, 5]):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            id_category__code__in=categories,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 51 but actually aggregate first by the
@@ -128,7 +135,7 @@ class YearlyReportBike():
         # Group by day of the week (0->monday, 7->sunday)
         result = qs.annotate(weekday=ExtractIsoWeekDay('timestamp')) \
                    .values('weekday') \
-                   .annotate(tjm=Sum('times') / 51) \
+                   .annotate(tjm=Sum('times')) \
                    .values('weekday', 'tjm')
 
         return result
@@ -144,7 +151,7 @@ class YearlyReportBike():
         result = qs.annotate(res=Sum('times')).values('res').values('id_category__code').annotate(tjm=Count('id_category__code'))
         return result
 
-    def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
+    def tjm_direction_bike(self, categories, direction, weekdays=[1, 2, 3, 4, 5, 6, 7]):
 
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -156,11 +163,12 @@ class YearlyReportBike():
         )
 
         # TODO: avoid the division?
-        return qs.aggregate(res=Sum('times'))['res'] / 365
+        return qs.aggregate(res=Sum('times'))['res'] #/ 365
 
-    def total(self, categories=[1]):
+    def total(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -168,9 +176,10 @@ class YearlyReportBike():
 
         return qs.aggregate(res=Sum('times'))['res']
 
-    def max_day(self, categories=[1]):
+    def max_day(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -179,9 +188,10 @@ class YearlyReportBike():
 
         return qs[0]['total'], qs[0]['date']
 
-    def max_month(self, categories=[1]):
+    def max_month(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -190,9 +200,10 @@ class YearlyReportBike():
 
         return qs[0]['total'], qs[0]['month']
 
-    def min_month(self, categories=[1]):
+    def min_month(self, categories=[1, 2, 3, 4, 5]):
 
         qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             id_category__code__in=categories,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
@@ -243,7 +254,7 @@ class YearlyReportBike():
         lanes = Lane.objects.filter(id_installation=count.id_installation)
 
         ws['B13'] = lanes[0].direction_desc
-        if(len(lanes) > 1):
+        if (len(lanes) > 1):
             ws['B14'] = lanes[1].direction_desc
 
         ws['B11'] = lanes[0].id_section.place_name
@@ -271,10 +282,10 @@ class YearlyReportBike():
 
         ws = workbook['CV_LV']
 
-        ws['F11'] = self.tjm_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
-        ws['G11'] = self.tjm_direction_bike([1], 2, weekdays=[0, 1, 2, 3, 4])
-        ws['H11'] = self.tjm_direction_bike([2, 3, 4, 5], 1, weekdays=[0, 1, 2, 3, 4])
-        ws['I11'] = self.tjm_direction_bike([2, 3, 4, 5], 2, weekdays=[0, 1, 2, 3, 4])
+        ws['F11'] = self.tjm_direction_bike([1], 1, weekdays=[1, 2, 3, 4, 5])
+        ws['G11'] = self.tjm_direction_bike([1], 2, weekdays=[1, 2, 3, 4, 5])
+        ws['H11'] = self.tjm_direction_bike([2, 3, 4, 5], 1, weekdays=[1, 2, 3, 4, 5])
+        ws['I11'] = self.tjm_direction_bike([2, 3, 4, 5], 2, weekdays=[1, 2, 3, 4, 5])
 
         ws['F12'] = self.tjm_direction_bike([1], 1)
         ws['G12'] = self.tjm_direction_bike([1], 2)
@@ -355,7 +366,7 @@ class YearlyReportBike():
         row_offset = 37
         column_offset = 3
 
-        data = self.values_by_hour_and_direction(1, [5, 6])
+        data = self.values_by_hour_and_direction(1, [6, 7])
         row = row_offset
         for i in data:
             ws.cell(
@@ -368,7 +379,7 @@ class YearlyReportBike():
         row_offset = 37
         column_offset = 4
 
-        data = self.values_by_hour_and_direction(2, [5, 6])
+        data = self.values_by_hour_and_direction(2, [6, 7])
         row = row_offset
         for i in data:
             ws.cell(
@@ -386,17 +397,16 @@ class YearlyReportBike():
         row = row_offset
         for i in data:
             ws.cell(
-                row=row,
+                row=row_offset + i['id_category__code'],
                 column=column_offset,
                 value=i['tjm']
             )
-            row += 1
 
-        ws = workbook['AN_GR']
-        ws.print_area = 'A1:Z62'
+        # ws = workbook['AN_GR']
+        # ws.print_area = 'A1:Z62'
 
-        ws = workbook['CAT']
-        ws.print_area = 'A1:Z62'
+        # ws = workbook['CAT']
+        # ws.print_area = 'A1:Z62'
 
         # Save the file
         output = os.path.join(

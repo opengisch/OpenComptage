@@ -455,14 +455,14 @@ class ChartCat(Chart):
         df_existing = statistics.get_category_data(
             self.count,
             self.section,
-            definitions.IMPORT_STATUS_DEFINITIVE,
+            status=definitions.IMPORT_STATUS_DEFINITIVE,
             start=self.start,
             end=self.end,
         )
         df_new = statistics.get_category_data(
             self.count,
             self.section,
-            definitions.IMPORT_STATUS_QUARANTINE,
+            status=definitions.IMPORT_STATUS_QUARANTINE,
             start=self.start,
             end=self.end,
         )

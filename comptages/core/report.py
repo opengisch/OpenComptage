@@ -11,7 +11,8 @@ def simple_print_callback(progress):
     print(f"Generating report... {progress}%")
 
 
-def prepare_reports(file_path, count=None, year=None, template='default', section_id=None, callback_progress=simple_print_callback):
+def prepare_reports(file_path, count=None, year=None, template='default', section_id=None,
+                    callback_progress=simple_print_callback):
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if template == 'default':
@@ -159,6 +160,9 @@ def _data_count(count, section, monday, workbook):
 
 def _data_count_yearly(count, section, year, workbook):
     ws = workbook['Data_count']
+    start = datetime(year, 1, 1)
+    end = datetime(year + 1, 1, 1) - timedelta(seconds=1)
+
     ws['B3'] = (
         'Poste de comptage : {}  Axe : {}:{}{}  '
         'PR {} + {} m à PR {} + {} m').format(
@@ -172,7 +176,7 @@ def _data_count_yearly(count, section, year, workbook):
             int(section.end_dist)
     )
 
-    ws['B4'] = 'Periode de comptage du 01/01/{0} au 31/12/{0}'.format(year)
+    ws['B4'] = 'Periode de comptage du {} au {}'.format(start.strftime("%d.%m.%Y"), end.strftime("%d.%m.%Y"))
 
     ws['B5'] = 'Comptage {}'.format(year)
 
@@ -185,6 +189,35 @@ def _data_count_yearly(count, section, year, workbook):
     ws['B9'] = 'Comptage véhicule par véhicule'
     if _is_aggregate(count):
         ws['B9'] = 'Comptage par intervale'
+
+    special_periods = statistics.get_special_periods(start, end)
+    row_offset = 19
+    texts = []
+    j = 0
+    for i in special_periods:
+        if i.start_date == i.end_date:
+            texts.append("{}: {}".format(i.start_date.strftime("%d.%m.%Y"), i.description))
+            ws.cell(
+                row=row_offset + j,
+                column=2,
+                value=i.start_date
+            )
+            j = j + 1
+        else:
+            texts.append(f"{i.start_date} - {i.end_date}: {i.description}")
+            texts.append("{} - {}: {}".format(i.start_date.strftime("%d.%m.%Y"), i.end_date.strftime("%d.%m.%Y"),
+                                              i.description))
+            for _date in [i.start_date + timedelta(days=x) for x in range(0, 1 + (i.end_date - i.start_date).days)]:
+                ws.cell(
+                    row=row_offset + j,
+                    column=2,
+                    value=_date
+                )
+                j = j + 1
+
+    ws['B10'] = 'Periode speciales : {}'.format(
+        ", ".join(texts)
+    )
 
     ws['B11'] = section.place_name
 
@@ -318,8 +351,8 @@ def _data_day(count, section, monday, workbook):
 def _data_day_yearly(count, section, year, workbook):
     ws = workbook['Data_day']
 
-    # Total
-    row_offset = 5
+    # Section
+    row_offset = 69
     col_offset = 2
 
     df = statistics.get_time_data_yearly(
@@ -334,21 +367,29 @@ def _data_day_yearly(count, section, year, workbook):
                 value=row.thm
             )
 
-    # Monthly coefficients
-    row_offset = 31
+    # Light heavy Section
+    row_offset = 96
     col_offset = 2
-    monthly_coefficients = [0.93, 0.96, 1.00, 1.02, 1.01, 1.04, 0.98, 0.98, 1.04, 1.03, 1.02, 0.98]
+    df = statistics.get_light_numbers_yearly(
+        section,
+        start=datetime(year, 1, 1),
+        end=datetime(year + 1, 1, 1),
+    )
 
     for i in range(7):
         ws.cell(
             row=row_offset,
             column=col_offset + i,
-            # FIXME: calculate actual coefficients
-            value=1
+            value=int(df[df['date'] == i][df['id_category__light'] == True].value),
+        )
+        ws.cell(
+            row=row_offset + 1,
+            column=col_offset + i,
+            value=int(df[df['date'] == i][df['id_category__light'] == False].value),
         )
 
     # Direction 1
-    row_offset = 35
+    row_offset = 5
     col_offset = 2
 
     df = statistics.get_time_data_yearly(
@@ -364,7 +405,7 @@ def _data_day_yearly(count, section, year, workbook):
             )
 
     # Light heavy direction 1
-    row_offset = 61
+    row_offset = 32
     col_offset = 2
     df = statistics.get_light_numbers_yearly(
         section,
@@ -386,7 +427,7 @@ def _data_day_yearly(count, section, year, workbook):
         )
 
     # Direction 2
-    row_offset = 66
+    row_offset = 37
     col_offset = 2
 
     df = statistics.get_time_data_yearly(
@@ -402,7 +443,7 @@ def _data_day_yearly(count, section, year, workbook):
             )
 
     # Light heavy direction 2
-    row_offset = 92
+    row_offset = 64
     col_offset = 2
     df = statistics.get_light_numbers_yearly(
         section,
@@ -431,14 +472,52 @@ def _data_month_yearly(count, section, year, workbook):
 
     df = statistics.get_month_data(section, start, end)
 
-    row_offset = 4
     col_offset = 2
+
+    # Section
+    row_offset = 14
 
     for col in df.itertuples():
         ws.cell(
             row=row_offset,
             column=col_offset + col.Index,
             value=col.tm
+        )
+
+    df = statistics.get_month_data(section, start, end, 1)
+
+    # Direction 1
+    row_offset = 4
+
+    for col in df.itertuples():
+        ws.cell(
+            row=row_offset,
+            column=col_offset + col.Index,
+            value=col.tm
+        )
+
+    df = statistics.get_month_data(section, start, end, 2)
+
+    # Direction 2
+    row_offset = 9
+
+    for col in df.itertuples():
+        ws.cell(
+            row=row_offset,
+            column=col_offset + col.Index,
+            value=col.tm
+        )
+
+    # Monthly coefficients
+    row_offset = 18
+    monthly_coefficients = [0.93, 0.96, 1.00, 1.02, 1.01, 1.04, 0.98, 0.98, 1.04, 1.03, 1.02, 0.98]
+
+    for i in range(12):
+        ws.cell(
+            row=row_offset,
+            column=col_offset + i,
+            # FIXME: calculate actual coefficients
+            value=monthly_coefficients[i]
         )
 
 
@@ -961,17 +1040,17 @@ def _t_cat(count, cat_id):
         }
         return conv[cat_id]
 
-    if count.id_class.name == 'EUR6':
-        conv = {
-            0: 0,
-            1: 2,
-            2: 3,
-            3: 4,
-            4: 5,
-            5: 6,
-            6: 1,
-        }
-        return conv[cat_id]
+    # if count.id_class.name == 'EUR6':
+    #     conv = {
+    #         0: 0,
+    #         1: 2,
+    #         2: 3,
+    #         3: 4,
+    #         4: 5,
+    #         5: 6,
+    #         6: 1,
+    #     }
+    #     return conv[cat_id]
 
     return cat_id if cat_id < 11 else 10
 
