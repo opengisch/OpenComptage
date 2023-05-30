@@ -251,7 +251,7 @@ class Comptages(QObject):
             return
 
         QgsMessageLog.logMessage(
-            '{} - Prepare import file {}'.format(
+            '{} - Prepare import file {} ended'.format(
                 datetime.now(), os.path.basename(file_path)),
             'Comptages', Qgis.Info)
 
@@ -389,12 +389,15 @@ class Comptages(QObject):
                     'Comptages', Qgis.Info)
                 return
             QgsMessageLog.logMessage(
-                '{} - Generate yearly report action can really begin now for count {} with file_path: {}'.format(
-                    datetime.now(), selected_count, file_path), 'Comptages', Qgis.Info)
+                '{} - Generate yearly report action can really begin now for year {} with file_path: {}'.format(
+                    datetime.now(), year, file_path), 'Comptages', Qgis.Info)
 
             if clazz.startswith("SPCH-MD"):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
+                QgsMessageLog.logMessage(
+                    '{} - Yearly bike report generation ended for year {} in file_path: {}'.format(
+                        datetime.now(), year, file_path), 'Comptages', Qgis.Info)
             else:
                 self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, report))
 
@@ -542,7 +545,6 @@ class Comptages(QObject):
         QgsMessageLog.logMessage(
             '{} - Generate chart action ended'.format(datetime.now()),
             'Comptages', Qgis.Info)
-
 
     def do_delete_data_action(self, count_id):
         dlg = DeleteDialog(self.iface)
