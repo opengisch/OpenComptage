@@ -2,32 +2,45 @@
 
 ## Development version
 
+The repository contains a docker-compose configuration to run the
+database and a QGIS container with the plugin code mounted as volume.
+
+### Steps
 Clone this repository with the submodules
 
     git clone --recurse-submodules git@github.com:opengisch/OpenComptage.git
 
-Start dev postgres for development, using docker
+Grant access to the X server
 
-    docker run -d --rm -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=comptages --name=comptagesdb postgis/postgis:12-2.5
+    xhost +
 
-Install python requirements
+Run the containers
 
-    pip install -r requirements.txt
+    cd OpenComptage
+    docker-compose up -d
 
-Initialize the datamodel from the QGIS's Python Console (use "--fake" flag if the database already exists)
+QGIS should start. Open the plugin manager and enable the plugin `comptages` and configure the host in the QGIS plugin settings to `127.0.0.1`.
+Restart QGIS after changing the settings.
 
-    from django.core.management import call_command
-    call_command('migrate', '--fake', 'comptages', '0001_initial')
-
-Upgrade the datamodel
+Initialize the datamodel from the QGIS's Python Console
 
     from django.core.management import call_command
     call_command('migrate', 'comptages')
 
-Import initial data (use "--clear" flag to delete data before import)
+
+!!! Note
+    Run first the command with the "--fake" flag if the database already exists to fake the initial migration
+    <code>call_command('migrate', '--fake', 'comptages', '0001_initial')</code>
+
+Restart QGIS and import initial data (use "--clear" flag to delete data before import)
 
     from django.core.management import call_command
     call_command('importdata')
+
+OpenComptage is now ready to be used! You can find some demo data into
+the mounted `/test_data/` directory of the QGIS container. E.g. in the
+`SWISS10_vbv` subdirectory there is the complete year 2021 set of
+measures for the `00107695` section in the SWISS10 class.
 
 ## Windows deployment
 
