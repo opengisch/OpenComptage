@@ -1,13 +1,11 @@
 FROM qgis/qgis:final-3_28_4
 
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y \
     python3-pip \
     xvfb \
     iputils-ping \
     glibc-tools \
-    && apt-get clean
+    && apt clean && apt autoremove --purge
 
 WORKDIR /usr/src/app
 

@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   qgis:
-    build: ./
+    image: ghcr.io/opengisch/opencomptage:latest
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix ro
       - ./comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
