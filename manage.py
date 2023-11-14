@@ -1,3 +1,4 @@
+import os
 import sys
 from comptages import prepare_django
 
@@ -7,7 +8,7 @@ if __name__ == "__main__":
 
     default_db = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "localhost",
+        "HOST": "db" if os.environ.get("LOCAL_TEST") == "1" else "localhost",
         "PORT": "5432",
         "NAME": "comptages",
         "USER": "postgres",

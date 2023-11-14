@@ -1,18 +1,28 @@
-version: '3.7'
-
 services:
   qgis:
+    depends_on: [db]
     build: ./
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix ro
-      - ./comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
-      - ./test_data:/test_data
+      - ${PWD}/comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
+      - ${PWD}/test_data:/test_data
     command:
       - qgis
     environment:
       - DISPLAY=${DISPLAY}
     privileged: true
     network_mode: host
+
+  qgis_tester:
+    profiles: [local_test]
+    depends_on: [db]
+    build: 
+      dockerfile: ./Dockerfile-test
+    environment:
+      LOCAL_TEST: 1
+    command: sh -c 'xvfb-run python3 manage.py migrate && python3 manage.py test comptages.test -v2'
+    volumes:
+      - ${PWD}:/OpenComptage
 
   db:
     image: postgis/postgis:12-2.5
