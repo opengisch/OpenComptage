@@ -2,6 +2,7 @@ import os
 
 from datetime import timedelta, datetime
 from openpyxl import load_workbook, Workbook
+from comptages.core.utils import push_info
 
 from comptages.datamodel import models
 from comptages.core import statistics
@@ -66,12 +67,21 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
 def _prepare_yearly_report(
     file_path: str, year: int, template_path: str, section_id: str, callback_progress
 ):
+    lower_bound = 100
     section = models.Section.objects.get(id__contains=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=section, start_process_date__year=year
     )
-    if not count_qs:
+    count_nb = count_qs.count()
+
+    if count_nb < lower_bound:
+        push_info(
+            f"""
+        Only {count_nb} Count objects were found! Please add {lower_bound - count_nb} objects before retrying. 
+        No report will be generated until then.
+        """
+        )
         return
     count = count_qs[0]
 
