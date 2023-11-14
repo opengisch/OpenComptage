@@ -2,7 +2,6 @@ import os
 
 from datetime import timedelta, datetime
 from openpyxl import load_workbook, Workbook
-from comptages.core.utils import push_info
 
 from comptages.datamodel import models
 from comptages.core import statistics
@@ -76,13 +75,12 @@ def _prepare_yearly_report(
     count_nb = count_qs.count()
 
     if count_nb < lower_bound:
-        push_info(
+        raise ValueError(
             f"""
-        Only {count_nb} Count objects were found! Please add {lower_bound - count_nb} objects before retrying. 
-        No report will be generated until then.
+            Only {count_nb} Count objects were found! Please add {lower_bound - count_nb} objects before retrying. 
+            No report will be generated until then.
         """
         )
-        return
     count = count_qs[0]
 
     workbook = load_workbook(filename=template_path)
