@@ -865,6 +865,7 @@ def _data_category_yearly(count, section, year, workbook):
 
 
 def _remove_useless_sheets(count, workbook):
+    return
     class_name = _t_cl(count.id_class.name)
 
     if class_name == 'SWISS10':

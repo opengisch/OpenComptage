@@ -1,3 +1,4 @@
+from typing import Callable, Dict, Iterator, List, Optional
 import pytz
 import os
 from datetime import datetime, timedelta
@@ -12,7 +13,7 @@ def simple_print_callback(progress):
     print(f"Importing... {progress}%")
 
 
-def import_file(file_path, count, callback_progress=simple_print_callback):
+def import_file(file_path: str, count: models.Count, callback_progress=simple_print_callback):
 
     file_format = get_file_format(file_path)
     file_header = _parse_file_header(file_path)
@@ -41,7 +42,7 @@ def import_file(file_path, count, callback_progress=simple_print_callback):
         raise NotImplementedError("file format not recognized")
 
 
-def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggregate=False, **kwargs):
+def _parse_and_write(file_path: str, count: models.Count, line_parser: Callable, callback_progress, from_aggregate: bool = False, **kwargs):
     basename = os.path.basename(file_path)
     bulk_mgr = BulkCreateManager(chunk_size=1000)
     lanes = _populate_lane_dict(count)
@@ -90,15 +91,14 @@ def _parse_and_write(file_path, count, line_parser, callback_progress, from_aggr
     bulk_mgr.done()
 
 
-def _parse_line_vbv1(line, **kwargs):
+def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
 
     if line.startswith('* '):
         return None
 
-    parsed_line = None
+    parsed_line = {}
     tz = pytz.timezone('Europe/Zurich')
     try:
-        parsed_line = dict()
         parsed_line['numbering'] = line[0:6]
         parsed_line['timestamp'] = tz.localize(datetime.strptime(
             "{}0000".format(line[7:24]), "%d%m%y %H%M %S %f"))
@@ -140,13 +140,12 @@ def _parse_line_vbv1(line, **kwargs):
     return [parsed_line]
 
 
-def _parse_line_mc(line, **kwargs):
+def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
     if not line.startswith('20'):
         return None
 
-    parsed_line = None
+    parsed_line = {}
     try:
-        parsed_line = dict()
         tz = pytz.timezone('Europe/Zurich')
         # TODO: numbering
         numbering = 1
@@ -176,11 +175,11 @@ def _parse_line_mc(line, **kwargs):
 
     return [parsed_line]
 
-def _parse_line_int2(line, **kwargs):
+def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
     if line.startswith('* '):
         return None
 
-    parsed_line = dict()
+    parsed_line = {}
     tz = pytz.timezone('Europe/Zurich')
     # TODO: numbering
     numbering = 1
@@ -260,7 +259,7 @@ def _parse_line_int2(line, **kwargs):
     return None
 
 
-def _get_int_bins(file_header, data_header, intspec, categories, code):
+def _get_int_bins(file_header, data_header, intspec, categories, code) -> List:
     """Returns an array with the bins if they exist, or the number of
     columns of this data type"""
     values = []
@@ -275,7 +274,7 @@ def _get_int_bins(file_header, data_header, intspec, categories, code):
     return values
 
 
-def _parse_file_header(file_path):
+def _parse_file_header(file_path: str):
     file_header = dict()
     tz = pytz.timezone("Europe/Zurich")
 
@@ -320,7 +319,7 @@ def _parse_file_header(file_path):
     return file_header
 
 
-def _parse_data_header(file_path):
+def _parse_data_header(file_path: str) -> List:
     data_header = []
 
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
@@ -338,7 +337,7 @@ def _parse_data_header(file_path):
     return data_header
 
 
-def _populate_lane_dict(count):
+def _populate_lane_dict(count: models.Count) -> Dict[int, int]:
     # e.g. lanes = {1: 435, 2: 436}
 
     lanes = models.Lane.objects.filter(

@@ -1,12 +1,12 @@
 import os
+from typing import Union
 
-from qgis.PyQt.QtCore import QObject, QVariant
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtSql import QSqlQuery
 from qgis.core import (
     QgsProject, QgsEditorWidgetSetup, QgsVectorLayer,
     QgsCoordinateReferenceSystem, QgsDataSourceUri,
-    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils,
-    QgsField, QgsVectorLayerJoinInfo)
+    QgsAction, QgsFeatureRequest, QgsExpressionContextUtils)
 from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
@@ -450,8 +450,14 @@ class Layers(QObject):
         return False
 
     def populate_list_of_highlighted_sections(
-            self, start_date=None, end_date=None, permanent=None,
-            sensor_type_id=None, tjm=None, axe=None, sector=None):
+        self, 
+        start_date=None, 
+        end_date=None, 
+        permanent=None,
+        sensor_type_id=None, 
+        tjm=None, axe=None, 
+        sector=None
+    ):
         """Return a list of highlighted sections. Directly on the db
         for performances"""
 
@@ -498,7 +504,15 @@ class Layers(QObject):
             self.highlighted_sections.append(str(query.value(0)).strip())
 
     def apply_filter(
-            self, start_date, end_date, installation_choice, sensor_choice, tjm, axe, sector):
+        self, 
+        start_date, 
+        end_date, 
+        installation_choice, 
+        sensor_choice, 
+        tjm, 
+        axe, 
+        sector
+    ):
         if installation_choice == 0:
             permanent = None
         elif installation_choice == 1:
@@ -532,7 +546,7 @@ class Layers(QObject):
             self.db.close()
             self.db = None
 
-    def get_installation_name_of_count(self, count_id):
+    def get_installation_name_of_count(self, count_id: str):
         return self.get_installation_of_count(count_id).attribute('name')
 
     def get_installation_of_count(self, count_id):
@@ -541,7 +555,7 @@ class Layers(QObject):
             count.attribute('id_installation'))
         return installation
 
-    def get_sections_of_count(self, count_id):
+    def get_sections_of_count(self, count_id: str):
         """Return the sections related to a count"""
 
         count = self.get_count(count_id)
@@ -601,7 +615,7 @@ class Layers(QObject):
             result.append(query.value(0))
         return result
 
-    def get_count(self, count_id):
+    def get_count(self, count_id: str):
         """Return the count feature"""
 
         request = QgsFeatureRequest().setFilterExpression(
@@ -610,7 +624,7 @@ class Layers(QObject):
 
         return next(self.layers['count'].getFeatures(request))
 
-    def get_installation(self, installation_id):
+    def get_installation(self, installation_id: str):
 
         request = QgsFeatureRequest().setFilterExpression(
             '"id" = {}'.format(installation_id)
@@ -618,7 +632,7 @@ class Layers(QObject):
 
         return next(self.layers['installation'].getFeatures(request))
 
-    def get_lanes_of_installation(self, installation_id):
+    def get_lanes_of_installation(self, installation_id: str):
 
         request = QgsFeatureRequest().setFilterExpression(
             '"id_installation" = {}'.format(installation_id)
@@ -634,7 +648,7 @@ class Layers(QObject):
         return next(self.layers['section'].getFeatures(request))
 
 
-    def is_data_aggregate(self, count_id):
+    def is_data_aggregate(self, count_id: str):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -647,7 +661,7 @@ class Layers(QObject):
             return True
         return False
 
-    def is_data_detail(self, count_id):
+    def is_data_detail(self, count_id: str):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -660,7 +674,7 @@ class Layers(QObject):
             return True
         return False
 
-    def select_and_zoom_on_section_of_count(self, count_id):
+    def select_and_zoom_on_section_of_count(self, count_id: str):
         sections = self.get_sections_of_count(count_id)
         layer = self.layers['section']
         layer.selectByIds([x.id() for x in sections])
@@ -686,18 +700,18 @@ class Layers(QObject):
 
         return clazz.attribute('name')
 
-    def get_class(self, class_id):
+    def get_class(self, class_id: str):
         request = QgsFeatureRequest().setFilterExpression(
             '"id" = {}'.format(class_id))
 
         return next(self.layers['class'].getFeatures(request))
 
-    def get_lanes_of_count(self, count_id):
+    def get_lanes_of_count(self, count_id: str):
 
         return self.get_lanes_of_installation(
             self.get_installation_of_count(count_id).attribute('id'))
 
-    def get_lanes_dict(self, count_id):
+    def get_lanes_dict(self, count_id: str):
 
         # Cached values
         if count_id in self.lanes_cache:
@@ -716,11 +730,11 @@ class Layers(QObject):
         """ To be called after an import is finished"""
         self.lanes_cache = dict()
 
-    def get_sensor_type_of_count(self, count_id):
+    def get_sensor_type_of_count(self, count_id: str):
         sensor_type_id = self.get_count(count_id).attribute('id_sensor_type')
         return self.get_sensor_type(sensor_type_id)
 
-    def get_sensor_type(self, sensor_type_id):
+    def get_sensor_type(self, sensor_type_id: str):
         """Return the sensor_type feature"""
 
         request = QgsFeatureRequest().setFilterExpression(
@@ -728,7 +742,7 @@ class Layers(QObject):
         )
         return next(self.layers['sensor_type'].getFeatures(request))
 
-    def get_sensor_type_id(self, sensor_type):
+    def get_sensor_type_id(self, sensor_type: str):
         request = QgsFeatureRequest().setFilterExpression(
             '"name" = \'{}\''.format(sensor_type)
         )
@@ -812,7 +826,7 @@ class Layers(QObject):
                     end))
         return '; '.join(result)
 
-    def count_contains_data(self, count_id):
+    def count_contains_data(self, count_id: str):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -828,7 +842,7 @@ class Layers(QObject):
             return True
         return False
 
-    def get_type_of_aggregate_count(self, count_id, import_status):
+    def get_type_of_aggregate_count(self, count_id: str, import_status):
         self.init_db_connection()
         query = QSqlQuery(self.db)
 
@@ -844,8 +858,14 @@ class Layers(QObject):
         return result
 
     def get_characteristic_speeds(
-            self, count_id, hour, direction, start_timestamp, end_timestamp,
-            section_id):
+        self, 
+        count_id, 
+        hour, 
+        direction, 
+        start_timestamp, 
+        end_timestamp,
+        section_id: str
+    ):
         self.init_db_connection()
         query = QSqlQuery(self.db)
         result = []
@@ -912,14 +932,14 @@ class Layers(QObject):
 
         return result
 
-    def get_formatter_name(self, model_name):
+    def get_formatter_name(self, model_name: str):
         request = QgsFeatureRequest().setFilterExpression(
             '"name" = \'{}\''.format(model_name)
         )
         return next(self.layers['brand'].getFeatures(
             request)).attribute('formatter_name')
 
-    def get_classes_of_section(self, section_id):
+    def get_classes_of_section(self, section_id: str):
         result = set()
         counts = self.get_counts_of_section(section_id)
 
@@ -928,7 +948,7 @@ class Layers(QObject):
 
         return result
 
-    def check_sensor_of_lane(self, lane_id):
+    def check_sensor_of_lane(self, lane_id: str):
         """ Check id a lane is registered in the sensor table"""
 
         self.init_db_connection()
@@ -943,7 +963,7 @@ class Layers(QObject):
             return True
         return False
 
-    def get_sensor_length(self, lane_id):
+    def get_sensor_length(self, lane_id: str):
         """ Get length of geometry in the sensor table"""
 
         self.init_db_connection()
@@ -958,7 +978,7 @@ class Layers(QObject):
             return query.value(0)
         return None
 
-    def get_models_by_sensor_type(self, sensor_type):
+    def get_models_by_sensor_type(self, sensor_type: models.SensorType):
         qs = models.SensorTypeModel.objects.filter(
             id_sensor_type=sensor_type)
 
@@ -968,7 +988,7 @@ class Layers(QObject):
         return result
 
 
-    def get_classes_by_sensor_type(self, sensor_type):
+    def get_classes_by_sensor_type(self, sensor_type: models.SensorType):
         qs = models.SensorTypeClass.objects.filter(
             id_sensor_type=sensor_type)
 

@@ -8,7 +8,7 @@ from functools import partial
 
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
 from qgis.core import QgsMessageLog, Qgis
-from comptages.core.utils import get_ui_class, push_warning, push_info
+from comptages.core.utils import get_ui_class, push_info
 from comptages.ui.resources import *
 from comptages.core import statistics, definitions
 from comptages.datamodel import models
@@ -25,7 +25,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.count = None
         self.sensor = None
 
-    def set_attributes(self, count):
+    def set_attributes(self, count: models.Count):
         self.count = count
 
         self.setWindowTitle("Comptage: {}, installation: {}".format(count.id, count.id_installation.name))
@@ -54,7 +54,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         self._create_tabs(count)
 
-    def _create_tabs(self, count):
+    def _create_tabs(self, count: models.Count):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
@@ -70,7 +70,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.tabWidget.addTab(tab, section.id)
             self._populate_tab(tab, section, count)
 
-    def _populate_tab(self, tab, section, count):
+    def _populate_tab(self, tab, section: models.Section, count: models.Count):
 
         # Check if there is data to be validated
         approval_process = False
@@ -97,7 +97,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.buttonValidate.hide()
             tab.buttonRefuse.hide()
 
-        sensor_type = count.id_sensor_type
+        sensor_type: models.SensorType = count.id_sensor_type
         lanes = models.Lane.objects.filter(id_section=section)
         directions = lanes.values('direction').distinct().values_list('direction', flat=True)
 
@@ -205,12 +205,13 @@ class ChartDock(QDockWidget, FORM_CLASS):
         tab = self.tabWidget.currentWidget()
         tab.webView.setHtml(tab.charts[row])
 
-    def current_tab_changed(self, index):
+    def current_tab_changed(self, index: int):
         tab = self.tabWidget.currentWidget()
         if tab.chartList.currentRow() == 0:
             self.chart_selection_changed(0)
 
     def set_dates(self):
+        assert self.count
         self._create_tabs(self.count)
 
         qs = models.CountDetail.objects.filter(
@@ -240,6 +241,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.startDate.setStyleSheet("background-color:white;")
         self.endDate.setStyleSheet("background-color:white")
 
+        assert self.count
         self._create_tabs(self.count)
 
     def validate_count(self, section):
@@ -253,6 +255,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         # start = self.startDate.date().toPyDate()
         # end = self.endDate.date().toPyDate() + timedelta(days=1)
 
+        assert self.count
         start = self.count.start_process_date
         end = self.count.end_process_date + timedelta(days=1)
 

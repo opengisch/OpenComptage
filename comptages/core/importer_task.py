@@ -1,15 +1,17 @@
 import os
 
 from datetime import datetime
+from typing import Any
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 
+from comptages.datamodel import models
 from comptages.core import importer
 
 
 class ImporterTask(QgsTask):
 
-    def __init__(self, file_path, count):
+    def __init__(self, file_path: str, count: models.Count):
         self.basename = os.path.basename(file_path)
         super().__init__(
             'Importation fichier {}'.format(self.basename))
@@ -26,7 +28,7 @@ class ImporterTask(QgsTask):
             raise e
             # return False
 
-    def finished(self, result):
+    def finished(self, result: Any):
         if result:
             QgsMessageLog.logMessage(
                 '{} - Import file {} ended'.format(

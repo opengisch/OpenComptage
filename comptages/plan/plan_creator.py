@@ -12,7 +12,7 @@ class PlanCreator():
     def __init__(self):
         self.settings = Settings()
 
-    def export_pdf(self, count, file_name):
+    def export_pdf(self, count: models.Count, file_name: str):
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
         qpt_file_path = os.path.join(
@@ -32,7 +32,7 @@ class PlanCreator():
         exporter.exportToPdf(
             file_name, exporter.PdfExportSettings())
 
-    def set_fields(self, count):
+    def set_fields(self, count: models.Count):
         section = models.Section.objects.filter(lane__id_installation__count=count).distinct()[0]
 
         self.set_text_item('f_01', count.id_installation.name)

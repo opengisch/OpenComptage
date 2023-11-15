@@ -36,7 +36,7 @@ class Settings(SettingManager):
             String("report_export_directory", Scope.Global, '/'))
 
 
-def get_ui_class(ui_file):
+def get_ui_class(ui_file: str):
     """Get UI Python class from .ui file.
        Can be filename.ui or subdirectory/filename.ui
     :param ui_file: The file of the ui in svir.ui

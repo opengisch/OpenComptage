@@ -30,20 +30,20 @@ def get_ui_class(ui_file):
     return loadUiType(ui_file_path)[0]
 
 
-def push_info(message):
+def push_info(message: str):
     iface.messageBar().pushInfo('Comptages', message)
 
 
-def push_warning(message):
+def push_warning(message: str):
     iface.messageBar().pushMessage('Comptages', message, Qgis.Warning, 0)
 
 
-def push_error(message):
+def push_error(message: str):
     # iface.messageBar().pushCritical('Comptages', message)
     iface.messageBar().pushMessage('Comptages', message, Qgis.Critical, 0)
 
 
-def create_progress_bar(message):
+def create_progress_bar(message: str):
 
     progress_widget = QProgressBar()
     progress_widget.setMaximum(100)

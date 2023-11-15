@@ -11,7 +11,15 @@ from comptages.core import definitions
 from comptages.datamodel import models
 
 
-def get_time_data(count, section, lane=None, direction=None, start=None, end=None, exclude_trash=False):
+def get_time_data(
+        count: models.Count, 
+        section: models.Section, 
+        lane=None, 
+        direction=None, 
+        start=None, 
+        end=None, 
+        exclude_trash=False
+    ):
 
     if not start:
         start = count.start_process_date
@@ -372,8 +380,15 @@ def get_average_speed_by_hour(count, section, lane=None, direction=None, start=N
     return df
 
 
-def get_category_data_by_hour(count, section, category, lane=None, direction=None, start=None, end=None):
-
+def get_category_data_by_hour(
+    count: models.Count, 
+    section: models.Section, 
+    category: models.Category, 
+    lane=None, 
+    direction=None, 
+    start=None, 
+    end=None
+):
     if not start:
         start = count.start_process_date
     if not end:

@@ -396,7 +396,7 @@ class Comptages(QObject):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
             else:
-                self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, report))
+                self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, report)) # FIXME `report` is a mystery.
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
