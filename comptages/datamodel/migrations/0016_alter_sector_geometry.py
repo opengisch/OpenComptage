@@ -5,15 +5,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0015_sector'),
+        ("comptages", "0015_sector"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sector',
-            name='geometry',
-            field=django.contrib.gis.db.models.fields.PolygonField(blank=True, null=True, srid=2056),
+            model_name="sector",
+            name="geometry",
+            field=django.contrib.gis.db.models.fields.PolygonField(
+                blank=True, null=True, srid=2056
+            ),
         ),
     ]

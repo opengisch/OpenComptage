@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0002_search_path'),
+        ("comptages", "0002_search_path"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='category',
-            name='id_category',
+            model_name="category",
+            name="id_category",
         ),
     ]

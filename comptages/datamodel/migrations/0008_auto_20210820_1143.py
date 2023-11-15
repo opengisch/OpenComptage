@@ -6,52 +6,63 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0007_alter_classcategory_id'),
+        ("comptages", "0007_alter_classcategory_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sensortypeclass',
-            name='id',
+            model_name="sensortypeclass",
+            name="id",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
         migrations.AddField(
-            model_name='sensortypeinstallation',
-            name='id',
+            model_name="sensortypeinstallation",
+            name="id",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
         migrations.AddField(
-            model_name='sensortypemodel',
-            name='id',
+            model_name="sensortypemodel",
+            name="id",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
         migrations.AlterField(
-            model_name='sensortypeclass',
-            name='id_sensor_type',
-            field=models.ForeignKey(db_column='id_sensor_type', on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.sensortype'),
+            model_name="sensortypeclass",
+            name="id_sensor_type",
+            field=models.ForeignKey(
+                db_column="id_sensor_type",
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="comptages.sensortype",
+            ),
         ),
         migrations.AlterField(
-            model_name='sensortypeinstallation',
-            name='id_sensor_type',
-            field=models.ForeignKey(db_column='id_sensor_type', on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.sensortype'),
+            model_name="sensortypeinstallation",
+            name="id_sensor_type",
+            field=models.ForeignKey(
+                db_column="id_sensor_type",
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="comptages.sensortype",
+            ),
         ),
         migrations.AlterField(
-            model_name='sensortypemodel',
-            name='id_sensor_type',
-            field=models.ForeignKey(db_column='id_sensor_type', on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.sensortype'),
+            model_name="sensortypemodel",
+            name="id_sensor_type",
+            field=models.ForeignKey(
+                db_column="id_sensor_type",
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="comptages.sensortype",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='sensortypeclass',
+            name="sensortypeclass",
             unique_together=set(),
         ),
         migrations.AlterUniqueTogether(
-            name='sensortypeinstallation',
+            name="sensortypeinstallation",
             unique_together=set(),
         ),
         migrations.AlterUniqueTogether(
-            name='sensortypemodel',
+            name="sensortypemodel",
             unique_together=set(),
         ),
     ]

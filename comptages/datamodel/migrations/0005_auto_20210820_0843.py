@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0004_delete_basetjmok'),
+        ("comptages", "0004_delete_basetjmok"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='countdetail',
-            name='from_aggregate',
+            model_name="countdetail",
+            name="from_aggregate",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='countdetail',
-            name='times',
+            model_name="countdetail",
+            name="times",
             field=models.IntegerField(default=1),
         ),
     ]

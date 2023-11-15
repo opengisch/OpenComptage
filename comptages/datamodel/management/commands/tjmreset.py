@@ -17,11 +17,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         counts = models.Count.objects.all()
 
-        if options['min_id']:
-            counts = counts.filter(id__gte=options['min_id'])
+        if options["min_id"]:
+            counts = counts.filter(id__gte=options["min_id"])
 
-        if options['max_id']:
-            counts = counts.filter(id__lte=options['max_id'])
+        if options["max_id"]:
+            counts = counts.filter(id__lte=options["max_id"])
 
         for i, count in enumerate(counts):
             print(f"{i+1} of {len(counts)} - Calculate TJM of count {count.id}")
@@ -29,4 +29,4 @@ class Command(BaseCommand):
             df, tjm = statistics.get_day_data(count)
 
             count.tjm = tjm
-            count.save(update_fields=['tjm'])
+            count.save(update_fields=["tjm"])
