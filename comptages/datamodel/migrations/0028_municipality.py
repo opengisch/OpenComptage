@@ -5,21 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0027_default_uuid'),
+        ("comptages", "0027_default_uuid"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Municipality',
+            name="Municipality",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('geometry', django.contrib.gis.db.models.fields.MultiPolygonField(srid=2056)),
-                ('name', models.TextField()),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(srid=2056),
+                ),
+                ("name", models.TextField()),
             ],
             options={
-                'db_table': 'municipality',
+                "db_table": "municipality",
             },
         ),
     ]

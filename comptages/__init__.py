@@ -15,8 +15,8 @@ def prepare_django(default_db=None, **additional_settings):
     # (i.e. the command is lauched from the QGIS python console), we
     # use the one in the plugin settings
     if not default_db:
-
         from comptages.core.settings import Settings as PluginSettings
+
         plugin_settings = PluginSettings()
         default_db = {
             "ENGINE": "django.contrib.gis.db.backends.postgis",
@@ -40,12 +40,12 @@ def prepare_django(default_db=None, **additional_settings):
         additional_settings["SPATIALITE_LIBRARY_PATH"] = SPATIALITE_LIBRARY_PATH_ENV
 
     django_settings.configure(
-        BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir),
+        BASE_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir),
         DATABASES={"default": default_db},
-        INSTALLED_APPS=('comptages.datamodel.apps.ComptagesConfig',),
+        INSTALLED_APPS=("comptages.datamodel.apps.ComptagesConfig",),
         USE_TZ=True,
-        TIME_ZONE='Europe/Zurich',
-        SECRET_KEY='09n+dhzh+02+_#$!1+8h-&(s-wbda#0*2mrv@lx*y#&fzlv&l)',
+        TIME_ZONE="Europe/Zurich",
+        SECRET_KEY="09n+dhzh+02+_#$!1+8h-&(s-wbda#0*2mrv@lx*y#&fzlv&l)",
         **additional_settings
     )
     django.setup()
@@ -59,4 +59,5 @@ def classFactory(iface):
     """
     prepare_django()
     from .comptages import Comptages
+
     return Comptages(iface)

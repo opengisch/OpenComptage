@@ -9,7 +9,6 @@ from comptages.core import importer
 
 
 class ImportTest(TransactionTestCase):
-
     @classmethod
     def setUpClass(cls):
         pass
@@ -40,9 +39,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(
-            utils.test_data_path("00056520.V01"),
-            count)
+        importer.import_file(utils.test_data_path("00056520.V01"), count)
 
         self.assertEqual(models.CountDetail.objects.count(), 18114)
 
@@ -75,9 +72,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(
-            utils.test_data_path("64210836_TCHO-Capitaine.txt"),
-            count)
+        importer.import_file(utils.test_data_path("64210836_TCHO-Capitaine.txt"), count)
 
         self.assertEqual(models.CountDetail.objects.count(), 25867)
 
@@ -110,9 +105,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(
-            utils.test_data_path("10020260.A01"),
-            count)
+        importer.import_file(utils.test_data_path("10020260.A01"), count)
 
         tz = pytz.timezone("Europe/Zurich")
 
@@ -144,8 +137,8 @@ class ImportTest(TransactionTestCase):
         )
 
         importer.import_file(
-            utils.test_data_path("simple_aggregate_multi_spec.i00"),
-            count)
+            utils.test_data_path("simple_aggregate_multi_spec.i00"), count
+        )
 
         self.assertEqual(models.CountDetail.objects.count(), 52)
 
@@ -184,7 +177,19 @@ class ImportTest(TransactionTestCase):
 
         self.assertEqual(
             importer._populate_category_dict(count),
-            {0: 922, 1: 22, 2: 23, 3: 24, 4: 25, 5: 26, 6: 27, 7: 28, 8: 29, 9: 30, 10: 31}
+            {
+                0: 922,
+                1: 22,
+                2: 23,
+                3: 24,
+                4: 25,
+                5: 26,
+                6: 27,
+                7: 28,
+                8: 29,
+                9: 30,
+                10: 31,
+            },
         )
 
     def test_lane_dict(self):

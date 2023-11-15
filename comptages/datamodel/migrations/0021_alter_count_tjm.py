@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0020_delete_tjm'),
+        ("comptages", "0020_delete_tjm"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='count',
-            name='tjm',
+            model_name="count",
+            name="tjm",
             field=models.IntegerField(null=True),
         ),
     ]

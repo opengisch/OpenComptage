@@ -5,15 +5,16 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0006_auto_20210820_1115'),
+        ("comptages", "0006_auto_20210820_1115"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='classcategory',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+            model_name="classcategory",
+            name="id",
+            field=models.UUIDField(
+                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+            ),
         ),
     ]

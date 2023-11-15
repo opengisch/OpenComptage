@@ -5,9 +5,24 @@ from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
 
 from ...models import (
-    Section, Lane, Brand, Category, Class, ClassCategory, Device, Installation,
-    Model, ModelClass, SensorType, SensorTypeClass, SensorTypeInstallation,
-    SensorTypeModel, Count, Sector, Municipality)
+    Section,
+    Lane,
+    Brand,
+    Category,
+    Class,
+    ClassCategory,
+    Device,
+    Installation,
+    Model,
+    ModelClass,
+    SensorType,
+    SensorTypeClass,
+    SensorTypeInstallation,
+    SensorTypeModel,
+    Count,
+    Sector,
+    Municipality,
+)
 
 logger = logging.getLogger("main")
 
@@ -19,7 +34,6 @@ class Command(BaseCommand):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
 
     def handle(self, *args, **options):
-
         if options["clear"]:
             print("Deleting...")
             try:
@@ -54,7 +68,9 @@ class Command(BaseCommand):
         self.import_model_classes(self.file_path("model_class.csv"))
         self.import_sensor_types(self.file_path("sensor_type.csv"))
         self.import_sensor_type_classes(self.file_path("sensor_type_class.csv"))
-        self.import_sensor_type_installations(self.file_path("sensor_type_installation.csv"))
+        self.import_sensor_type_installations(
+            self.file_path("sensor_type_installation.csv")
+        )
         self.import_sensor_type_models(self.file_path("sensor_type_model.csv"))
         self.import_devices(self.file_path("device.csv"))
         self.import_sectors(self.file_path("sector.csv"))
@@ -62,7 +78,9 @@ class Command(BaseCommand):
         print("🚓")
 
     def file_path(self, filename):
-        return os.path.join(os.path.dirname(__file__),'..','..','..','basedata',filename)
+        return os.path.join(
+            os.path.dirname(__file__), "..", "..", "..", "basedata", filename
+        )
 
     def import_sections(self, csv_file):
         print("Importing sections...")
@@ -82,8 +100,12 @@ class Command(BaseCommand):
                     start_dist=Decimal(feat["start_dist"].value),
                     end_dist=Decimal(feat["end_dist"].value),
                     place_name=feat["place_name"],
-                    start_validity=feat["start_validity"].value,  # TODO : probably needs cast do datetime
-                    end_validity=feat["end_validity"].value,  # TODO : probably needs cast do datetime
+                    start_validity=feat[
+                        "start_validity"
+                    ].value,  # TODO : probably needs cast do datetime
+                    end_validity=feat[
+                        "end_validity"
+                    ].value,  # TODO : probably needs cast do datetime
                 )
             )
         Section.objects.bulk_create(sections)
@@ -101,7 +123,7 @@ class Command(BaseCommand):
                 Brand(
                     id=Decimal(feat["id"].value),
                     name=feat["name"],
-                    formatter_name=feat["formatter_name"]
+                    formatter_name=feat["formatter_name"],
                 )
             )
         Brand.objects.bulk_create(brands)
@@ -174,7 +196,8 @@ class Command(BaseCommand):
                 Installation(
                     geometry=feat.geom.wkt,
                     id=Decimal(feat["id"].value),
-                    permanent=str(feat["permanent"]).lower() in ("yes", "true", "t", "1"),
+                    permanent=str(feat["permanent"]).lower()
+                    in ("yes", "true", "t", "1"),
                     name=feat["name"],
                     picture=feat["picture"],
                     active=str(feat["active"]).lower() in ("yes", "true", "t", "1"),
@@ -253,7 +276,8 @@ class Command(BaseCommand):
                 SensorType(
                     id=Decimal(feat["id"].value),
                     name=feat["name"],
-                    permanent=str(feat["permanent"]).lower() in ("yes", "true", "t", "1"),
+                    permanent=str(feat["permanent"]).lower()
+                    in ("yes", "true", "t", "1"),
                 )
             )
         SensorType.objects.bulk_create(objects)

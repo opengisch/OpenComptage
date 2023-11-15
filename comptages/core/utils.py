@@ -18,39 +18,33 @@ def get_ui_class(ui_file):
     :param ui_file: The file of the ui in svir.ui
     :type ui_file: str
     """
-    os.path.sep.join(ui_file.split('/'))
+    os.path.sep.join(ui_file.split("/"))
     ui_file_path = os.path.abspath(
-            os.path.join(
-                    os.path.dirname(__file__),
-                    os.pardir,
-                    'ui',
-                    ui_file
-            )
+        os.path.join(os.path.dirname(__file__), os.pardir, "ui", ui_file)
     )
     return loadUiType(ui_file_path)[0]
 
 
 def push_info(message: str):
-    iface.messageBar().pushInfo('Comptages', message)
+    iface.messageBar().pushInfo("Comptages", message)
 
 
 def push_warning(message: str):
-    iface.messageBar().pushMessage('Comptages', message, Qgis.Warning, 0)
+    iface.messageBar().pushMessage("Comptages", message, Qgis.Warning, 0)
 
 
 def push_error(message: str):
     # iface.messageBar().pushCritical('Comptages', message)
-    iface.messageBar().pushMessage('Comptages', message, Qgis.Critical, 0)
+    iface.messageBar().pushMessage("Comptages", message, Qgis.Critical, 0)
 
 
 def create_progress_bar(message: str):
-
     progress_widget = QProgressBar()
     progress_widget.setMaximum(100)
     progress_widget.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
     message_bar = iface.messageBar().createMessage(message)
     message_bar.setWidget(progress_widget)
-    iface.messageBar().pushMessage('')
+    iface.messageBar().pushMessage("")
     iface.messageBar().pushWidget(message_bar)
 
     return progress_widget

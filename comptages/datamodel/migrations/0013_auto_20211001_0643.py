@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0012_remove_tjm_day'),
+        ("comptages", "0012_remove_tjm_day"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tjm',
-            name='week_day',
+            model_name="tjm",
+            name="week_day",
         ),
         migrations.AddField(
-            model_name='tjm',
-            name='day',
+            model_name="tjm",
+            name="day",
             field=models.DateField(null=True),
         ),
     ]
