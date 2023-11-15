@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0023_installation_alias'),
+        ("comptages", "0023_installation_alias"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='category',
-            name='trash',
+            model_name="category",
+            name="trash",
             field=models.BooleanField(default=False),
         ),
     ]

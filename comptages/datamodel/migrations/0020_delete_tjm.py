@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0019_alter_tjm_count'),
+        ("comptages", "0019_alter_tjm_count"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Tjm',
+            name="Tjm",
         ),
     ]

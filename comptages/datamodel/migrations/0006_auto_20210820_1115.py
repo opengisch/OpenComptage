@@ -6,24 +6,27 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0005_auto_20210820_0843'),
+        ("comptages", "0005_auto_20210820_0843"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='classcategory',
-            name='id',
+            model_name="classcategory",
+            name="id",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
         migrations.AlterField(
-            model_name='classcategory',
-            name='id_class',
-            field=models.ForeignKey(db_column='id_class', on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.class'),
+            model_name="classcategory",
+            name="id_class",
+            field=models.ForeignKey(
+                db_column="id_class",
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="comptages.class",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='classcategory',
+            name="classcategory",
             unique_together=set(),
         ),
     ]

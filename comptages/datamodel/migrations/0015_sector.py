@@ -5,20 +5,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0014_count_tjm'),
+        ("comptages", "0014_count_tjm"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Sector',
+            name="Sector",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('geometry', django.contrib.gis.db.models.fields.GeometryField(blank=True, null=True, srid=2056)),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                (
+                    "geometry",
+                    django.contrib.gis.db.models.fields.GeometryField(
+                        blank=True, null=True, srid=2056
+                    ),
+                ),
             ],
             options={
-                'db_table': 'sector',
+                "db_table": "sector",
             },
         ),
     ]

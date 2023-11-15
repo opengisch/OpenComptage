@@ -2,7 +2,7 @@ from collections import defaultdict
 from django.apps import apps
 
 
-class BulkCreateManager(object):
+class BulkCreateManager:
     """
     This helper class keeps track of ORM objects to be created for multiple
     model classes, and automatically creates those objects with `bulk_create`
@@ -12,7 +12,7 @@ class BulkCreateManager(object):
     call `done()` to ensure the final set of objects is created for all models.
     """
 
-    def __init__(self, chunk_size=100):
+    def __init__(self, chunk_size: int = 100):
         self._create_queues = defaultdict(list)
         self.chunk_size = chunk_size
 
