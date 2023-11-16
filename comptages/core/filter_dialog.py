@@ -1,9 +1,15 @@
-from qgis.PyQt.QtWidgets import QDialog, QCompleter, QComboBox, QSlider, QDialogButtonBox
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QCompleter,
+    QComboBox,
+    QSlider,
+    QDialogButtonBox,
+)
 from qgis.PyQt.QtCore import Qt
 from comptages.core.utils import get_ui_class
 from comptages.datamodel import models
 
-FORM_CLASS = get_ui_class('filter.ui')
+FORM_CLASS = get_ui_class("filter.ui")
 
 
 class FilterDialog(QDialog, FORM_CLASS):
@@ -25,17 +31,19 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.tjm.rangeChanged.connect(update_tjm_labels)
 
         # Populate axe filter
-        self.axe.addItem('Tous', None)
+        self.axe.addItem("Tous", None)
         self.axe.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.axe.completer().setFilterMode(Qt.MatchContains)
         self.axe.setInsertPolicy(QComboBox.NoInsert)
 
-        for i in models.Section.objects.all().distinct('owner', 'road').order_by('owner'):
-            self.axe.addItem(str(i.owner) + ':' + str(i.road), (i.owner, i.road))
+        for i in (
+            models.Section.objects.all().distinct("owner", "road").order_by("owner")
+        ):
+            self.axe.addItem(str(i.owner) + ":" + str(i.road), (i.owner, i.road))
 
         # Populate sector filter
-        self.sector.addItem('Tous', None)
-        for i in models.Sector.objects.all().order_by('id'):
+        self.sector.addItem("Tous", None)
+        for i in models.Sector.objects.all().order_by("id"):
             self.sector.addItem(str(i.id), i.id)
 
         def reset_dialog(button):
@@ -47,5 +55,4 @@ class FilterDialog(QDialog, FORM_CLASS):
             self.axe.setCurrentIndex(0)
             self.sector.setCurrentIndex(0)
 
-        self.buttons.button(
-            QDialogButtonBox.Reset).clicked.connect(reset_dialog)
+        self.buttons.button(QDialogButtonBox.Reset).clicked.connect(reset_dialog)

@@ -5,23 +5,34 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0009_auto_20210820_1143'),
+        ("comptages", "0009_auto_20210820_1143"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tjm',
+            name="Tjm",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('day', models.DateField()),
-                ('value', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('count', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='comptages.count')),
-                ('lane', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.lane')),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("day", models.DateField()),
+                ("value", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "count",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="comptages.count",
+                    ),
+                ),
+                (
+                    "lane",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="comptages.lane",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'tjm',
+                "db_table": "tjm",
             },
         ),
     ]

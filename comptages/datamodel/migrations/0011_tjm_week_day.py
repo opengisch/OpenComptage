@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0010_tjm'),
+        ("comptages", "0010_tjm"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tjm',
-            name='week_day',
+            model_name="tjm",
+            name="week_day",
             field=models.SmallIntegerField(default=0),
         ),
     ]

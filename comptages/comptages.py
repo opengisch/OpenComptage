@@ -7,8 +7,12 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QMessageBox
 from qgis.PyQt.QtCore import QObject, Qt, QDateTime
 from qgis.core import (
-    QgsMessageLog, Qgis, QgsApplication, QgsExpressionContextUtils,
-    QgsProject)
+    QgsMessageLog,
+    Qgis,
+    QgsApplication,
+    QgsExpressionContextUtils,
+    QgsProject,
+)
 from qgis.utils import qgsfunction, plugins
 
 from comptages.core.settings import Settings, SettingsDialog
@@ -29,7 +33,6 @@ from comptages.core import definitions
 
 
 class Comptages(QObject):
-
     def __init__(self, iface):
         QObject.__init__(self)
 
@@ -50,85 +53,68 @@ class Comptages(QObject):
 
     def initGui(self):
         self.connect_db_action = QAction(
-            QIcon(':/plugins/Comptages/images/power.png'),
-            'Connection DB',
-            self.iface.mainWindow()
+            QIcon(":/plugins/Comptages/images/power.png"),
+            "Connection DB",
+            self.iface.mainWindow(),
         )
 
         self.create_new_action = QAction(
-            QIcon(':/plugins/Comptages/images/measure.png'),
-            'Créer un nouveau comptage',
-            None
+            QIcon(":/plugins/Comptages/images/measure.png"),
+            "Créer un nouveau comptage",
+            None,
         )
 
         self.select_edit_action = QAction(
-            QIcon(':/plugins/Comptages/images/select_edit.png'),
-            'Modifier comptage',
-            None
+            QIcon(":/plugins/Comptages/images/select_edit.png"),
+            "Modifier comptage",
+            None,
         )
 
         self.import_files_action = QAction(
-            QIcon(':/plugins/Comptages/images/import.png'),
-            'Importation',
-            None
+            QIcon(":/plugins/Comptages/images/import.png"), "Importation", None
         )
 
         self.validate_imported_files = QAction(
-            QIcon(':/plugins/Comptages/images/validate.png'),
-            'Validation',
-            None
+            QIcon(":/plugins/Comptages/images/validate.png"), "Validation", None
         )
 
         self.filter_action = QAction(
-            QIcon(':/plugins/Comptages/images/filter.png'),
-            'Filtrer',
-            None
+            QIcon(":/plugins/Comptages/images/filter.png"), "Filtrer", None
         )
 
         self.yearly_report_action = QAction(
-            QIcon(':/plugins/Comptages/images/filled_file.png'),
-            'Rapport annuel',
-            None
+            QIcon(":/plugins/Comptages/images/filled_file.png"), "Rapport annuel", None
         )
 
         self.import_ics_action = QAction(
-            QIcon(':/plugins/Comptages/images/calendar.png'),
-            'Importer fichier ics',
-            None
+            QIcon(":/plugins/Comptages/images/calendar.png"),
+            "Importer fichier ics",
+            None,
         )
 
         self.settings_action = QAction(
-            QIcon(':/plugins/Comptages/images/settings.png'),
-            'Réglages',
-            None
+            QIcon(":/plugins/Comptages/images/settings.png"), "Réglages", None
         )
 
-        self.connect_db_action.triggered.connect(
-            self.do_connect_db_action)
+        self.connect_db_action.triggered.connect(self.do_connect_db_action)
 
-        self.create_new_action.triggered.connect(
-            self.do_create_new_action)
+        self.create_new_action.triggered.connect(self.do_create_new_action)
 
-        self.select_edit_action.triggered.connect(
-            self.do_select_edit_action)
+        self.select_edit_action.triggered.connect(self.do_select_edit_action)
 
-        self.import_files_action.triggered.connect(
-            self.do_import_files_action)
+        self.import_files_action.triggered.connect(self.do_import_files_action)
 
         self.validate_imported_files.triggered.connect(
-            self.do_validate_imported_files_action)
+            self.do_validate_imported_files_action
+        )
 
-        self.filter_action.triggered.connect(
-            self.do_filter_action)
+        self.filter_action.triggered.connect(self.do_filter_action)
 
-        self.yearly_report_action.triggered.connect(
-            self.do_yearly_report_action)
+        self.yearly_report_action.triggered.connect(self.do_yearly_report_action)
 
-        self.import_ics_action.triggered.connect(
-            self.do_import_ics_action)
+        self.import_ics_action.triggered.connect(self.do_import_ics_action)
 
-        self.settings_action.triggered.connect(
-            self.do_settings_action)
+        self.settings_action.triggered.connect(self.do_settings_action)
 
         self.create_new_action.setEnabled(False)
         self.select_edit_action.setEnabled(False)
@@ -138,19 +124,19 @@ class Comptages(QObject):
         self.yearly_report_action.setEnabled(False)
         self.import_ics_action.setEnabled(False)
 
-        self.iface.addPluginToMenu('Comptages', self.connect_db_action)
-        self.iface.addPluginToMenu('Comptages', self.create_new_action)
-        self.iface.addPluginToMenu('Comptages', self.select_edit_action)
-        self.iface.addPluginToMenu('Comptages', self.import_files_action)
-        self.iface.addPluginToMenu('Comptages', self.validate_imported_files)
-        self.iface.addPluginToMenu('Comptages', self.filter_action)
-        self.iface.addPluginToMenu('Comptages', self.yearly_report_action)
-        self.iface.addPluginToMenu('Comptages', self.import_ics_action)
-        self.iface.addPluginToMenu('Comptages', self.settings_action)
+        self.iface.addPluginToMenu("Comptages", self.connect_db_action)
+        self.iface.addPluginToMenu("Comptages", self.create_new_action)
+        self.iface.addPluginToMenu("Comptages", self.select_edit_action)
+        self.iface.addPluginToMenu("Comptages", self.import_files_action)
+        self.iface.addPluginToMenu("Comptages", self.validate_imported_files)
+        self.iface.addPluginToMenu("Comptages", self.filter_action)
+        self.iface.addPluginToMenu("Comptages", self.yearly_report_action)
+        self.iface.addPluginToMenu("Comptages", self.import_ics_action)
+        self.iface.addPluginToMenu("Comptages", self.settings_action)
 
-        self.toolbar = self.iface.addToolBar('Comptages')
-        self.toolbar.setObjectName('Comptages')
-        self.toolbar.setToolTip('Comptages toolbar')
+        self.toolbar = self.iface.addToolBar("Comptages")
+        self.toolbar.setObjectName("Comptages")
+        self.toolbar.setToolTip("Comptages toolbar")
 
         self.toolbar.addAction(self.connect_db_action)
         self.toolbar.addSeparator()
@@ -165,13 +151,13 @@ class Comptages(QObject):
         self.toolbar.addAction(self.settings_action)
 
     def unload(self):
-        self.iface.removePluginMenu('Comptages', self.connect_db_action)
-        self.iface.removePluginMenu('Comptages', self.create_new_action)
-        self.iface.removePluginMenu('Comptages', self.select_edit_action)
-        self.iface.removePluginMenu('Comptages', self.filter_action)
-        self.iface.removePluginMenu('Comptages', self.yearly_report_action)
-        self.iface.removePluginMenu('Comptages', self.import_ics_action)
-        self.iface.removePluginMenu('Comptages', self.settings_action)
+        self.iface.removePluginMenu("Comptages", self.connect_db_action)
+        self.iface.removePluginMenu("Comptages", self.create_new_action)
+        self.iface.removePluginMenu("Comptages", self.select_edit_action)
+        self.iface.removePluginMenu("Comptages", self.filter_action)
+        self.iface.removePluginMenu("Comptages", self.yearly_report_action)
+        self.iface.removePluginMenu("Comptages", self.import_ics_action)
+        self.iface.removePluginMenu("Comptages", self.settings_action)
 
         del self.connect_db_action
         del self.create_new_action
@@ -189,31 +175,34 @@ class Comptages(QObject):
 
     def do_create_new_action(self):
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
         self.layers.create_count()
 
     def do_select_edit_action(self):
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
         self.layers.edit_count()
 
     def do_import_files_action(self):
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
         file_dialog = QFileDialog()
-        title = 'Importer'
-        path = self.settings.value('data_import_directory')
+        title = "Importer"
+        path = self.settings.value("data_import_directory")
         files = QFileDialog.getOpenFileNames(
-            file_dialog, title, path,
-            "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
+            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)"
+        )[0]
 
-        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'import'))
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "import"))
 
         tasks = []
         for file_path in files:
@@ -224,19 +213,21 @@ class Comptages(QObject):
 
     def import_file(self, file_path, count_id=None):
         QgsMessageLog.logMessage(
-            '{} - Prepare import file {} started'.format(
-                datetime.now(), os.path.basename(file_path)),
-            'Comptages', Qgis.Info)
+            "{} - Prepare import file {} started".format(
+                datetime.now(), os.path.basename(file_path)
+            ),
+            "Comptages",
+            Qgis.Info,
+        )
 
         # Manage binary files
-        with open(file_path, 'rb') as fd:
+        with open(file_path, "rb") as fd:
             file_head = fd.read(24)
 
-        if file_head == b'Golden River Traffic Ltd':  # is a binary file
-            formatter = self.layers.get_formatter_name('GoldenRiver')
+        if file_head == b"Golden River Traffic Ltd":  # is a binary file
+            formatter = self.layers.get_formatter_name("GoldenRiver")
             file_path_formatted = "{}_for".format(file_path)
-            os.system("{} {} {}".format(
-                formatter, file_path, file_path_formatted))
+            os.system("{} {} {}".format(formatter, file_path, file_path_formatted))
             file_path = file_path_formatted
 
         if count_id:
@@ -247,46 +238,65 @@ class Comptages(QObject):
         if not count:
             QgsMessageLog.logMessage(
                 "Impossible de trouver le comptage associé {}".format(
-                    file_path,), 'Comptages', Qgis.Critical)
+                    file_path,
+                ),
+                "Comptages",
+                Qgis.Critical,
+            )
             return
 
         QgsMessageLog.logMessage(
-            '{} - Prepare import file {}'.format(
-                datetime.now(), os.path.basename(file_path)),
-            'Comptages', Qgis.Info)
+            "{} - Prepare import file {}".format(
+                datetime.now(), os.path.basename(file_path)
+            ),
+            "Comptages",
+            Qgis.Info,
+        )
 
         QgsMessageLog.logMessage(
-            '{} - Import file {} started'.format(
-                datetime.now(), os.path.basename(file_path)),
-            'Comptages', Qgis.Info)
+            "{} - Import file {} started".format(
+                datetime.now(), os.path.basename(file_path)
+            ),
+            "Comptages",
+            Qgis.Info,
+        )
 
         task = importer_task.ImporterTask(file_path, count)
         return task
 
-    def all_tasks_finished(self, task='import'):
+    def all_tasks_finished(self, task="import"):
         # Check if actually all tasks are finished because apparently it doesn't
         # work the same on all systems
         if not self.tm.countActiveTasks() == 0:
             QgsMessageLog.logMessage(
-                '{} - all_tasks_finished signal raised, but active tasks still exist, ignoring it'.format(datetime.now()),
-                'Comptages', Qgis.Warning)
+                "{} - all_tasks_finished signal raised, but active tasks still exist, ignoring it".format(
+                    datetime.now()
+                ),
+                "Comptages",
+                Qgis.Warning,
+            )
 
             return
 
         self.tm.allTasksFinished.disconnect()
-        push_info(('Toutes les tâches sont terminées. Consultez le journal '
-                   'pour plus de détails.'))
+        push_info(
+            (
+                "Toutes les tâches sont terminées. Consultez le journal "
+                "pour plus de détails."
+            )
+        )
         QgsMessageLog.logMessage(
-            '{} - All tasks ended'.format(datetime.now()),
-            'Comptages', Qgis.Info)
+            "{} - All tasks ended".format(datetime.now()), "Comptages", Qgis.Info
+        )
 
-        if task == 'import':
+        if task == "import":
             self.chart_dock.show_next_quarantined_chart()
 
     def do_validate_imported_files_action(self):
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
         self.chart_dock.show_next_quarantined_chart()
 
@@ -326,8 +336,8 @@ class Comptages(QObject):
             self.filter_sector = dlg.sector.currentIndex()
 
             self.layers.apply_filter(
-                dlg.start_date.dateTime().toString('yyyy-MM-dd'),
-                dlg.end_date.dateTime().toString('yyyy-MM-dd'),
+                dlg.start_date.dateTime().toString("yyyy-MM-dd"),
+                dlg.end_date.dateTime().toString("yyyy-MM-dd"),
                 dlg.installation.currentIndex(),
                 dlg.sensor.currentIndex(),
                 [self.filter_tjm[0], self.filter_tjm[1]],
@@ -335,26 +345,38 @@ class Comptages(QObject):
                 dlg.sector.currentData(),
             )
 
-            if (not dlg.start_date.dateTime()) and (not dlg.end_date.dateTime()) and (dlg.installation.currentIndex() == 0) and \
-               (dlg.sensor.currentIndex() == 0) and (dlg.tjm.lowerValue() == 0) and (dlg.tjm.upperValue() == 30000) and \
-               (dlg.axe.currentText() == 'Tous') and (dlg.sector.currentText() == 'Tous'):
+            if (
+                (not dlg.start_date.dateTime())
+                and (not dlg.end_date.dateTime())
+                and (dlg.installation.currentIndex() == 0)
+                and (dlg.sensor.currentIndex() == 0)
+                and (dlg.tjm.lowerValue() == 0)
+                and (dlg.tjm.upperValue() == 30000)
+                and (dlg.axe.currentText() == "Tous")
+                and (dlg.sector.currentText() == "Tous")
+            ):
                 self.filter_action.setIcon(
-                    QIcon(':/plugins/Comptages/images/filter.png'))
+                    QIcon(":/plugins/Comptages/images/filter.png")
+                )
             else:
                 self.filter_action.setIcon(
-                    QIcon(':/plugins/Comptages/images/filter_active.png'))
+                    QIcon(":/plugins/Comptages/images/filter_active.png")
+                )
 
     def do_yearly_report_action(self):
         QgsMessageLog.logMessage(
-            '{} - Generate yearly report action started'.format(datetime.now()),
-            'Comptages', Qgis.Info)
+            "{} - Generate yearly report action started".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
 
-        layer = self.layers.layers['section']
+        layer = self.layers.layers["section"]
 
         selected_count = layer.selectedFeatureCount()
         if selected_count == 0:
@@ -366,7 +388,7 @@ class Comptages(QObject):
         else:
             selected_feature = next(layer.getSelectedFeatures())
 
-        section_id = selected_feature.attribute('id')
+        section_id = selected_feature.attribute("id")
 
         classes = self.layers.get_classes_of_section(section_id)
         dlg = YearlyReportDialog(self.iface)
@@ -378,25 +400,34 @@ class Comptages(QObject):
             clazz = dlg.classi.currentText()
 
             file_dialog = QFileDialog()
-            title = 'Exporter un rapport'
-            path = self.settings.value('report_export_directory')
-            file_path = QFileDialog.getExistingDirectory(
-                file_dialog, title, path)
+            title = "Exporter un rapport"
+            path = self.settings.value("report_export_directory")
+            file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
 
             if not file_path:
                 QgsMessageLog.logMessage(
-                    '{} - Generate yearly report action ended: No file_path given'.format(datetime.now()),
-                    'Comptages', Qgis.Info)
+                    "{} - Generate yearly report action ended: No file_path given".format(
+                        datetime.now()
+                    ),
+                    "Comptages",
+                    Qgis.Info,
+                )
                 return
             QgsMessageLog.logMessage(
-                '{} - Generate yearly report action can really begin now for count {} with file_path: {}'.format(
-                    datetime.now(), selected_count, file_path), 'Comptages', Qgis.Info)
+                "{} - Generate yearly report action can really begin now for count {} with file_path: {}".format(
+                    datetime.now(), selected_count, file_path
+                ),
+                "Comptages",
+                Qgis.Info,
+            )
 
             if clazz.startswith("SPCH-MD"):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
             else:
-                self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, report))
+                self.tm.allTasksFinished.connect(
+                    partial(self.all_tasks_finished, report)
+                )  # FIXME `report` is a mystery.
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
@@ -404,8 +435,9 @@ class Comptages(QObject):
                         file_path=file_path,
                         template="yearly",
                         year=year,
-                        section_id=section_id
-                    ))
+                        section_id=section_id,
+                    )
+                )
             # TODO: check if there are comptages for this section and year
 
     def do_import_ics_action(self):
@@ -418,131 +450,156 @@ class Comptages(QObject):
         config_creator = ConfigCreatorCmd(self.layers, count_id)
         config_creator.set_section_commands()
 
-        installation_name = self.layers.get_installation_name_of_count(
-            count_id)
+        installation_name = self.layers.get_installation_name_of_count(count_id)
 
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('*.CMD')
-        title = 'Exporter la configuration'
+        file_dialog.setDefaultSuffix("*.CMD")
+        title = "Exporter la configuration"
         path = os.path.join(
-            self.settings.value('config_export_directory'),
-            "{}.CMD".format(installation_name))
+            self.settings.value("config_export_directory"),
+            "{}.CMD".format(installation_name),
+        )
         file = QFileDialog.getSaveFileName(
-            file_dialog, title, path, "Config file (*.CMD)")[0]
+            file_dialog, title, path, "Config file (*.CMD)"
+        )[0]
 
         if not file:
             return
 
         config_creator.write_file(file)
-        push_info('Written config file {}'.format(file))
+        push_info("Written config file {}".format(file))
 
     def do_import_single_file_action(self, count_id):
         file_dialog = QFileDialog()
-        title = 'Importation'
-        path = self.settings.value('data_import_directory')
+        title = "Importation"
+        path = self.settings.value("data_import_directory")
         file_path = QFileDialog.getOpenFileName(
-            file_dialog, title, path,
-            "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)")[0]
+            file_dialog, title, path, "Data file (*.A?? *.aV? *.I?? *.V?? *.txt)"
+        )[0]
 
         if not file_path:
             return
 
-        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'import'))
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "import"))
 
         self.tm.addTask(self.import_file(file_path, count_id))
 
     def do_generate_report_action(self, count_id):
         QgsMessageLog.logMessage(
-            '{} - Generate report action started'.format(datetime.now()),
-            'Comptages', Qgis.Info)
+            "{} - Generate report action started".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
         count = models.Count.objects.get(id=count_id)
 
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
 
         # Show message if there are no data to process
         if not models.CountDetail.objects.filter(id_count=count).exists():
-            push_info("Installation {}: Il n'y a pas de données à traiter pour "
-                      "le comptage {}".format(
-                          count.id_installation.name,
-                          count.id))
+            push_info(
+                "Installation {}: Il n'y a pas de données à traiter pour "
+                "le comptage {}".format(count.id_installation.name, count.id)
+            )
             QgsMessageLog.logMessage(
-                '{} - Generate report action ended: No data for count {}'.format(datetime.now(), count.id),
-                'Comptages', Qgis.Info)
+                "{} - Generate report action ended: No data for count {}".format(
+                    datetime.now(), count.id
+                ),
+                "Comptages",
+                Qgis.Info,
+            )
             return
 
         file_dialog = QFileDialog()
-        title = 'Exporter un rapport'
-        path = self.settings.value('report_export_directory')
-        file_path = QFileDialog.getExistingDirectory(
-            file_dialog, title, path)
+        title = "Exporter un rapport"
+        path = self.settings.value("report_export_directory")
+        file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
 
         if not file_path:
             QgsMessageLog.logMessage(
-                '{} - Generate report action ended: No file_path given'.format(datetime.now()),
-                'Comptages', Qgis.Info)
+                "{} - Generate report action ended: No file_path given".format(
+                    datetime.now()
+                ),
+                "Comptages",
+                Qgis.Info,
+            )
             return
         QgsMessageLog.logMessage(
-            '{} - Generate report action can really begin now for count {} with file_path: {}'.format(
-                datetime.now(), count.id, file_path), 'Comptages', Qgis.Info)
+            "{} - Generate report action can really begin now for count {} with file_path: {}".format(
+                datetime.now(), count.id, file_path
+            ),
+            "Comptages",
+            Qgis.Info,
+        )
 
-        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, 'report'))
+        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "report"))
         self.tm.addTask(
             report_task.ReportTask(
                 file_path=file_path,
                 count=count,
-            ))
+            )
+        )
 
     def do_export_plan_action(self, count_id):
         count = models.Count.objects.get(id=count_id)
         plan_creator = PlanCreator()
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('*.PDF')
-        title = 'Exporter plan de pose'
+        file_dialog.setDefaultSuffix("*.PDF")
+        title = "Exporter plan de pose"
         path = os.path.join(
-            self.settings.value('config_export_directory'),
-            "{}.pdf".format("plan_de_pose"))
+            self.settings.value("config_export_directory"),
+            "{}.pdf".format("plan_de_pose"),
+        )
         file = QFileDialog.getSaveFileName(
-            file_dialog, title, path, "Config file (*.PDF)")[0]
+            file_dialog, title, path, "Config file (*.PDF)"
+        )[0]
 
         if not file:
             return
 
         # Highlight the current sections and installation in the layout
         previous_highlightes_sections = self.layers.highlighted_sections
-        self.layers.highlighted_sections = \
-            self.layers.get_section_ids_of_count(count_id)
+        self.layers.highlighted_sections = self.layers.get_section_ids_of_count(
+            count_id
+        )
         QgsExpressionContextUtils.setProjectVariable(
-            QgsProject.instance(), 'highlighted_installation',
-            self.layers.get_installation_name_of_count(count_id))
+            QgsProject.instance(),
+            "highlighted_installation",
+            self.layers.get_installation_name_of_count(count_id),
+        )
 
         plan_creator.export_pdf(count, file)
 
         self.layers.highlighted_sections = previous_highlightes_sections
         QgsExpressionContextUtils.setProjectVariable(
-            QgsProject.instance(), 'highlighted_installation',
-            '')
-        self.layers.layers['section'].triggerRepaint()
+            QgsProject.instance(), "highlighted_installation", ""
+        )
+        self.layers.layers["section"].triggerRepaint()
 
     def do_generate_chart_action(self, count_id):
         QgsMessageLog.logMessage(
-            '{} - Generate chart action started'.format(datetime.now()),
-            'Comptages', Qgis.Info)
+            "{} - Generate chart action started".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
         if self.tm.countActiveTasks() > 0:
-            push_info(("Veuillez patienter jusqu'à ce que l'importation "
-                       "soit terminée."))
+            push_info(
+                ("Veuillez patienter jusqu'à ce que l'importation " "soit terminée.")
+            )
             return
         count = models.Count.objects.get(id=count_id)
         self.chart_dock.set_attributes(count)
 
         QgsMessageLog.logMessage(
-            '{} - Generate chart action ended'.format(datetime.now()),
-            'Comptages', Qgis.Info)
-
+            "{} - Generate chart action ended".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
     def do_delete_data_action(self, count_id):
         dlg = DeleteDialog(self.iface)
@@ -604,15 +661,14 @@ class Comptages(QObject):
         count"""
 
         # Call the method of the current instance of the plugin
-        return plugins['comptages'].is_section_highlighted(
-            feature.attribute('id'))
+        return plugins["comptages"].is_section_highlighted(feature.attribute("id"))
 
     @qgsfunction(args="auto", group="Comptages")
     def check_dates(feature, parent):
         """Used by count layer to show if a count was during a special
         period"""
 
-        return plugins['comptages'].layers.check_dates(
-            feature.attribute('start_process_date'),
-            feature.attribute('end_process_date')
+        return plugins["comptages"].layers.check_dates(
+            feature.attribute("start_process_date"),
+            feature.attribute("end_process_date"),
         )

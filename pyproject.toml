@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comptages"
+version = "0.1"
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+check = ["pyright>=1.1.36", "black>=23.11.0", "qgis-plugin-ci>=2.8.1"]
+
+[tool.black]
+extend-exclude = '''
+/(
+  # The following are specific to Black, you probably don't want those.
+  | qgissettingmanager
+)/
+'''
+
+[tool.qgis-plugin-ci]
+plugin_path = "comptages"
+github_organization_slug = "opengisch"
+project_slug = "OpenComptage"
+
+[tool.pyright]
+pythonVersion = "3.10"
+exclude = [
+  "**/nodes_modules",
+  "**/__pycache__",
+  "**/migrations",
+  "**/qgissettingmanager",
+  "**/test",
+]
+
+reportMissingImports = false
+useLibraryCodeForTypes = true
+[tool.setuptools]
+package-dir = { "" = "comptages" }
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

@@ -5,15 +5,19 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0017_alter_countdetail_id_count'),
+        ("comptages", "0017_alter_countdetail_id_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='countdetail',
-            name='id_category',
-            field=models.ForeignKey(db_column='id_category', null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='comptages.category'),
+            model_name="countdetail",
+            name="id_category",
+            field=models.ForeignKey(
+                db_column="id_category",
+                null=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="comptages.category",
+            ),
         ),
     ]

@@ -1,39 +1,44 @@
-name: Docker
+name: Lint, Check, Build, Test
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
     branches:
-      - '*'
-
-  pull_request:
-    branches:
       - master
+  pull_request:
 
 jobs:
+  build_package_lint_check:
+    name: Build, package, lint, check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      - name: Setup, build, install
+        run: |
+          pip install build
+          python -m build .
+          pip install ./dist/comptages-0.1-py3-none-any.whl[check]
+      - name: Package
+        run: qgis-plugin-ci package 'test'
+      - name: Lint
+        run: black . --check
+
+      # - name: Check
+      #   run: pyright .
+
   test:
     name: Test
-    runs-on: ubuntu-20.04
-
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install requirements
-        run: |
-          pip3 install -r requirements.txt
-
-      - name: Install QGIS
-        run: |
-          sudo apt update && sudo apt install -y qgis
-
+      - uses: actions/checkout@v4
       - name: Start docker stack
-        run: docker-compose up --build -d
-
-      - name: Wait a little bit
-        run: sleep 5
-
-      - name: Running migrations
-        run: python manage.py migrate
-
+        run: docker compose up db -d
       - name: Running tests
-        run: |
-          python manage.py test comptages.test -v2
+        run: docker compose run qgis_tester

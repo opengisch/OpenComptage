@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0011_tjm_week_day'),
+        ("comptages", "0011_tjm_week_day"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tjm',
-            name='day',
+            model_name="tjm",
+            name="day",
         ),
     ]

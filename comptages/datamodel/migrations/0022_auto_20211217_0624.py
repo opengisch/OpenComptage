@@ -9,7 +9,7 @@ from django.db import migrations, transaction
 
 def get_console_logger():
     logger = logging.getLogger(__name__)
-    handler = logging.FileHandler('migration_0022.log')
+    handler = logging.FileHandler("migration_0022.log")
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
@@ -21,25 +21,31 @@ def migrate_data(apps, schema_editor):
     logger = get_console_logger()
     count_details = []
     chunk_size = 1000
-    local_tz = pytz.timezone('Europe/Zurich')
+    local_tz = pytz.timezone("Europe/Zurich")
     start_time = datetime.datetime.now()
 
     # We can't import the models directly as it may be a newer
     # version than this migration expects. We use the historical version.
-    CountAggregateValueCls = apps.get_model('comptages', 'CountAggregateValueCls')
-    CountAggregateValueCnt = apps.get_model('comptages', 'CountAggregateValueCnt')
-    CountAggregateValueDrn = apps.get_model('comptages', 'CountAggregateValueDrn')
-    CountAggregateValueLen = apps.get_model('comptages', 'CountAggregateValueLen')
-    CountAggregateValueSpd = apps.get_model('comptages', 'CountAggregateValueSpd')
-    CountDetail = apps.get_model('comptages', 'CountDetail')
+    CountAggregateValueCls = apps.get_model("comptages", "CountAggregateValueCls")
+    CountAggregateValueCnt = apps.get_model("comptages", "CountAggregateValueCnt")
+    CountAggregateValueDrn = apps.get_model("comptages", "CountAggregateValueDrn")
+    CountAggregateValueLen = apps.get_model("comptages", "CountAggregateValueLen")
+    CountAggregateValueSpd = apps.get_model("comptages", "CountAggregateValueSpd")
+    CountDetail = apps.get_model("comptages", "CountDetail")
 
     ## CLS
-    logger.info(f'{datetime.datetime.now()} Start with count_aggregate_value_cls table')
+    logger.info(f"{datetime.datetime.now()} Start with count_aggregate_value_cls table")
     num = 0
     while CountAggregateValueCls.objects.all().exists():
         with transaction.atomic():
             # Cannot delete using a normal slice on all() objects like this qs = CountAggregateValueCls.objects.all()[:100]
-            qs = CountAggregateValueCls.objects.filter(id__in=list(CountAggregateValueCls.objects.values_list('pk', flat=True)[:chunk_size]))
+            qs = CountAggregateValueCls.objects.filter(
+                id__in=list(
+                    CountAggregateValueCls.objects.values_list("pk", flat=True)[
+                        :chunk_size
+                    ]
+                )
+            )
             for i in qs:
                 count_details.append(
                     CountDetail(
@@ -59,14 +65,22 @@ def migrate_data(apps, schema_editor):
             qs.delete()
             num += chunk_size
             now = datetime.datetime.now()
-            logger.info(f'{now} Table CLS (1/5), migrated {num} rows, total elapsed time {now - start_time}')
+            logger.info(
+                f"{now} Table CLS (1/5), migrated {num} rows, total elapsed time {now - start_time}"
+            )
 
     ## CNT
-    logger.info(f'{datetime.datetime.now()} Start with count_aggregate_value_cnt table')
+    logger.info(f"{datetime.datetime.now()} Start with count_aggregate_value_cnt table")
     num = 0
     while CountAggregateValueCnt.objects.all().exists():
         with transaction.atomic():
-            qs = CountAggregateValueCnt.objects.filter(id__in=list(CountAggregateValueCnt.objects.values_list('pk', flat=True)[:chunk_size]))
+            qs = CountAggregateValueCnt.objects.filter(
+                id__in=list(
+                    CountAggregateValueCnt.objects.values_list("pk", flat=True)[
+                        :chunk_size
+                    ]
+                )
+            )
             for i in qs:
                 count_details.append(
                     CountDetail(
@@ -85,14 +99,22 @@ def migrate_data(apps, schema_editor):
             qs.delete()
             num += chunk_size
             now = datetime.datetime.now()
-            logger.info(f'{now} Table CNT (2/5), migrated {num} rows, total elapsed time {now - start_time}')
+            logger.info(
+                f"{now} Table CNT (2/5), migrated {num} rows, total elapsed time {now - start_time}"
+            )
 
     ## DRN
-    logger.info(f'{datetime.datetime.now()} Start with count_aggregate_value_drn table')
+    logger.info(f"{datetime.datetime.now()} Start with count_aggregate_value_drn table")
     num = 0
     while CountAggregateValueDrn.objects.all().exists():
         with transaction.atomic():
-            qs = CountAggregateValueDrn.objects.filter(id__in=list(CountAggregateValueDrn.objects.values_list('pk', flat=True)[:chunk_size]))
+            qs = CountAggregateValueDrn.objects.filter(
+                id__in=list(
+                    CountAggregateValueDrn.objects.values_list("pk", flat=True)[
+                        :chunk_size
+                    ]
+                )
+            )
             for i in qs:
                 count_details.append(
                     CountDetail(
@@ -111,14 +133,22 @@ def migrate_data(apps, schema_editor):
             qs.delete()
             num += chunk_size
             now = datetime.datetime.now()
-            logger.info(f'{now} Table DRN (3/5), migrated {num} rows, total elapsed time {now - start_time}')
+            logger.info(
+                f"{now} Table DRN (3/5), migrated {num} rows, total elapsed time {now - start_time}"
+            )
 
     ## LEN
-    logger.info(f'{datetime.datetime.now()} Start with count_aggregate_value_len table')
+    logger.info(f"{datetime.datetime.now()} Start with count_aggregate_value_len table")
     num = 0
     while CountAggregateValueLen.objects.all().exists():
         with transaction.atomic():
-            qs = CountAggregateValueLen.objects.filter(id__in=list(CountAggregateValueLen.objects.values_list('pk', flat=True)[:chunk_size]))
+            qs = CountAggregateValueLen.objects.filter(
+                id__in=list(
+                    CountAggregateValueLen.objects.values_list("pk", flat=True)[
+                        :chunk_size
+                    ]
+                )
+            )
             for i in qs:
                 count_details.append(
                     CountDetail(
@@ -138,14 +168,22 @@ def migrate_data(apps, schema_editor):
             qs.delete()
             num += chunk_size
             now = datetime.datetime.now()
-            logger.info(f'{now} Table LEN (4/5), migrated {num} rows, total elapsed time {now - start_time}')
+            logger.info(
+                f"{now} Table LEN (4/5), migrated {num} rows, total elapsed time {now - start_time}"
+            )
 
     ## SPD
-    logger.info(f'{datetime.datetime.now()} Start with count_aggregate_value_spd table')
+    logger.info(f"{datetime.datetime.now()} Start with count_aggregate_value_spd table")
     num = 0
     while CountAggregateValueSpd.objects.all().exists():
         with transaction.atomic():
-            qs = CountAggregateValueSpd.objects.filter(id__in=list(CountAggregateValueSpd.objects.values_list('pk', flat=True)[:chunk_size]))
+            qs = CountAggregateValueSpd.objects.filter(
+                id__in=list(
+                    CountAggregateValueSpd.objects.values_list("pk", flat=True)[
+                        :chunk_size
+                    ]
+                )
+            )
             for i in qs:
                 count_details.append(
                     CountDetail(
@@ -165,25 +203,28 @@ def migrate_data(apps, schema_editor):
             qs.delete()
             num += chunk_size
             now = datetime.datetime.now()
-            logger.info(f'{now} Table SPD (5/5), migrated {num} rows, total elapsed time {now - start_time}')
+            logger.info(
+                f"{now} Table SPD (5/5), migrated {num} rows, total elapsed time {now - start_time}"
+            )
 
     now = datetime.datetime.now()
-    logger.info(f'{now} All tables migrated! Total elapsed time {now - start_time}')
+    logger.info(f"{now} All tables migrated! Total elapsed time {now - start_time}")
+
 
 class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
-        ('comptages', '0021_alter_count_tjm'),
+        ("comptages", "0021_alter_count_tjm"),
     ]
 
     operations = [
         migrations.RunPython(migrate_data),
-        migrations.DeleteModel(name='CountAggregateValueCls'),
-        migrations.DeleteModel(name='CountAggregateValueCnt'),
-        migrations.DeleteModel(name='CountAggregateValueDrn'),
-        migrations.DeleteModel(name='CountAggregateValueLen'),
-        migrations.DeleteModel(name='CountAggregateValueSpd'),
-        migrations.DeleteModel(name='CountAggregateValueSds'),
-        migrations.DeleteModel(name='CountAggregate'),
+        migrations.DeleteModel(name="CountAggregateValueCls"),
+        migrations.DeleteModel(name="CountAggregateValueCnt"),
+        migrations.DeleteModel(name="CountAggregateValueDrn"),
+        migrations.DeleteModel(name="CountAggregateValueLen"),
+        migrations.DeleteModel(name="CountAggregateValueSpd"),
+        migrations.DeleteModel(name="CountAggregateValueSds"),
+        migrations.DeleteModel(name="CountAggregate"),
     ]

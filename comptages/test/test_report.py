@@ -9,7 +9,6 @@ from comptages.core import report, importer, statistics
 
 
 class ImportTest(TransactionTestCase):
-
     @classmethod
     def setUpClass(cls):
         pass
@@ -42,11 +41,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(
-            utils.test_data_path("00056520.V01"),
-            count)
-        importer.import_file(
-            utils.test_data_path("00056520.V02"),
-            count)
+        importer.import_file(utils.test_data_path("00056520.V01"), count)
+        importer.import_file(utils.test_data_path("00056520.V02"), count)
 
         report.prepare_reports("/tmp/", count)

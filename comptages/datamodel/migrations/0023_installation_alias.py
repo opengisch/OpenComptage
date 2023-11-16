@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('comptages', '0022_auto_20211217_0624'),
+        ("comptages", "0022_auto_20211217_0624"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='installation',
-            name='alias',
+            model_name="installation",
+            name="alias",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
     ]
