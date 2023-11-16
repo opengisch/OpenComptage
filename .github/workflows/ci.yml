@@ -22,6 +22,7 @@ jobs:
           cache: "pip"
       - name: Setup, build, install
         run: |
+          pip install build
           python -m build .
           pip install ./dist/comptages-0.1-py3-none-any.whl[check]
       - name: Packageq
