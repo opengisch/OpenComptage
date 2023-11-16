@@ -1,4 +1,4 @@
-name: Docker
+name: Test application
 
 concurrency:
   group: ${{ github.ref }}
@@ -11,15 +11,42 @@ on:
   pull_request:
 
 jobs:
+  build_package:
+    name: Check and lint code
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - name: Setup, build, install
+        with:
+          python-version: "3.10"
+          cache: "pip"
+        run: |
+          python -m build .
+          pip install ./dist/comptages-0.1-py3-none-any.whl qgis-plugin-ci
+      - name: Package
+        run: qgis-plugin-ci package 'test'
+  lint_check:
+    name: Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - name: Setup
+        with:
+          python-version: "3.10"
+          cache: "pip"
+        run: pip install black pyright
+      - name: Lint
+        run: black .
+      - name: Check
+        run: pyright --project pyproject.toml
   test:
     name: Test
     runs-on: ubuntu-22.04
-
     steps:
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Start docker stack
         run: docker compose up db -d
-
       - name: Running tests
         run: docker compose run qgis_tester
