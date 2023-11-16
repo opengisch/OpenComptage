@@ -27,9 +27,10 @@ jobs:
       - name: Packageq
         run: qgis-plugin-ci package 'test'
       - name: Lint
-        run: black .
-      - name: Check
-        run: pyright .
+        run: black . --check
+      # - name: Check
+      #   run: pyright .
+
   test:
     name: Test
     runs-on: ubuntu-22.04

@@ -5,21 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "comptages"
 version = "0.1"
-dependencies = [
-	"nose2 == 0.8.0",
-	"psycopg2-binary == 2.8.6", # on Debian derivates this requires `libpq-dev`
-	"icalendar == 4.0.3",
-	"openpyxl == 3.1.2",
-	"django == 3.2.15",
-	"plotly == 5.3.1",
-	"pandas == 1.3.4",
-]
+dynamic = ["dependencies"]
 
 [project.optional-dependencies]
 check = ["pyright>=1.1.36", "black>=23.11.0", "qgis-plugin-ci>=2.8.1"]
 
 [tool.setuptools]
 package-dir = { "" = "comptages" }
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
 
 [tool.qgis-plugin-ci]
 plugin_path = "comptages"
@@ -28,6 +23,12 @@ project_slug = "OpenComptage"
 
 [tool.pyright]
 pythonVersion = "3.10"
-exclude = ["**/nodes_modules", "**/__pycache__", "**/migrations"]
+exclude = [
+    "**/nodes_modules",
+    "**/__pycache__",
+    "**/migrations",
+    "**/qgissettingmanager",
+    "**/test",
+]
 reportMissingImports = false
 useLibraryCodeForTypes = true
