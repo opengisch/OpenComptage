@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-check = ["pyright", "black", "qgis-plug-ci"]
+check = ["pyright>=1.1.36", "black>=23.11.0", "qgis-plugin-ci>=2.8.1"]
 
 [tool.setuptools]
 package-dir = { "" = "comptages" }
