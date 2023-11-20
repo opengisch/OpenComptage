@@ -69,7 +69,7 @@ def connect_to_db():
 
 
 def count_valid_days(section_id: str, year: int) -> int:
-    """Predicates the this section, that year, has 100 or more valid days across all counts."""
+    """Count valid days across all counts for `section` and `year`."""
     days = set()
     counts = models.Count.objects.filter(
         id_installation__lane__id_section=section_id,
