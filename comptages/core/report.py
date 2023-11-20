@@ -104,7 +104,9 @@ def _mondays_of_count(count):
         yield monday
 
 
-def _data_count(count: models.Count, section: models.Section, monday, workbook: Workbook):
+def _data_count(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_count"]
     ws["B3"] = (
         "Poste de comptage : {}  Axe : {}:{}{}  " "PR {} + {} m à PR {} + {} m"
@@ -151,7 +153,9 @@ def _data_count(count: models.Count, section: models.Section, monday, workbook: 
         ws["B14"] = lanes[1].direction_desc
 
 
-def _data_count_yearly(count: models.Count, section: models.Section, year: int, workbook: Workbook):
+def _data_count_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_count"]
     ws["B3"] = (
         "Poste de comptage : {}  Axe : {}:{}{}  " "PR {} + {} m à PR {} + {} m"
@@ -294,7 +298,9 @@ def _data_day(count: models.Count, section: models.Section, monday, workbook: Wo
         ws.cell(row=row_offset + 1, column=col_offset + i, value=light.get(False, 0))
 
 
-def _data_day_yearly(count: models.Count, section: models.Section, year: int, workbook: Workbook):
+def _data_day_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_day"]
 
     # Total
@@ -338,7 +344,7 @@ def _data_day_yearly(count: models.Count, section: models.Section, year: int, wo
     row_offset = 35
     col_offset = 2
 
-    df = statistics.get_time_data_yearly(year, section: models.Section, direction=1)
+    df = statistics.get_time_data_yearly(year, section, direction=1)
 
     for i in range(7):
         day_df = df[df["date"] == i]
@@ -368,7 +374,7 @@ def _data_day_yearly(count: models.Count, section: models.Section, year: int, wo
     row_offset = 66
     col_offset = 2
 
-    df = statistics.get_time_data_yearly(year, section: models.Section, direction=2)
+    df = statistics.get_time_data_yearly(year, section, direction=2)
 
     for i in range(7):
         day_df = df[df["date"] == i]
@@ -395,7 +401,9 @@ def _data_day_yearly(count: models.Count, section: models.Section, year: int, wo
         )
 
 
-def _data_month_yearly(count: models.Count, section: models.Section, year: int, workbook: Workbook):
+def _data_month_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_month"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -409,7 +417,9 @@ def _data_month_yearly(count: models.Count, section: models.Section, year: int, 
         ws.cell(row=row_offset, column=col_offset + col.Index, value=col.tm)
 
 
-def _data_speed(count: models.Count, section: models.Section, monday, workbook: Workbook):
+def _data_speed(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_speed"]
 
     speed_ranges = [
@@ -486,7 +496,7 @@ def _data_speed(count: models.Count, section: models.Section, monday, workbook: 
         col_offset = 19
 
         df = statistics.get_average_speed_by_hour(
-            count, section: models.Section, direction=1, start=monday, end=monday + timedelta(days=7)
+            count, section, direction=1, start=monday, end=monday + timedelta(days=7)
         )
         for row in df.itertuples():
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
@@ -531,13 +541,15 @@ def _data_speed(count: models.Count, section: models.Section, monday, workbook: 
         col_offset = 19
 
         df = statistics.get_average_speed_by_hour(
-            count, section: models.Section, direction=2, start=monday, end=monday + timedelta(days=7)
+            count, section, direction=2, start=monday, end=monday + timedelta(days=7)
         )
         for row in df.itertuples():
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
 
-def _data_speed_yearly(count: models.Count, section: models.Section, year: int, workbook: Workbook):
+def _data_speed_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_speed"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -599,7 +611,7 @@ def _data_speed_yearly(count: models.Count, section: models.Section, year: int, 
         col_offset = 16
         for i, v in enumerate(characteristic_speeds):
             df = statistics.get_characteristic_speed_by_hour(
-                None, section: models.Section, direction=1, start=start, end=end, v=v
+                None, section, direction=1, start=start, end=end, v=v
             )
             for row in df.itertuples():
                 ws.cell(
@@ -643,7 +655,7 @@ def _data_speed_yearly(count: models.Count, section: models.Section, year: int, 
         col_offset = 16
         for i, v in enumerate(characteristic_speeds):
             df = statistics.get_characteristic_speed_by_hour(
-                count, section: models.Section, direction=2, start=start, end=end, v=v
+                count, section, direction=2, start=start, end=end, v=v
             )
             for row in df.itertuples():
                 ws.cell(
@@ -665,7 +677,9 @@ def _data_speed_yearly(count: models.Count, section: models.Section, year: int, 
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
 
-def _data_category(count: models.Count, section: models.Section, monday, workbook: Workbook):
+def _data_category(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_category"]
 
     categories = (
@@ -719,7 +733,9 @@ def _data_category(count: models.Count, section: models.Section, monday, workboo
             ws.cell(row=row_num, column=col_num, value=value)
 
 
-def _data_category_yearly(count: models.Count, section: models.Section, year: int, workbook: Workbook):
+def _data_category_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_category"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
