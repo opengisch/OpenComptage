@@ -1,7 +1,7 @@
 import os
 
 from datetime import timedelta, datetime
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 
 from comptages.datamodel import models
 from comptages.core import statistics
@@ -28,6 +28,8 @@ def prepare_reports(
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
+        assert year
+        assert section_id
         _prepare_yearly_report(
             file_path, year, template_path, section_id, callback_progress
         )
@@ -62,7 +64,7 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
 
 
 def _prepare_yearly_report(
-    file_path, year, template_path, section_id, callback_progress
+    file_path: str, year: int, template_path: str, section_id: str, callback_progress
 ):
     section = models.Section.objects.get(id__contains=section_id)
     # Get first count to be used as example
@@ -102,7 +104,9 @@ def _mondays_of_count(count):
         yield monday
 
 
-def _data_count(count, section, monday, workbook):
+def _data_count(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_count"]
     ws["B3"] = (
         "Poste de comptage : {}  Axe : {}:{}{}  " "PR {} + {} m à PR {} + {} m"
@@ -149,7 +153,9 @@ def _data_count(count, section, monday, workbook):
         ws["B14"] = lanes[1].direction_desc
 
 
-def _data_count_yearly(count, section, year, workbook):
+def _data_count_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_count"]
     ws["B3"] = (
         "Poste de comptage : {}  Axe : {}:{}{}  " "PR {} + {} m à PR {} + {} m"
@@ -190,7 +196,7 @@ def _data_count_yearly(count, section, year, workbook):
         ws["B14"] = lanes[1].direction_desc
 
 
-def _data_day(count, section, monday, workbook):
+def _data_day(count: models.Count, section: models.Section, monday, workbook: Workbook):
     ws = workbook["Data_day"]
 
     # Total
@@ -292,7 +298,9 @@ def _data_day(count, section, monday, workbook):
         ws.cell(row=row_offset + 1, column=col_offset + i, value=light.get(False, 0))
 
 
-def _data_day_yearly(count, section, year, workbook):
+def _data_day_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_day"]
 
     # Total
@@ -393,7 +401,9 @@ def _data_day_yearly(count, section, year, workbook):
         )
 
 
-def _data_month_yearly(count, section, year, workbook):
+def _data_month_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_month"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -407,7 +417,9 @@ def _data_month_yearly(count, section, year, workbook):
         ws.cell(row=row_offset, column=col_offset + col.Index, value=col.tm)
 
 
-def _data_speed(count, section, monday, workbook):
+def _data_speed(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_speed"]
 
     speed_ranges = [
@@ -535,7 +547,9 @@ def _data_speed(count, section, monday, workbook):
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
 
-def _data_speed_yearly(count, section, year, workbook):
+def _data_speed_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_speed"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -663,7 +677,9 @@ def _data_speed_yearly(count, section, year, workbook):
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
 
-def _data_category(count, section, monday, workbook):
+def _data_category(
+    count: models.Count, section: models.Section, monday, workbook: Workbook
+):
     ws = workbook["Data_category"]
 
     categories = (
@@ -717,7 +733,9 @@ def _data_category(count, section, monday, workbook):
             ws.cell(row=row_num, column=col_num, value=value)
 
 
-def _data_category_yearly(count, section, year, workbook):
+def _data_category_yearly(
+    count: models.Count, section: models.Section, year: int, workbook: Workbook
+):
     ws = workbook["Data_category"]
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -773,7 +791,7 @@ def _data_category_yearly(count, section, year, workbook):
             ws.cell(row=row_num, column=col_num, value=value)
 
 
-def _remove_useless_sheets(count, workbook):
+def _remove_useless_sheets(count: models.Count, workbook: Workbook):
     return
     class_name = _t_cl(count.id_class.name)
 
@@ -821,7 +839,7 @@ def _t_cl(class_name):
     return class_name
 
 
-def _t_cat(count, cat_id):
+def _t_cat(count: models.Count, cat_id):
     """Convert categories of a class into the ones of another class e.g.
     FHWA13 should be converted in SWISS7 in order to fill the
     report cells

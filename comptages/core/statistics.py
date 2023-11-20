@@ -470,7 +470,7 @@ def get_special_periods(first_day, last_day):
     return qs
 
 
-def get_month_data(section, start, end):
+def get_month_data(section: models.Section, start, end):
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section, timestamp__gte=start, timestamp__lt=end
     )
