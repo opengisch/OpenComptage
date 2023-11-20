@@ -20,7 +20,7 @@ class SelectSectionsToReport(QDialog):
         super().__init__(*args, **kwargs)
 
         self.setMinimumWidth(550)
-        self.setWindowTitle("Please select the counts...")
+        self.setWindowTitle("Please select the sections to include in the report...")
         self.layout = QVBoxLayout()
 
         # Parent layout
