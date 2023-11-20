@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import Optional
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 
@@ -8,7 +9,13 @@ from comptages.core import report
 
 class ReportTask(QgsTask):
     def __init__(
-        self, file_path, count=None, year=None, template="default", section_id=None
+        self,
+        file_path,
+        count=None,
+        year=None,
+        template="default",
+        section_id=None,
+        only_sections_ids: Optional[list[str]] = None,
     ):
         self.basename = os.path.basename(file_path)
         super().__init__("Génération du rapport: {}".format(self.basename))
@@ -18,6 +25,7 @@ class ReportTask(QgsTask):
         self.template = template
         self.year = year
         self.section_id = section_id
+        self.only_sections_ids = only_sections_ids
 
     def run(self):
         try:
@@ -27,6 +35,7 @@ class ReportTask(QgsTask):
                 self.year,
                 self.template,
                 self.section_id,
+                self.only_sections_ids,
                 callback_progress=self.setProgress,
             )
             return True

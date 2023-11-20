@@ -1,6 +1,7 @@
 import os
 
 from datetime import timedelta, datetime
+from typing import Optional
 from openpyxl import load_workbook
 
 from comptages.datamodel import models
@@ -13,10 +14,11 @@ def simple_print_callback(progress):
 
 def prepare_reports(
     file_path,
-    count=None,
+    count: Optional[models.Count] = None,
     year=None,
     template="default",
     section_id=None,
+    only_sections_ids: Optional[list[str]] = None,
     callback_progress=simple_print_callback,
 ):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +26,11 @@ def prepare_reports(
     if template == "default":
         template_name = "template.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
-        _prepare_default_reports(file_path, count, template_path, callback_progress)
+        assert count
+        assert only_sections_ids is not None
+        _prepare_default_reports(
+            file_path, count, template_path, only_sections_ids, callback_progress
+        )
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
@@ -35,10 +41,16 @@ def prepare_reports(
         pass
 
 
-def _prepare_default_reports(file_path, count, template_path, callback_progress):
+def _prepare_default_reports(
+    file_path: str,
+    count: models.Count,
+    template_path: str,
+    only_sections_ids: list[str],
+    callback_progress,
+):
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(
-        lane__id_installation__count=count
+        lane__id_installation__count=count, lane__id__in=only_sections_ids
     ).distinct()
 
     mondays_qty = len(list(_mondays_of_count(count)))

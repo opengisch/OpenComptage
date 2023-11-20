@@ -29,6 +29,7 @@ from comptages.plan.plan_creator import PlanCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
+from comptages.ui.select_reports import SelectSectionsToReport
 from comptages.core import definitions
 
 
@@ -515,34 +516,46 @@ class Comptages(QObject):
             return
 
         file_dialog = QFileDialog()
-        title = "Exporter un rapport"
-        path = self.settings.value("report_export_directory")
-        file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
 
-        if not file_path:
+        sections_ids = (
+            models.Section.objects.filter(lane__id_installation__count=count)
+            .distinct()
+            .values_list("pk", flat=True)
+        )
+        report_selection_dialog = SelectSectionsToReport(sections_ids=sections_ids)
+
+        if report_selection_dialog.exec_():
+            only_sections_ids = report_selection_dialog.get_inputs()
+            title = "Exporter un rapport"
+
+            path = self.settings.value("report_export_directory")
+            file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
+
+            if not file_path:
+                QgsMessageLog.logMessage(
+                    "{} - Generate report action ended: No file_path given".format(
+                        datetime.now()
+                    ),
+                    "Comptages",
+                    Qgis.Info,
+                )
+                return
             QgsMessageLog.logMessage(
-                "{} - Generate report action ended: No file_path given".format(
-                    datetime.now()
+                "{} - Generate report action can really begin now for count {} with file_path: {}".format(
+                    datetime.now(), count.id, file_path
                 ),
                 "Comptages",
                 Qgis.Info,
             )
-            return
-        QgsMessageLog.logMessage(
-            "{} - Generate report action can really begin now for count {} with file_path: {}".format(
-                datetime.now(), count.id, file_path
-            ),
-            "Comptages",
-            Qgis.Info,
-        )
 
-        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "report"))
-        self.tm.addTask(
-            report_task.ReportTask(
-                file_path=file_path,
-                count=count,
+            self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "report"))
+            self.tm.addTask(
+                report_task.ReportTask(
+                    file_path=file_path,
+                    count=count,
+                    only_sections_ids=only_sections_ids,
+                )
             )
-        )
 
     def do_export_plan_action(self, count_id):
         count = models.Count.objects.get(id=count_id)
