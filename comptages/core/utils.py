@@ -10,6 +10,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
 
 from comptages.core.settings import Settings
+from comptages.datamodel import models
 
 
 def get_ui_class(ui_file):
@@ -65,3 +66,19 @@ def connect_to_db():
     db.open()
 
     return db
+
+
+def count_valid_days(section_id: str, year: int) -> int:
+    """Predicates the this section, that year, has 100 or more valid days across all counts."""
+    days = set()
+    counts = models.Count.objects.filter(
+        id_installation__lane__id_section=section_id,
+        start_process_date__year=year,
+    )
+    for count in counts:
+        details = models.CountDetail.objects.filter(id_count=count)
+        for detail in details:
+            date = detail.timestamp.date()
+            days.add(date)
+
+    return len(days)

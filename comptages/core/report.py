@@ -66,21 +66,13 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
 def _prepare_yearly_report(
     file_path: str, year: int, template_path: str, section_id: str, callback_progress
 ):
-    lower_bound = 100
     section = models.Section.objects.get(id__contains=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=section, start_process_date__year=year
     )
-    count_nb = count_qs.count()
-
-    if count_nb < lower_bound:
-        raise ValueError(
-            f"""
-            Only {count_nb} Count objects were found! Please add {lower_bound - count_nb} objects before retrying. 
-            No report will be generated until then.
-        """
-        )
+    if not count_qs:
+        return
     count = count_qs[0]
 
     workbook = load_workbook(filename=template_path)
