@@ -112,7 +112,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.buttonValidate.hide()
             tab.buttonRefuse.hide()
 
-        sensor_type: models.SensorType = count.id_sensor_type
+        sensor_type = count.id_sensor_type
         lanes = models.Lane.objects.filter(id_section=section)
         directions = (
             lanes.values("direction").distinct().values_list("direction", flat=True)
