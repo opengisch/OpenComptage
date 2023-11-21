@@ -15,7 +15,7 @@ class ReportTask(QgsTask):
         year=None,
         template="default",
         section_id=None,
-        only_sections_ids: Optional[list[str]] = None,
+        selected_sections_dates: Optional[dict[str, list[str]]] = None,
     ):
         self.basename = os.path.basename(file_path)
         super().__init__("Génération du rapport: {}".format(self.basename))
@@ -25,7 +25,7 @@ class ReportTask(QgsTask):
         self.template = template
         self.year = year
         self.section_id = section_id
-        self.only_sections_ids = only_sections_ids
+        self.only_sections_ids = selected_sections_dates
 
     def run(self):
         try:

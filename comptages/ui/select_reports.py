@@ -4,7 +4,6 @@ from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
-    QFrame,
     QLabel,
     QRadioButton,
     QVBoxLayout,
@@ -14,10 +13,12 @@ from qgis.PyQt.QtWidgets import (
 
 
 class SelectSectionsToReport(QDialog):
+    fmt = "%d-%m-%Y"
+
     def __init__(self, *args, **kwargs):
         sections_ids: list[str] = kwargs.pop("sections_ids")
         mondays: list[datetime] = kwargs.pop("mondays")
-        mondays_as_datestr = [d.strftime("%d-%m-%Y") for d in mondays]
+        mondays_as_datestr = [d.strftime(self.fmt) for d in mondays]
 
         super().__init__(*args, **kwargs)
 
@@ -139,7 +140,7 @@ class SelectSectionsToReport(QDialog):
         builder = {}
         for section_id, item in self.items_check_boxes.items():
             builder[section_id] = [
-                monday_datestr
+                datetime.strptime(monday_datestr, self.fmt)
                 for monday_datestr, subcheckbox in item["subcheckboxes"].items()
                 if subcheckbox.isChecked()
             ]

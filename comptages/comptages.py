@@ -527,7 +527,7 @@ class Comptages(QObject):
         )
 
         if report_selection_dialog.exec_():
-            only_sections_ids = report_selection_dialog.get_inputs()
+            selected_sections_dates = report_selection_dialog.get_inputs()
             title = "Exporter un rapport"
 
             path = self.settings.value("report_export_directory")
@@ -555,7 +555,7 @@ class Comptages(QObject):
                 report_task.ReportTask(
                     file_path=file_path,
                     count=count,
-                    only_sections_ids=only_sections_ids,
+                    selected_sections_dates=selected_sections_dates,
                 )
             )
 

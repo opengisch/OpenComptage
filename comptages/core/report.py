@@ -17,7 +17,7 @@ def prepare_reports(
     year=None,
     template="default",
     section_id=None,
-    only_sections_ids: Optional[list[str]] = None,
+    sections_days: Optional[dict[str, list[str]]] = None,
     callback_progress=simple_print_callback,
 ):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -27,7 +27,7 @@ def prepare_reports(
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert count
         _prepare_default_reports(
-            file_path, count, template_path, callback_progress, only_sections_ids
+            file_path, count, template_path, callback_progress, sections_days
         )
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
@@ -46,18 +46,23 @@ def _prepare_default_reports(
     count: models.Count,
     template_path: str,
     callback_progress,
-    only_sections_ids: Optional[list[str]] = None,
+    sections_days: Optional[dict[str, list[str]]] = None,
 ):
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(lane__id_installation__count=count)
 
-    if only_sections_ids:
-        sections = sections.filter(lane__id__in=only_sections_ids)
+    # Filter out sections based on parameter
+    if sections_days:
+        sections = sections.filter(lane__id__in=sections_days.keys())
 
     mondays_qty = len(list(_mondays_of_count(count)))
     mondays = _mondays_of_count(count)
     for section in sections.distinct():
         for i, monday in enumerate(mondays):
+            # Filter out date based on parameter
+            if sections_days and monday not in sections_days[section.id]:
+                continue
+
             progress = int(100 / mondays_qty * (i - 1))
             callback_progress(progress)
 
@@ -70,7 +75,6 @@ def _prepare_default_reports(
             output = os.path.join(
                 file_path, "{}_{}_r.xlsx".format(section.id, monday.strftime("%Y%m%d"))
             )
-
             workbook.save(filename=output)
 
 
