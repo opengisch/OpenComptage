@@ -516,13 +516,15 @@ class Comptages(QObject):
             return
 
         file_dialog = QFileDialog()
-
+        mondays: list[datetime] = list(report._mondays_of_count(count))
         sections_ids = (
             models.Section.objects.filter(lane__id_installation__count=count)
             .distinct()
-            .values_list("pk", flat=True)
+            .values_list("id", flat=True)
         )
-        report_selection_dialog = SelectSectionsToReport(sections_ids=sections_ids)
+        report_selection_dialog = SelectSectionsToReport(
+            sections_ids=list(sections_ids), mondays=mondays
+        )
 
         if report_selection_dialog.exec_():
             only_sections_ids = report_selection_dialog.get_inputs()

@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta, datetime
-from typing import Optional
+from typing import Generator, Optional
 from openpyxl import load_workbook, Workbook
 
 from comptages.datamodel import models
@@ -26,7 +26,6 @@ def prepare_reports(
         template_name = "template.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert count
-        assert only_sections_ids is not None
         _prepare_default_reports(
             file_path, count, template_path, only_sections_ids, callback_progress
         )
@@ -46,17 +45,18 @@ def _prepare_default_reports(
     file_path: str,
     count: models.Count,
     template_path: str,
-    only_sections_ids: list[str],
     callback_progress,
+    only_sections_ids: Optional[list[str]] = None,
 ):
     # We do by section and not by count because of special cases.
-    sections = models.Section.objects.filter(
-        lane__id_installation__count=count, lane__id__in=only_sections_ids
-    ).distinct()
+    sections = models.Section.objects.filter(lane__id_installation__count=count)
+
+    if only_sections_ids:
+        sections = sections.filter(lane__id__in=only_sections_ids)
 
     mondays_qty = len(list(_mondays_of_count(count)))
     mondays = _mondays_of_count(count)
-    for section in sections:
+    for section in sections.distinct():
         for i, monday in enumerate(mondays):
             progress = int(100 / mondays_qty * (i - 1))
             callback_progress(progress)
@@ -98,7 +98,7 @@ def _prepare_yearly_report(
     workbook.save(filename=output)
 
 
-def _mondays_of_count(count):
+def _mondays_of_count(count) -> Generator[datetime, None, None]:
     """Generator that return the Mondays of the count"""
 
     start = count.start_process_date

@@ -1,11 +1,11 @@
+from datetime import datetime
+from typing import Optional
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
-    QComboBox,
     QDialog,
     QDialogButtonBox,
     QLabel,
-    QLineEdit,
-    QPlainTextEdit,
     QRadioButton,
     QVBoxLayout,
     QScrollArea,
@@ -13,14 +13,25 @@ from qgis.PyQt.QtWidgets import (
 )
 
 
+def log(msg: str):
+    QgsMessageLog.logMessage(msg, level=Qgis.Info)
+
+
 class SelectSectionsToReport(QDialog):
     def __init__(self, *args, **kwargs):
-        self.items = kwargs.pop("sections_ids")
+        sections_ids: list[str] = kwargs.pop("sections_ids")
+        sections_ids.append("0099999")
+        log(str(sections_ids))
+        mondays: list[datetime] = kwargs.pop("mondays")
+        mondays_as_datestr = [d.strftime("%d-%m-%Y") for d in mondays]
 
         super().__init__(*args, **kwargs)
 
+        self.max_selected = len(sections_ids) * len(mondays)
         self.setMinimumWidth(550)
-        self.setWindowTitle("Please select the sections to include in the report...")
+        self.setWindowTitle(
+            "Please select the sections and dates to include in the report..."
+        )
         self.layout = QVBoxLayout()
 
         # Parent layout
@@ -35,7 +46,7 @@ class SelectSectionsToReport(QDialog):
         # Radio: all
         self.all_selector = QRadioButton()
         self.all_selector.setChecked(True)
-        self.all_selector.toggled.connect(lambda: self.select("all"))
+        self.all_selector.toggled.connect(lambda: self.select_all_none("all"))
         self.all_selector_label = QLabel()
         self.all_selector_label.setText("Select all")
         self.all_selector_label.setBuddy(self.all_selector)
@@ -44,7 +55,7 @@ class SelectSectionsToReport(QDialog):
 
         # Radio: none
         self.none_selector = QRadioButton()
-        self.none_selector.toggled.connect(lambda: self.select("none"))
+        self.none_selector.toggled.connect(lambda: self.select_all_none("none"))
         self.none_selector_label = QLabel()
         self.none_selector_label.setText("Unselect all")
         self.none_selector_label.setBuddy(self.none_selector)
@@ -58,15 +69,33 @@ class SelectSectionsToReport(QDialog):
 
         # Checkboxes: items
         self.items_check_boxes = {}
-        for item in self.items:
-            check_box = QCheckBox(item)
-            check_box.setChecked(True)
-            check_box.clicked.connect(self.update_selected)
+        for item in sections_ids:
+            item_checkbox = QCheckBox(item)
+            item_checkbox.setChecked(True)
             label = QLabel()
-            label.setBuddy(check_box)
+            label.setBuddy(item_checkbox)
             self.vbox.addWidget(label)
-            self.vbox.addWidget(check_box)
-            self.items_check_boxes[item] = check_box
+            self.vbox.addWidget(item_checkbox)
+            self.items_check_boxes[item] = {
+                "checkbox": item_checkbox,
+                "subcheckboxes": {},
+            }
+            self.items_check_boxes[item]["checkbox"].clicked.connect(
+                lambda: self.update_children_of(item)
+            )
+
+            # Checkboxes: subitems
+            for subitem in mondays_as_datestr:
+                subitem_checkbox = QCheckBox(subitem)
+                subitem_checkbox.setChecked(True)
+                subitem_checkbox.clicked.connect(self.update_selected_count)
+                label = QLabel()
+                label.setBuddy(subitem_checkbox)
+                self.vbox.addWidget(label)
+                self.vbox.addWidget(subitem_checkbox)
+                self.items_check_boxes[item]["subcheckboxes"][
+                    subitem
+                ] = subitem_checkbox
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
@@ -75,7 +104,7 @@ class SelectSectionsToReport(QDialog):
 
         # Selected
         self.selected = QLabel()
-        selected_text = f"Selected: {self.count_selected()} out of {len(self.items)}"
+        selected_text = f"Selected: {self.count_selected()} out of {self.max_selected}"
         self.selected.setText(selected_text)
         self.layout.addWidget(self.selected)
 
@@ -83,26 +112,45 @@ class SelectSectionsToReport(QDialog):
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-    def update_selected(self):
+    def update_selected_count(self):
         self.selected.setText(
-            f"Selected: {self.count_selected()} out of {len(self.items)}"
+            f"Selected: {self.count_selected()} out of {self.max_selected}"
         )
 
     def count_selected(self) -> int:
-        return len(
-            [
-                checkbox
-                for checkbox in self.items_check_boxes.values()
-                if checkbox.isChecked()
-            ]
+        count = 0
+        for item in self.items_check_boxes.values():
+            if item["checkbox"].isChecked():
+                for subcheckbox in item["subcheckboxes"].values():
+                    if subcheckbox.isChecked():
+                        count += 1
+        return count
+
+    def update_children_of(self, item: str):
+        log(f"Update_selected received: {item}")
+        new_state = self.items_check_boxes[item]["checkbox"].isChecked()
+        log(f"Parent {item} to {new_state}")
+        log(
+            f"Children {str(self.items_check_boxes[item]['subcheckboxes'].keys())} to {new_state}"
         )
+        for subcheckbox in self.items_check_boxes[item]["subcheckboxes"].values():
+            subcheckbox.setChecked(new_state)
+        self.update_selected_count()
 
-    def select(self, desired: str):
-        for check_box in self.items_check_boxes.values():
-            check_box.setChecked(desired == "all")
-        self.update_selected()
+    def select_all_none(self, desired: str):
+        new_state = desired == "all"
+        for item in self.items_check_boxes.values():
+            item["checkbox"].setChecked(new_state)
+            for subcheckbox in item["subcheckboxes"].values():
+                subcheckbox.setChecked(new_state)
+        self.update_selected_count()
 
-    def get_inputs(self) -> list[str]:
-        return [
-            item.text() for item in self.items_check_boxes.values() if item.isChecked()
-        ]
+    def get_inputs(self) -> dict[str, list[str]]:
+        builder = {}
+        for section_id, item in self.items_check_boxes.items():
+            builder[section_id] = [
+                monday_datestr
+                for monday_datestr, subcheckbox in item["subcheckboxes"].items()
+                if subcheckbox.isChecked()
+            ]
+        return builder
