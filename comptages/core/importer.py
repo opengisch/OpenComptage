@@ -13,9 +13,7 @@ def simple_print_callback(progress):
     print(f"Importing... {progress}%")
 
 
-def import_file(
-    file_path: str, count, callback_progress=simple_print_callback
-):
+def import_file(file_path: str, count, callback_progress=simple_print_callback):
     file_format = get_file_format(file_path)
     file_header = _parse_file_header(file_path)
 
