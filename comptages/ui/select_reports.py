@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import partial
 from typing import Optional
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import (
@@ -21,7 +22,6 @@ class SelectSectionsToReport(QDialog):
     def __init__(self, *args, **kwargs):
         sections_ids: list[str] = kwargs.pop("sections_ids")
         sections_ids.append("0099999")
-        log(str(sections_ids))
         mondays: list[datetime] = kwargs.pop("mondays")
         mondays_as_datestr = [d.strftime("%d-%m-%Y") for d in mondays]
 
@@ -70,8 +70,9 @@ class SelectSectionsToReport(QDialog):
         # Checkboxes: items
         self.items_check_boxes = {}
         for item in sections_ids:
-            item_checkbox = QCheckBox(item)
+            item_checkbox = QCheckBox(f"section {item}")
             item_checkbox.setChecked(True)
+            item_checkbox.clicked.connect(partial(self.update_children_of, item))
             label = QLabel()
             label.setBuddy(item_checkbox)
             self.vbox.addWidget(label)
@@ -80,9 +81,6 @@ class SelectSectionsToReport(QDialog):
                 "checkbox": item_checkbox,
                 "subcheckboxes": {},
             }
-            self.items_check_boxes[item]["checkbox"].clicked.connect(
-                lambda: self.update_children_of(item)
-            )
 
             # Checkboxes: subitems
             for subitem in mondays_as_datestr:
@@ -96,6 +94,8 @@ class SelectSectionsToReport(QDialog):
                 self.items_check_boxes[item]["subcheckboxes"][
                     subitem
                 ] = subitem_checkbox
+
+        log(str(self.items_check_boxes))
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
@@ -129,10 +129,6 @@ class SelectSectionsToReport(QDialog):
     def update_children_of(self, item: str):
         log(f"Update_selected received: {item}")
         new_state = self.items_check_boxes[item]["checkbox"].isChecked()
-        log(f"Parent {item} to {new_state}")
-        log(
-            f"Children {str(self.items_check_boxes[item]['subcheckboxes'].keys())} to {new_state}"
-        )
         for subcheckbox in self.items_check_boxes[item]["subcheckboxes"].values():
             subcheckbox.setChecked(new_state)
         self.update_selected_count()
