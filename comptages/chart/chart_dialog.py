@@ -24,7 +24,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.count = None
         self.sensor = None
 
-    def set_attributes(self, count: models.Count):
+    def set_attributes(self, count):
         self.count = count
 
         self.setWindowTitle(
@@ -63,7 +63,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         self._create_tabs(count)
 
-    def _create_tabs(self, count: models.Count):
+    def _create_tabs(self, count):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
@@ -81,7 +81,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.tabWidget.addTab(tab, section.id)
             self._populate_tab(tab, section, count)
 
-    def _populate_tab(self, tab, section: models.Section, count: models.Count):
+    def _populate_tab(self, tab, section, count):
         # Check if there is data to be validated
         approval_process = False
         if models.CountDetail.objects.filter(

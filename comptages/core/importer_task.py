@@ -10,7 +10,7 @@ from comptages.core import importer
 
 
 class ImporterTask(QgsTask):
-    def __init__(self, file_path: str, count: models.Count):
+    def __init__(self, file_path: str, count):
         self.basename = os.path.basename(file_path)
         super().__init__("Importation fichier {}".format(self.basename))
 

@@ -14,7 +14,7 @@ def simple_print_callback(progress):
 
 
 def import_file(
-    file_path: str, count: models.Count, callback_progress=simple_print_callback
+    file_path: str, count, callback_progress=simple_print_callback
 ):
     file_format = get_file_format(file_path)
     file_header = _parse_file_header(file_path)
@@ -46,7 +46,7 @@ def import_file(
 
 def _parse_and_write(
     file_path: str,
-    count: models.Count,
+    count: count,
     line_parser: Callable,
     callback_progress,
     from_aggregate: bool = False,
@@ -360,7 +360,7 @@ def _parse_data_header(file_path: str) -> List:
     return data_header
 
 
-def _populate_lane_dict(count: models.Count) -> Dict[int, int]:
+def _populate_lane_dict(count) -> Dict[int, int]:
     # e.g. lanes = {1: 435, 2: 436}
 
     lanes = models.Lane.objects.filter(id_installation__count=count).order_by("number")

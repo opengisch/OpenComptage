@@ -11,8 +11,8 @@ from comptages.datamodel import models
 
 
 def get_time_data(
-    count: models.Count,
-    section: models.Section,
+    count,
+    section,
     lane=None,
     direction=None,
     start=None,
@@ -422,9 +422,9 @@ def get_average_speed_by_hour(
 
 
 def get_category_data_by_hour(
-    count: models.Count,
-    section: models.Section,
-    category: models.Category,
+    count,
+    section,
+    category,
     lane=None,
     direction=None,
     start=None,
