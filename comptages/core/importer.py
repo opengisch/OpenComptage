@@ -44,7 +44,7 @@ def import_file(file_path: str, count, callback_progress=simple_print_callback):
 
 def _parse_and_write(
     file_path: str,
-    count: count,
+    count,
     line_parser: Callable,
     callback_progress,
     from_aggregate: bool = False,
