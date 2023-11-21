@@ -27,7 +27,6 @@ class SelectSectionsToReport(QDialog):
         self.setWindowTitle(
             "Please select the sections and dates to include in the report..."
         )
-        self.layout = QVBoxLayout()
 
         # Parent layout
         self.layout = QVBoxLayout()
@@ -38,24 +37,26 @@ class SelectSectionsToReport(QDialog):
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
-        # Radio: all
-        self.all_selector = QRadioButton()
-        self.all_selector.setChecked(True)
-        self.all_selector.toggled.connect(partial(self.select_all_none, "all"))
-        self.all_selector_label = QLabel()
-        self.all_selector_label.setText("Select all")
-        self.all_selector_label.setBuddy(self.all_selector)
-        self.layout.addWidget(self.all_selector_label)
-        self.layout.addWidget(self.all_selector)
+        # Create `all` and `none` selectors only if there are several sections
+        if len(sections_ids) > 1:
+            # Radio: all
+            self.all_selector = QRadioButton()
+            self.all_selector.setChecked(True)
+            self.all_selector.toggled.connect(partial(self.select_all_none, "all"))
+            self.all_selector_label = QLabel()
+            self.all_selector_label.setText("Select all")
+            self.all_selector_label.setBuddy(self.all_selector)
+            self.layout.addWidget(self.all_selector_label)
+            self.layout.addWidget(self.all_selector)
 
-        # Radio: none
-        self.none_selector = QRadioButton()
-        self.none_selector.toggled.connect(partial(self.select_all_none, "none"))
-        self.none_selector_label = QLabel()
-        self.none_selector_label.setText("Unselect all")
-        self.none_selector_label.setBuddy(self.none_selector)
-        self.layout.addWidget(self.none_selector_label)
-        self.layout.addWidget(self.none_selector)
+            # Radio: none
+            self.none_selector = QRadioButton()
+            self.none_selector.toggled.connect(partial(self.select_all_none, "none"))
+            self.none_selector_label = QLabel()
+            self.none_selector_label.setText("Unselect all")
+            self.none_selector_label.setBuddy(self.none_selector)
+            self.layout.addWidget(self.none_selector_label)
+            self.layout.addWidget(self.none_selector)
 
         # Checkboxes: containers
         self.scrollarea = QScrollArea()
