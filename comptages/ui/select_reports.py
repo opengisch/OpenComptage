@@ -1,11 +1,10 @@
 from datetime import datetime
 from functools import partial
-from typing import Optional
-from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
+    QFrame,
     QLabel,
     QRadioButton,
     QVBoxLayout,
@@ -14,14 +13,9 @@ from qgis.PyQt.QtWidgets import (
 )
 
 
-def log(msg: str):
-    QgsMessageLog.logMessage(msg, level=Qgis.Info)
-
-
 class SelectSectionsToReport(QDialog):
     def __init__(self, *args, **kwargs):
         sections_ids: list[str] = kwargs.pop("sections_ids")
-        sections_ids.append("0099999")
         mondays: list[datetime] = kwargs.pop("mondays")
         mondays_as_datestr = [d.strftime("%d-%m-%Y") for d in mondays]
 
@@ -46,7 +40,7 @@ class SelectSectionsToReport(QDialog):
         # Radio: all
         self.all_selector = QRadioButton()
         self.all_selector.setChecked(True)
-        self.all_selector.toggled.connect(lambda: self.select_all_none("all"))
+        self.all_selector.toggled.connect(partial(self.select_all_none, "all"))
         self.all_selector_label = QLabel()
         self.all_selector_label.setText("Select all")
         self.all_selector_label.setBuddy(self.all_selector)
@@ -55,7 +49,7 @@ class SelectSectionsToReport(QDialog):
 
         # Radio: none
         self.none_selector = QRadioButton()
-        self.none_selector.toggled.connect(lambda: self.select_all_none("none"))
+        self.none_selector.toggled.connect(partial(self.select_all_none, "none"))
         self.none_selector_label = QLabel()
         self.none_selector_label.setText("Unselect all")
         self.none_selector_label.setBuddy(self.none_selector)
@@ -75,6 +69,7 @@ class SelectSectionsToReport(QDialog):
             item_checkbox.clicked.connect(partial(self.update_children_of, item))
             label = QLabel()
             label.setBuddy(item_checkbox)
+
             self.vbox.addWidget(label)
             self.vbox.addWidget(item_checkbox)
             self.items_check_boxes[item] = {
@@ -85,17 +80,17 @@ class SelectSectionsToReport(QDialog):
             # Checkboxes: subitems
             for subitem in mondays_as_datestr:
                 subitem_checkbox = QCheckBox(subitem)
+                subitem_checkbox.setStyleSheet("QCheckBox { padding-left: 15px; }")
                 subitem_checkbox.setChecked(True)
                 subitem_checkbox.clicked.connect(self.update_selected_count)
                 label = QLabel()
                 label.setBuddy(subitem_checkbox)
+
                 self.vbox.addWidget(label)
                 self.vbox.addWidget(subitem_checkbox)
                 self.items_check_boxes[item]["subcheckboxes"][
                     subitem
                 ] = subitem_checkbox
-
-        log(str(self.items_check_boxes))
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
@@ -127,7 +122,6 @@ class SelectSectionsToReport(QDialog):
         return count
 
     def update_children_of(self, item: str):
-        log(f"Update_selected received: {item}")
         new_state = self.items_check_boxes[item]["checkbox"].isChecked()
         for subcheckbox in self.items_check_boxes[item]["subcheckboxes"].values():
             subcheckbox.setChecked(new_state)
