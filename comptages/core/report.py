@@ -27,7 +27,7 @@ def prepare_reports(
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert count
         _prepare_default_reports(
-            file_path, count, template_path, only_sections_ids, callback_progress
+            file_path, count, template_path, callback_progress, only_sections_ids
         )
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
