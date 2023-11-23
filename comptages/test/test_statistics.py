@@ -286,7 +286,7 @@ class StatisticsTest(TransactionTestCase):
 
         count = models.Count.objects.create(
             start_service_date=tz.localize(datetime(2021, 2, 1)),
-            end_service_date=tz.localize(datetime(2022, 12, 10)),
+            end_service_date=tz.localize(datetime(2021, 12, 10)),
             start_process_date=tz.localize(datetime(2021, 2, 10)),
             end_process_date=tz.localize(datetime(2021, 12, 15)),
             start_put_date=tz.localize(datetime(2021, 1, 1)),
@@ -298,11 +298,11 @@ class StatisticsTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_files = Path(utils.test_data_path("SWISS10_vbv_year"))
-        test_files = islice(path_to_files.iterdir(), 5)
+        path_to_files = Path(__file__).parent.joinpath("test_data/SWISS10_vbv_year")
+        test_files = islice(path_to_files.iterdir(), 10)
 
         for file in test_files:
             importer.import_file(utils.test_data_path(file), count)
 
         valid = statistics.get_valid_days(section.id, 2021)
-        assert valid == 2
+        self.assertEqual(valid, 4)
