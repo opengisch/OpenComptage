@@ -1,3 +1,5 @@
+from itertools import islice
+from pathlib import Path
 import pytz
 from datetime import datetime, timedelta
 from django.test import TransactionTestCase
@@ -247,12 +249,12 @@ class StatisticsTest(TransactionTestCase):
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
-            start_service_date=tz.localize(datetime(2022, 4, 25)),
-            end_service_date=tz.localize(datetime(2022, 4, 27)),
-            start_process_date=tz.localize(datetime(2022, 4, 25)),
-            end_process_date=tz.localize(datetime(2022, 4, 27)),
-            start_put_date=tz.localize(datetime(2022, 4, 25)),
-            end_put_date=tz.localize(datetime(2022, 4, 27)),
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2021, 12, 1)),
+            start_process_date=tz.localize(datetime(2021, 2, 2)),
+            end_process_date=tz.localize(datetime(2021, 12, 1)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 12, 31)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
@@ -269,3 +271,38 @@ class StatisticsTest(TransactionTestCase):
         self.assertTrue(statistics.get_speed_data(count, sections[0]).empty)
 
         self.assertFalse(statistics.get_speed_data(count, sections[2]).empty)
+
+    def test_get_valid_days(self):
+        section_id = "00107695"
+        section = models.Section.objects.get(id=section_id)
+        lane = models.Lane.objects.filter(id_section=section_id)[0]
+        installation = models.Installation.objects.get(id=lane.id_installation.id)
+
+        model = models.Model.objects.all()[0]
+        device = models.Device.objects.all()[0]
+        sensor_type = models.SensorType.objects.all()[0]
+        class_ = models.Class.objects.get(name="SWISS10")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2022, 12, 10)),
+            start_process_date=tz.localize(datetime(2021, 2, 10)),
+            end_process_date=tz.localize(datetime(2021, 12, 15)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        path_to_files = Path(utils.test_data_path("SWISS10_vbv_year"))
+        test_files = islice(path_to_files.iterdir(), 5)
+
+        for file in test_files:
+            importer.import_file(utils.test_data_path(file), count)
+
+        valid = statistics.get_valid_days(section.id, 2021)
+        assert valid == 2

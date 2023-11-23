@@ -485,3 +485,29 @@ def get_month_data(section: models.Section, start, end):
 
     df = pd.DataFrame.from_records(qs)
     return df
+
+
+def get_valid_days(section_id: str, year: int) -> int:
+    """
+    Count valid days across all counts for `section` and `year`,
+    where a day is deemed valid just in case there are at least 14 1-hour blocks
+    between 6pm and 4pm with at least 1 vehicle.
+    """
+    section = models.Section.objects.get(id=section_id)
+    df = get_time_data_yearly(year, section)
+    df.reset_index()
+
+    valid_days_in_year = []
+    one_hour_block = set()
+    prev_day = None
+    for _, row in df.iterrows():
+        if any(k not in row for k in ("date", "hour", "thm")):
+            continue
+        if row["date"] != prev_day:
+            if len(one_hour_block) >= 14:
+                valid_days_in_year.append(prev_day)
+            one_hour_block.clear()
+        if 6 <= row["hour"] <= 22 and row["thm"] > 0:
+            one_hour_block.add(row["hour"])
+        prev_day = row["date"]
+    return len(valid_days_in_year)

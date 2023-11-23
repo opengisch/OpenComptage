@@ -20,7 +20,8 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.delete_dialog import DeleteDialog
-from comptages.core.utils import push_info, push_error, count_valid_days
+from comptages.core.utils import push_info, push_error
+from comptages.core.statistics import get_valid_days
 from comptages.datamodel import models
 from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
@@ -422,7 +423,7 @@ class Comptages(QObject):
             )
 
             # Do not proceed unless the number of processed days exceeds 100 days
-            valid_days = count_valid_days(section_id, year)
+            valid_days = get_valid_days(section_id, year)
             if valid_days < 100:
                 push_error(
                     f"This section ({section_id}) lacks valid days for this year ({year}). Found only {valid_days} out of 100."
