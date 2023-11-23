@@ -249,12 +249,12 @@ class StatisticsTest(TransactionTestCase):
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
-            start_service_date=tz.localize(datetime(2021, 2, 1)),
-            end_service_date=tz.localize(datetime(2021, 12, 1)),
-            start_process_date=tz.localize(datetime(2021, 2, 2)),
-            end_process_date=tz.localize(datetime(2021, 12, 1)),
-            start_put_date=tz.localize(datetime(2021, 1, 1)),
-            end_put_date=tz.localize(datetime(2021, 12, 31)),
+            start_service_date=tz.localize(datetime(2022, 4, 25)),
+            end_service_date=tz.localize(datetime(2022, 4, 27)),
+            start_process_date=tz.localize(datetime(2022, 4, 25)),
+            end_process_date=tz.localize(datetime(2022, 4, 27)),
+            start_put_date=tz.localize(datetime(2022, 4, 25)),
+            end_put_date=tz.localize(datetime(2022, 4, 27)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
