@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
@@ -11,12 +13,16 @@ from comptages.core import report, importer
 class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
-        pass
+        cls.testouputs = "/OpenComptage/testoutputs"
 
     def setUp(self):
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
         call_command("importdata")
+
+    def tearDown(self) -> None:
+        for file in Path(self.testouputs).iterdir():
+            os.remove(file)
 
     def test_report(self):
         # Create count and import some data
