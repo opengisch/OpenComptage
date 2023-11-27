@@ -37,6 +37,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
+        parser.add_argument("--add-count", action="store_true", help="Add count data")
 
     def handle(self, *args, **options):
         if options["clear"]:
@@ -80,7 +81,10 @@ class Command(BaseCommand):
         self.import_devices(self.file_path("device.csv"))
         self.import_sectors(self.file_path("sector.csv"))
         self.import_municipalities(self.file_path("municipality.csv"))
-        self.import_counts()
+
+        if options["add_count"]:
+            self.import_count()
+
         print("🚓")
 
     def file_path(self, filename):
@@ -395,11 +399,11 @@ class Command(BaseCommand):
         Municipality.objects.bulk_create(objects)
         print(f"Inserted {len(objects)} municipalities.")
 
-    def import_counts(self):
+    def import_count(self):
         section_id = "00107695"
         lane = Lane.objects.filter(id_section=section_id)[0]
         print(f"Importing counts for section {section_id}, lane {lane.id}...")
-        
+
         installation = Installation.objects.get(id=lane.id_installation.id)
         model = Model.objects.all()[0]
         device = Device.objects.all()[0]
