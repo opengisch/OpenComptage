@@ -3,6 +3,7 @@ import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
+import os
 
 from comptages.test import utils
 from comptages.datamodel import models
@@ -12,12 +13,16 @@ from comptages.core import report, importer
 class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
-        pass
+        cls.testoutputs = "/OpenComptage/testoutputs"
 
     def setUp(self):
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
         call_command("importdata")
+
+    def tearDown(self):
+        for file in Path(self.testoutputs).iterdir():
+            os.remove(file)
 
     def test_report(self):
         # Create count and import some data
@@ -77,4 +82,5 @@ class ImportTest(TransactionTestCase):
         for file in Path(utils.test_data_path(test_data_folder)).iterdir():
             importer.import_file(utils.test_data_path(str(file)), count)
 
-        report.prepare_reports("/OpenComptage/testoutputs", count)
+        report.prepare_reports(self.testoutputs, count)
+        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 4)
