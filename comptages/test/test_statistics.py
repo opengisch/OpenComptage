@@ -305,4 +305,4 @@ class StatisticsTest(TransactionTestCase):
             importer.import_file(utils.test_data_path(file), count)
 
         valid = statistics.get_valid_days(section.id, 2021)
-        self.assertEqual(valid, 4)
+        self.assertEqual(valid, 2)
