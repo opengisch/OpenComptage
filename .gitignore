@@ -1,6 +1,7 @@
 .idea
 __pycache__/
 comptages/__pycache__/
+testoutputs/
 .docker/tests/
 .docker/tests/screenshot.png
 .env

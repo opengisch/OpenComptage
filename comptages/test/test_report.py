@@ -55,14 +55,15 @@ class ImportTest(TransactionTestCase):
         sensor_type = models.SensorType.objects.all()[0]
         class_ = models.Class.objects.get(name="SPCH13")
         installation = models.Installation.objects.get(name=installation_name)
+        tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
-            start_service_date=datetime(2021, 1, 5),
-            end_service_date=datetime(2021, 12, 1),
-            start_process_date=datetime(2021, 1, 10),
-            end_process_date=datetime(2021, 11, 1),
-            start_put_date=datetime(2021, 1, 1),
-            end_put_date=datetime(2021, 12, 31),
+            start_service_date=tz.localize(datetime(2021, 1, 5)),
+            end_service_date=tz.localize(datetime(2021, 12, 1)),
+            start_process_date=tz.localize(datetime(2021, 1, 10)),
+            end_process_date=tz.localize(datetime(2021, 11, 1)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 12, 31)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
@@ -75,4 +76,4 @@ class ImportTest(TransactionTestCase):
             id_count=count.id, timestamp__gt="2021-03-02", timestamp__lt="2021-03-03"
         )
         self.assertEqual(items.count(), 360)
-        report.prepare_reports(count)
+        report.prepare_reports("/OpenComptage/testoutputs", count)
