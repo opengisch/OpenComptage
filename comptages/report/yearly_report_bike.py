@@ -160,6 +160,7 @@ class YearlyReportBike:
             .values("res")
             .values("id_category__code")
             .annotate(tjm=Count("id_category__code"))
+            .order_by("id_category__code")
         )
         return result
 
