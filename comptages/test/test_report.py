@@ -52,7 +52,7 @@ class ImportTest(TransactionTestCase):
 
         report.prepare_reports("/tmp/", count)
 
-    def test_report_ensure_first_sections(self):
+    def test_report_ensure_all_sections(self):
         # Create count and import some data pertaining to
         # a specific special case
         section_id = "53526896"
