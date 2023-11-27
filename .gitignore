@@ -1,8 +1,8 @@
 .idea
-.docker/tests/
-.docker/tests/screenshot.png
-.env
+.docker/
+.env/
 .vscode/settings.json
 *.nix
 *.log
 **/__pycache__/
+testoutputs/
