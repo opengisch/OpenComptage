@@ -52,7 +52,7 @@ class ImportTest(TransactionTestCase):
         # a specific special case
         section_id = "53526896"
         test_data_folder = "5350_1_4"
-        
+
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
         sensor_type = models.SensorType.objects.all()[0]
@@ -76,5 +76,5 @@ class ImportTest(TransactionTestCase):
 
         for file in Path(utils.test_data_path(test_data_folder)).iterdir():
             importer.import_file(utils.test_data_path(str(file)), count)
-        
+
         report.prepare_reports("/OpenComptage/testoutputs", count)
