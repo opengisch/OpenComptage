@@ -75,3 +75,4 @@ class ImportTest(TransactionTestCase):
             id_count=count.id, timestamp__gt="2021-03-02", timestamp__lt="2021-03-03"
         )
         self.assertEqual(items.count(), 360)
+        report.prepare_reports(count)
