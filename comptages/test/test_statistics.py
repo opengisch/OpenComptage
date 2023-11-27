@@ -275,34 +275,6 @@ class StatisticsTest(TransactionTestCase):
     def test_get_valid_days(self):
         section_id = "00107695"
         section = models.Section.objects.get(id=section_id)
-        lane = models.Lane.objects.filter(id_section=section_id)[0]
-        installation = models.Installation.objects.get(id=lane.id_installation.id)
-
-        model = models.Model.objects.all()[0]
-        device = models.Device.objects.all()[0]
-        sensor_type = models.SensorType.objects.all()[0]
-        class_ = models.Class.objects.get(name="SWISS10")
-        tz = pytz.timezone("Europe/Zurich")
-
-        count = models.Count.objects.create(
-            start_service_date=tz.localize(datetime(2021, 2, 1)),
-            end_service_date=tz.localize(datetime(2021, 12, 10)),
-            start_process_date=tz.localize(datetime(2021, 2, 10)),
-            end_process_date=tz.localize(datetime(2021, 12, 15)),
-            start_put_date=tz.localize(datetime(2021, 1, 1)),
-            end_put_date=tz.localize(datetime(2021, 1, 5)),
-            id_model=model,
-            id_device=device,
-            id_sensor_type=sensor_type,
-            id_class=class_,
-            id_installation=installation,
-        )
-
-        path_to_files = Path(__file__).parent.joinpath("test_data/SWISS10_vbv_year")
-        test_files = islice(path_to_files.iterdir(), 10)
-
-        for file in test_files:
-            importer.import_file(utils.test_data_path(file), count)
-
+        call_command("importdata", "--only-count")
         valid = statistics.get_valid_days(section.id, 2021)
-        self.assertEqual(valid, 2)
+        self.assertEqual(valid, 6)
