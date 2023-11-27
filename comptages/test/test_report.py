@@ -1,3 +1,4 @@
+from pathlib import Path
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
@@ -55,8 +56,12 @@ class ImportTest(TransactionTestCase):
         sensor_type = models.SensorType.objects.all()[0]
         class_ = models.Class.objects.get(name="SPCH13")
         installation = models.Installation.objects.get(name=installation_name)
-        tz = pytz.timezone("Europe/Zurich")
+        sections_ids = models.Section.objects.filter(
+            lane__id_installation_id=installation.id
+        ).values_list("id", flat=True)
+        self.assertEqual(len(sections_ids), 2)
 
+        tz = pytz.timezone("Europe/Zurich")
         count = models.Count.objects.create(
             start_service_date=tz.localize(datetime(2021, 1, 5)),
             end_service_date=tz.localize(datetime(2021, 12, 1)),
@@ -76,4 +81,8 @@ class ImportTest(TransactionTestCase):
             id_count=count.id, timestamp__gt="2021-03-02", timestamp__lt="2021-03-03"
         )
         self.assertEqual(items.count(), 360)
-        report.prepare_reports("/OpenComptage/testoutputs", count)
+
+        output = "/OpenComptage/testoutputs"
+        for section_id in sections_ids:
+            report.prepare_reports(output, count, 2021, "yearly", section_id=section_id)
+        self.assertEqual(len(list(Path(output).iterdir())), 45)
