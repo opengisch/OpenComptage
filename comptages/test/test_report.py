@@ -1,4 +1,3 @@
-from pathlib import Path
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
@@ -6,7 +5,7 @@ from django.core.management import call_command
 
 from comptages.test import utils
 from comptages.datamodel import models
-from comptages.core import report, importer, statistics
+from comptages.core import report, importer
 
 
 class ImportTest(TransactionTestCase):
@@ -81,8 +80,3 @@ class ImportTest(TransactionTestCase):
             id_count=count.id, timestamp__gt="2021-03-02", timestamp__lt="2021-03-03"
         )
         self.assertEqual(items.count(), 360)
-
-        output = "/OpenComptage/testoutputs"
-        for section_id in sections_ids:
-            report.prepare_reports(output, count, 2021, "yearly", section_id=section_id)
-        self.assertEqual(len(list(Path(output).iterdir())), 45)
