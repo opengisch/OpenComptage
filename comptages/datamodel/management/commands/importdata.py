@@ -1,5 +1,4 @@
 from datetime import datetime
-from itertools import islice
 import logging
 import os
 from decimal import Decimal
@@ -38,8 +37,15 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
         parser.add_argument("--add-count", action="store_true", help="Add count data")
+        parser.add_argument(
+            "--only-count", action="store_true", help="Add only count data"
+        )
 
     def handle(self, *args, **options):
+        if options["only_count"]:
+            self.import_count()
+            return
+
         if options["clear"]:
             print("Deleting...")
             try:
