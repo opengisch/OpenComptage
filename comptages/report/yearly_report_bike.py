@@ -277,30 +277,6 @@ class YearlyReportBike:
 
         ws["B11"] = lanes[0].id_section.place_name
 
-        # TODO move to Data_hour or Data_year
-        ws = workbook["AN_TE"]
-
-        row_offset = 14
-        column_offset = 1
-        data = self.values_by_day_and_hour()
-        for i in data:
-            ws.cell(
-                row=i["hour"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-
-        row_offset = 47
-        column_offset = 1
-
-        data = self.values_by_day_and_month()
-        for i in data:
-            ws.cell(
-                row=i["month"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-
         ws = workbook["Data_year"]
         row_offset = 4
         column_offset = 1
@@ -379,6 +355,25 @@ class YearlyReportBike:
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
             row += 1
+
+        row_offset = 64
+        column_offset = 1
+        data = self.values_by_day_and_hour()
+        for i in data:
+            ws.cell(
+                row=i["hour"] + row_offset,
+                column=i["weekday"] + column_offset,
+                value=i["tjm"],
+            )
+            row_offset += 1
+
+        data = self.values_by_day_and_month()
+        for i in data:
+            ws.cell(
+                row=i["month"] + row_offset,
+                column=i["weekday"] + column_offset,
+                value=i["tjm"],
+            )
 
         ws = workbook["Data_class"]
         row_offset = 4
