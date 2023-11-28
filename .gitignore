@@ -5,5 +5,6 @@ comptages/__pycache__/
 .docker/tests/screenshot.png
 .env
 .vscode/settings.json
+.log
 shell.nix
 Pipfile
