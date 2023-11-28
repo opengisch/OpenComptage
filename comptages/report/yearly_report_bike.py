@@ -241,8 +241,6 @@ class YearlyReportBike:
         template = os.path.join(current_dir, "template_yearly_bike.xlsx")
         workbook = load_workbook(filename=template)
 
-        # DATA COUNT
-
         ws = workbook["Data_count"]
 
         section = Section.objects.get(id=self.section_id)
@@ -303,9 +301,16 @@ class YearlyReportBike:
                 value=i["tjm"],
             )
 
-        # TODO move to Data_hour or Data_year
-        ws = workbook["CV_LV"]
         ws = workbook["Data_year"]
+        row_offset = 4
+        column_offset = 1
+
+        data = self.values_by_day()
+        row = row_offset
+        for i in data:
+            ws.cell(row=row, column=column_offset, value=i["date"])
+            ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
+            row += 1
 
         ws["F11"] = self.tjm_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
         ws["G11"] = self.tjm_direction_bike([1], 2, weekdays=[0, 1, 2, 3, 4])
@@ -326,17 +331,6 @@ class YearlyReportBike:
 
         ws["J41"] = self.min_month()[0]
         ws["k41"] = self.min_month()[1]
-
-        ws = workbook["Data_year"]
-        row_offset = 4
-        column_offset = 1
-
-        data = self.values_by_day()
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["date"])
-            ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
-            row += 1
 
         ws = workbook["Data_week"]
         row_offset = 4
