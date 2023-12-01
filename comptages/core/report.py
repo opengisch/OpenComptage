@@ -37,7 +37,9 @@ def prepare_reports(
         pass
 
 
-def _prepare_default_reports(file_path, count, template_path, callback_progress):
+def _prepare_default_reports(
+    file_path: str, count: models.Count, template_path: str, callback_progress
+):
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(
         lane__id_installation__count=count
@@ -87,7 +89,7 @@ def _prepare_yearly_report(
     workbook.save(filename=output)
 
 
-def _mondays_of_count(count):
+def _mondays_of_count(count: models.Count):
     """Generator that return the Mondays of the count"""
 
     start = count.start_process_date
