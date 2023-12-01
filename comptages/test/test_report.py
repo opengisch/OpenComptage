@@ -1,10 +1,11 @@
-import os
-from pathlib import Path
+import decimal
+from itertools import chain
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
 from django.db.models.manager import Manager
+from comptages.report.yearly_report_bike import YearlyReportBike
 
 from comptages.test import utils
 from comptages.datamodel import models
@@ -105,7 +106,18 @@ class ImportTest(TransactionTestCase):
             lane__id=lanes_installation.values_list("pk", flat=True)[0]
         )
         report = YearlyReportBike("template_yearly_bike.xlsx", 2021, section_id)
-        dir1 = report.values_by_hour_and_direction(1)
-        dir2 = report.values_by_hour_and_direction(2)
-        print(dir1)
-        print(dir2)
+        tjms_dir1 = (
+            decimal.Decimal(v)
+            for v in report.values_by_hour_and_direction(1).values_list(
+                "tjm", flat=True
+            )
+        )
+        tjms_dir2 = (
+            decimal.Decimal(v)
+            for v in report.values_by_hour_and_direction(2).values_list(
+                "tjm", flat=True
+            )
+        )
+        with self.subTest():
+            for value in chain(tjms_dir1, tjms_dir2):
+                self.assertTrue(value.as_tuple().exponent == 3)
