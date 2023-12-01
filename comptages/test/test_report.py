@@ -10,6 +10,7 @@ from comptages.core import report, importer
 from comptages.datamodel import models
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.test import utils, yearly_count_for
+from comptages.core import report, importer
 
 
 class ImportTest(TransactionTestCase):
