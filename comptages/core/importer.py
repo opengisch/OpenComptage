@@ -44,7 +44,7 @@ def import_file(file_path: str, count, callback_progress=simple_print_callback):
 
 def _parse_and_write(
     file_path: str,
-    count,
+    count: models.Count,
     line_parser: Callable,
     callback_progress,
     from_aggregate: bool = False,
@@ -274,7 +274,9 @@ def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
     return None
 
 
-def _get_int_bins(file_header, data_header, intspec, categories, code) -> List:
+def _get_int_bins(
+    file_header, data_header, intspec, categories: dict, code: str
+) -> list:
     """Returns an array with the bins if they exist, or the number of
     columns of this data type"""
     values = []
@@ -340,7 +342,7 @@ def _parse_file_header(file_path: str):
     return file_header
 
 
-def _parse_data_header(file_path: str) -> List:
+def _parse_data_header(file_path: str) -> list:
     data_header = []
 
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
@@ -358,7 +360,7 @@ def _parse_data_header(file_path: str) -> List:
     return data_header
 
 
-def _populate_lane_dict(count) -> Dict[int, int]:
+def _populate_lane_dict(count: models.Count) -> dict[int, int]:
     # e.g. lanes = {1: 435, 2: 436}
 
     lanes = models.Lane.objects.filter(id_installation__count=count).order_by("number")
@@ -366,7 +368,7 @@ def _populate_lane_dict(count) -> Dict[int, int]:
     return {x.number: x.id for x in lanes}
 
 
-def _populate_direction_dict(count):
+def _populate_direction_dict(count: models.Count):
     # e.g. lanes = {1: 406, 2: 408}
     # It will return only one lane per direction
 
@@ -377,7 +379,7 @@ def _populate_direction_dict(count):
     return {x.direction: x.id for x in directions}
 
 
-def _populate_category_dict(count):
+def _populate_category_dict(count: models.Count):
     # if 'CLASS' not in self.file_header:
     #     return
     # class_name = self.file_header['CLASS']
@@ -397,7 +399,7 @@ def _populate_category_dict(count):
     return {x.code: x.id for x in categories}
 
 
-def get_file_format(file_path):
+def get_file_format(file_path: str) -> Optional[str]:
     """Return the file format on None if not identified."""
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
         for line in f:
@@ -410,7 +412,7 @@ def get_file_format(file_path):
         return None
 
 
-def get_file_encoding(file_path):
+def get_file_encoding(file_path: str) -> str:
     """Guess the right file encoding."""
     with open(file_path, "r", encoding="utf-8") as f:
         try:
@@ -422,7 +424,7 @@ def get_file_encoding(file_path):
             return "utf-8"
 
 
-def get_line_count(file_path):
+def get_line_count(file_path) -> int:
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
         number_of_lines = sum(1 for _ in f)
     return number_of_lines
@@ -438,7 +440,7 @@ def get_intspec(file_header):
     return intspec
 
 
-def guess_count(file_path):
+def guess_count(file_path: str) -> Optional[models.Count]:
     """Try to identify the count related to an imported file."""
 
     header = _parse_file_header(file_path)
