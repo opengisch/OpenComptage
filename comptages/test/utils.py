@@ -1,9 +1,6 @@
 import os
 
-from datetime import datetime
-from django.contrib.gis.geos import LineString
 
-from comptages.datamodel import models
 
 
 def test_data_path(file_path):
