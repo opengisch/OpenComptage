@@ -120,4 +120,4 @@ class ImportTest(TransactionTestCase):
         )
         with self.subTest():
             for value in chain(tjms_dir1, tjms_dir2):
-                self.assertTrue(value.as_tuple().exponent == 3)
+                self.assertEqual(value.as_tuple().exponent, 3)
