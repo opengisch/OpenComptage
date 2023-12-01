@@ -38,27 +38,31 @@ class ImportTest(TransactionTestCase):
     def test_ensure_non_rounded_values(self):
         file_name = "64540060_Latenium_PS2021_ChMixte.txt"
         installation_name = "64540060"
+        year = 2021
+
         installation = models.Installation.objects.get(name=installation_name)
-        count = yearly_count_for(2021, installation)
+        count = yearly_count_for(year, installation)
         importer.import_file(utils.test_data_path(file_name), count)
 
         lanes_installation: Manager = installation.lane_set
         section_ids = lanes_installation.values_list("id_section", flat=True)
         self.assertTrue(section_ids.exists())
 
-        report = YearlyReportBike("template_yearly_bike.xlsx", 2021, section_ids[0])
-        report_dir1 = report.values_by_hour_and_direction(1).values_list(
-            "tjm", flat=True
-        )
-        report_dir2 = report.values_by_hour_and_direction(2).values_list(
-            "tjm", flat=True
-        )
-        self.assertTrue(report_dir1.exists())
-        self.assertTrue(report_dir2.exists())
+        for section_id in section_ids:
+            with self.subTest():
+                report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
+                report_dir1 = report.values_by_hour_and_direction(1).values_list(
+                    "tjm", flat=True
+                )
+                report_dir2 = report.values_by_hour_and_direction(2).values_list(
+                    "tjm", flat=True
+                )
+                self.assertTrue(report_dir1.exists())
+                self.assertTrue(report_dir2.exists())
 
-        tjms_dir1 = (decimal.Decimal(v) for v in report_dir1)
-        tjms_dir2 = (decimal.Decimal(v) for v in report_dir2)
-        with self.subTest():
-            for value in chain(tjms_dir1, tjms_dir2):
-                print(value)
-                self.assertEqual(value.as_tuple().exponent, 3)
+                tjms = (decimal.Decimal(v) for v in chain(report_dir1, report_dir2))
+                for value in tjms:
+                    with self.subTest():
+                        exponent = value.as_tuple().exponent
+                        self.assertEqual(exponent, 3)
+                print(f"Section {section_id} is GO")
