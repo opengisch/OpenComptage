@@ -1,8 +1,6 @@
 import os
 
 
-
-
 def test_data_path(file_path):
     """Return the path of file in the directory with the test data."""
     path = os.path.join(
