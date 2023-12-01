@@ -1,5 +1,4 @@
 import os
-from typing import Union
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtSql import QSqlQuery

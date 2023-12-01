@@ -1,10 +1,8 @@
 .idea
-__pycache__/
-comptages/__pycache__/
 .docker/tests/
 .docker/tests/screenshot.png
 .env
 .vscode/settings.json
-.log
-shell.nix
-Pipfile
+*.nix
+*.log
+**/__pycache__/

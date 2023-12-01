@@ -1,15 +1,13 @@
 import os
 
-from string import ascii_uppercase
 
-from django.db.models import Sum, Avg, Max, Count
+from django.db.models import Sum, Count
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     ExtractIsoWeekDay,
     ExtractHour,
     ExtractMonth,
-    ExtractDay,
 )
 
 from openpyxl import load_workbook
