@@ -51,16 +51,17 @@ class ImportTest(TransactionTestCase):
         for section_id in section_ids:
             with self.subTest():
                 report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
-                report_dir1 = report.values_by_hour_and_direction(1).values_list(
-                    "tjm", flat=True
-                )
-                report_dir2 = report.values_by_hour_and_direction(2).values_list(
-                    "tjm", flat=True
-                )
-                self.assertTrue(report_dir1.exists())
-                self.assertTrue(report_dir2.exists())
+                report_dir1 = report.values_by_hour_and_direction(1)
+                report_dir2 = report.values_by_hour_and_direction(2)
+                report_dir1_values = report_dir1.values_list("tjm", flat=True)
+                report_dir2_values = report_dir2.values_list("tjm", flat=True)
+                self.assertTrue(report_dir1_values.exists())
+                self.assertTrue(report_dir2_values.exists())
 
-                tjms = (decimal.Decimal(v) for v in chain(report_dir1, report_dir2))
+                tjms = (
+                    decimal.Decimal(v)
+                    for v in chain(report_dir1_values, report_dir2_values)
+                )
                 for value in tjms:
                     with self.subTest():
                         exponent = value.as_tuple().exponent
