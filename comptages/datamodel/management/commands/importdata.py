@@ -407,10 +407,13 @@ class Command(BaseCommand):
 
     def import_count(self):
         section_id = "00107695"
-        lane = Lane.objects.filter(id_section=section_id)[0]
-        print(f"Importing counts for section {section_id}, lane {lane.id}...")
+        section = Section.objects.get(id=section_id)
+        lanes = section.lane_set.values_list("id", flat=True)
+        print(f"Importing counts for section {section_id} with lanes {lanes}")
 
-        installation = Installation.objects.get(id=lane.id_installation.id)
+        installation = Installation.objects.filter(lane__id__in=lanes)[0]
+        assert installation
+
         model = Model.objects.all()[0]
         device = Device.objects.all()[0]
         sensor_type = SensorType.objects.all()[0]
@@ -430,7 +433,6 @@ class Command(BaseCommand):
             id_class=class_,
             id_installation=installation,
         )
-
         path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
         files = list(path_to_files.iterdir())[:50]
 

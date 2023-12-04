@@ -1,3 +1,4 @@
+from functools import reduce
 import pandas as pd
 
 from datetime import timedelta, datetime
@@ -487,27 +488,27 @@ def get_month_data(section: models.Section, start, end):
     return df
 
 
-def get_valid_days(section_id: str, year: int) -> int:
+def get_valid_days(year: int, section: models.Section) -> int:
     """
     Count valid days across all counts for `section` and `year`,
     where a day is deemed valid just in case there are at least 14 1-hour blocks
     between 6pm and 4pm with at least 1 vehicle.
     """
-    section = models.Section.objects.get(id=section_id)
     df = get_time_data_yearly(year, section)
     df.reset_index()
 
-    valid_days_in_year = []
-    one_hour_block = set()
-    prev_day = None
-    for _, row in df.iterrows():
+    def count_valid_blocks(acc: dict[str, int], label_row: tuple) -> dict[str, int]:
+        _, row = label_row
         if any(k not in row for k in ("date", "hour", "thm")):
-            continue
-        if row["date"] != prev_day:
-            if len(one_hour_block) >= 14:
-                valid_days_in_year.append(prev_day)
-            one_hour_block.clear()
+            return acc
+        current_date = row["date"]
+        if current_date not in acc:
+            acc[current_date] = 0
         if 6 <= row["hour"] <= 22 and row["thm"] > 0:
-            one_hour_block.add(row["hour"])
-        prev_day = row["date"]
-    return len(valid_days_in_year)
+            acc[current_date] += 1
+        return acc
+
+    iterator = df.iterrows()
+    valid_days = reduce(count_valid_blocks, iterator, {})
+    has_14_valid_blocks = lambda valid_blocks: valid_blocks >= 14
+    return len(list(filter(has_14_valid_blocks, valid_days.values())))
