@@ -94,6 +94,7 @@ class ImportTest(TransactionTestCase):
         found_files = len(list(Path(self.testoutputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
+        self.assertGreater(found_files, 0)
         self.assertEqual(found_files % n_sections, 0)
 
     def test_all_sections_yearly(self):
@@ -133,8 +134,9 @@ class ImportTest(TransactionTestCase):
         for file in islice(gen, 50):
             importer.import_file(utils.test_data_path(str(file)), count)
 
-        report.prepare_reports(self.testoutputs, count)
+        report.prepare_reports(self.testoutputs, count, year=2021, template="yearly")
         found_files = len(list(Path(self.testoutputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
+        self.assertGreater(found_files, 0)
         self.assertEqual(found_files % n_sections, 0)
