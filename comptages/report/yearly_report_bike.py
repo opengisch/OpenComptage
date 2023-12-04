@@ -40,6 +40,7 @@ class YearlyReportBike:
             .annotate(total=Sum("times"))
             .values("weekday", "id_lane__direction", "total")
         )
+        return result
 
     def values_by_day_and_hour(self):
         # Get all the count details for section and the year
