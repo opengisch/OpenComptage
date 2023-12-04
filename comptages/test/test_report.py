@@ -4,6 +4,7 @@ import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
+from django.db.models import Count
 import os
 
 from comptages.test import utils
@@ -55,14 +56,20 @@ class ImportTest(TransactionTestCase):
 
     def test_all_sections_default(self):
         # Test if default report features all sections for special case
-        section_id = "53526896"
         test_data_folder = "5350_1_4"
+        section_id = "53526896"
+        installation = models.Installation.objects.get(lane__id_section_id=section_id)
+        expected_files = (
+            models.Lane.objects.filter(id_installation=installation.id)
+            .values("id_section")
+            .count()
+            * 2  # default reports = weeks x sections
+        )
 
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
         sensor_type = models.SensorType.objects.all()[0]
         class_ = models.Class.objects.get(name="SWISS10")
-        installation = models.Installation.objects.get(lane__id_section_id=section_id)
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
@@ -83,18 +90,25 @@ class ImportTest(TransactionTestCase):
             importer.import_file(utils.test_data_path(str(file)), count)
 
         report.prepare_reports(self.testoutputs, count)
-        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 2)
+        found_files = len(list(Path(self.testoutputs).iterdir()))
+        self.assertEqual(found_files, expected_files)
 
     def test_all_sections_yearly(self):
         # Test if yearly report features all sections for special case
-        installation_name = "53309999"
         test_data_folder = "ASC"
+        installation_name = "53309999"
+        installation = models.Installation.objects.get(name=installation_name)
+        expected_files = (
+            models.Lane.objects.filter(id_installation=installation.id)
+            .values("id_section")
+            .count()
+            * 52  # default reports = weeks x sections
+        )
 
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
         sensor_type = models.SensorType.objects.all()[0]
         class_ = models.Class.objects.get(name="SWISS10")
-        installation = models.Installation.objects.get(name=installation_name)
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
@@ -116,4 +130,5 @@ class ImportTest(TransactionTestCase):
             importer.import_file(utils.test_data_path(str(file)), count)
 
         report.prepare_reports(self.testoutputs, count)
-        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 51)
+        found_files = len(list(Path(self.testoutputs).iterdir()))
+        self.assertEqual(found_files, expected_files)
