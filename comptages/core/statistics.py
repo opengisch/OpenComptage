@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 
 from django.db.models import F, CharField, Value, Q
 from django.db.models import Sum
-from django.db.models.functions import ExtractHour, Trunc, Concat
+from django.db.models.functions import ExtractHour, Trunc, Concat, TruncDate, TruncHour
 
 from comptages.core import definitions
 from comptages.datamodel import models
@@ -494,21 +494,32 @@ def get_valid_days(year: int, section: models.Section) -> int:
     where a day is deemed valid just in case there are at least 14 1-hour blocks
     between 6pm and 4pm with at least 1 vehicle.
     """
-    df = get_time_data_yearly(year, section)
-    df.reset_index()
+    start = datetime(year, 1, 1)
+    end = datetime(year + 1, 1, 1)
+    iterator = (
+        models.CountDetail.objects.filter(
+            id_lane__id_section=section,
+            id_category__isnull=False,
+            timestamp__gte=start,
+            timestamp__lt=end,
+        )
+        .annotate(
+            date=TruncDate("timestamp"), hour=ExtractHour("timestamp"), tj=Sum("times")
+        )
+        .order_by("date")
+        .values("date", "hour", "tj")
+    )
 
-    def count_valid_blocks(acc: dict[str, int], label_row: tuple) -> dict[str, int]:
-        _, row = label_row
-        if any(k not in row for k in ("date", "hour", "thm")):
-            return acc
-        current_date = row["date"]
-        if current_date not in acc:
-            acc[current_date] = 0
-        if 6 <= row["hour"] <= 22 and row["thm"] > 0:
-            acc[current_date] += 1
+    def count_valid_blocks(acc: dict, item: dict) -> dict[str, int]:
+        print(item)
+        date = item["date"]
+        if date not in acc:
+            acc[date] = 0
+        if 6 <= item["hour"] <= 22 and item["tj"] > 0:
+            acc[date] += 1
         return acc
 
-    iterator = df.iterrows()
     valid_days = reduce(count_valid_blocks, iterator, {})
+    print(valid_days)
     has_14_valid_blocks = lambda valid_blocks: valid_blocks >= 14
     return len(list(filter(has_14_valid_blocks, valid_days.values())))
