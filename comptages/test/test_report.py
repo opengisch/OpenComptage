@@ -98,12 +98,12 @@ class ImportTest(TransactionTestCase):
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
-            start_service_date=tz.localize(datetime(2021, 3, 1)),
-            end_service_date=tz.localize(datetime(2021, 3, 2)),
-            start_process_date=tz.localize(datetime(2021, 3, 15)),
-            end_process_date=tz.localize(datetime(2021, 3, 28)),
-            start_put_date=tz.localize(datetime(2021, 2, 20)),
-            end_put_date=tz.localize(datetime(2021, 4, 1)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            start_service_date=tz.localize(datetime(2021, 1, 8)),
+            end_service_date=tz.localize(datetime(2021, 12, 15)),
+            start_process_date=tz.localize(datetime(2021, 1, 15)),
+            end_process_date=tz.localize(datetime(2021, 12, 28)),
+            end_put_date=tz.localize(datetime(2021, 12, 31)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
