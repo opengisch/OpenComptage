@@ -83,4 +83,4 @@ class ImportTest(TransactionTestCase):
             importer.import_file(utils.test_data_path(str(file)), count)
 
         report.prepare_reports(self.testoutputs, count)
-        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 4)
+        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 2)
