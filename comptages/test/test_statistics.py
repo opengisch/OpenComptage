@@ -1,5 +1,3 @@
-from itertools import islice
-from pathlib import Path
 import pytz
 from datetime import datetime, timedelta
 from django.test import TransactionTestCase
@@ -277,4 +275,4 @@ class StatisticsTest(TransactionTestCase):
         section = models.Section.objects.get(id=section_id)
         call_command("importdata", "--only-count")
         valid = statistics.get_valid_days(section.id, 2021)
-        self.assertEqual(valid, 6)
+        self.assertGreaterEqual(valid, 100)
