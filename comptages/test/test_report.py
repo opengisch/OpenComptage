@@ -65,6 +65,7 @@ class ImportTest(TransactionTestCase):
             .values("id_section")
             .count()
         )
+        self.assertGreater(n_sections, 0)
 
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
@@ -91,6 +92,8 @@ class ImportTest(TransactionTestCase):
 
         report.prepare_reports(self.testoutputs, count)
         found_files = len(list(Path(self.testoutputs).iterdir()))
+        # The number of files generated is expected to be: weeks measured x sections
+        # so let's make sure all sections are considered in the files generation
         self.assertEqual(found_files % n_sections, 0)
 
     def test_all_sections_yearly(self):
@@ -104,6 +107,7 @@ class ImportTest(TransactionTestCase):
             .values("id_section")
             .count()
         )
+        self.assertGreater(n_sections, 0)
 
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
@@ -131,4 +135,6 @@ class ImportTest(TransactionTestCase):
 
         report.prepare_reports(self.testoutputs, count)
         found_files = len(list(Path(self.testoutputs).iterdir()))
+        # The number of files generated is expected to be: weeks measured x sections
+        # so let's make sure all sections are considered in the files generation
         self.assertEqual(found_files % n_sections, 0)
