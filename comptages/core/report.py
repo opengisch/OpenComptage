@@ -101,8 +101,7 @@ def _prepare_yearly_report(
 
     workbook.save(filename=output)
 
-
-def _mondays_of_count(count) -> Generator[datetime, None, None]:
+def _mondays_of_count(count: models.Count):
     """Generator that return the Mondays of the count"""
 
     start = count.start_process_date

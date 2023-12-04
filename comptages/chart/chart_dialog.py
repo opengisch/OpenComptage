@@ -24,7 +24,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         self.count = None
         self.sensor = None
 
-    def set_attributes(self, count: models.Count):
+    def set_attributes(self, count):
         self.count = count
 
         self.setWindowTitle(
@@ -112,7 +112,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             tab.buttonValidate.hide()
             tab.buttonRefuse.hide()
 
-        sensor_type: models.SensorType = count.id_sensor_type
+        sensor_type = count.id_sensor_type
         lanes = models.Lane.objects.filter(id_section=section)
         directions = (
             lanes.values("direction").distinct().values_list("direction", flat=True)
@@ -270,7 +270,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         assert self.count
         self._create_tabs(self.count)
 
-    def validate_count(self, section):
+    def validate_count(self, section: models.Section):
         QgsMessageLog.logMessage(
             "{} - Accept data started".format(datetime.now()), "Comptages", Qgis.Info
         )
@@ -318,7 +318,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             "{} - Accept data ended".format(datetime.now()), "Comptages", Qgis.Info
         )
 
-    def refuse_count(self, section):
+    def refuse_count(self, section: models.Section):
         QgsMessageLog.logMessage(
             "{} - Reject data started".format(datetime.now()), "Comptages", Qgis.Info
         )

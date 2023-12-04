@@ -1,5 +1,4 @@
 import os
-from typing import Union
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtSql import QSqlQuery
@@ -1014,7 +1013,7 @@ class Layers(QObject):
             return query.value(0)
         return None
 
-    def get_models_by_sensor_type(self, sensor_type: models.SensorType):
+    def get_models_by_sensor_type(self, sensor_type):
         qs = models.SensorTypeModel.objects.filter(id_sensor_type=sensor_type)
 
         result = []
@@ -1022,7 +1021,7 @@ class Layers(QObject):
             result.append(i.id_model.id)
         return result
 
-    def get_classes_by_sensor_type(self, sensor_type: models.SensorType):
+    def get_classes_by_sensor_type(self, sensor_type):
         qs = models.SensorTypeClass.objects.filter(id_sensor_type=sensor_type)
 
         result = []
