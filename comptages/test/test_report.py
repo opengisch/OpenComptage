@@ -111,9 +111,9 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        iterator = Path(utils.test_data_path(test_data_folder)).iterdir()
-        for file in islice(iterator, 50):
+        gen = Path(utils.test_data_path(test_data_folder)).iterdir()
+        for file in islice(gen, 50):
             importer.import_file(utils.test_data_path(str(file)), count)
 
         report.prepare_reports(self.testoutputs, count)
-        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 2)
+        self.assertEqual(len(list(Path(self.testoutputs).iterdir())), 51)
