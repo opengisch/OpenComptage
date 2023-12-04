@@ -131,7 +131,7 @@ class ImportTest(TransactionTestCase):
         )
 
         gen = Path(utils.test_data_path(test_data_folder)).iterdir()
-        for file in islice(gen, 50):
+        for file in islice(gen, 250):
             importer.import_file(utils.test_data_path(str(file)), count)
 
         report.prepare_reports(self.testoutputs, count, year=2021, template="yearly")
