@@ -139,5 +139,4 @@ class ImportTest(TransactionTestCase):
         found_files = len(list(Path(self.testoutputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
-        print(found_files)
-        self.assertGreater(found_files, 0)
+        self.assertGreater(found_files, 50)
