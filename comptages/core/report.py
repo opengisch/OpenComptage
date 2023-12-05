@@ -26,14 +26,14 @@ def prepare_reports(
 
     if template == "default":
         template_name = "template.xlsx"
-        template_path = os.path.join(current_dir, os.pardir, "Report", template_name)
+        template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert count
         _prepare_default_reports(
             file_path, count, template_path, callback_progress, sections_days
         )
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
-        template_path = os.path.join(current_dir, os.pardir, "Report", template_name)
+        template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert year
         assert section_id
         _prepare_yearly_report(
@@ -51,9 +51,7 @@ def _prepare_default_reports(
     sections_days: Optional[dict[str, list[date]]] = None,
 ):
     # We do by section and not by count because of special cases.
-    sections = models.Section.objects.filter(
-        lane__id_installation__count=count
-    ).distinct()
+    sections = models.Section.objects.filter(lane__id_installation__count=count)
 
     # Filter out sections if the user narrowed down the section to include
     # in report
@@ -65,7 +63,8 @@ def _prepare_default_reports(
     )
     mondays = list(_mondays_of_count(count))
     mondays_qty = len(mondays)
-    for section in sections.distinct():
+
+    for section in sections:
         for i, monday in enumerate(mondays):
             # Filter out date based on parameter
             if sections_days and monday not in sections_days[section.id]:
