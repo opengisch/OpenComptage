@@ -391,6 +391,7 @@ class Comptages(QObject):
             selected_feature = next(layer.getSelectedFeatures())
 
         section_id = selected_feature.attribute("id")
+        section = models.Section.objects.get(id=section_id)
 
         classes = self.layers.get_classes_of_section(section_id)
         dlg = YearlyReportDialog(self.iface)
@@ -424,7 +425,7 @@ class Comptages(QObject):
             )
 
             # Do not proceed unless the number of processed days exceeds 100 days
-            valid_days = get_valid_days(section_id, year)
+            valid_days = get_valid_days(year, section)
             if valid_days < 100:
                 push_error(
                     f"This section ({section_id}) lacks valid days for this year ({year}). Found only {valid_days} out of 100."
