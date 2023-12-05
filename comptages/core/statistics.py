@@ -1,9 +1,9 @@
+from typing import Any
 import pandas as pd
 
 from datetime import timedelta, datetime
 
 from django.db.models import F, CharField, Value, Q, Sum, QuerySet
-from django.db.models.query import ValuesQuerySet
 from django.db.models.functions import ExtractHour, Trunc, Concat
 
 from comptages.core import definitions
@@ -331,7 +331,7 @@ def get_speed_data_by_hour(
     end=None,
     speed_low=0,
     speed_high=15,
-) -> ValuesQuerySet[models.CountDetail]:
+) -> "ValuesQuerySet[models.CountDetail, Any]":
     if not start:
         start = count.start_process_date
     if not end:
@@ -460,7 +460,7 @@ def get_category_data_by_hour(
     direction=None,
     start=None,
     end=None,
-) -> ValuesQuerySet[models.CountDetail]:
+) -> "ValuesQuerySet[models.CountDetail, Any]":
     if not start:
         start = count.start_process_date
     if not end:
