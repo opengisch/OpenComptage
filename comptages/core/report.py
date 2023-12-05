@@ -1,6 +1,7 @@
 import os
 
 from datetime import timedelta, datetime
+from typing import Optional
 from openpyxl import load_workbook, Workbook
 
 from comptages.datamodel import models
@@ -16,7 +17,7 @@ def prepare_reports(
     count=None,
     year=None,
     template="default",
-    section_id=None,
+    sections_ids: Optional[list[str]] = None,
     callback_progress=simple_print_callback,
 ):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,9 +30,9 @@ def prepare_reports(
         template_name = "template_yearly.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert year
-        assert section_id
+        assert sections_ids
         _prepare_yearly_report(
-            file_path, year, template_path, section_id, callback_progress
+            file_path, year, template_path, sections_ids, callback_progress
         )
     elif template == "yearly_bike":
         pass
@@ -66,27 +67,33 @@ def _prepare_default_reports(
 
 
 def _prepare_yearly_report(
-    file_path: str, year: int, template_path: str, section_id: str, callback_progress
+    file_path: str,
+    year: int,
+    template_path: str,
+    sections_ids: list[str],
+    callback_progress,
 ):
-    section = models.Section.objects.get(id__contains=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
-        id_installation__lane__id_section=section, start_process_date__year=year
+        id_installation__lane__id_section__in=sections_ids,
+        start_process_date__year=year,
     )
     if not count_qs:
         return
     count = count_qs[0]
 
-    workbook = load_workbook(filename=template_path)
-    _data_count_yearly(count, section, year, workbook)
-    _data_day_yearly(count, section, year, workbook)
-    _data_month_yearly(count, section, year, workbook)
-    _data_speed_yearly(count, section, year, workbook)
-    _data_category_yearly(count, section, year, workbook)
-    _remove_useless_sheets(count, workbook)
-    output = os.path.join(file_path, "{}_{}_r.xlsx".format(section.id, year))
+    sections = models.Section.objects.filter(id__in=sections_ids)
+    for section in sections:
+        workbook = load_workbook(filename=template_path)
+        _data_count_yearly(count, section, year, workbook)
+        _data_day_yearly(count, section, year, workbook)
+        _data_month_yearly(count, section, year, workbook)
+        _data_speed_yearly(count, section, year, workbook)
+        _data_category_yearly(count, section, year, workbook)
+        _remove_useless_sheets(count, workbook)
+        output = os.path.join(file_path, "{}_{}_r.xlsx".format(section.id, year))
 
-    workbook.save(filename=output)
+        workbook.save(filename=output)
 
 
 def _mondays_of_count(count: models.Count):
