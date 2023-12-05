@@ -91,7 +91,7 @@ def _prepare_yearly_report(
         _data_speed_yearly(count, section, year, workbook)
         _data_category_yearly(count, section, year, workbook)
         _remove_useless_sheets(count, workbook)
-        output = os.path.join(file_path, "{}_{}_r.xlsx".format(section.id, year))
+        output = os.path.join(file_path, f"{section.id}_{year}_r.xlsx")
 
         workbook.save(filename=output)
 

@@ -4,7 +4,6 @@ import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
-from django.db.models import Count
 import os
 
 from comptages.test import utils

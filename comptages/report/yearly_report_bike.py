@@ -34,7 +34,7 @@ class YearlyReportBike:
         )
 
         # Total by day of the week (0->monday, 7->sunday) and by direction
-        result = (
+        return (
             qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
             .values("weekday")
             .annotate(total=Sum("times"))
