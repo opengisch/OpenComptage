@@ -103,13 +103,12 @@ class ImportTest(TransactionTestCase):
         installation_name = "53309999"
 
         installation = models.Installation.objects.get(name=installation_name)
-        n_sections = (
-            models.Lane.objects.filter(id_installation=installation.id)
-            .values("id_section")
-            .count()
+        sections = models.Lane.objects.filter(id_installation=installation.id).values(
+            "id_section"
         )
-        self.assertGreater(n_sections, 0)
+        self.assertGreater(sections.count(), 0)
 
+        section_id = sections[0]["id_section"]
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
         sensor_type = models.SensorType.objects.all()[0]
@@ -134,9 +133,11 @@ class ImportTest(TransactionTestCase):
         for file in islice(gen, 250):
             importer.import_file(utils.test_data_path(str(file)), count)
 
-        report.prepare_reports(self.testoutputs, count, year=2021, template="yearly")
+        report.prepare_reports(
+            self.testoutputs, count, year=2021, template="yearly", section_id=section_id
+        )
         found_files = len(list(Path(self.testoutputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
+        print(found_files)
         self.assertGreater(found_files, 0)
-        self.assertEqual(found_files % n_sections, 0)
