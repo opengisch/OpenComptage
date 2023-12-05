@@ -3,6 +3,8 @@ from datetime import date, timedelta, datetime
 from typing import Generator, Optional
 from openpyxl import load_workbook, Workbook
 
+from qgis.core import Qgis, QgsMessageLog
+
 from comptages.datamodel import models
 from comptages.core import statistics
 
@@ -24,14 +26,14 @@ def prepare_reports(
 
     if template == "default":
         template_name = "template.xlsx"
-        template_path = os.path.join(current_dir, os.pardir, "report", template_name)
+        template_path = os.path.join(current_dir, os.pardir, "Report", template_name)
         assert count
         _prepare_default_reports(
             file_path, count, template_path, callback_progress, sections_days
         )
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
-        template_path = os.path.join(current_dir, os.pardir, "report", template_name)
+        template_path = os.path.join(current_dir, os.pardir, "Report", template_name)
         assert year
         assert section_id
         _prepare_yearly_report(
@@ -53,18 +55,22 @@ def _prepare_default_reports(
         lane__id_installation__count=count
     ).distinct()
 
-    # Filter out sections based on parameter
+    # Filter out sections if the user narrowed down the section to include
+    # in report
     if sections_days:
-        sections = sections.filter(lane__id__in=sections_days.keys())
+        sections = sections.filter(id__in=list(sections_days.keys()))
 
-    mondays_qty = len(list(_mondays_of_count(count)))
-    mondays = _mondays_of_count(count)
-    for section in sections:
+    QgsMessageLog.logMessage(
+        f"Reporting on {sections.count()} sections", "Report", Qgis.Info
+    )
+    mondays = list(_mondays_of_count(count))
+    mondays_qty = len(mondays)
+    for section in sections.distinct():
         for i, monday in enumerate(mondays):
             # Filter out date based on parameter
             if sections_days and monday not in sections_days[section.id]:
                 continue
-
+            QgsMessageLog.logMessage("Adding to workbook", "Report", Qgis.Info)
             progress = int(100 / mondays_qty * (i - 1))
             callback_progress(progress)
 
