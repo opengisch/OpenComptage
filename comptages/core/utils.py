@@ -1,7 +1,6 @@
 import os
 
 from datetime import datetime
-from comptages.core.statistics import get_time_data_yearly
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
@@ -10,10 +9,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
 
-from django.db.models.functions import Trunc
-
 from comptages.core.settings import Settings
-from comptages.datamodel import models
 
 
 def get_ui_class(ui_file):
@@ -69,23 +65,3 @@ def connect_to_db():
     db.open()
 
     return db
-
-
-def count_valid_days(section_id: str, year: int) -> int:
-    """Count valid days across all counts for `section` and `year`."""
-    section = models.Section.objects.get(id=section_id)
-    df = get_time_data_yearly(year, section)
-    df.reset_index()
-
-    valid_days_in_year = set()
-    valid_hours_in_day = set()
-    prev_day = None
-    for _, row in df.iterrows():
-        if row["date"] != prev_day:
-            if len(valid_hours_in_day) >= 14:
-                valid_days_in_year.add(prev_day)
-            valid_hours_in_day.clear()
-        if 6 <= row["hour"] <= 22 and row["thm"] > 0:
-            valid_hours_in_day.add(row["hour"])
-        prev_day = row["date"]
-    return len(valid_days_in_year)
