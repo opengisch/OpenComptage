@@ -58,12 +58,12 @@ def _prepare_default_reports(
     if sections_days:
         sections = sections.filter(id__in=list(sections_days.keys()))
 
-    QgsMessageLog.logMessage(
-        f"Reporting on {sections.count()} sections", "Report", Qgis.Info
-    )
     mondays = list(_mondays_of_count(count))
     mondays_qty = len(mondays)
 
+    QgsMessageLog.logMessage(
+        f"Reporting on {sections.distinct().count()} sections", "Report", Qgis.Info
+    )
     for section in sections:
         for i, monday in enumerate(mondays):
             # Filter out date based on parameter
