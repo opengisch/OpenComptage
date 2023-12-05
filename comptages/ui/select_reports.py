@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from functools import partial
 from qgis.PyQt.QtWidgets import (
     QCheckBox,
@@ -117,10 +117,9 @@ class SelectSectionsToReport(QDialog):
     def count_selected(self) -> int:
         count = 0
         for item in self.items_check_boxes.values():
-            if item["checkbox"].isChecked():
-                for subcheckbox in item["subcheckboxes"].values():
-                    if subcheckbox.isChecked():
-                        count += 1
+            for subcheckbox in item["subcheckboxes"].values():
+                if subcheckbox.isChecked():
+                    count += 1
         return count
 
     def update_children_of(self, item: str):
@@ -137,11 +136,11 @@ class SelectSectionsToReport(QDialog):
                 subcheckbox.setChecked(new_state)
         self.update_selected_count()
 
-    def get_inputs(self) -> dict[str, list[str]]:
+    def get_inputs(self) -> dict[str, list[date]]:
         builder = {}
         for section_id, item in self.items_check_boxes.items():
             builder[section_id] = [
-                datetime.strptime(monday_datestr, self.fmt)
+                datetime.strptime(monday_datestr, self.fmt).date()
                 for monday_datestr, subcheckbox in item["subcheckboxes"].items()
                 if subcheckbox.isChecked()
             ]
