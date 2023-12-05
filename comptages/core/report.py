@@ -25,6 +25,7 @@ def prepare_reports(
     if template == "default":
         template_name = "template.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
+        assert count
         _prepare_default_reports(file_path, count, template_path, callback_progress)
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
@@ -75,8 +76,7 @@ def _prepare_yearly_report(
 ):
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
-        id_installation__lane__id_section__in=sections_ids,
-        start_process_date__year=year,
+        id_installation__lane__id_section=sections_ids[0], start_process_date__year=year
     )
     if not count_qs:
         return
