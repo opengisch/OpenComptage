@@ -434,7 +434,7 @@ class Command(BaseCommand):
             id_installation=installation,
         )
         path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
-        files = list(path_to_files.iterdir())[:50]
+        files = list(path_to_files.iterdir())
 
         for file in files:
             import_file(str(file), count)
