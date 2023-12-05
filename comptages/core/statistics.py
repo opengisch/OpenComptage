@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 
 from django.db.models import F, CharField, Value, Q
 from django.db.models import Sum
-from django.db.models.functions import ExtractHour, Trunc, Concat, TruncDate, TruncHour
+from django.db.models.functions import ExtractHour, Trunc, Concat
 
 from comptages.core import definitions
 from comptages.datamodel import models
@@ -504,14 +504,13 @@ def get_valid_days(year: int, section: models.Section) -> int:
             timestamp__lt=end,
         )
         .annotate(
-            date=TruncDate("timestamp"), hour=ExtractHour("timestamp"), tj=Sum("times")
+            date=F("timestamp__date"), hour=ExtractHour("timestamp"), tj=Sum("times")
         )
         .order_by("date")
         .values("date", "hour", "tj")
     )
 
     def count_valid_blocks(acc: dict, item: dict) -> dict[str, int]:
-        print(item)
         date = item["date"]
         if date not in acc:
             acc[date] = 0
@@ -520,6 +519,5 @@ def get_valid_days(year: int, section: models.Section) -> int:
         return acc
 
     valid_days = reduce(count_valid_blocks, iterator, {})
-    print(valid_days)
     has_14_valid_blocks = lambda valid_blocks: valid_blocks >= 14
     return len(list(filter(has_14_valid_blocks, valid_days.values())))
