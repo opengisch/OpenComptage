@@ -1,6 +1,6 @@
 import os
 import pytz
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from functools import partial
 
 from qgis.PyQt.QtGui import QIcon
@@ -516,7 +516,7 @@ class Comptages(QObject):
             return
 
         file_dialog = QFileDialog()
-        mondays: list[datetime] = list(report._mondays_of_count(count))
+        mondays = list(report._mondays_of_count(count))
         sections_ids = (
             models.Section.objects.filter(lane__id_installation__count=count)
             .distinct()
@@ -527,7 +527,9 @@ class Comptages(QObject):
         )
 
         if report_selection_dialog.exec_():
-            selected_sections_dates = report_selection_dialog.get_inputs()
+            selected_sections_dates: dict[
+                str, list[date]
+            ] = report_selection_dialog.get_inputs()
             title = "Exporter un rapport"
 
             path = self.settings.value("report_export_directory")
@@ -543,9 +545,10 @@ class Comptages(QObject):
                 )
                 return
             QgsMessageLog.logMessage(
-                "{} - Generate report action can really begin now for count {} with file_path: {}".format(
-                    datetime.now(), count.id, file_path
-                ),
+                f"""
+                {datetime.now()} - Generate report action can really begin now for count {count.id} with file_path: {file_path}.
+                Selected sections and dates: {selected_sections_dates}
+                """,
                 "Comptages",
                 Qgis.Info,
             )

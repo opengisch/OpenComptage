@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, datetime
+from datetime import date, timedelta, datetime
 from typing import Generator, Optional
 from openpyxl import load_workbook, Workbook
 
@@ -17,7 +17,7 @@ def prepare_reports(
     year=None,
     template="default",
     section_id=None,
-    sections_days: Optional[dict[str, list[str]]] = None,
+    sections_days: Optional[dict[str, list[date]]] = None,
     callback_progress=simple_print_callback,
 ):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,10 +46,12 @@ def _prepare_default_reports(
     count: models.Count,
     template_path: str,
     callback_progress,
-    sections_days: Optional[dict[str, list[str]]] = None,
+    sections_days: Optional[dict[str, list[date]]] = None,
 ):
     # We do by section and not by count because of special cases.
-    sections = models.Section.objects.filter(lane__id_installation__count=count)
+    sections = models.Section.objects.filter(
+        lane__id_installation__count=count
+    ).distinct()
 
     # Filter out sections based on parameter
     if sections_days:
@@ -57,7 +59,7 @@ def _prepare_default_reports(
 
     mondays_qty = len(list(_mondays_of_count(count)))
     mondays = _mondays_of_count(count)
-    for section in sections.distinct():
+    for section in sections:
         for i, monday in enumerate(mondays):
             # Filter out date based on parameter
             if sections_days and monday not in sections_days[section.id]:
@@ -75,6 +77,7 @@ def _prepare_default_reports(
             output = os.path.join(
                 file_path, "{}_{}_r.xlsx".format(section.id, monday.strftime("%Y%m%d"))
             )
+
             workbook.save(filename=output)
 
 
@@ -102,7 +105,7 @@ def _prepare_yearly_report(
     workbook.save(filename=output)
 
 
-def _mondays_of_count(count: models.Count):
+def _mondays_of_count(count: models.Count) -> Generator[date, None, None]:
     """Generator that return the Mondays of the count"""
 
     start = count.start_process_date

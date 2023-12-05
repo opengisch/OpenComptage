@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
@@ -15,7 +15,7 @@ class ReportTask(QgsTask):
         year=None,
         template="default",
         section_id=None,
-        selected_sections_dates: Optional[dict[str, list[str]]] = None,
+        selected_sections_dates: Optional[dict[str, list[date]]] = None,
     ):
         self.basename = os.path.basename(file_path)
         super().__init__("Génération du rapport: {}".format(self.basename))
