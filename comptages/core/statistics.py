@@ -60,7 +60,9 @@ def get_time_data(
     return df
 
 
-def get_time_data_yearly(year, section, lane=None, direction=None) -> pd.DataFrame:
+def get_time_data_yearly(
+    year, section: models.Section, lane=None, direction=None
+) -> pd.DataFrame:
     """Vehicles by hour and day of the week"""
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -79,6 +81,8 @@ def get_time_data_yearly(year, section, lane=None, direction=None) -> pd.DataFra
 
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
+
+    assert qs.exists()
 
     # Vehicles by day and hour
     qs = (

@@ -102,10 +102,10 @@ class ImportTest(TransactionTestCase):
         installation_name = "53309999"
 
         installation = models.Installation.objects.get(name=installation_name)
-        sections_ids = models.Lane.objects.filter(
-            id_installation=installation.id
-        ).values_list("id_section", flat=True)
-        self.assertGreater(sections_ids.count(), 0)
+        sections_ids = models.Section.objects.filter(
+            lane__id_installation=installation.id
+        ).values_list("id", flat=True)
+        self.assertTrue(sections_ids.exists())
 
         model = models.Model.objects.all()[0]
         device = models.Device.objects.all()[0]
