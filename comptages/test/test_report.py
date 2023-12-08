@@ -74,7 +74,6 @@ class ImportTest(TransactionTestCase):
         ).filter(sections__lte=3)
         self.assertTrue(special_case_installations.exists())
 
-        self.assertTrue(models.Count.objects.all().exists())
         count = models.Count.objects.filter(
             id_installation__in=special_case_installations
         ).first()

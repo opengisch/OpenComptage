@@ -68,15 +68,17 @@ def _prepare_default_reports(
 def _prepare_yearly_report(
     file_path: str, year: int, template_path: str, section_id: str, callback_progress
 ):
-    section = models.Section.objects.get(id=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
-        id_installation__lane__id_section=section, start_process_date__year=year
+        id_installation__lane__id_section=section_id, start_process_date__year=year
     )
-    if not count_qs:
+    if not count_qs.exists():
         return
-    count = count_qs[0]
 
+    count = count_qs.first()
+    assert count
+
+    section = models.Section.objects.get(id=section_id)
     workbook = load_workbook(filename=template_path)
     _data_count_yearly(count, section, year, workbook)
     _data_day_yearly(count, section, year, workbook)
