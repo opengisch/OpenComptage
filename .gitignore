@@ -1,6 +1,4 @@
 .idea
-__pycache__/
-comptages/__pycache__/
 .docker/tests/
 .docker/tests/screenshot.png
 .env
@@ -8,3 +6,6 @@ comptages/__pycache__/
 shell.nix
 Pipfile
 /testoutputs
+*.nix
+*.log
+**/__pycache__/

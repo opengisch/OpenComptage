@@ -99,7 +99,7 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
 
 
 def get_day_data(
-    count,
+    count: models.Count,
     section=None,
     lane=None,
     direction=None,
@@ -155,7 +155,11 @@ def get_day_data(
 
 
 def get_category_data(
-    count, section, status=definitions.IMPORT_STATUS_DEFINITIVE, start=None, end=None
+    count: models.Count,
+    section: models.Section,
+    status=definitions.IMPORT_STATUS_DEFINITIVE,
+    start=None,
+    end=None,
 ):
     if not start:
         start = count.start_process_date
@@ -193,7 +197,13 @@ def get_category_data(
     return df
 
 
-def get_speed_data(count, section, exclude_trash=False, start=None, end=None):
+def get_speed_data(
+    count: models.Count,
+    section: models.Section,
+    exclude_trash=False,
+    start=None,
+    end=None,
+):
     if not start:
         start = count.start_process_date
     if not end:
@@ -249,7 +259,14 @@ def get_speed_data(count, section, exclude_trash=False, start=None, end=None):
     return df
 
 
-def get_light_numbers(count, section, lane=None, direction=None, start=None, end=None):
+def get_light_numbers(
+    count: models.Count,
+    section: models.Section,
+    lane=None,
+    direction=None,
+    start=None,
+    end=None,
+):
     if not start:
         start = count.start_process_date
     if not end:
@@ -281,7 +298,9 @@ def get_light_numbers(count, section, lane=None, direction=None, start=None, end
     return res
 
 
-def get_light_numbers_yearly(section, lane=None, direction=None, start=None, end=None):
+def get_light_numbers_yearly(
+    section: models.Section, lane=None, direction=None, start=None, end=None
+):
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         id_category__isnull=False,
@@ -305,8 +324,8 @@ def get_light_numbers_yearly(section, lane=None, direction=None, start=None, end
 
 
 def get_speed_data_by_hour(
-    count,
-    section,
+    count: models.Count,
+    section: models.Section,
     lane=None,
     direction=None,
     start=None,
@@ -348,7 +367,13 @@ def get_speed_data_by_hour(
 
 
 def get_characteristic_speed_by_hour(
-    count, section, lane=None, direction=None, start=None, end=None, v=0.15
+    count: models.Count,
+    section: models.Section,
+    lane=None,
+    direction=None,
+    start=None,
+    end=None,
+    v=0.15,
 ):
     if not start:
         start = count.start_process_date
@@ -385,7 +410,13 @@ def get_characteristic_speed_by_hour(
 
 
 def get_average_speed_by_hour(
-    count, section, lane=None, direction=None, start=None, end=None, v=0.15
+    count: models.Count,
+    section: models.Section,
+    lane=None,
+    direction=None,
+    start=None,
+    end=None,
+    v=0.15,
 ):
     if not start:
         start = count.start_process_date
@@ -423,8 +454,8 @@ def get_average_speed_by_hour(
 
 
 def get_category_data_by_hour(
-    count,
-    section,
+    count: models.Count,
+    section: models.Section,
     category,
     lane=None,
     direction=None,

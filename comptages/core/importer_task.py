@@ -5,7 +5,6 @@ from typing import Any
 
 from qgis.core import QgsTask, Qgis, QgsMessageLog
 
-from comptages.datamodel import models
 from comptages.core import importer
 
 
