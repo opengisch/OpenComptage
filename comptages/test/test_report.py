@@ -2,6 +2,7 @@ from pathlib import Path
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
+from django.db.models import Count
 from django.core.management import call_command
 import os
 
@@ -57,11 +58,36 @@ class ImportTest(TransactionTestCase):
         section_id = "00107695"
         installations = models.Installation.objects.filter(lane__id_section=section_id)
         installation = installations.first()
-        assert installation
 
-        count = models.Count.objects.get(id_installation=installation.id)
+        count = models.Count.objects.filter(id_installation=installation.id).first()
         report.prepare_reports(
             self.testoutputs, count, year, "yearly", section_id=section_id
         )
 
+        self.assertTrue(list(Path(self.testoutputs).iterdir()))
+
+    def test_generate_yearly_reports_special_case(self):
+        call_command("importdata", "--only-swiss10year", "--limit", 100)
+
+        special_case_installations = models.Installation.objects.annotate(
+            sections=Count("lane__id_section")
+        ).filter(sections__lte=3)
+        self.assertTrue(special_case_installations.exists())
+
+        self.assertTrue(models.Count.objects.all().exists())
+        count = models.Count.objects.filter(
+            id_installation__in=special_case_installations
+        ).first()
+
+        year = count.start_process_date.year
+        section_id = special_case_installations.values_list(
+            "lane__id_section", flat=True
+        ).first()
+
+        print(
+            f"Preparing reports for count = {count}, year = {year}, section_id = {section_id}"
+        )
+        report.prepare_reports(
+            self.testoutputs, count, year, "yearly", section_id=section_id
+        )
         self.assertTrue(list(Path(self.testoutputs).iterdir()))
