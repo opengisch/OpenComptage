@@ -7,3 +7,4 @@ comptages/__pycache__/
 .vscode/settings.json
 shell.nix
 Pipfile
+/testoutputs

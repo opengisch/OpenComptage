@@ -3,6 +3,7 @@ import logging
 import os
 from decimal import Decimal
 from pathlib import Path
+from typing import Optional
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
 import pytz
@@ -36,14 +37,24 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
-        parser.add_argument("--add-count", action="store_true", help="Add count data")
         parser.add_argument(
-            "--only-count", action="store_true", help="Add only count data"
+            "--add-swiss10year", action="store_true", help="Add count data"
+        )
+        parser.add_argument(
+            "--only-swiss10year",
+            action="store_true",
+            help="Add only Swiss 10 year data",
+        )
+        parser.add_argument(
+            "--limit",
+            action="store",
+            type=int,
+            help="limit the number of files to import",
         )
 
     def handle(self, *args, **options):
-        if options["only_count"]:
-            self.import_count()
+        if options["only_swiss10year"]:
+            self.import_count(options["limit"])
             return
 
         if options["clear"]:
@@ -88,8 +99,8 @@ class Command(BaseCommand):
         self.import_sectors(self.file_path("sector.csv"))
         self.import_municipalities(self.file_path("municipality.csv"))
 
-        if options["add_count"]:
-            self.import_count()
+        if options["add_swiss10year"]:
+            self.import_count(options["limit"])
 
         print("🚓")
 
@@ -124,7 +135,7 @@ class Command(BaseCommand):
                     ].value,  # TODO : probably needs cast do datetime
                 )
             )
-        Section.objects.bulk_create(sections)
+        Section.objects.bulk_create(sections, ignore_conflicts=True)
         print(f"Inserted {len(sections)} sections.")
 
     def import_brands(self, csv_file):
@@ -405,28 +416,25 @@ class Command(BaseCommand):
         Municipality.objects.bulk_create(objects)
         print(f"Inserted {len(objects)} municipalities.")
 
-    def import_count(self):
+    def import_count(self, limit: Optional[int] = None):
         section_id = "00107695"
-        section = Section.objects.get(id=section_id)
-        lanes = section.lane_set.values_list("id", flat=True)
-        print(f"Importing counts for section {section_id} with lanes {lanes}")
+        year = 2021
+        installations = Installation.objects.filter(lane__id_section=section_id)
+        installation = installations.first()
 
-        installation = Installation.objects.filter(lane__id__in=lanes)[0]
-        assert installation
-
-        model = Model.objects.all()[0]
-        device = Device.objects.all()[0]
-        sensor_type = SensorType.objects.all()[0]
+        model = Model.objects.all().first()
+        device = Device.objects.all().first()
+        sensor_type = SensorType.objects.all().first()
         class_ = Class.objects.get(name="SWISS10")
         tz = pytz.timezone("Europe/Zurich")
 
         count = Count.objects.create(
-            start_service_date=tz.localize(datetime(2021, 2, 1)),
-            end_service_date=tz.localize(datetime(2021, 12, 10)),
-            start_process_date=tz.localize(datetime(2021, 2, 10)),
-            end_process_date=tz.localize(datetime(2021, 12, 15)),
-            start_put_date=tz.localize(datetime(2021, 1, 1)),
-            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            start_service_date=tz.localize(datetime(year, 1, 2)),
+            end_service_date=tz.localize(datetime(year, 12, 15)),
+            start_process_date=tz.localize(datetime(year, 1, 3)),
+            end_process_date=tz.localize(datetime(year, 12, 30)),
+            start_put_date=tz.localize(datetime(year, 2, 1)),
+            end_put_date=tz.localize(datetime(year, 12, 31)),
             id_model=model,
             id_device=device,
             id_sensor_type=sensor_type,
@@ -436,7 +444,13 @@ class Command(BaseCommand):
         path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
         files = list(path_to_files.iterdir())
 
+        if limit:
+            files = files[:limit]
+
+        imported = 0
         for file in files:
             import_file(str(file), count)
+            imported += 1
+            print(f"Imported {file} ({len(files) - imported} left...)")
 
         print(f"Imported {len(files)} count files!")

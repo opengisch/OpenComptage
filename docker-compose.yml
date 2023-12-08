@@ -23,6 +23,7 @@ services:
     command: sh -c 'xvfb-run python3 manage.py migrate && python3 manage.py test comptages.test -v2'
     volumes:
       - ${PWD}:/OpenComptage
+      - ${PWD}/testoutputs:/testoutputs
 
   db:
     image: postgis/postgis:12-2.5

@@ -66,7 +66,7 @@ def _prepare_default_reports(file_path, count, template_path, callback_progress)
 def _prepare_yearly_report(
     file_path: str, year: int, template_path: str, section_id: str, callback_progress
 ):
-    section = models.Section.objects.get(id__contains=section_id)
+    section = models.Section.objects.get(id=section_id)
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=section, start_process_date__year=year
@@ -908,7 +908,7 @@ def _is_aggregate(count):
     from_aggregate = (
         models.CountDetail.objects.filter(id_count=count)
         .distinct("from_aggregate")
-        .values("from_aggregate")[0]["from_aggregate"]
+        .values("from_aggregate")
     )
-
-    return from_aggregate
+    assert from_aggregate.exists()
+    return from_aggregate[0]["from_aggregate"]
