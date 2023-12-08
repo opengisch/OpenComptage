@@ -79,14 +79,16 @@ class ImportTest(TransactionTestCase):
         ).first()
 
         year = count.start_process_date.year
-        section_id = special_case_installations.values_list(
-            "lane__id_section", flat=True
-        ).first()
+        section = (
+            models.Section.objects.filter(lane__id_installation=count.id_installation)
+            .distinct()
+            .first()
+        )
 
         print(
-            f"Preparing reports for count = {count}, year = {year}, section_id = {section_id}"
+            f"Preparing reports for count = {count}, year = {year}, section_id = {section.id}"
         )
         report.prepare_reports(
-            self.testoutputs, count, year, "yearly", section_id=section_id
+            self.testoutputs, count, year, "yearly", section_id=section.id
         )
         self.assertTrue(list(Path(self.testoutputs).iterdir()))
