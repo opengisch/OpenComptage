@@ -5,7 +5,7 @@ from django.core.management import call_command
 
 from comptages.test import utils
 from comptages.datamodel import models
-from comptages.core import report, importer, statistics
+from comptages.core import report, importer
 
 
 class ImportTest(TransactionTestCase):

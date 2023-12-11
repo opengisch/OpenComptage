@@ -63,7 +63,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
 
         self._create_tabs(count)
 
-    def _create_tabs(self, count):
+    def _create_tabs(self, count: models.Count):
         try:
             self.tabWidget.currentChanged.disconnect(self.current_tab_changed)
         except Exception:
@@ -81,7 +81,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             self.tabWidget.addTab(tab, section.id)
             self._populate_tab(tab, section, count)
 
-    def _populate_tab(self, tab, section, count):
+    def _populate_tab(self, tab, section: models.Section, count: models.Count):
         # Check if there is data to be validated
         approval_process = False
         if models.CountDetail.objects.filter(
@@ -270,7 +270,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
         assert self.count
         self._create_tabs(self.count)
 
-    def validate_count(self, section):
+    def validate_count(self, section: models.Section):
         QgsMessageLog.logMessage(
             "{} - Accept data started".format(datetime.now()), "Comptages", Qgis.Info
         )
@@ -318,7 +318,7 @@ class ChartDock(QDockWidget, FORM_CLASS):
             "{} - Accept data ended".format(datetime.now()), "Comptages", Qgis.Info
         )
 
-    def refuse_count(self, section):
+    def refuse_count(self, section: models.Section):
         QgsMessageLog.logMessage(
             "{} - Reject data started".format(datetime.now()), "Comptages", Qgis.Info
         )

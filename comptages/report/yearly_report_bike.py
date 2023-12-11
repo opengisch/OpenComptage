@@ -11,7 +11,6 @@ from django.db.models.functions import (
     ExtractIsoWeekDay,
     ExtractHour,
     ExtractMonth,
-    ExtractDay,
 )
 
 from openpyxl import load_workbook
