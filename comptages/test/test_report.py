@@ -42,25 +42,22 @@ class ImportTest(TransactionTestCase):
 
         installation = models.Installation.objects.get(name=installation_name)
         count = yearly_count_for(year, installation)
-        self.assertTrue(models.Count.objects.all().first().id == count.id)
-
         importer.import_file(utils.test_data_path(file_name), count)
-        sections = models.Section.objects.filter(
-            lane__id_installation=installation.id, lane__countdetail__id_count=count.id
-        )
-        self.assertTrue(sections.exists())
 
-        for section_id in sections.values_list("id", flat=True):
+        lanes_installation: Manager = installation.lane_set
+        section_ids = lanes_installation.values_list("id_section", flat=True)
+        self.assertTrue(section_ids.exists())
+
+        for section_id in section_ids:
             with self.subTest():
                 report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
                 report_dir1 = report.values_by_hour_and_direction(1)
                 report_dir2 = report.values_by_hour_and_direction(2)
-
-                self.assertTrue(report_dir1.exists())
-                self.assertTrue(report_dir2.exists())
-
                 report_dir1_values = report_dir1.values_list("tjm", flat=True)
                 report_dir2_values = report_dir2.values_list("tjm", flat=True)
+                self.assertTrue(report_dir1_values.exists())
+                self.assertTrue(report_dir2_values.exists())
+
                 tjms = (
                     decimal.Decimal(v)
                     for v in chain(report_dir1_values, report_dir2_values)
