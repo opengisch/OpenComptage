@@ -102,11 +102,7 @@ class ImportTest(TransactionTestCase):
         installation_name = "53309999"
 
         installation = models.Installation.objects.get(name=installation_name)
-        sections = models.Section.objects.filter(
-            lane__id_installation=installation.id
-        ).distinct()
-        self.assertTrue(sections.exists())
-
+        
         model = models.Model.objects.all().first()
         device = models.Device.objects.all().first()
         sensor_type = models.SensorType.objects.all().first()
@@ -135,6 +131,12 @@ class ImportTest(TransactionTestCase):
             imported += 1
             print(f"Remaining: {to_import - imported}")
 
+        sections = models.Section.objects.filter(
+            lane__id_installation=installation.id,
+            lane__countdetail__id_count=count.id
+        ).distinct()
+        self.assertTrue(sections.exists())
+        
         sections_ids = list(sections.values_list("id", flat=True))
         report.prepare_reports(
             file_path=self.testoutputs,
