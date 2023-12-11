@@ -91,6 +91,10 @@ def get_time_data_yearly(
         .annotate(thm=Sum("times"))
         .values("import_status", "date", "hour", "thm")
     )
+    if not qs.exists():
+        print(
+            f"Year: {year}. Section: {section}. Lane: {lane}. Direction: {direction}. Query: {str(qs.query)}"
+        )
 
     df = pd.DataFrame.from_records(qs)
     df = df.groupby([df["date"].dt.dayofweek, "hour"]).thm.sum()
