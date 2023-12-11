@@ -13,9 +13,9 @@ def yearly_count_for(
     sensor_type: Optional[models.SensorType] = None,
 ) -> models.Count:
     tz = pytz.timezone("Europe/Zurich")
-    model = model or models.Model.objects.all()[0]
-    device = device or models.Device.objects.all()[0]
-    sensor_type = sensor_type or models.SensorType.objects.all()[0]
+    model = model or models.Model.objects.all().first()
+    device = device or models.Device.objects.all().first()
+    sensor_type = sensor_type or models.SensorType.objects.all().first()
     class_ = class_ or models.Class.objects.get(name="SWISS10")
     return models.Count.objects.create(
         start_put_date=tz.localize(datetime(year, 1, 1)),

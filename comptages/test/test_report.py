@@ -44,11 +44,12 @@ class ImportTest(TransactionTestCase):
         count = yearly_count_for(year, installation)
         importer.import_file(utils.test_data_path(file_name), count)
 
-        lanes_installation: Manager = installation.lane_set
-        section_ids = lanes_installation.values_list("id_section", flat=True)
-        self.assertTrue(section_ids.exists())
+        sections_ids = models.Section.objects.filter(
+            lane__id_installation=installation.id, lane__countdetail__isnull=False
+        ).values_list("id", flat=True)
+        self.assertTrue(sections_ids.exists())
 
-        for section_id in section_ids:
+        for section_id in sections_ids:
             with self.subTest():
                 report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
                 report_dir1 = report.values_by_hour_and_direction(1)
