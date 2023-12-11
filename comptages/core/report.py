@@ -84,9 +84,9 @@ def _prepare_yearly_report(
     assert count
 
     # Filter out sections whose id is not in the sections_ids
-    # or whose lanes match no countdetail
+    # or whose lanes match no countdetail for the current count
     sections = models.Section.objects.filter(
-        id__in=sections_ids, lane__countdetail__isnull=False
+        id__in=sections_ids, lane__countdetail__id_count=count.id
     )
     for section in sections:
         workbook = load_workbook(filename=template_path)
