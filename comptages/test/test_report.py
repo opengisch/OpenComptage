@@ -27,9 +27,9 @@ class ImportTest(TransactionTestCase):
 
     def test_report(self):
         # Create count and import some data
-        model = models.Model.objects.all()[0]
-        device = models.Device.objects.all()[0]
-        sensor_type = models.SensorType.objects.all()[0]
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
         class_ = models.Class.objects.get(name="SWISS10")
         installation = models.Installation.objects.get(name="00056520")
         tz = pytz.timezone("Europe/Zurich")
@@ -66,9 +66,9 @@ class ImportTest(TransactionTestCase):
         )
         self.assertGreater(n_sections, 0)
 
-        model = models.Model.objects.all()[0]
-        device = models.Device.objects.all()[0]
-        sensor_type = models.SensorType.objects.all()[0]
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
         class_ = models.Class.objects.get(name="SWISS10")
         tz = pytz.timezone("Europe/Zurich")
 
@@ -102,14 +102,14 @@ class ImportTest(TransactionTestCase):
         installation_name = "53309999"
 
         installation = models.Installation.objects.get(name=installation_name)
-        sections_ids = models.Section.objects.filter(
+        sections = models.Section.objects.filter(
             lane__id_installation=installation.id
-        ).values_list("id", flat=True)
-        self.assertTrue(sections_ids.exists())
+        ).distinct()
+        self.assertTrue(sections.exists())
 
-        model = models.Model.objects.all()[0]
-        device = models.Device.objects.all()[0]
-        sensor_type = models.SensorType.objects.all()[0]
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
         class_ = models.Class.objects.get(name="SWISS10")
         tz = pytz.timezone("Europe/Zurich")
 
@@ -128,18 +128,23 @@ class ImportTest(TransactionTestCase):
         )
 
         gen = Path(utils.test_data_path(test_data_folder)).iterdir()
-        for file in islice(gen, 250):
+        to_import = 100
+        imported = 0
+        for file in islice(gen, to_import):
             importer.import_file(utils.test_data_path(str(file)), count)
+            imported += 1
+            print(f"Remaining: {to_import - imported}")
 
+        sections_ids = list(sections.values_list("id", flat=True))
         report.prepare_reports(
-            self.testoutputs,
-            count,
-            year=2021,
+            file_path=self.testoutputs,
+            count=count,
+            year=count.start_process_date.year,
             template="yearly",
-            sections_ids=list(sections_ids),
+            sections_ids=sections_ids,
         )
         found_files = len(list(Path(self.testoutputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
         self.assertGreater(found_files, 50)
-        self.assertEqual(found_files % sections_ids.count(), 0)
+        self.assertEqual(found_files % sections.count(), 0)

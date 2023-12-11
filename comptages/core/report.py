@@ -78,11 +78,16 @@ def _prepare_yearly_report(
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=sections_ids[0], start_process_date__year=year
     )
-    if not count_qs:
+    if not count_qs.exists():
         return
-    count = count_qs[0]
+    count = count_qs.first()
+    assert count
 
-    sections = models.Section.objects.filter(id__in=sections_ids)
+    # Filter out sections whose id is not in the sections_ids
+    # or whose lanes match no countdetail
+    sections = models.Section.objects.filter(
+        id__in=sections_ids, lane__countdetail__isnull=False
+    )
     for section in sections:
         workbook = load_workbook(filename=template_path)
         _data_count_yearly(count, section, year, workbook)
@@ -92,7 +97,6 @@ def _prepare_yearly_report(
         _data_category_yearly(count, section, year, workbook)
         _remove_useless_sheets(count, workbook)
         output = os.path.join(file_path, f"{section.id}_{year}_r.xlsx")
-
         workbook.save(filename=output)
 
 

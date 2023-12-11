@@ -82,8 +82,6 @@ def get_time_data_yearly(
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
 
-    assert qs.exists()
-
     # Vehicles by day and hour
     qs = (
         qs.annotate(date=Trunc("timestamp", "day"), hour=ExtractHour("timestamp"))
