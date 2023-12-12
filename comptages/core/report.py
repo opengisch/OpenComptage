@@ -43,6 +43,7 @@ def prepare_reports(
 def _prepare_default_reports(
     file_path: str, count: models.Count, template_path: str, callback_progress
 ):
+    """Write default reports to disk (1 per section in count, per week)"""
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(
         lane__id_installation__count=count
@@ -75,6 +76,7 @@ def _prepare_yearly_report(
     sections_ids: list[str],
     callback_progress,
 ):
+    """Write default reports to disk (1 per section included in the count)"""
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=sections_ids[0], start_process_date__year=year

@@ -2,7 +2,7 @@ import os
 from typing import Any
 
 
-from django.db.models import Sum, Count, QuerySet
+from django.db.models import Sum, Count
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
