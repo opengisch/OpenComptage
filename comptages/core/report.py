@@ -1,10 +1,11 @@
 import os
+from datetime import date, datetime, timedelta
+from typing import Generator, Optional
 
-from datetime import timedelta, datetime
-from openpyxl import load_workbook, Workbook
+from openpyxl import Workbook, load_workbook
 
-from comptages.datamodel import models
 from comptages.core import statistics
+from comptages.datamodel import models
 
 
 def simple_print_callback(progress):
@@ -89,7 +90,7 @@ def _prepare_yearly_report(
     workbook.save(filename=output)
 
 
-def _mondays_of_count(count: models.Count):
+def _mondays_of_count(count: models.Count) -> Generator[date, None, None]:
     """Generator that return the Mondays of the count"""
 
     start = count.start_process_date

@@ -1,16 +1,16 @@
 import decimal
-from itertools import chain
 import os
+from itertools import chain
 from pathlib import Path
-from django.test import TransactionTestCase
+
 from django.core.management import call_command
 from django.db.models.manager import Manager
+from django.test import TransactionTestCase
 
-from comptages.core import report, importer
+from comptages.core import importer, report
 from comptages.datamodel import models
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.test import utils, yearly_count_for
-from comptages.core import report, importer
 
 
 class ImportTest(TransactionTestCase):

@@ -1,19 +1,13 @@
 import os
 
-
-from django.db.models import Sum, Count
-from django.db.models.functions import Cast
-from django.db.models.fields import DateField
-from django.db.models.functions import (
-    ExtractIsoWeekDay,
-    ExtractHour,
-    ExtractMonth,
-)
-
+from django.db.fields import DateField
+from django.db.functions import (Cast, ExtractHour, ExtractIsoWeekDay,
+                                 ExtractMonth)
+from django.db.models import Count, Sum
 from openpyxl import load_workbook
 
 from comptages.core import definitions
-from comptages.datamodel.models import CountDetail, Section, Lane
+from comptages.datamodel.models import CountDetail, Lane, Section
 
 
 class YearlyReportBike:
@@ -41,7 +35,7 @@ class YearlyReportBike:
             .values("weekday", "id_lane__direction", "total")
         )
 
-    def values_by_day_and_hour(self):
+    def values_by_day_and_hour(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -63,7 +57,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_hour_and_direction(self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
+    def values_by_hour_and_direction(self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -85,7 +79,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_and_month(self):
+    def values_by_day_and_month(self) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -107,7 +101,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day(self):
+    def values_by_day(self) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -125,7 +119,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self):
+    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -145,7 +139,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_class(self):
+    def values_by_class(self) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -161,7 +155,7 @@ class YearlyReportBike:
         )
         return result
 
-    def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
+    def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]) -> dict:
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
@@ -174,7 +168,7 @@ class YearlyReportBike:
         # TODO: avoid the division?
         return qs.aggregate(res=Sum("times"))["res"] / 365
 
-    def total(self, categories=[1]):
+    def total(self, categories=[1]) -> dict:
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
@@ -183,7 +177,7 @@ class YearlyReportBike:
 
         return qs.aggregate(res=Sum("times"))["res"]
 
-    def max_day(self, categories=[1]):
+    def max_day(self, categories=[1]) -> tuple:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
@@ -198,7 +192,7 @@ class YearlyReportBike:
 
         return qs[0]["total"], qs[0]["date"]
 
-    def max_month(self, categories=[1]):
+    def max_month(self, categories=[1]) -> tuple:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
@@ -213,7 +207,7 @@ class YearlyReportBike:
 
         return qs[0]["total"], qs[0]["month"]
 
-    def min_month(self, categories=[1]):
+    def min_month(self, categories=[1]) -> tuple:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
