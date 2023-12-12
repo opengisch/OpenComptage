@@ -1,11 +1,12 @@
-from qgis.PyQt.QtWidgets import (
-    QDialog,
-    QCompleter,
-    QComboBox,
-    QSlider,
-    QDialogButtonBox,
-)
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import (
+    QComboBox,
+    QCompleter,
+    QDialog,
+    QDialogButtonBox,
+    QSlider,
+)
+
 from comptages.core.utils import get_ui_class
 from comptages.datamodel import models
 

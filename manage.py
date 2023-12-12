@@ -1,8 +1,9 @@
 import os
 import sys
-from comptages import prepare_django
 
 from django.core.management import execute_from_command_line
+
+from comptages import prepare_django
 
 if __name__ == "__main__":
     default_db = {

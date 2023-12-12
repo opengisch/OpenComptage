@@ -1,6 +1,6 @@
 import os
-import django
 
+import django
 from django.conf import settings as django_settings
 
 

@@ -1,31 +1,32 @@
-from datetime import datetime
 import logging
 import os
+from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
+
+import pytz
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
-import pytz
 
 from ....core.importer import import_file
 from ...models import (
-    Section,
-    Lane,
     Brand,
     Category,
     Class,
     ClassCategory,
+    Count,
     Device,
     Installation,
+    Lane,
     Model,
     ModelClass,
+    Municipality,
+    Section,
+    Sector,
     SensorType,
     SensorTypeClass,
     SensorTypeInstallation,
     SensorTypeModel,
-    Count,
-    Sector,
-    Municipality,
 )
 
 logger = logging.getLogger("main")

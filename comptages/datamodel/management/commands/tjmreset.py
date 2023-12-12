@@ -1,8 +1,9 @@
 import logging
+
 from django.core.management.base import BaseCommand
 
-from comptages.datamodel import models
 from comptages.core import statistics
+from comptages.datamodel import models
 
 logger = logging.getLogger("main")
 

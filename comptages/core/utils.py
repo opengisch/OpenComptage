@@ -1,12 +1,11 @@
 import os
-
 from datetime import datetime
 
 from qgis.core import Qgis
-from qgis.PyQt.uic import loadUiType
-from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtSql import QSqlDatabase
+from qgis.PyQt.QtWidgets import QProgressBar
+from qgis.PyQt.uic import loadUiType
 from qgis.utils import iface
 
 from comptages.core.settings import Settings

@@ -1,19 +1,17 @@
 import os
 
-
-from django.db.models import Sum, Count
-from django.db.models.functions import Cast
+from django.db.models import Count, Sum
 from django.db.models.fields import DateField
 from django.db.models.functions import (
-    ExtractIsoWeekDay,
+    Cast,
     ExtractHour,
+    ExtractIsoWeekDay,
     ExtractMonth,
 )
-
 from openpyxl import load_workbook
 
 from comptages.core import definitions
-from comptages.datamodel.models import CountDetail, Section, Lane
+from comptages.datamodel.models import CountDetail, Lane, Section
 
 
 class YearlyReportBike:

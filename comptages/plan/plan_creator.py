@@ -1,7 +1,9 @@
 import os
-from qgis.core import QgsPrintLayout, QgsProject, QgsReadWriteContext, QgsLayoutExporter
+
+from qgis.core import QgsLayoutExporter, QgsPrintLayout, QgsProject, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.utils import iface
+
 from comptages.core.settings import Settings
 from comptages.datamodel import models
 

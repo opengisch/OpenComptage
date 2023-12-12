@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from qgis.core import QgsTask, Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog, QgsTask
 
 from comptages.core import report
 

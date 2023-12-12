@@ -1,5 +1,5 @@
 import icalendar
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QFileDialog
 
 from comptages.core.utils import push_info

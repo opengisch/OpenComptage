@@ -1,17 +1,17 @@
-import plotly
-import plotly.graph_objs as go
-import plotly.express as px
-from plotly.subplots import make_subplots
-
 from datetime import datetime, timedelta
 from functools import partial
 
+import plotly
+import plotly.express as px
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QDockWidget, QListWidgetItem, QTabWidget
-from qgis.core import QgsMessageLog, Qgis
+
+from comptages.core import definitions, statistics
 from comptages.core.utils import get_ui_class, push_info
-from comptages.ui.resources import *
-from comptages.core import statistics, definitions
 from comptages.datamodel import models
+from comptages.ui.resources import *
 
 FORM_CLASS = get_ui_class("chart_dock.ui")
 

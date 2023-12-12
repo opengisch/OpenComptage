@@ -1,10 +1,10 @@
 import os
+from datetime import datetime, timedelta
 
-from datetime import timedelta, datetime
-from openpyxl import load_workbook, Workbook
+from openpyxl import Workbook, load_workbook
 
-from comptages.datamodel import models
 from comptages.core import statistics
+from comptages.datamodel import models
 
 
 def simple_print_callback(progress):

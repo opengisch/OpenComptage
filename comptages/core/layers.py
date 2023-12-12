@@ -1,22 +1,22 @@
 import os
 
-from qgis.PyQt.QtCore import QObject
-from qgis.PyQt.QtSql import QSqlQuery
 from qgis.core import (
-    QgsProject,
-    QgsEditorWidgetSetup,
-    QgsVectorLayer,
+    QgsAction,
     QgsCoordinateReferenceSystem,
     QgsDataSourceUri,
-    QgsAction,
-    QgsFeatureRequest,
+    QgsEditorWidgetSetup,
     QgsExpressionContextUtils,
+    QgsFeatureRequest,
+    QgsProject,
+    QgsVectorLayer,
 )
+from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtSql import QSqlQuery
 from qgis.utils import iface
 
 from comptages.core.definitions import LAYER_DEFINITIONS
 from comptages.core.settings import Settings
-from comptages.core.utils import push_info, connect_to_db
+from comptages.core.utils import connect_to_db, push_info
 from comptages.datamodel import models
 
 

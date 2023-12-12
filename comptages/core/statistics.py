@@ -1,10 +1,8 @@
+from datetime import datetime, timedelta
+
 import pandas as pd
-
-from datetime import timedelta, datetime
-
-from django.db.models import F, CharField, Value, Q
-from django.db.models import Sum
-from django.db.models.functions import ExtractHour, Trunc, Concat
+from django.db.models import CharField, F, Q, Sum, Value
+from django.db.models.functions import Concat, ExtractHour, Trunc
 
 from comptages.core import definitions
 from comptages.datamodel import models

@@ -1,35 +1,34 @@
 import os
-import pytz
 from datetime import datetime, timedelta
 from functools import partial
 
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QFileDialog, QMessageBox
-from qgis.PyQt.QtCore import QObject, Qt, QDateTime
+import pytz
 from qgis.core import (
-    QgsMessageLog,
     Qgis,
     QgsApplication,
     QgsExpressionContextUtils,
+    QgsMessageLog,
     QgsProject,
 )
-from qgis.utils import qgsfunction, plugins
+from qgis.PyQt.QtCore import QDateTime, QObject, Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QMessageBox
+from qgis.utils import plugins, qgsfunction
 
-from comptages.core.settings import Settings, SettingsDialog
-from comptages.core.layers import Layers
-from comptages.core.filter_dialog import FilterDialog
-from comptages.core.yearly_report_dialog import YearlyReportDialog
-from comptages.core.delete_dialog import DeleteDialog
-from comptages.core.utils import push_info
-from comptages.datamodel import models
-from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
 from comptages.config.config_creator import ConfigCreatorCmd
+from comptages.core import definitions, importer, importer_task, report, report_task
+from comptages.core.delete_dialog import DeleteDialog
+from comptages.core.filter_dialog import FilterDialog
+from comptages.core.layers import Layers
+from comptages.core.settings import Settings, SettingsDialog
+from comptages.core.utils import push_info
+from comptages.core.yearly_report_dialog import YearlyReportDialog
+from comptages.datamodel import models
+from comptages.ics.ics_importer import IcsImporter
 from comptages.plan.plan_creator import PlanCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
-from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
-from comptages.core import definitions
 
 
 class Comptages(QObject):

@@ -3,6 +3,7 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 
 import uuid
+
 from django.contrib.gis.db import models
 
 

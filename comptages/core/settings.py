@@ -3,9 +3,9 @@ import os
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.uic import loadUiType
 
-from comptages.qgissettingmanager import SettingManager, Scope
-from comptages.qgissettingmanager.types import String, Integer, Bool
+from comptages.qgissettingmanager import Scope, SettingManager
 from comptages.qgissettingmanager.setting_dialog import SettingDialog
+from comptages.qgissettingmanager.types import Bool, Integer, String
 
 
 class Settings(SettingManager):

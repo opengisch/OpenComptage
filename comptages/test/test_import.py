@@ -1,11 +1,12 @@
-import pytz
 from datetime import datetime
-from django.test import TransactionTestCase
-from django.core.management import call_command
 
-from comptages.test import utils
-from comptages.datamodel import models
+import pytz
+from django.core.management import call_command
+from django.test import TransactionTestCase
+
 from comptages.core import importer
+from comptages.datamodel import models
+from comptages.test import utils
 
 
 class ImportTest(TransactionTestCase):

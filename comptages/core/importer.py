@@ -1,12 +1,13 @@
-from typing import Callable, Dict, Iterator, List, Optional
-import pytz
 import os
 from datetime import datetime, timedelta
+from typing import Callable, Dict, Iterator, List, Optional
+
+import pytz
 from django.db.models import Q
 
 from comptages.core import definitions
-from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
+from comptages.datamodel import models
 
 
 def simple_print_callback(progress):
