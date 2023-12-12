@@ -1,10 +1,8 @@
 import decimal
 import os
-from itertools import chain
 from pathlib import Path
 
 from django.core.management import call_command
-from django.db.models.manager import Manager
 from django.test import TransactionTestCase
 
 from comptages.core import importer, report
@@ -60,4 +58,40 @@ class ImportTest(TransactionTestCase):
             with self.subTest():
                 exponent = value.as_tuple().exponent
                 self.assertEqual(exponent, 3)
-        print(f"Section {section_id} is GO")
+
+    def test_ensure_more_accurate_averages(self):
+        file_name = "64540060_Latenium_PS2021_ChMixte.txt"
+        installation_name = "64540060"
+        year = 2021
+
+        installation = models.Installation.objects.get(name=installation_name)
+        count = yearly_count_for(year, installation)
+        importer.import_file(utils.test_data_path(file_name), count)
+
+        section_id = installation_name
+        report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
+        day_and_hour = report.values_by_day_and_hour()
+        hour_and_direction1 = report.values_by_hour_and_direction(1)
+        hour_and_direction2 = report.values_by_hour_and_direction(2)
+        day_and_month = report.values_by_day_and_month()
+        day_of_week = report.values_by_day_of_week()
+
+        for qs_name, qs in zip(
+            [
+                "day and hour",
+                "hour and direction 1",
+                "hour and direction 2",
+                "day and month",
+                "day of week",
+            ],
+            [
+                day_and_hour,
+                hour_and_direction1,
+                hour_and_direction2,
+                day_and_month,
+                day_of_week,
+            ],
+        ):
+            print(f"{qs_name}:")
+            for value in qs:
+                print(value)
