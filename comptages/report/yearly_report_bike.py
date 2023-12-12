@@ -124,6 +124,7 @@ class YearlyReportBike:
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
         # TODO: don't divide by 51 but actually aggregate first by the
