@@ -20,8 +20,6 @@ class ImportTest(TransactionTestCase):
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
         call_command("importdata")
-
-    def tearDown(self):
         for file in Path(self.testoutputs).iterdir():
             os.remove(file)
 
@@ -145,7 +143,4 @@ class ImportTest(TransactionTestCase):
             sections_ids=sections_ids,
         )
         found_files = len(list(Path(self.testoutputs).iterdir()))
-        # The number of files generated is expected to be: weeks measured x sections
-        # so let's make sure all sections are considered in the files generation
-        self.assertGreater(found_files, 50)
-        self.assertEqual(found_files % sections.count(), 0)
+        self.assertEqual(found_files, sections.count())

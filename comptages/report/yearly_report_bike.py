@@ -1,7 +1,8 @@
 import os
+from typing import Any
 
 
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, QuerySet
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
@@ -24,7 +25,7 @@ class YearlyReportBike:
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self):
+    def values_by_direction(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -34,7 +35,7 @@ class YearlyReportBike:
         )
 
         # Total by day of the week (0->monday, 7->sunday) and by direction
-        result = (
+        return (
             qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
             .values("weekday")
             .annotate(total=Sum("times"))
