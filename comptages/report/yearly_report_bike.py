@@ -9,7 +9,7 @@ from django.db.models.functions import (
     ExtractMonth,
     TruncDate,
 )
-from django.db.models import Count, Sum, F, FloatField
+from django.db.models import Count, Sum, F, FloatField, Avg
 from openpyxl import load_workbook
 
 from comptages.core import definitions
@@ -54,18 +54,13 @@ class YearlyReportBike:
 
         # Total by day of the week (0->monday, 6->sunday) and by hour (0->23)
         result = (
-            qs.annotate(
-                realday=TruncDate("timestamp"),
-                weekday=ExtractIsoWeekDay("timestamp"),
-                hour=ExtractHour("timestamp"),
-            )
-            .values("realday", "weekday", "hour")
-            .annotate(Count("weekday"))
+            qs.annotate(date=TruncDate("timestamp"))
+            .values("date")
             .annotate(Sum("times"))
             .annotate(
-                tjm=ExpressionWrapper(
-                    F("weekday__count") / F("times__sum"), output_field=FloatField()
-                ),
+                tjm=Avg("times"),
+                hour=ExtractHour("timestamp"),
+                weekday=ExtractIsoWeekDay("date"),
             )
             .values("weekday", "hour", "tjm")
         )
@@ -87,17 +82,11 @@ class YearlyReportBike:
 
         # Total by hour (0->23)
         result = (
-            qs.annotate(
-                realday=TruncDate("timestamp"),
-                hour=ExtractHour("timestamp"),
-            )
-            .values("realday", "hour")
-            .annotate(Sum("times"))
-            .annotate(Count("realday"))
+            qs.annotate(date=TruncDate("timestamp"))
+            .values("date")
             .annotate(
-                tjm=ExpressionWrapper(
-                    F("times__sum") / F("realday__count"), output_field=FloatField()
-                )
+                tjm=Sum("times"),
+                hour=ExtractHour("timestamp"),
             )
             .values("hour", "tjm")
         )
@@ -117,19 +106,12 @@ class YearlyReportBike:
 
         # Total by day of the week (0->monday, 6->sunday) and by month (1->12)
         result = (
-            qs.annotate(
-                realday=TruncDate("timestamp"),
-                weekday=ExtractIsoWeekDay("timestamp"),
-                month=ExtractMonth("timestamp"),
-                sums=Sum("times"),
-            )
-            .values("month", "weekday", "sums")
-            .annotate(
-                tjm=ExpressionWrapper(
-                    F("sums") / Count("month", distinct=True),
-                    output_field=FloatField(),
-                )
-            )
+            qs.annotate(date=TruncDate("timestamp"))
+            .values("date")
+            .annotate(Sum("times"))
+            .annotate(weekday=ExtractIsoWeekDay("timestamp"))
+            .values("weekday")
+            .annotate(tjm=Avg("times"), month=ExtractMonth("timestamp"))
             .values("weekday", "month", "tjm")
         )
 
@@ -166,19 +148,12 @@ class YearlyReportBike:
 
         # Group by day of the week (0->monday, 7->sunday)
         result = (
-            qs.annotate(
-                realday=TruncDate("timestamp"),
-                weekday=ExtractIsoWeekDay("timestamp"),
-            )
-            .values("realday", "weekday")
+            qs.annotate(date=TruncDate("timestamp"))
+            .values("date")
             .annotate(Sum("times"))
-            .annotate(Count("weekday", distinct=True))
-            .annotate(
-                tjm=ExpressionWrapper(
-                    F("times__sum") / F("weekday__count"),
-                    output_field=FloatField(),
-                )
-            )
+            .annotate(weekday=ExtractIsoWeekDay("timestamp"))
+            .values("weekday")
+            .annotate(tjm=Avg("times"))
             .values("weekday", "tjm")
         )
 
