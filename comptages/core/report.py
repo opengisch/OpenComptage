@@ -1,6 +1,6 @@
 import os
 from datetime import date, datetime, timedelta
-from typing import Generator, Optional
+from typing import Generator
 
 from openpyxl import Workbook, load_workbook
 

@@ -1,16 +1,15 @@
 import os
 from typing import Any
-
+from django.db.models.expressions import ExpressionWrapper
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     Cast,
     ExtractHour,
-    ExtractDay,
     ExtractIsoWeekDay,
     ExtractMonth,
     TruncDate,
 )
-from django.db.models import Count, Sum, F, Avg
+from django.db.models import Count, Sum, F, FloatField
 from openpyxl import load_workbook
 
 from comptages.core import definitions
@@ -56,14 +55,18 @@ class YearlyReportBike:
         # Total by day of the week (0->monday, 6->sunday) and by hour (0->23)
         result = (
             qs.annotate(
-                weekday=ExtractIsoWeekDay("timestamp"),
                 realday=TruncDate("timestamp"),
+                weekday=ExtractIsoWeekDay("timestamp"),
                 hour=ExtractHour("timestamp"),
             )
-            .values("realday")
-            .annotate(tjm=Sum("times"))
-            .values("weekday")
-            .annotate(tjm=Avg("times"))
+            .values("realday", "weekday", "hour")
+            .annotate(Count("weekday"))
+            .annotate(Sum("times"))
+            .annotate(
+                tjm=ExpressionWrapper(
+                    F("weekday__count") / F("times__sum"), output_field=FloatField()
+                ),
+            )
             .values("weekday", "hour", "tjm")
         )
         return result
@@ -85,11 +88,17 @@ class YearlyReportBike:
         # Total by hour (0->23)
         result = (
             qs.annotate(
-                hour=ExtractHour("timestamp"),
                 realday=TruncDate("timestamp"),
+                hour=ExtractHour("timestamp"),
             )
-            .values("realday")
-            .annotate(tjm=Sum("times"))
+            .values("realday", "hour")
+            .annotate(Sum("times"))
+            .annotate(Count("realday"))
+            .annotate(
+                tjm=ExpressionWrapper(
+                    F("times__sum") / F("realday__count"), output_field=FloatField()
+                )
+            )
             .values("hour", "tjm")
         )
 
@@ -112,17 +121,21 @@ class YearlyReportBike:
                 realday=TruncDate("timestamp"),
                 weekday=ExtractIsoWeekDay("timestamp"),
                 month=ExtractMonth("timestamp"),
+                sums=Sum("times"),
             )
-            .values("realday")
-            .annotate(tjm=Sum("times"))
-            .values("weekday", "tjm")
-            .annotate(tjm=Avg("tjm"))
+            .values("month", "weekday", "sums")
+            .annotate(
+                tjm=ExpressionWrapper(
+                    F("sums") / Count("month", distinct=True),
+                    output_field=FloatField(),
+                )
+            )
             .values("weekday", "month", "tjm")
         )
 
         return result
 
-    def values_by_day(self) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -140,7 +153,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -154,18 +167,24 @@ class YearlyReportBike:
         # Group by day of the week (0->monday, 7->sunday)
         result = (
             qs.annotate(
-                weekday=ExtractIsoWeekDay("timestamp"), realday=TruncDate("timestamp")
+                realday=TruncDate("timestamp"),
+                weekday=ExtractIsoWeekDay("timestamp"),
             )
-            .values("realday")
-            .annotate(tjm=Sum("times"))
-            .values("realday", "tjm")
-            .annotate(tjm=Avg("times"))
+            .values("realday", "weekday")
+            .annotate(Sum("times"))
+            .annotate(Count("weekday", distinct=True))
+            .annotate(
+                tjm=ExpressionWrapper(
+                    F("times__sum") / F("weekday__count"),
+                    output_field=FloatField(),
+                )
+            )
             .values("weekday", "tjm")
         )
 
         return result
 
-    def values_by_class(self) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,

@@ -59,7 +59,7 @@ class ImportTest(TransactionTestCase):
                 exponent = value.as_tuple().exponent
                 self.assertEqual(exponent, 3)
 
-    def test_ensure_more_accurate_averages(self):
+    def test_ensure_more_accurate_details(self):
         file_name = "64540060_Latenium_PS2021_ChMixte.txt"
         installation_name = "64540060"
         year = 2021
