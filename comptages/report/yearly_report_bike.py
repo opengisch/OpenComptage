@@ -155,14 +155,13 @@ class YearlyReportBike:
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        result = (
+        return (
             qs.annotate(res=Sum("times"))
             .values("res")
             .values("id_category__code")
             .annotate(tjm=Count("id_category__code"))
             .order_by("id_category__code")
         )
-        return result
 
     def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
         qs = CountDetail.objects.filter(
@@ -390,7 +389,7 @@ class YearlyReportBike:
         data = self.values_by_class()
         row = row_offset
         for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
+            ws.cell(row=row, column=column_offset, value=i["tjm"] or " ")
             row += 1
 
         ws = workbook["AN_GR"]
