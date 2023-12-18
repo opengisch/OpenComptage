@@ -1,9 +1,16 @@
 import os
+from typing import Any
 
-from django.db.fields import DateField
-from django.db.functions import (Cast, ExtractHour, ExtractIsoWeekDay,
-                                 ExtractMonth)
-from django.db.models import Count, Sum
+from django.db.models.fields import DateField
+from django.db.models.functions import (
+    Cast,
+    ExtractHour,
+    ExtractDay,
+    ExtractIsoWeekDay,
+    ExtractMonth,
+    TruncDate,
+)
+from django.db.models import Count, Sum, F, Avg
 from openpyxl import load_workbook
 
 from comptages.core import definitions
@@ -18,7 +25,7 @@ class YearlyReportBike:
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self):
+    def values_by_direction(self) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -28,7 +35,7 @@ class YearlyReportBike:
         )
 
         # Total by day of the week (0->monday, 7->sunday) and by direction
-        result = (
+        return (
             qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
             .values("weekday")
             .annotate(total=Sum("times"))
@@ -48,16 +55,22 @@ class YearlyReportBike:
 
         # Total by day of the week (0->monday, 6->sunday) and by hour (0->23)
         result = (
-            qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .annotate(hour=ExtractHour("timestamp"))
-            .values("weekday", "hour")
-            .annotate(tjm=Sum("times") / 51)
+            qs.annotate(
+                weekday=ExtractIsoWeekDay("timestamp"),
+                realday=TruncDate("timestamp"),
+                hour=ExtractHour("timestamp"),
+            )
+            .values("realday")
+            .annotate(tjm=Sum("times"))
+            .values("weekday")
+            .annotate(tjm=Avg("times"))
             .values("weekday", "hour", "tjm")
         )
-
         return result
 
-    def values_by_hour_and_direction(self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_hour_and_direction(
+        self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
+    ) -> "ValuesQuerySet[CountDetail, Any]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -71,9 +84,12 @@ class YearlyReportBike:
 
         # Total by hour (0->23)
         result = (
-            qs.annotate(hour=ExtractHour("timestamp"))
-            .values("hour")
-            .annotate(tjm=Sum("times") / 365)
+            qs.annotate(
+                hour=ExtractHour("timestamp"),
+                realday=TruncDate("timestamp"),
+            )
+            .values("realday")
+            .annotate(tjm=Sum("times"))
             .values("hour", "tjm")
         )
 
@@ -92,10 +108,15 @@ class YearlyReportBike:
 
         # Total by day of the week (0->monday, 6->sunday) and by month (1->12)
         result = (
-            qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .annotate(month=ExtractMonth("timestamp"))
-            .values("weekday", "month")
-            .annotate(tjm=Sum("times") / 12)
+            qs.annotate(
+                realday=TruncDate("timestamp"),
+                weekday=ExtractIsoWeekDay("timestamp"),
+                month=ExtractMonth("timestamp"),
+            )
+            .values("realday")
+            .annotate(tjm=Sum("times"))
+            .values("weekday", "tjm")
+            .annotate(tjm=Avg("tjm"))
             .values("weekday", "month", "tjm")
         )
 
@@ -132,9 +153,13 @@ class YearlyReportBike:
 
         # Group by day of the week (0->monday, 7->sunday)
         result = (
-            qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .values("weekday")
-            .annotate(tjm=Sum("times") / 51)
+            qs.annotate(
+                weekday=ExtractIsoWeekDay("timestamp"), realday=TruncDate("timestamp")
+            )
+            .values("realday")
+            .annotate(tjm=Sum("times"))
+            .values("realday", "tjm")
+            .annotate(tjm=Avg("times"))
             .values("weekday", "tjm")
         )
 
@@ -156,7 +181,9 @@ class YearlyReportBike:
         )
         return result
 
-    def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]) -> dict:
+    def tjm_direction_bike(
+        self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
+    ) -> dict:
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
