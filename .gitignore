@@ -1,6 +1,6 @@
 .idea
+testoutputs/
 .docker/tests/
-.docker/tests/screenshot.png
 .env
 .vscode/settings.json
 *.nix
