@@ -1,6 +1,4 @@
 import os
-from typing import Any
-from django.db.models.expressions import ExpressionWrapper
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     Cast,
@@ -9,7 +7,7 @@ from django.db.models.functions import (
     ExtractMonth,
     TruncDate,
 )
-from django.db.models import Count, Sum, F, FloatField, Avg
+from django.db.models import Count, Sum, Avg
 from openpyxl import load_workbook
 
 from comptages.core import definitions
