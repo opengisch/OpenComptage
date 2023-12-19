@@ -1,8 +1,9 @@
 .idea
 testoutputs/
-.docker/tests/
 .env
-.vscode/settings.json
+.docker/
+.env/
+.vscode/
 *.nix
 *.log
 **/__pycache__/

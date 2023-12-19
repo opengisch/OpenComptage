@@ -2,7 +2,9 @@ import os
 from datetime import date, datetime, timedelta
 from typing import Generator
 
-from openpyxl import Workbook, load_workbook
+from datetime import timedelta, datetime
+from typing import Optional
+from openpyxl import load_workbook, Workbook
 
 from comptages.core import statistics
 from comptages.datamodel import models
@@ -17,7 +19,7 @@ def prepare_reports(
     count=None,
     year=None,
     template="default",
-    section_id=None,
+    sections_ids: Optional[list[str]] = None,
     callback_progress=simple_print_callback,
 ):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,14 +27,15 @@ def prepare_reports(
     if template == "default":
         template_name = "template.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
+        assert count
         _prepare_default_reports(file_path, count, template_path, callback_progress)
     elif template == "yearly":
         template_name = "template_yearly.xlsx"
         template_path = os.path.join(current_dir, os.pardir, "report", template_name)
         assert year
-        assert section_id
+        assert sections_ids
         _prepare_yearly_report(
-            file_path, year, template_path, section_id, callback_progress
+            file_path, year, template_path, sections_ids, callback_progress
         )
     elif template == "yearly_bike":
         pass
@@ -41,6 +44,7 @@ def prepare_reports(
 def _prepare_default_reports(
     file_path: str, count: models.Count, template_path: str, callback_progress
 ):
+    """Write default reports to disk (1 per section in count, per week)"""
     # We do by section and not by count because of special cases.
     sections = models.Section.objects.filter(
         lane__id_installation__count=count
@@ -67,27 +71,39 @@ def _prepare_default_reports(
 
 
 def _prepare_yearly_report(
-    file_path: str, year: int, template_path: str, section_id: str, callback_progress
+    file_path: str,
+    year: int,
+    template_path: str,
+    sections_ids: list[str],
+    callback_progress,
 ):
-    section = models.Section.objects.get(id__contains=section_id)
+    """Write default reports to disk (1 per section included in the count)"""
     # Get first count to be used as example
     count_qs = models.Count.objects.filter(
-        id_installation__lane__id_section=section, start_process_date__year=year
+        id_installation__lane__id_section=sections_ids[0], start_process_date__year=year
     )
-    if not count_qs:
+    if not count_qs.exists():
         return
-    count = count_qs[0]
+    count = count_qs.first()
+    assert count
 
-    workbook = load_workbook(filename=template_path)
-    _data_count_yearly(count, section, year, workbook)
-    _data_day_yearly(count, section, year, workbook)
-    _data_month_yearly(count, section, year, workbook)
-    _data_speed_yearly(count, section, year, workbook)
-    _data_category_yearly(count, section, year, workbook)
-    _remove_useless_sheets(count, workbook)
-    output = os.path.join(file_path, "{}_{}_r.xlsx".format(section.id, year))
+    # Filter out sections whose id is not in the sections_ids
+    # or whose lanes match no countdetail for the current count
+    sections = models.Section.objects.filter(
+        id__in=sections_ids,
+        lane__countdetail__id_count=count.id,
+    ).distinct()
 
-    workbook.save(filename=output)
+    for section in sections:
+        workbook = load_workbook(filename=template_path)
+        _data_count_yearly(count, section, year, workbook)
+        _data_day_yearly(count, section, year, workbook)
+        _data_month_yearly(count, section, year, workbook)
+        _data_speed_yearly(count, section, year, workbook)
+        _data_category_yearly(count, section, year, workbook)
+        _remove_useless_sheets(count, workbook)
+        output = os.path.join(file_path, f"{section.id}_{year}_r.xlsx")
+        workbook.save(filename=output)
 
 
 def _mondays_of_count(count: models.Count) -> Generator[date, None, None]:
@@ -272,33 +288,36 @@ def _data_day(count: models.Count, section: models.Section, monday, workbook: Wo
         ws.cell(row=row_offset + 1, column=col_offset + i, value=light.get(False, 0))
 
     # Direction 2
-    row_offset = 35
-    col_offset = 2
-    for i in range(7):
-        df = statistics.get_time_data(
-            count,
-            section,
-            start=monday + timedelta(days=i),
-            end=monday + timedelta(days=i + 1),
-            direction=2,
-        )
+    if len(section.lane_set.all()) == 2:
+        row_offset = 35
+        col_offset = 2
+        for i in range(7):
+            df = statistics.get_time_data(
+                count,
+                section,
+                start=monday + timedelta(days=i),
+                end=monday + timedelta(days=i + 1),
+                direction=2,
+            )
 
-        for row in df.itertuples():
-            ws.cell(row=row_offset + row.hour, column=col_offset + i, value=row.thm)
+            for row in df.itertuples():
+                ws.cell(row=row_offset + row.hour, column=col_offset + i, value=row.thm)
 
-    # Light heavy direction 2
-    row_offset = 60
-    col_offset = 2
-    for i in range(7):
-        light = statistics.get_light_numbers(
-            count,
-            section,
-            start=monday + timedelta(days=i),
-            end=monday + timedelta(days=i + 1),
-            direction=2,
-        )
-        ws.cell(row=row_offset, column=col_offset + i, value=light.get(True, 0))
-        ws.cell(row=row_offset + 1, column=col_offset + i, value=light.get(False, 0))
+        # Light heavy direction 2
+        row_offset = 60
+        col_offset = 2
+        for i in range(7):
+            light = statistics.get_light_numbers(
+                count,
+                section,
+                start=monday + timedelta(days=i),
+                end=monday + timedelta(days=i + 1),
+                direction=2,
+            )
+            ws.cell(row=row_offset, column=col_offset + i, value=light.get(True, 0))
+            ws.cell(
+                row=row_offset + 1, column=col_offset + i, value=light.get(False, 0)
+            )
 
 
 def _data_day_yearly(
@@ -374,34 +393,38 @@ def _data_day_yearly(
         )
 
     # Direction 2
-    row_offset = 66
-    col_offset = 2
+    if len(section.lane_set.all()) == 2:
+        row_offset = 66
+        col_offset = 2
 
-    df = statistics.get_time_data_yearly(year, section, direction=2)
+        df = statistics.get_time_data_yearly(year, section, direction=2)
 
-    for i in range(7):
-        day_df = df[df["date"] == i]
-        for row in day_df.itertuples():
-            ws.cell(row=row_offset + row.hour, column=col_offset + i, value=row.thm)
+        for i in range(7):
+            day_df = df[df["date"] == i]
+            for row in day_df.itertuples():
+                ws.cell(row=row_offset + row.hour, column=col_offset + i, value=row.thm)
 
-    # Light heavy direction 2
-    row_offset = 92
-    col_offset = 2
-    df = statistics.get_light_numbers_yearly(
-        section, start=datetime(year, 1, 1), end=datetime(year + 1, 1, 1), direction=2
-    )
-
-    for i in range(7):
-        ws.cell(
-            row=row_offset,
-            column=col_offset + i,
-            value=int(df[df["date"] == i][df["id_category__light"] == True].value),
+        # Light heavy direction 2
+        row_offset = 92
+        col_offset = 2
+        df = statistics.get_light_numbers_yearly(
+            section,
+            start=datetime(year, 1, 1),
+            end=datetime(year + 1, 1, 1),
+            direction=2,
         )
-        ws.cell(
-            row=row_offset + 1,
-            column=col_offset + i,
-            value=int(df[df["date"] == i][df["id_category__light"] == False].value),
-        )
+
+        for i in range(7):
+            ws.cell(
+                row=row_offset,
+                column=col_offset + i,
+                value=int(df[df["date"] == i][df["id_category__light"] == True].value),
+            )
+            ws.cell(
+                row=row_offset + 1,
+                column=col_offset + i,
+                value=int(df[df["date"] == i][df["id_category__light"] == False].value),
+            )
 
 
 def _data_month_yearly(
@@ -505,39 +528,42 @@ def _data_speed(
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
     # Direction 2
-    row_offset = 33
-    col_offset = 2
-    for i, range_ in enumerate(speed_ranges):
-        res = statistics.get_speed_data_by_hour(
-            count,
-            section,
-            direction=2,
-            start=monday,
-            end=monday + timedelta(days=7),
-            speed_low=range_[0],
-            speed_high=range_[1],
-        )
-
-        for row in res:
-            ws.cell(row=row_offset + row[0], column=col_offset + i, value=row[1])
-
-    if not _is_aggregate(count):
-        # Characteristic speed direction 2
+    if len(section.lane_set.all()) == 2:
         row_offset = 33
-        col_offset = 16
-        for i, v in enumerate(characteristic_speeds):
-            df = statistics.get_characteristic_speed_by_hour(
+        col_offset = 2
+        for i, range_ in enumerate(speed_ranges):
+            res = statistics.get_speed_data_by_hour(
                 count,
                 section,
                 direction=2,
                 start=monday,
                 end=monday + timedelta(days=7),
-                v=v,
+                speed_low=range_[0],
+                speed_high=range_[1],
             )
-            for row in df.itertuples():
-                ws.cell(
-                    row=row_offset + row.Index, column=col_offset + i, value=row.speed
+
+            for row in res:
+                ws.cell(row=row_offset + row[0], column=col_offset + i, value=row[1])
+
+        if not _is_aggregate(count):
+            # Characteristic speed direction 2
+            row_offset = 33
+            col_offset = 16
+            for i, v in enumerate(characteristic_speeds):
+                df = statistics.get_characteristic_speed_by_hour(
+                    count,
+                    section,
+                    direction=2,
+                    start=monday,
+                    end=monday + timedelta(days=7),
+                    v=v,
                 )
+                for row in df.itertuples():
+                    ws.cell(
+                        row=row_offset + row.Index,
+                        column=col_offset + i,
+                        value=row.speed,
+                    )
 
         # Average speed direction 1
         row_offset = 33
@@ -636,48 +662,51 @@ def _data_speed_yearly(
             ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
     # Direction 2
-    row_offset = 33
-    col_offset = 2
-    for i, range_ in enumerate(speed_ranges):
-        res = statistics.get_speed_data_by_hour(
-            count,
-            section,
-            direction=2,
-            start=start,
-            end=end,
-            speed_low=range_[0],
-            speed_high=range_[1],
-        )
-
-        for row in res:
-            ws.cell(row=row_offset + row[0], column=col_offset + i, value=row[1])
-
-    if not _is_aggregate(count):
-        # Characteristic speed direction 2
+    if len(section.lane_set.all()) == 2:
         row_offset = 33
-        col_offset = 16
-        for i, v in enumerate(characteristic_speeds):
-            df = statistics.get_characteristic_speed_by_hour(
-                count, section, direction=2, start=start, end=end, v=v
+        col_offset = 2
+        for i, range_ in enumerate(speed_ranges):
+            res = statistics.get_speed_data_by_hour(
+                count,
+                section,
+                direction=2,
+                start=start,
+                end=end,
+                speed_low=range_[0],
+                speed_high=range_[1],
+            )
+
+            for row in res:
+                ws.cell(row=row_offset + row[0], column=col_offset + i, value=row[1])
+
+        if not _is_aggregate(count):
+            # Characteristic speed direction 2
+            row_offset = 33
+            col_offset = 16
+            for i, v in enumerate(characteristic_speeds):
+                df = statistics.get_characteristic_speed_by_hour(
+                    count, section, direction=2, start=start, end=end, v=v
+                )
+                for row in df.itertuples():
+                    ws.cell(
+                        row=row_offset + row.Index,
+                        column=col_offset + i,
+                        value=row.speed,
+                    )
+
+            # Average speed direction 2
+            row_offset = 33
+            col_offset = 19
+
+            df = statistics.get_average_speed_by_hour(
+                count,
+                section,
+                direction=2,
+                start=start,
+                end=end,
             )
             for row in df.itertuples():
-                ws.cell(
-                    row=row_offset + row.Index, column=col_offset + i, value=row.speed
-                )
-
-        # Average speed direction 1
-        row_offset = 33
-        col_offset = 19
-
-        df = statistics.get_average_speed_by_hour(
-            count,
-            section,
-            direction=2,
-            start=start,
-            end=end,
-        )
-        for row in df.itertuples():
-            ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
+                ws.cell(row=row_offset + row.Index, column=col_offset, value=row.speed)
 
 
 def _data_category(
@@ -714,26 +743,27 @@ def _data_category(
             ws.cell(row=row_num, column=col_num, value=value)
 
     # Direction 2
-    row_offset = 33
-    col_offset = 2
-    for category in categories:
-        res = statistics.get_category_data_by_hour(
-            count,
-            section,
-            category=category,
-            direction=2,
-            start=monday,
-            end=monday + timedelta(days=7),
-        )
+    if len(section.lane_set.all()) == 2:
+        row_offset = 33
+        col_offset = 2
+        for category in categories:
+            res = statistics.get_category_data_by_hour(
+                count,
+                section,
+                category=category,
+                direction=2,
+                start=monday,
+                end=monday + timedelta(days=7),
+            )
 
-        for row in res:
-            row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code)
-            value = (
-                ws.cell(row_num, col_num).value + row[1]
-            )  # Add to previous value because with class convertions multiple categories can converge into a single one
+            for row in res:
+                row_num = row_offset + row[0]
+                col_num = col_offset + _t_cat(count, category.code)
+                value = (
+                    ws.cell(row_num, col_num).value + row[1]
+                )  # Add to previous value because with class convertions multiple categories can converge into a single one
 
-            ws.cell(row=row_num, column=col_num, value=value)
+                ws.cell(row=row_num, column=col_num, value=value)
 
 
 def _data_category_yearly(
@@ -772,26 +802,27 @@ def _data_category_yearly(
             ws.cell(row=row_num, column=col_num, value=value)
 
     # Direction 2
-    row_offset = 33
-    col_offset = 2
-    for category in categories:
-        res = statistics.get_category_data_by_hour(
-            None,
-            section,
-            category=category,
-            direction=2,
-            start=start,
-            end=end,
-        )
+    if len(section.lane_set.all()) == 2:
+        row_offset = 33
+        col_offset = 2
+        for category in categories:
+            res = statistics.get_category_data_by_hour(
+                None,
+                section,
+                category=category,
+                direction=2,
+                start=start,
+                end=end,
+            )
 
-        for row in res:
-            row_num = row_offset + row[0]
-            col_num = col_offset + _t_cat(count, category.code)
-            value = (
-                ws.cell(row_num, col_num).value + row[1]
-            )  # Add to previous value because with class convertions multiple categories can converge into a single one
+            for row in res:
+                row_num = row_offset + row[0]
+                col_num = col_offset + _t_cat(count, category.code)
+                value = (
+                    ws.cell(row_num, col_num).value + row[1]
+                )  # Add to previous value because with class convertions multiple categories can converge into a single one
 
-            ws.cell(row=row_num, column=col_num, value=value)
+                ws.cell(row=row_num, column=col_num, value=value)
 
 
 def _remove_useless_sheets(count: models.Count, workbook: Workbook):

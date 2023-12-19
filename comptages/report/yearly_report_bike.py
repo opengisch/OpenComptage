@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 from string import ascii_uppercase
 from typing import Any
@@ -29,7 +30,7 @@ class YearlyReportBike:
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_direction(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
