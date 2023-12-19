@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.9"
           cache: "pip"
       - name: Setup, build, install
         run: |
@@ -34,9 +34,14 @@ jobs:
     name: Test
     runs-on: ubuntu-22.04
     timeout-minutes: 15
+    strategy:
+      matrix:
+        postgis_versions:
+          - 11-3.3
+          - 15-3.4
     steps:
       - uses: actions/checkout@v4
       - name: Start docker stack
-        run: docker compose up db -d
+        run: POSTGIS_VERSION=${{ matrix.postgis_versions }} docker compose up db -d
       - name: Running tests
         run: docker compose run qgis_tester

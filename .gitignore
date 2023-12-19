@@ -6,3 +6,4 @@
 *.nix
 *.log
 **/__pycache__/
+test_outputs/

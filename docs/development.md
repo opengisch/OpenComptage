@@ -1,4 +1,19 @@
 # Development
+
+## Upgrade dependencies
+
+__Disclaimer__: This section presupposes that you are using a version of `pip-tools` matching your Python interpreter. In other words, if you want to upgrade or pin dependencies for Python 3.9, `pip-tools` need to be downloaded for Python 3.9, which in turn means that if you use `pip`, you need to use `pip` for Pyhton 3.9.
+
+Make sure you have `pip-tools` installed -- ideally in a virtual environment at the root of the project. Then run
+
+    pip-compile --upgrade
+
+In case something goes south, you can re-generate `requirements.txt`, which amounts to pinning the dependencies described in `requirements.in` and constrained by `pyproject.toml` to a version matching the project's configuration:
+
+    pip-compile -o requirements.txt pyproject.toml
+    
+Now `pip-compile --upgrade` should work.
+
 ## Data model
 The data model has been created to easily allow to add functionality to the product
 e.g. adding new vehicle classes and to be as simple as possible and easily
@@ -44,3 +59,4 @@ The code of the plugin (directory =comptages=) is structured in the following wa
    | ui/                 | contains QT's files with the definition of the user interface dialogs              |
    | comptages.py        | plugin main module                                                                 |
    | metadata.txt        | plugin metadata                                                                    |
+
