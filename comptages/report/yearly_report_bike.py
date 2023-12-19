@@ -57,11 +57,10 @@ class YearlyReportBike:
             qs.annotate(date=TruncDate("timestamp"))
             .values("date")
             .annotate(Sum("times"))
-            .annotate(
-                tjm=Avg("times"),
-                hour=ExtractHour("timestamp"),
-                weekday=ExtractIsoWeekDay("date"),
-            )
+            .annotate(weekday=ExtractIsoWeekDay("date"))
+            .values("weekday")
+            .annotate(tjm=Avg("times"))
+            .annotate(hour=ExtractHour("timestamp"))
             .values("weekday", "hour", "tjm")
         )
         return result
