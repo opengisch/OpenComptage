@@ -4,6 +4,7 @@ from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
+    QHLine,
     QLabel,
     QRadioButton,
     QVBoxLayout,
@@ -93,6 +94,8 @@ class SelectSectionsToReport(QDialog):
                 self.items_check_boxes[item]["subcheckboxes"][
                     subitem
                 ] = subitem_checkbox
+
+            self.vbox.addWidget(QHLine())
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
