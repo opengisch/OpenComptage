@@ -3,6 +3,9 @@
 .docker/tests/screenshot.png
 .env
 .vscode/settings.json
+shell.nix
+Pipfile
+/testoutputs
 *.nix
 *.log
 **/__pycache__/

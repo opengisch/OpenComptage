@@ -269,3 +269,11 @@ class StatisticsTest(TransactionTestCase):
         self.assertTrue(statistics.get_speed_data(count, sections[0]).empty)
 
         self.assertFalse(statistics.get_speed_data(count, sections[2]).empty)
+
+    def test_get_valid_days(self):
+        call_command("importdata", "--only-swiss10year")
+        section_id = "00107695"
+        section = models.Section.objects.get(id=section_id)
+        # 2021 comes from the call to `importdata --only count`
+        valid = statistics.get_valid_days(2021, section)
+        self.assertGreaterEqual(valid, 100)

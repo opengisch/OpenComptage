@@ -20,7 +20,8 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.delete_dialog import DeleteDialog
-from comptages.core.utils import push_info
+from comptages.core.utils import push_info, push_error
+from comptages.core.statistics import get_valid_days
 from comptages.datamodel import models
 from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
@@ -390,6 +391,7 @@ class Comptages(QObject):
             selected_feature = next(layer.getSelectedFeatures())
 
         section_id = selected_feature.attribute("id")
+        section = models.Section.objects.get(id=section_id)
 
         classes = self.layers.get_classes_of_section(section_id)
         dlg = YearlyReportDialog(self.iface)
@@ -421,6 +423,14 @@ class Comptages(QObject):
                 "Comptages",
                 Qgis.Info,
             )
+
+            # Do not proceed unless the number of processed days exceeds 100 days
+            valid_days = get_valid_days(year, section)
+            if valid_days < 100:
+                push_error(
+                    f"This section ({section_id}) lacks valid days for this year ({year}). Found only {valid_days} out of 100."
+                )
+                return
 
             if clazz.startswith("SPCH-MD"):
                 yrb = YearlyReportBike(file_path, year, section_id)
