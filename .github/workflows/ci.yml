@@ -30,9 +30,6 @@ jobs:
       - name: Lint
         run: black . --check
 
-      # - name: Check
-      #   run: pyright .
-
   test:
     name: Test
     runs-on: ubuntu-22.04
