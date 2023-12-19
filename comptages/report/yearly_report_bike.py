@@ -4,8 +4,7 @@ from typing import Any
 from string import ascii_uppercase
 from typing import Any
 
-from django.db.models import Sum, Avg, Max, Count, QuerySet
-from django.db.models.query import ValuesQuerySet
+from django.db.models import Sum, Avg, Count
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
