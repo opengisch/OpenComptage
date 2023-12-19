@@ -30,6 +30,7 @@ exclude = [
 
 reportMissingImports = false
 useLibraryCodeForTypes = true
+
 [tool.setuptools]
 package-dir = { "" = "comptages" }
 
