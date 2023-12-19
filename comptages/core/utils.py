@@ -1,6 +1,8 @@
+from operator import itemgetter
 import os
 
 from datetime import datetime
+from typing import Any
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
@@ -65,3 +67,18 @@ def connect_to_db():
     db.open()
 
     return db
+
+
+def partial_order_with_blanks(
+    container: dict[int, Any], default_missing=None
+) -> dict[int, Any]:
+    container_copy = container.copy()
+    blanks = []
+    prev = 0
+    for k in container_copy:
+        if k > prev + 1:
+            blanks.append(k - 1)
+        prev = k
+    for b in blanks:
+        container_copy[b] = default_missing
+    return dict(sorted(container_copy.items(), key=itemgetter(0)))

@@ -1,20 +1,18 @@
 import os
 
-from string import ascii_uppercase
-
-from django.db.models import Sum, Avg, Max, Count
+from django.db.models import Sum, Count, F
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     ExtractIsoWeekDay,
     ExtractHour,
     ExtractMonth,
-    ExtractDay,
 )
 
 from openpyxl import load_workbook
 
 from comptages.core import definitions
+from comptages.core.utils import partial_order_with_blanks
 from comptages.datamodel.models import CountDetail, Section, Lane
 
 
@@ -160,7 +158,8 @@ class YearlyReportBike:
             .values("res")
             .values("id_category__code")
             .annotate(tjm=Count("id_category__code"))
-            .order_by("id_category__code")
+            .annotate(code=F("id_category__code"))
+            .order_by("code")
         )
 
     def tjm_direction_bike(self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]):
@@ -386,10 +385,18 @@ class YearlyReportBike:
         row_offset = 4
         column_offset = 2
 
-        data = self.values_by_class()
         row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"] or " ")
+        data = self.values_by_class()
+        # construct dict by class id and
+        data = {i["code"]: i for i in data}
+        # ensure all 6 rows / class ids are there, whether filled with data or with a blank
+        data = partial_order_with_blanks(data)
+        for value in data.values():
+            ws.cell(
+                row=row,
+                column=column_offset,
+                value=value["tjm"] if value is not None else "",
+            )
             row += 1
 
         ws = workbook["AN_GR"]
