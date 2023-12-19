@@ -1,4 +1,11 @@
 import os
+
+from string import ascii_uppercase
+from typing import Any
+
+from django.db.models import Sum, Avg, Max, Count, QuerySet
+from django.db.models.query import ValuesQuerySet
+from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     Cast,
@@ -39,7 +46,7 @@ class YearlyReportBike:
             .values("weekday", "id_lane__direction", "total")
         )
 
-    def values_by_day_and_hour(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_day_and_hour(self) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -65,7 +72,7 @@ class YearlyReportBike:
 
     def values_by_hour_and_direction(
         self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
-    ) -> "ValuesQuerySet[CountDetail, Any]":
+    ) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -90,7 +97,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_and_month(self) -> "ValuesQuerySet[CountDetail, Any]":
+    def values_by_day_and_month(self) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -114,7 +121,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_day(self) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -132,7 +139,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_day_of_week(self) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -156,7 +163,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_class(self) -> ValuesQuerySet:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -174,7 +181,7 @@ class YearlyReportBike:
 
     def tjm_direction_bike(
         self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
-    ) -> dict:
+    ) -> float:
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
@@ -187,7 +194,7 @@ class YearlyReportBike:
         # TODO: avoid the division?
         return qs.aggregate(res=Sum("times"))["res"] / 365
 
-    def total(self, categories=[1]) -> dict:
+    def total(self, categories=[1]) -> float:
         qs = CountDetail.objects.filter(
             timestamp__year=self.year,
             id_category__code__in=categories,
@@ -196,7 +203,7 @@ class YearlyReportBike:
 
         return qs.aggregate(res=Sum("times"))["res"]
 
-    def max_day(self, categories=[1]) -> tuple:
+    def max_day(self, categories=[1]) -> tuple[str, Any]:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
@@ -211,7 +218,7 @@ class YearlyReportBike:
 
         return qs[0]["total"], qs[0]["date"]
 
-    def max_month(self, categories=[1]) -> tuple:
+    def max_month(self, categories=[1]) -> tuple[str, Any]:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
@@ -226,7 +233,7 @@ class YearlyReportBike:
 
         return qs[0]["total"], qs[0]["month"]
 
-    def min_month(self, categories=[1]) -> tuple:
+    def min_month(self, categories=[1]) -> tuple[str, Any]:
         qs = (
             CountDetail.objects.filter(
                 timestamp__year=self.year,
@@ -249,21 +256,15 @@ class YearlyReportBike:
         ws = workbook["Data_count"]
 
         section = Section.objects.get(id=self.section_id)
-        ws["B3"] = (
-            "Poste de comptage : {}  Axe : {}:{}{}  " "PR {} + {} m à PR {} + {} m"
-        ).format(
-            section.id,
-            section.owner,
-            section.road,
-            section.way,
-            section.start_pr,
-            int(round(section.start_dist)),
-            section.end_pr,
-            int(round(section.end_dist)),
-        )
+        ws[
+            "B3"
+        ] = f"""
+            Poste de comptage : {section.id}  
+            Axe : {section.owner}:{section.road}{section.way}
+            PR {section.start_pr} + {int(round(section.start_dist) if section.start_dist else 'NA')} m à PR {section.end_pr} + {int(round(section.end_dist)) if section.end_dist else 'NA'} m
+        """
 
         ws["B4"] = "Periode de comptage du 01/01/{0} au 31/12/{0}".format(self.year)
-
         ws["B5"] = "Comptage {}".format(self.year)
 
         # Get one count for the section and the year to get the base data
@@ -278,7 +279,6 @@ class YearlyReportBike:
         ws["B7"] = "Modèle : {}".format(count.id_model.name)
         ws["B8"] = "Classification : {}".format(count.id_class.name)
         ws["B9"] = "Comptage véhicule par véhicule"
-
         ws["B12"] = "Remarque : {}".format(count.remarks)
 
         lanes = Lane.objects.filter(id_installation=count.id_installation)
@@ -289,30 +289,16 @@ class YearlyReportBike:
 
         ws["B11"] = lanes[0].id_section.place_name
 
-        ws = workbook["AN_TE"]
-
-        row_offset = 14
-        column_offset = 1
-        data = self.values_by_day_and_hour()
-        for i in data:
-            ws.cell(
-                row=i["hour"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-
-        row_offset = 47
+        ws = workbook["Data_year"]
+        row_offset = 4
         column_offset = 1
 
-        data = self.values_by_day_and_month()
+        data = self.values_by_day()
+        row = row_offset
         for i in data:
-            ws.cell(
-                row=i["month"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-
-        ws = workbook["CV_LV"]
+            ws.cell(row=row, column=column_offset, value=i["date"])
+            ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
+            row += 1
 
         ws["F11"] = self.tjm_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
         ws["G11"] = self.tjm_direction_bike([1], 2, weekdays=[0, 1, 2, 3, 4])
@@ -333,17 +319,6 @@ class YearlyReportBike:
 
         ws["J41"] = self.min_month()[0]
         ws["k41"] = self.min_month()[1]
-
-        ws = workbook["Data_year"]
-        row_offset = 4
-        column_offset = 1
-
-        data = self.values_by_day()
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["date"])
-            ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
-            row += 1
 
         ws = workbook["Data_week"]
         row_offset = 4
@@ -392,6 +367,25 @@ class YearlyReportBike:
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
             row += 1
+
+        row_offset = 64
+        column_offset = 1
+        data = self.values_by_day_and_hour()
+        for i in data:
+            ws.cell(
+                row=i["hour"] + row_offset,
+                column=i["weekday"] + column_offset,
+                value=i["tjm"],
+            )
+            row_offset += 1
+
+        data = self.values_by_day_and_month()
+        for i in data:
+            ws.cell(
+                row=i["month"] + row_offset,
+                column=i["weekday"] + column_offset,
+                value=i["tjm"],
+            )
 
         ws = workbook["Data_class"]
         row_offset = 4
