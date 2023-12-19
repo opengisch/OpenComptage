@@ -1,9 +1,13 @@
+from datetime import datetime
 import logging
 import os
 from decimal import Decimal
+from pathlib import Path
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
+import pytz
 
+from ....core.importer import import_file
 from ...models import (
     Section,
     Lane,
@@ -32,8 +36,16 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
+        parser.add_argument("--add-count", action="store_true", help="Add count data")
+        parser.add_argument(
+            "--only-count", action="store_true", help="Add only count data"
+        )
 
     def handle(self, *args, **options):
+        if options["only_count"]:
+            self.import_count()
+            return
+
         if options["clear"]:
             print("Deleting...")
             try:
@@ -75,6 +87,10 @@ class Command(BaseCommand):
         self.import_devices(self.file_path("device.csv"))
         self.import_sectors(self.file_path("sector.csv"))
         self.import_municipalities(self.file_path("municipality.csv"))
+
+        if options["add_count"]:
+            self.import_count()
+
         print("🚓")
 
     def file_path(self, filename):
@@ -388,3 +404,37 @@ class Command(BaseCommand):
             )
         Municipality.objects.bulk_create(objects)
         print(f"Inserted {len(objects)} municipalities.")
+
+    def import_count(self):
+        section_id = "00107695"
+        lane = Lane.objects.filter(id_section=section_id)[0]
+        print(f"Importing counts for section {section_id}, lane {lane.id}...")
+
+        installation = Installation.objects.get(id=lane.id_installation.id)
+        model = Model.objects.all()[0]
+        device = Device.objects.all()[0]
+        sensor_type = SensorType.objects.all()[0]
+        class_ = Class.objects.get(name="SWISS10")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = Count.objects.create(
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2021, 12, 10)),
+            start_process_date=tz.localize(datetime(2021, 2, 10)),
+            end_process_date=tz.localize(datetime(2021, 12, 15)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
+        files = list(path_to_files.iterdir())[:50]
+
+        for file in files:
+            import_file(str(file), count)
+
+        print(f"Imported {len(files)} count files!")
