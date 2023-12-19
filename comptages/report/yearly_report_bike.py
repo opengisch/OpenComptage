@@ -46,7 +46,7 @@ class YearlyReportBike:
             .values("weekday", "id_lane__direction", "total")
         )
 
-    def values_by_day_and_hour(self) -> ValuesQuerySet:
+    def values_by_day_and_hour(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -72,7 +72,7 @@ class YearlyReportBike:
 
     def values_by_hour_and_direction(
         self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
-    ) -> ValuesQuerySet:
+    ) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -97,7 +97,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_and_month(self) -> ValuesQuerySet:
+    def values_by_day_and_month(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -121,7 +121,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day(self) -> ValuesQuerySet:
+    def values_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -139,7 +139,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self) -> ValuesQuerySet:
+    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -163,7 +163,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_class(self) -> ValuesQuerySet:
+    def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
