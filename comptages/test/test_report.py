@@ -28,7 +28,7 @@ class ImportTest(TransactionTestCase):
             os.remove(file)
 
     def tearDown(self) -> None:
-        for file in Path(self.testouputs).iterdir():
+        for file in Path(self.testoutputs).iterdir():
             os.remove(file)
 
     def test_report(self):
