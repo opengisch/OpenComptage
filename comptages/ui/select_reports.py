@@ -4,10 +4,11 @@ from qgis.PyQt.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
-    QHLine,
+    QFrame,
     QLabel,
     QRadioButton,
     QVBoxLayout,
+    QSizePolicy,
     QScrollArea,
     QWidget,
 )
@@ -95,7 +96,8 @@ class SelectSectionsToReport(QDialog):
                     subitem
                 ] = subitem_checkbox
 
-            self.vbox.addWidget(QHLine())
+            horizontal_line = QHSeparationLine()
+            self.vbox.addWidget(horizontal_line, 1, 0, 1, 2)
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
@@ -148,3 +150,15 @@ class SelectSectionsToReport(QDialog):
                 if subcheckbox.isChecked()
             ]
         return builder
+
+
+class QHSeparationLine(QFrame):
+    """A horizontal separation line"""
+
+    def __init__(self):
+        super().__init__()
+        self.setMinimumWidth(1)
+        self.setFixedHeight(20)
+        self.setFrameShape(QFrame.HLine)
+        self.setFrameShadow(QFrame.Sunken)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
