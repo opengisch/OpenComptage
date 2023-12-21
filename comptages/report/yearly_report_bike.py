@@ -258,7 +258,7 @@ class YearlyReportBike:
 
         section = Section.objects.get(id=self.section_id)
 
-        def match_section(value: str | Decimal | None) -> str:
+        def render_section_dist(value: str | Decimal | None) -> str:
             match value:
                 case "NA" | None:
                     return "NA"
@@ -267,8 +267,8 @@ class YearlyReportBike:
                 case _:
                     return str(round(int(value)))
 
-        section_start_dist = match_section(section.start_dist)
-        section_end_dist = match_section(section.end_dist)
+        section_start_dist = render_section_dist(section.start_dist)
+        section_end_dist = render_section_dist(section.end_dist)
 
         ws[
             "B3"
