@@ -37,11 +37,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--clear", action="store_true", help="Delete existing data")
+        parser.add_argument("--add-count", action="store_true", help="Add count data")
         parser.add_argument(
-            "--add-swiss10year", action="store_true", help="Add count data"
-        )
-        parser.add_argument(
-            "--only-swiss10year",
+            "--only-count",
             action="store_true",
             help="Add only Swiss 10 year data",
         )
@@ -53,7 +51,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if options["only_swiss10year"]:
+        if options["only_count"]:
             self.import_count(options["limit"])
             return
 
@@ -99,7 +97,7 @@ class Command(BaseCommand):
         self.import_sectors(self.file_path("sector.csv"))
         self.import_municipalities(self.file_path("municipality.csv"))
 
-        if options["add_swiss10year"]:
+        if options["add_count"]:
             self.import_count(options["limit"])
 
         print("🚓")
@@ -441,7 +439,7 @@ class Command(BaseCommand):
             id_class=class_,
             id_installation=installation,
         )
-        path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
+        path_to_files = Path("/test_data/SWISS10_vbv_year")
         files = list(path_to_files.iterdir())
 
         if limit:
