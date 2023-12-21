@@ -1,6 +1,9 @@
 import os
 
-from datetime import datetime
+from datetime import date, datetime, time
+
+import pytz
+from django.utils import timezone
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
@@ -65,3 +68,17 @@ def connect_to_db():
     db.open()
 
     return db
+
+
+def to_time_aware_utc(d: datetime | date) -> datetime:
+    """Time aware datetimes"""
+    match d:
+        case datetime():
+            if timezone.is_naive(d):
+                return d.astimezone(pytz.timezone("UTC"))
+            else:
+                return d
+        case date():
+            return to_time_aware_utc(datetime.combine(d, time()))
+        case _:
+            raise ValueError(f"Expected datetime or date, got {type(d)}")
