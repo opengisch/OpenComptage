@@ -24,7 +24,7 @@ services:
     volumes:
       - ${PWD}:/OpenComptage
       - ${PWD}/test_data:/test_data
-      - ${PWD}/testoutputs:/testoutputs
+      - ${PWD}/test_outputs:/test_outputs
 
   db:
     image: postgis/postgis:12-2.5

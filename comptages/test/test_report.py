@@ -14,10 +14,10 @@ from comptages.core import report, importer
 class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.testoutputs = "/testoutputs"
+        cls.test_outputs = "/test_outputs"
 
     def setUp(self):
-        for file in Path(self.testoutputs).iterdir():
+        for file in Path(self.test_outputs).iterdir():
             os.remove(file)
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
@@ -61,10 +61,10 @@ class ImportTest(TransactionTestCase):
 
         count = models.Count.objects.filter(id_installation=installation.id).first()
         report.prepare_reports(
-            self.testoutputs, count, year, "yearly", section_id=section_id
+            self.test_outputs, count, year, "yearly", section_id=section_id
         )
 
-        self.assertTrue(list(Path(self.testoutputs).iterdir()))
+        self.assertTrue(list(Path(self.test_outputs).iterdir()))
 
     def test_generate_yearly_reports_special_case(self):
         call_command("importdata", "--only-swiss10year", "--limit", 100)
@@ -89,6 +89,6 @@ class ImportTest(TransactionTestCase):
             f"Preparing reports for count = {count}, year = {year}, section_id = {section.id}"
         )
         report.prepare_reports(
-            self.testoutputs, count, year, "yearly", section_id=section.id
+            self.test_outputs, count, year, "yearly", section_id=section.id
         )
-        self.assertTrue(list(Path(self.testoutputs).iterdir()))
+        self.assertTrue(list(Path(self.test_outputs).iterdir()))

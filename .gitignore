@@ -5,7 +5,7 @@
 .vscode/settings.json
 shell.nix
 Pipfile
-/testoutputs
+/test_outputs
 *.nix
 *.log
 **/__pycache__/
