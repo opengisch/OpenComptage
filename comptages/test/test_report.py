@@ -18,17 +18,17 @@ from comptages.test import utils, yearly_count_for
 class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.testoutputs = "/OpenComptage/testoutputs"
+        cls.test_outputs = "/test_outputs"
 
     def setUp(self):
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
         call_command("importdata")
-        for file in Path(self.testoutputs).iterdir():
+        for file in Path(self.test_outputs).iterdir():
             os.remove(file)
 
     def tearDown(self) -> None:
-        for file in Path(self.testoutputs).iterdir():
+        for file in Path(self.test_outputs).iterdir():
             os.remove(file)
 
     def test_report(self):
@@ -138,8 +138,8 @@ class ImportTest(TransactionTestCase):
         for file in Path(utils.test_data_path(test_data_folder)).iterdir():
             importer.import_file(utils.test_data_path(str(file)), count)
 
-        report.prepare_reports(self.testoutputs, count)
-        found_files = len(list(Path(self.testoutputs).iterdir()))
+        report.prepare_reports(self.test_outputs, count)
+        found_files = len(list(Path(self.test_outputs).iterdir()))
         # The number of files generated is expected to be: weeks measured x sections
         # so let's make sure all sections are considered in the files generation
         self.assertGreater(found_files, 0)
@@ -187,11 +187,11 @@ class ImportTest(TransactionTestCase):
 
         sections_ids = list(sections.values_list("id", flat=True))
         report.prepare_reports(
-            file_path=self.testoutputs,
+            file_path=self.test_outputs,
             count=count,
             year=count.start_process_date.year,
             template="yearly",
             sections_ids=sections_ids,
         )
-        found_files = len(list(Path(self.testoutputs).iterdir()))
+        found_files = len(list(Path(self.test_outputs).iterdir()))
         self.assertEqual(found_files, sections.count())

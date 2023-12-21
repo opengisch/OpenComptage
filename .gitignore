@@ -1,5 +1,5 @@
 .idea
-testoutputs/
+test_outputs/
 .env
 .docker/
 .env/
