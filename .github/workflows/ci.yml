@@ -25,8 +25,8 @@ jobs:
           pip install build
           python -m build .
           pip install ./dist/comptages-0.1-py3-none-any.whl[check]
-      - name: Package
-        run: qgis-plugin-ci package 'test'
+      # - name: Package
+      #   run: qgis-plugin-ci package 'test'
       - name: Lint
         run: black . --check
 
