@@ -52,8 +52,8 @@ class ImportTest(TransactionTestCase):
         report.prepare_reports("/tmp/", count)
 
     def test_generate_yearly_reports(self):
-        call_command("importdata", "--only-swiss10year", "--limit", 100)
-        # year and section id come from --add-swiss10year`
+        call_command("importdata", "--only-count", "--limit", 100)
+        # year and section id come from --add-count`
         year = 2021
         section_id = "00107695"
         installations = models.Installation.objects.filter(lane__id_section=section_id)
@@ -67,7 +67,7 @@ class ImportTest(TransactionTestCase):
         self.assertTrue(list(Path(self.test_outputs).iterdir()))
 
     def test_generate_yearly_reports_special_case(self):
-        call_command("importdata", "--only-swiss10year", "--limit", 100)
+        call_command("importdata", "--only-count", "--limit", 100)
 
         special_case_installations = models.Installation.objects.annotate(
             sections=Count("lane__id_section")
