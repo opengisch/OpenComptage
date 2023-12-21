@@ -1,3 +1,4 @@
+from decimal import Decimal
 import os
 from typing import Any
 
@@ -256,12 +257,25 @@ class YearlyReportBike:
         ws = workbook["Data_count"]
 
         section = Section.objects.get(id=self.section_id)
+
+        def match_section(value: str | Decimal | None) -> str:
+            match value:
+                case "NA" | None:
+                    return "NA"
+                case Decimal():
+                    return str(round(value))
+                case _:
+                    return str(round(int(value)))
+
+        section_start_dist = match_section(section.start_dist)
+        section_end_dist = match_section(section.end_dist)
+
         ws[
             "B3"
         ] = f"""
             Poste de comptage : {section.id}  
             Axe : {section.owner}:{section.road}{section.way}
-            PR {section.start_pr} + {int(round(section.start_dist) if section.start_dist else 'NA')} m à PR {section.end_pr} + {int(round(section.end_dist)) if section.end_dist else 'NA'} m
+            PR {section.start_pr} + {section_start_dist} m à PR {section.end_pr} + {section_end_dist} m
         """
 
         ws["B4"] = "Periode de comptage du 01/01/{0} au 31/12/{0}".format(self.year)
