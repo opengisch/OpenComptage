@@ -266,7 +266,7 @@ class YearlyReportBike:
             if isinstance(value, Decimal):
                 return str(round(value))
             raise ValueError(value)
-            
+
         section_start_dist = render_section_dist(section.start_dist)
         section_end_dist = render_section_dist(section.end_dist)
 
