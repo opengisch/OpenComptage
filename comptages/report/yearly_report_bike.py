@@ -24,24 +24,6 @@ class YearlyReportBike:
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self):
-        # Get all the count details for section and the year
-        qs = CountDetail.objects.filter(
-            id_lane__id_section__id=self.section_id,
-            timestamp__year=self.year,
-            # id_category__code__in=[1, 2],
-            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
-        )
-
-        # Total by day of the week (0->monday, 7->sunday) and by direction
-        result = (
-            qs.annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .values("weekday")
-            .annotate(total=Sum("times"))
-            .values("weekday", "id_lane__direction", "total")
-        )
-        return result
-
     def values_by_day_and_hour(self):
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(

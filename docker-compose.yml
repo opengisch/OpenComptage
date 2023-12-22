@@ -1,4 +1,5 @@
 services:
+
   qgis:
     depends_on: [db]
     build: ./
@@ -6,6 +7,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix ro
       - ${PWD}/comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
       - ${PWD}/test_data:/test_data
+      - ${PWD}/test_outputs:/test_outputs
     command:
       - qgis
     environment:
