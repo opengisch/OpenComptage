@@ -259,14 +259,14 @@ class YearlyReportBike:
         section = Section.objects.get(id=self.section_id)
 
         def render_section_dist(value: str | Decimal | None) -> str:
-            match value:
-                case "NA" | None:
-                    return "NA"
-                case Decimal():
-                    return str(round(value))
-                case _:
-                    return str(round(int(value)))
-
+            if value is None or value == "NA":
+                return "NA"
+            if isinstance(value, str):
+                return str(round(int(value)))
+            if isinstance(value, Decimal):
+                return str(round(value))
+            raise ValueError(value)
+            
         section_start_dist = render_section_dist(section.start_dist)
         section_end_dist = render_section_dist(section.end_dist)
 
