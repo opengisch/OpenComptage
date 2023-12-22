@@ -1,8 +1,6 @@
 import os
 
-from datetime import date, datetime, time
-
-import pytz
+from datetime import datetime
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
