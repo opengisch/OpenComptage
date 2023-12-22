@@ -1,7 +1,8 @@
 import os
 
-from datetime import timedelta, datetime
+from datetime import date, time, timedelta, datetime
 from openpyxl import load_workbook, Workbook
+import pytz
 
 from comptages.datamodel import models
 from comptages.core import statistics
@@ -9,6 +10,15 @@ from comptages.core import statistics
 
 def simple_print_callback(progress):
     print(f"Generating report... {progress}%")
+
+
+def to_time_aware_utc(d: datetime | date) -> datetime:
+    """Time aware datetimes"""
+    if isinstance(d, datetime):
+        return d.astimezone(pytz.timezone("UTC"))
+    if isinstance(d, date):
+        return to_time_aware_utc(datetime.combine(d, time()))
+    raise ValueError(f"Expected datetime or date, got {type(d)}")
 
 
 def prepare_reports(

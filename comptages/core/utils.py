@@ -67,14 +67,3 @@ def connect_to_db():
     db.open()
 
     return db
-
-
-def to_time_aware_utc(d: datetime | date) -> datetime:
-    """Time aware datetimes"""
-    match d:
-        case datetime():
-            return d.astimezone(pytz.timezone("UTC"))
-        case date():
-            return to_time_aware_utc(datetime.combine(d, time()))
-        case _:
-            raise ValueError(f"Expected datetime or date, got {type(d)}")
