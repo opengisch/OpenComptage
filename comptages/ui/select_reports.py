@@ -68,7 +68,7 @@ class SelectSectionsToReport(QDialog):
 
         # Checkboxes: items
         self.items_check_boxes = {}
-        for item in sections_ids:
+        for i, item in enumerate(sections_ids, 1):
             item_checkbox = QCheckBox(f"section {item}")
             item_checkbox.setChecked(True)
             item_checkbox.clicked.connect(partial(self.update_children_of, item))
@@ -100,8 +100,9 @@ class SelectSectionsToReport(QDialog):
                     subitem
                 ] = subitem_checkbox
 
-            horizontal_line = QHSeparationLine()
-            self.vbox.addWidget(horizontal_line)
+            if i < len(sections_ids):
+                horizontal_line = QHSeparationLine()
+                self.vbox.addWidget(horizontal_line)
 
         # Checkbox: containers: populate layout
         self.widget.setLayout(self.vbox)
@@ -147,14 +148,15 @@ class SelectSectionsToReport(QDialog):
 
     # TODO: This would be acceptable if the container widget
     # was dynamically resized in response to the show/hide signal
-
-    # def collapse_below(self, item: str):
-    #     is_hidden = self.items_check_boxes[item]["collapse_toggle"].text() == "hide"
-    #     for subcheckbox in self.items_check_boxes[item]["subcheckboxes"].values():
-    #         subcheckbox.setHidden(is_hidden)
-    #     self.items_check_boxes[item]["collapse_toggle"].setText(
-    #         "show" if is_hidden else "hide"
-    #     )
+    """
+    def collapse_below(self, item: str):
+        is_hidden = self.items_check_boxes[item]["collapse_toggle"].text() == "hide"
+        for subcheckbox in self.items_check_boxes[item]["subcheckboxes"].values():
+            subcheckbox.setHidden(is_hidden)
+        self.items_check_boxes[item]["collapse_toggle"].setText(
+            "show" if is_hidden else "hide"
+        )
+    """
 
     def get_inputs(self) -> dict[str, list[date]]:
         builder = {}
