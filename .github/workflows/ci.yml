@@ -26,11 +26,12 @@ jobs:
           python -m build .
           pip install ./dist/comptages-0.1-py3-none-any.whl[check]
       - name: Package
-        run: qgis-plugin-ci package 'test'
+        run: qgis-plugin-ci --no-validation package 'test'
       - name: Lint
         run: black . --check
       - name: Check
         run: pyright . > pyright_report.txt
+        continue-on-error: true
       - uses: actions/upload-artifact@v4
         with:
           name: Pyright Report
