@@ -6,7 +6,7 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractHour, Trunc, Concat
 
 from comptages.core import definitions
-from comptages.core.utils import to_time_aware_utc
+from comptages.core.report import to_time_aware_utc
 from comptages.datamodel import models
 
 
