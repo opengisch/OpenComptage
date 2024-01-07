@@ -426,8 +426,8 @@ class Comptages(QObject):
                 yrb.run()
             else:
                 self.tm.allTasksFinished.connect(
-                    partial(self.all_tasks_finished, report)
-                )  # FIXME `report` is a mystery.
+                    partial(self.all_tasks_finished, "report")
+                )
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
