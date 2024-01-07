@@ -5,8 +5,7 @@ from django.db.models import F, CharField, Value, Q
 from django.db.models import Sum
 from django.db.models.functions import ExtractHour, Trunc, Concat
 
-from comptages.core import definitions
-from comptages.core.report import to_time_aware_utc
+from comptages.core import definitions, report
 from comptages.datamodel import models
 
 
@@ -23,7 +22,7 @@ def get_time_data(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     # By lane/direction grouped per hour
 
@@ -65,7 +64,7 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
     """Vehicles by hour and day of the week"""
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     # By lane/direction grouped per hour
 
@@ -113,7 +112,7 @@ def get_day_data(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -167,7 +166,7 @@ def get_category_data(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -211,7 +210,7 @@ def get_speed_data(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -275,7 +274,7 @@ def get_light_numbers(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_count=count,
@@ -342,7 +341,7 @@ def get_speed_data_by_hour(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
@@ -385,7 +384,7 @@ def get_characteristic_speed_by_hour(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
@@ -429,7 +428,7 @@ def get_average_speed_by_hour(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
@@ -474,7 +473,7 @@ def get_category_data_by_hour(
         start = count.start_process_date
     if not end:
         end = count.end_process_date + timedelta(days=1)
-    start, end = tuple([to_time_aware_utc(d) for d in (start, end)])
+    start, end = tuple([report.to_time_aware_utc(d) for d in (start, end)])
 
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
