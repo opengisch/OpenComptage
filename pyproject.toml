@@ -26,10 +26,13 @@ exclude = [
     "**/migrations",
     "**/qgissettingmanager",
     "**/test",
+    ".venv/",
 ]
-
-reportMissingImports = false
 useLibraryCodeForTypes = true
+reportMissingImports = false
+reportUndefinedVariable = false
+reportInvalidStringEscapeSequence = "error"
+
 [tool.setuptools]
 package-dir = { "" = "comptages" }
 

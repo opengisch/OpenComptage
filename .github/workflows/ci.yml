@@ -11,15 +11,15 @@ on:
   pull_request:
 
 jobs:
-  build_package_lint_check:
-    name: Build, package, lint, check
+  ensure_build_package:
+    name: Ensure build and package
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-          cache: "pip"
+          cache: pip
       - name: Setup, build, install
         run: |
           pip install build
@@ -29,9 +29,12 @@ jobs:
         run: qgis-plugin-ci package 'test'
       - name: Lint
         run: black . --check
-
-      # - name: Check
-      #   run: pyright .
+      - name: Check
+        run: pyright . > pyright_report.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Pyright Report
+          path: pyright_report.txt
 
   test:
     name: Test
