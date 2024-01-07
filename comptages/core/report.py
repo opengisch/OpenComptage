@@ -828,33 +828,36 @@ def _data_category_yearly(
 def _remove_useless_sheets(count: models.Count, workbook: Workbook):
     class_name = _t_cl(count.id_class.name)
 
-    if class_name == "SWISS10":
-        workbook.remove_sheet(workbook["SWISS7_H"])
-        workbook.remove_sheet(workbook["SWISS7_G"])
-        workbook.remove_sheet(workbook["EUR6_H"])
-        workbook.remove_sheet(workbook["EUR6_G"])
-    elif class_name == "SWISS7":
-        workbook.remove_sheet(workbook["SWISS10_H"])
-        workbook.remove_sheet(workbook["SWISS10_G"])
-        workbook.remove_sheet(workbook["EUR6_H"])
-        workbook.remove_sheet(workbook["EUR6_G"])
-    elif class_name == "EUR6":
-        workbook.remove_sheet(workbook["SWISS10_H"])
-        workbook.remove_sheet(workbook["SWISS10_G"])
-        workbook.remove_sheet(workbook["SWISS7_H"])
-        workbook.remove_sheet(workbook["SWISS7_G"])
-    elif class_name == "Volume1":
-        workbook.remove_sheet(workbook["SWISS7_H"])
-        workbook.remove_sheet(workbook["SWISS7_G"])
-        workbook.remove_sheet(workbook["SWISS10_H"])
-        workbook.remove_sheet(workbook["SWISS10_G"])
-        workbook.remove_sheet(workbook["EUR6_H"])
-        workbook.remove_sheet(workbook["EUR6_G"])
+    try:
+        if class_name == "SWISS10":
+            workbook.remove_sheet(workbook["SWISS7_H"])
+            workbook.remove_sheet(workbook["SWISS7_G"])
+            workbook.remove_sheet(workbook["EUR6_H"])
+            workbook.remove_sheet(workbook["EUR6_G"])
+        elif class_name == "SWISS7":
+            workbook.remove_sheet(workbook["SWISS10_H"])
+            workbook.remove_sheet(workbook["SWISS10_G"])
+            workbook.remove_sheet(workbook["EUR6_H"])
+            workbook.remove_sheet(workbook["EUR6_G"])
+        elif class_name == "EUR6":
+            workbook.remove_sheet(workbook["SWISS10_H"])
+            workbook.remove_sheet(workbook["SWISS10_G"])
+            workbook.remove_sheet(workbook["SWISS7_H"])
+            workbook.remove_sheet(workbook["SWISS7_G"])
+        elif class_name == "Volume1":
+            workbook.remove_sheet(workbook["SWISS7_H"])
+            workbook.remove_sheet(workbook["SWISS7_G"])
+            workbook.remove_sheet(workbook["SWISS10_H"])
+            workbook.remove_sheet(workbook["SWISS10_G"])
+            workbook.remove_sheet(workbook["EUR6_H"])
+            workbook.remove_sheet(workbook["EUR6_G"])
 
-    if _is_aggregate(count):
-        workbook.remove_sheet(workbook["Vit_Hd"])
-    else:
-        workbook.remove_sheet(workbook["Vit_H"])
+        if _is_aggregate(count):
+            workbook.remove_sheet(workbook["Vit_Hd"])
+        else:
+            workbook.remove_sheet(workbook["Vit_H"])
+    except KeyError:
+        pass
 
 
 def _t_cl(class_name):
