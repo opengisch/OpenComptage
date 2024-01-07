@@ -11,8 +11,6 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
 
-from comptages.core.settings import Settings
-
 
 def get_ui_class(ui_file):
     """Get UI Python class from .ui file.
@@ -57,6 +55,8 @@ def clear_widgets():
 
 
 def connect_to_db():
+    from comptages.core.settings import Settings
+
     settings = Settings()
     db = QSqlDatabase.addDatabase("QPSQL", str(datetime.now()))
     db.setHostName(settings.value("db_host"))
