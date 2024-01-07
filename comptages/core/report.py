@@ -828,36 +828,44 @@ def _data_category_yearly(
 def _remove_useless_sheets(count: models.Count, workbook: Workbook):
     class_name = _t_cl(count.id_class.name)
 
-    try:
-        if class_name == "SWISS10":
-            workbook.remove_sheet(workbook["SWISS7_H"])
-            workbook.remove_sheet(workbook["SWISS7_G"])
-            workbook.remove_sheet(workbook["EUR6_H"])
-            workbook.remove_sheet(workbook["EUR6_G"])
-        elif class_name == "SWISS7":
-            workbook.remove_sheet(workbook["SWISS10_H"])
-            workbook.remove_sheet(workbook["SWISS10_G"])
-            workbook.remove_sheet(workbook["EUR6_H"])
-            workbook.remove_sheet(workbook["EUR6_G"])
-        elif class_name == "EUR6":
-            workbook.remove_sheet(workbook["SWISS10_H"])
-            workbook.remove_sheet(workbook["SWISS10_G"])
-            workbook.remove_sheet(workbook["SWISS7_H"])
-            workbook.remove_sheet(workbook["SWISS7_G"])
-        elif class_name == "Volume1":
-            workbook.remove_sheet(workbook["SWISS7_H"])
-            workbook.remove_sheet(workbook["SWISS7_G"])
-            workbook.remove_sheet(workbook["SWISS10_H"])
-            workbook.remove_sheet(workbook["SWISS10_G"])
-            workbook.remove_sheet(workbook["EUR6_H"])
-            workbook.remove_sheet(workbook["EUR6_G"])
+    if class_name == "SWISS10":
+        to_remove_from_spreadsheet = [
+            "SWISS7_H",
+            "SWISS7_G",
+            "EUR6_H",
+            "EUR6_G",
+        ]
+    elif class_name == "SWISS7":
+        to_remove_from_spreadsheet = ["SWISS10_H", "SWISS10_G", "EUR6_H", "EUR6_G"]
+    elif class_name == "EUR6":
+        to_remove_from_spreadsheet = [
+            "SWISS10_H",
+            "SWISS10_G",
+            "SWISS7_H",
+            "SWISS7_G",
+        ]
+    elif class_name == "Volume1":
+        to_remove_from_spreadsheet = [
+            "SWISS10_H",
+            "SWISS10_G",
+            "SWISS7_H",
+            "SWISS7_G",
+            "EUR6_H",
+            "EUR6_G",
+        ]
+    else:
+        to_remove_from_spreadsheet = []
 
-        if _is_aggregate(count):
-            workbook.remove_sheet(workbook["Vit_Hd"])
-        else:
-            workbook.remove_sheet(workbook["Vit_H"])
-    except KeyError:
-        pass
+    if _is_aggregate(count):
+        to_remove_from_spreadsheet.append("Vit_Hd")
+    else:
+        to_remove_from_spreadsheet.append("Vit_H")
+
+    for key in to_remove_from_spreadsheet:
+        try:
+            workbook.remove_sheet(workbook[key])
+        except KeyError:
+            continue
 
 
 def _t_cl(class_name):
