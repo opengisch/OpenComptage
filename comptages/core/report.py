@@ -51,18 +51,20 @@ def _prepare_default_reports(
     sections_days: Optional[dict[str, list[date]]] = None,
 ):
     # We do by section and not by count because of special cases.
-    sections = models.Section.objects.filter(lane__id_installation__count=count)
+    sections = models.Section.objects.filter(
+        lane__id_installation__count=count
+    ).distinct()
 
     # Filter out sections if the user narrowed down the section to include
     # in report
     if sections_days:
-        sections = sections.filter(id__in=list(sections_days.keys()))
+        sections = sections.filter(id__in=list(sections_days.keys())).distinct()
 
     mondays = list(_mondays_of_count(count))
     mondays_qty = len(mondays)
 
     QgsMessageLog.logMessage(
-        f"Reporting on {sections.distinct().count()} sections", "Report", Qgis.Info
+        f"Reporting on {sections.count()} sections", "Report", Qgis.Info
     )
     for section in sections:
         for i, monday in enumerate(mondays):
