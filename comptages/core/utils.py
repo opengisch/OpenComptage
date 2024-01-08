@@ -13,7 +13,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
 
 from comptages.core.settings import Settings
-from comptages.datamodel import models 
+from comptages.datamodel import models
 
 
 def get_ui_class(ui_file):
