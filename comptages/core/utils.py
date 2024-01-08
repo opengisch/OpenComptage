@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 from typing import Any
 
+from django.db.models.expressions import F
+
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
@@ -72,23 +74,42 @@ def connect_to_db():
     return db
 
 
-def partition_by_season(count: models.Count) -> dict[str, Any]:
-    """Break down count details by season"""
+def get_count_details_by_season(count: models.Count) -> dict[str, Any]:
+    """Break down count details by season x section x class"""
     seasons = {
         "spring": [3, 4, 5],
         "summer": [6, 7, 8],
         "fall": [9, 10, 11],
         "winter": [12, 1, 2],
     }
-    accumulator = {k: {"_range": v, "times": 0} for k, v in seasons.items()}
 
-    def reducer(acc: dict, detail: models.CountDetail) -> dict:
-        d = detail.timestamp
-        for name, season in acc.items():
-            if d.month in season["_range"]:
-                acc[name]["times"] += detail.times
+    count_details = (
+        models.CountDetail.objects.filter(id_count=count.id)
+        .annotate(section=F("id_lane__id_section"), _class=F("id_count__id_class"))
+        .values("id", "section", "_class", "times", "timestamp")
+    )
+
+    def reducer(acc: dict, detail) -> dict:
+        timestamp = detail["timestamp"]
+
+        for season, _range in seasons.items():
+            if timestamp.month in _range:
+                section_id = detail["section"]
+                _class = detail["_class"]
+                times = detail["times"]
+
+                if section_id not in acc:
+                    acc[section_id] = {}
+
+                if _class not in acc[section_id]:
+                    acc[section_id][_class] = {}
+
+                if season not in acc[section_id][_class]:
+                    acc[section_id][_class][season] = 0
+
+                acc[section_id][_class][season] += times
                 break
+
         return acc
 
-    count_details = models.CountDetail.objects.filter(id_count=count.id)
-    return reduce(reducer, count_details, accumulator)
+    return reduce(reducer, count_details, {})

@@ -78,5 +78,14 @@ class ImportTest(TransactionTestCase):
 
         print(f"Imported {len(files)} count files!")
 
-        partitioned_by_season = utils.partition_by_season(count)
-        self.assertTrue(any(v["times"] > 0 for v in partitioned_by_season.values()))
+        details = utils.get_count_details_by_season(count)
+
+        def inspect_leaves(d, res) -> list[int]:
+            for v in d.values():
+                if isinstance(v, int):
+                    res.append(v)
+                elif isinstance(v, dict):
+                    inspect_leaves(v, res)
+            return res
+
+        self.assertTrue(all(value > 0 for value in inspect_leaves(details, [])))
