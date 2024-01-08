@@ -1,6 +1,9 @@
+from functools import reduce
 import os
 
 from datetime import datetime
+from typing import Any
+
 
 from qgis.core import Qgis
 from qgis.PyQt.uic import loadUiType
@@ -10,6 +13,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.utils import iface
 
 from comptages.core.settings import Settings
+from comptages.datamodel import models 
 
 
 def get_ui_class(ui_file):
@@ -65,3 +69,25 @@ def connect_to_db():
     db.open()
 
     return db
+
+
+def partition_by_season(count: models.Count) -> dict[str, Any]:
+    """Break down count details by season"""
+    seasons = {
+        "spring": [3, 4, 5],
+        "summer": [6, 7, 8],
+        "fall": [9, 10, 11],
+        "winter": [12, 1, 2],
+    }
+    accumulator = {k: {"_range": v, "times": 0} for k, v in seasons.items()}
+
+    def reducer(acc: dict, detail: models.CountDetail) -> dict:
+        d = detail.timestamp
+        for name, season in acc.items():
+            if d.month in season["_range"]:
+                acc[name]["times"] += detail.times
+                break
+        return acc
+
+    count_details = models.CountDetail.objects.filter(id_count=count.id)
+    return reduce(reducer, count_details, accumulator)

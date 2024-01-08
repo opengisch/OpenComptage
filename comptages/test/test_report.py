@@ -1,11 +1,12 @@
+from pathlib import Path
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
 
-from comptages.test import utils
+from comptages.test import utils as test_utils
 from comptages.datamodel import models
-from comptages.core import report, importer
+from comptages.core import report, importer, utils
 
 
 class ImportTest(TransactionTestCase):
@@ -41,7 +42,41 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(utils.test_data_path("00056520.V01"), count)
-        importer.import_file(utils.test_data_path("00056520.V02"), count)
+        importer.import_file(test_utils.test_data_path("00056520.V01"), count)
+        importer.import_file(test_utils.test_data_path("00056520.V02"), count)
 
         report.prepare_reports("/tmp/", count)
+
+    def test_busiest_by_season(self):
+        # Import Swiss10 test data
+        installation = models.Installation.objects.get(name="00107695")
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
+        class_ = models.Class.objects.get(name="SWISS10")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2021, 12, 10)),
+            start_process_date=tz.localize(datetime(2021, 2, 10)),
+            end_process_date=tz.localize(datetime(2021, 12, 15)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
+        files = list(path_to_files.iterdir())[:50]
+
+        for file in files:
+            importer.import_file(str(file), count)
+
+        print(f"Imported {len(files)} count files!")
+
+        partitioned_by_season = utils.partition_by_season(count)
+        self.assertTrue(any(v["times"] > 0 for v in partitioned_by_season.values()))
