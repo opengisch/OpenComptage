@@ -643,6 +643,11 @@ class Comptages(QObject):
 
                 qs.delete()
                 call_command("tjmreset")
+                QgsMessageLog.logMessage(
+                    "Les TJMs ont été réinitialisés; rouvrir cette fenêtre pour afficher les données actualisées!",
+                    "Comptages",
+                    Qgis.Info,
+                )
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db
