@@ -408,6 +408,7 @@ def on_dialog_changed(dialog, attribute, value, attributeChanged):
     <attributeEditorField showLabel="1" index="13" name="id_model"/>
     <attributeEditorField showLabel="1" index="11" name="id_device"/>
     <attributeEditorField showLabel="1" index="12" name="id_installation"/>
+    <attributeEditorField showLabel="1" index="15" name="tjm"/>
   </attributeEditorForm>
   <editable>
     <field editable="0" name="Periode speciale"/>
