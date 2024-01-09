@@ -1,8 +1,11 @@
+from itertools import islice
 from pathlib import Path
+from typing import Any, Generator, Iterable
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
+from openpyxl import load_workbook
 
 from comptages.test import utils as test_utils
 from comptages.datamodel import models
@@ -48,12 +51,12 @@ class ImportTest(TransactionTestCase):
         report.prepare_reports("/tmp/", count)
 
     def test_busiest_by_season(self):
-        # Import Swiss10 test data
+        # Import test data pertaining to "mobilité douce"
         installation = models.Installation.objects.get(name="00107695")
         model = models.Model.objects.all().first()
         device = models.Device.objects.all().first()
         sensor_type = models.SensorType.objects.all().first()
-        class_ = models.Class.objects.get(name="SWISS10")
+        class_ = models.Class.objects.get(name="SPCH-MD 5C")
         tz = pytz.timezone("Europe/Zurich")
 
         count = models.Count.objects.create(
@@ -70,14 +73,13 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
-        files = list(path_to_files.iterdir())[:50]
+        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+            "64540060_Latenium_PS2021_ChMixte.txt"
+        )
+        importer.import_file(str(path_to_file), count)
+        print("Imported 1 count files!")
 
-        for file in files:
-            importer.import_file(str(file), count)
-
-        print(f"Imported {len(files)} count files!")
-
+        # Collect count details
         details = utils.get_count_details_by_season(count)
 
         def inspect_leaves(d, res) -> list[int]:
@@ -89,3 +91,20 @@ class ImportTest(TransactionTestCase):
             return res
 
         self.assertTrue(all(value > 0 for value in inspect_leaves(details, [])))
+
+        # Prepare workbook
+        path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
+        path_to_outputs = Path("/OpenComptage/testoutputs").joinpath("yearly_bike.xlsx")
+        wb = load_workbook(path_to_inputs)
+
+        # Write data & save
+        ws = wb["Data_yearly_stats"]
+        window = ws["B22:F25"]
+
+        for row, season in zip(window, ("printemps", "été", "automne", "hiver")):
+            for cell, category in zip(
+                row, ("VELO", "MONO", "SHORT", "SPECIAL", "MULTI")
+            ):
+                cell.value = sum(details[season][category].values())
+
+        wb.save(path_to_outputs)

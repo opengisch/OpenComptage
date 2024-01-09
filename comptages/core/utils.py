@@ -76,40 +76,61 @@ def connect_to_db():
 
 def get_count_details_by_season(count: models.Count) -> dict[str, Any]:
     """Break down count details by season x section x class"""
+    output = {}
+    # Assuming seasons to run from 20 <month> to 21 <month n + 1>
     seasons = {
-        "spring": [3, 4, 5],
-        "summer": [6, 7, 8],
-        "fall": [9, 10, 11],
-        "winter": [12, 1, 2],
+        "printemps": [3, 4, 5],
+        "été": [6, 7, 8],
+        "automne": [9, 10, 11],
+        "hiver": [12, 1, 2],
     }
 
-    count_details = (
-        models.CountDetail.objects.filter(id_count=count.id)
-        .annotate(section=F("id_lane__id_section"), _class=F("id_count__id_class"))
-        .values("id", "section", "_class", "times", "timestamp")
+    # Preparing to filter out categories that don't reference the class picked out by `class_name`
+    class_name = "SPCH-MD 5C"
+    categories_name_to_exclude = ("TRASH", "ELSE")
+    _class = models.Class.objects.get(name=class_name)
+    categories_ids = (
+        _class.classcategory_set.annotate(name=F("id_category__name"))
+        .exclude(name__in=categories_name_to_exclude)
+        .values_list("id_category", flat=True)
     )
 
+    # Getting data
+    count_details = (
+        models.CountDetail.objects.filter(
+            id_count=count.id, id_category__in=categories_ids
+        )
+        .annotate(
+            section=F("id_lane__id_section"), category_name=F("id_category__name")
+        )
+        .values("id", "section", "category_name", "times", "timestamp")
+    )
+
+    # Preparing to collect data
     def reducer(acc: dict, detail) -> dict:
-        timestamp = detail["timestamp"]
+        timestamp: datetime = detail["timestamp"]
 
         for season, _range in seasons.items():
-            if timestamp.month in _range:
+            if timestamp.month in _range and (
+                timestamp.month != _range[0] or timestamp.day >= 21
+            ):
                 section_id = detail["section"]
-                _class = detail["_class"]
+                category_name = detail["category_name"]
                 times = detail["times"]
 
-                if section_id not in acc:
-                    acc[section_id] = {}
+                if season not in acc:
+                    acc[season] = {}
 
-                if _class not in acc[section_id]:
-                    acc[section_id][_class] = {}
+                if category_name not in acc[season]:
+                    acc[season][category_name] = {}
 
-                if season not in acc[section_id][_class]:
-                    acc[section_id][_class][season] = 0
+                if section_id not in acc[season][category_name]:
+                    acc[season][category_name][section_id] = 0
 
-                acc[section_id][_class][season] += times
+                acc[season][category_name][section_id] += times
                 break
 
         return acc
 
+    # Collecting
     return reduce(reducer, count_details, {})
