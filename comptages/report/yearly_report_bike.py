@@ -1,9 +1,7 @@
 from decimal import Decimal
 import os
-from typing import Any
-
 from string import ascii_uppercase
-from typing import Any
+from typing import Any, Union
 
 from django.db.models import Sum, Avg, Count
 from django.db.models.functions import Cast
@@ -258,7 +256,7 @@ class YearlyReportBike:
 
         section = Section.objects.get(id=self.section_id)
 
-        def render_section_dist(value: str | Decimal | None) -> str:
+        def render_section_dist(value: Union[str, Decimal, None]) -> str:
             if value is None or value == "NA":
                 return "NA"
             if isinstance(value, str):
