@@ -44,4 +44,4 @@ jobs:
       - name: Start docker stack
         run: POSTGIS_VERSION=${{ matrix.postgis_versions }} docker compose up db -d
       - name: Running tests
-        run: docker compose run qgis_tester
+        run: POSTGIS_VERSION=${{ matrix.postgis_versions }} docker compose run qgis_tester
