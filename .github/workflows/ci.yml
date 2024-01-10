@@ -31,14 +31,15 @@ jobs:
         run: black . --check
 
   test:
-    name: Test
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
         postgis_versions:
-          - 11-3.3
+          - 12-3.4
           - 15-3.4
+    name: Test with PostGIS v. ${{ matrix.postgis_versions }}
     steps:
       - uses: actions/checkout@v4
       - name: Start docker stack
