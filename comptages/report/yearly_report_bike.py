@@ -1,9 +1,8 @@
 from decimal import Decimal
 import os
-from string import ascii_uppercase
 from typing import Any, Union
 
-from django.db.models import Sum, Avg, Count
+from django.db.models import Sum, Avg, Count, F
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
@@ -151,15 +150,15 @@ class YearlyReportBike:
 
         # Group by day of the week (0->monday, 7->sunday)
         result = (
-            qs.annotate(date=TruncDate("timestamp"))
+            qs.annotate(
+                date=TruncDate("timestamp"),
+            )
             .values("date")
-            .annotate(Sum("times"))
+            .annotate(tjm=Sum("times"))
             .annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .values("weekday")
-            .annotate(tjm=Avg("times"))
+            .annotate(tjm=F("tjm") / Count("weekday", distinct=True))
             .values("weekday", "tjm")
         )
-
         return result
 
     def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
