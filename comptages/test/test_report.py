@@ -18,16 +18,16 @@ from comptages.test import utils, yearly_count_for
 class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_outputs = "/test_outputs"
+        cls.test_outputs = Path("/OpenComptage/test_outputs")
+        cls.test_data = Path("/OpenComptage/comptages/test/test_data")
+
+        for file in cls.test_outputs.iterdir():
+            os.remove(file)
 
     def setUp(self):
         # With TransactionTestCase the db is reset at every test, so we
         # re-import base data every time.
         call_command("importdata")
-        for file in Path(self.test_outputs).iterdir():
-            os.remove(file)
-
-    def tearDown(self) -> None:
         for file in Path(self.test_outputs).iterdir():
             os.remove(file)
 
@@ -196,7 +196,7 @@ class ImportTest(TransactionTestCase):
         found_files = len(list(Path(self.test_outputs).iterdir()))
         self.assertEqual(found_files, sections.count())
 
-    def test_report_md(self):
+    def test_yearly_bike_report(self):
         # Import test data pertaining to "mobilité douce"
         installation_name = "64540060"
         installation = models.Installation.objects.get(name=installation_name)
@@ -220,11 +220,12 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
-            "64540060_Latenium_PS2021_ChMixte.txt"
-        )
+        path_to_file = self.test_data.joinpath("64540060_Latenium_PS2021_ChMixte.txt")
         importer.import_file(str(path_to_file), count)
         print("Imported 1 count files!")
+
+        models.CountDetail.objects.update(import_status=0)
+        print("Forced import status to 'definitive' for testing purposes")
 
         sections_ids = (
             models.Section.objects.filter(lane__id_installation__name=installation_name)
@@ -233,10 +234,9 @@ class ImportTest(TransactionTestCase):
         )
         self.assertTrue(sections_ids.exists())
 
-        report.prepare_reports(
-            file_path=self.test_outputs,
-            count=count,
+        report = YearlyReportBike(
+            path_to_output_dir=self.test_outputs,
             year=2021,
-            sections_ids=list(sections_ids),
-            template="yearly",
+            section_id=sections_ids.first(),
         )
+        report.run()

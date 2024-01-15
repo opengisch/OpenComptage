@@ -21,10 +21,10 @@ from comptages.datamodel.models import CountDetail, Lane, Section
 
 
 class YearlyReportBike:
-    def __init__(self, file_path, year, section_id):
+    def __init__(self, path_to_output_dir, year, section_id):
         # TODO: pass section or section id?
 
-        self.file_path = file_path
+        self.path_to_output_dir = path_to_output_dir
         self.year = year
         self.section_id = section_id
 
@@ -189,6 +189,7 @@ class YearlyReportBike:
             id_lane__direction=direction,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
+        assert qs.exists()
 
         # TODO: avoid the division?
         return qs.aggregate(res=Sum("times"))["res"] / 365
@@ -417,7 +418,8 @@ class YearlyReportBike:
 
         # Save the file
         output = os.path.join(
-            self.file_path, "{}_{}_r.xlsx".format(self.section_id, self.year)
+            self.path_to_output_dir, "{}_{}_r.xlsx".format(self.section_id, self.year)
         )
 
         workbook.save(filename=output)
+        print(f"Saved report to {output}")
