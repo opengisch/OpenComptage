@@ -195,3 +195,48 @@ class ImportTest(TransactionTestCase):
         )
         found_files = len(list(Path(self.test_outputs).iterdir()))
         self.assertEqual(found_files, sections.count())
+
+    def test_report_md(self):
+        # Import test data pertaining to "mobilité douce"
+        installation_name = "64540060"
+        installation = models.Installation.objects.get(name=installation_name)
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
+        class_ = models.Class.objects.get(name="SPCH-MD 5C")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2021, 12, 10)),
+            start_process_date=tz.localize(datetime(2021, 2, 10)),
+            end_process_date=tz.localize(datetime(2021, 12, 15)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+            "64540060_Latenium_PS2021_ChMixte.txt"
+        )
+        importer.import_file(str(path_to_file), count)
+        print("Imported 1 count files!")
+
+        sections_ids = (
+            models.Section.objects.filter(lane__id_installation__name=installation_name)
+            .distinct()
+            .values_list("id", flat=True)
+        )
+        self.assertTrue(sections_ids.exists())
+
+        report.prepare_reports(
+            file_path=self.test_outputs,
+            count=count,
+            year=2021,
+            sections_ids=list(sections_ids),
+            template="yearly",
+        )
