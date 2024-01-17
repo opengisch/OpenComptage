@@ -350,7 +350,7 @@ class YearlyReportBike:
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["runs"])
-            ws.cell(row=row, column=column_offset+3, value=i["tjm"])
+            ws.cell(row=row, column=column_offset + 3, value=i["tjm"])
             row += 1
 
         ws = workbook["Data_hour"]
