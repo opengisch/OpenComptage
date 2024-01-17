@@ -137,29 +137,39 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_day_of_week(self) -> dict[str, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
-
-        # TODO: don't divide by 51 but actually aggregate first by the
-        # real days (with sum) and then aggregate by weekday (with average)
-
-        # Group by day of the week (0->monday, 7->sunday)
         result = (
-            qs.annotate(
-                date=TruncDate("timestamp"),
-            )
+            qs.annotate(date=TruncDate("timestamp"))
             .values("date")
-            .annotate(tjm=Sum("times"))
-            .annotate(weekday=ExtractIsoWeekDay("timestamp"))
-            .annotate(tjm=F("tjm") / Count("weekday", distinct=True))
-            .values("weekday", "tjm")
+            .annotate(daily_runs=Sum("times"), week_day=ExtractIsoWeekDay("timestamp"))
+            .values("week_day", "daily_runs")
+            .order_by("week_day")
         )
-        return result
+        # FIXME
+        # Aggregation via `values()` into `annotate()` all the way to the end result would be more performant.
+        builder = {}
+        for item in result:
+            if item["week_day"] not in builder:
+                builder[item["week_day"]] = {
+                    "days": 1,
+                    "runs": item["daily_runs"],
+                    "tjm": item["daily_runs"],
+                    "week_day": item["week_day"],
+                }
+            else:
+                builder[item["week_day"]]["days"] += 1
+                builder[item["week_day"]]["runs"] += item["daily_runs"]
+                builder[item["week_day"]]["tjm"] = round(
+                    builder[item["week_day"]]["runs"]
+                    / builder[item["week_day"]]["days"]
+                )
+        return builder
 
     def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
@@ -336,10 +346,11 @@ class YearlyReportBike:
         row_offset = 4
         column_offset = 2
 
-        data = self.values_by_day_of_week()
+        data = self.values_by_day_of_week().values()
         row = row_offset
         for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
+            ws.cell(row=row, column=column_offset, value=i["runs"])
+            ws.cell(row=row, column=column_offset+3, value=i["tjm"])
             row += 1
 
         ws = workbook["Data_hour"]
