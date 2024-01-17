@@ -1,8 +1,9 @@
 from decimal import Decimal
+from functools import reduce
 import os
 from typing import Any, Union
 
-from django.db.models import Sum, Avg, Count, F
+from django.db.models import Sum, Avg, F
 from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
@@ -171,7 +172,7 @@ class YearlyReportBike:
                 )
         return builder
 
-    def values_by_class(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def values_by_class(self) -> dict[str, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -179,13 +180,25 @@ class YearlyReportBike:
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        result = (
-            qs.annotate(res=Sum("times"))
-            .values("res")
-            .values("id_category__code")
-            .annotate(tjm=Count("id_category__code"))
+        results = (
+            qs.annotate(day=ExtractIsoWeekDay("timestamp"))
+            .values("day")
+            .annotate(runs=Sum("times"), code=F("id_category__code"))
+            .values("day", "runs", "code")
         )
-        return result
+
+        def reducer(acc: dict, i: dict):
+            code = str(i["code"])
+            day = str(i["day"])
+            runs = i["runs"]
+
+            if code not in acc:
+                acc[code] = {}
+
+            acc[code][day] = runs
+            return acc
+
+        return reduce(reducer, results, {})
 
     def tjm_direction_bike(
         self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
@@ -410,15 +423,16 @@ class YearlyReportBike:
                 value=i["tjm"],
             )
 
-        ws = workbook["Data_class"]
-        row_offset = 4
-        column_offset = 2
-
         data = self.values_by_class()
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
-            row += 1
+        ws = workbook["Data_class"]
+        window = ws["B4:H18"]
+        for idx_row, row in enumerate(window, 0):
+            code = str(idx_row)
+            for idx_column, cell in enumerate(row, 1):
+                day = str(idx_column)
+                cell.value = (
+                    data[code][day] if code in data and day in data[code] else ""
+                )
 
         ws = workbook["AN_GR"]
         ws.print_area = "A1:Z62"
