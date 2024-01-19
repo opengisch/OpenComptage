@@ -27,7 +27,7 @@ class YearlyReportBike:
         self.year = year
         self.section_id = section_id
 
-    def values_by_direction(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def total_runs_by_directions(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -44,7 +44,7 @@ class YearlyReportBike:
             .values("weekday", "id_lane__direction", "total")
         )
 
-    def values_by_day_and_hour(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def tjms_by_weekday_hour(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -68,7 +68,7 @@ class YearlyReportBike:
         )
         return result
 
-    def values_by_hour_and_direction(
+    def total_runs_by_hour_and_direction(
         self, directions=(1, 2), weekdays=(0, 1, 2, 3, 4, 5, 6)
     ) -> dict[str, Any]:
         # Get all the count details for section and the year
@@ -92,22 +92,71 @@ class YearlyReportBike:
         )
 
         def partition(acc: dict, val: dict) -> dict:
-            hour = val["hour"]
-            section = val["section"]
-            direction = val["direction"]
+            hour = str(val["hour"])
+            direction = str(val["direction"])
 
             if hour not in acc:
                 acc[hour] = {}
 
-            if section not in acc[hour]:
-                acc[hour][section] = {}
+            if direction not in acc[hour]:
+                acc[hour][direction] = {}
 
-            acc[hour][section][direction] = val
+            acc[hour][direction][direction] = val
             return acc
 
         return reduce(partition, results, {})
 
-    def values_by_day_and_month(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def total_runs_by_hour_one_direction(self, direction: int) -> dict[str, Any]:
+        # Get all the count details for hours and the specific direction
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+            id_lane__direction=direction,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
+        )
+        results = (
+            qs.annotate(hour=ExtractHour("timestamp"))
+            .values("hour")
+            .annotate(runs=Sum("times"))
+            .values("runs", "hour")
+            .order_by("hour")
+        )
+
+        def reducer(acc: dict, val: dict) -> dict:
+            day = str(val["day"])
+            hour = str(val["hour"])
+
+            if not day in acc:
+                acc[day] = {}
+
+            if not hour in acc:
+                acc[day][hour] = val["runs"]
+
+            return acc
+
+        return reduce(reducer, results, {})
+
+    def tota_runs_by_hour_weekday_one_direction(
+        self, direction: int
+    ) -> "ValuesQuerySet[Countdetail, dict[str, Any]]":
+        qs = CountDetail.objects.filter(
+            id_lane__id_section__id=self.section_id,
+            timestamp__year=self.year,
+            id_lane__direction=direction,
+            import_status=definitions.IMPORT_STATUS_DEFINITIVE,
+        )
+        return (
+            qs.annotate(hour=ExtractHour("timestamp"))
+            .values("hour")
+            .annotate(runs=Sum("times"))
+            .values("runs", "hour")
+            .annotate(day=ExtractIsoWeekDay("timestamp"))
+            .order_by("day")
+        )
+
+    def tjms_by_weekday_and_month(
+        self,
+    ) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -131,7 +180,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def tjm_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -149,7 +198,7 @@ class YearlyReportBike:
 
         return result
 
-    def values_by_day_of_week(self) -> dict[str, Any]:
+    def tjms_total_runs_by_day_of_week(self) -> dict[str, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -183,7 +232,7 @@ class YearlyReportBike:
                 )
         return builder
 
-    def values_by_class(self) -> dict[str, Any]:
+    def total_runs_by_class(self) -> dict[str, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -211,7 +260,7 @@ class YearlyReportBike:
 
         return reduce(reducer, results, {})
 
-    def tjm_direction_bike(
+    def tjms_by_direction_bike(
         self, categories, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
     ) -> float:
         qs = CountDetail.objects.filter(
@@ -339,22 +388,26 @@ class YearlyReportBike:
         row_offset = 4
         column_offset = 1
 
-        data = self.values_by_day()
+        data = self.tjm_by_day()
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["date"])
             ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
             row += 1
 
-        ws["F11"] = self.tjm_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
-        ws["G11"] = self.tjm_direction_bike([1], 2, weekdays=[0, 1, 2, 3, 4])
-        ws["H11"] = self.tjm_direction_bike([2, 3, 4, 5], 1, weekdays=[0, 1, 2, 3, 4])
-        ws["I11"] = self.tjm_direction_bike([2, 3, 4, 5], 2, weekdays=[0, 1, 2, 3, 4])
+        ws["F11"] = self.tjms_by_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
+        ws["G11"] = self.tjms_by_direction_bike([1], 2, weekdays=[0, 1, 2, 3, 4])
+        ws["H11"] = self.tjms_by_direction_bike(
+            [2, 3, 4, 5], 1, weekdays=[0, 1, 2, 3, 4]
+        )
+        ws["I11"] = self.tjms_by_direction_bike(
+            [2, 3, 4, 5], 2, weekdays=[0, 1, 2, 3, 4]
+        )
 
-        ws["F12"] = self.tjm_direction_bike([1], 1)
-        ws["G12"] = self.tjm_direction_bike([1], 2)
-        ws["H12"] = self.tjm_direction_bike([2, 3, 4, 5], 1)
-        ws["I12"] = self.tjm_direction_bike([2, 3, 4, 5], 2)
+        ws["F12"] = self.tjms_by_direction_bike([1], 1)
+        ws["G12"] = self.tjms_by_direction_bike([1], 2)
+        ws["H12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 1)
+        ws["I12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 2)
 
         ws["J35"] = self.total()
         ws["J39"] = self.max_day()[0]
@@ -370,72 +423,53 @@ class YearlyReportBike:
         row_offset = 4
         column_offset = 2
 
-        data = self.values_by_day_of_week().values()
+        data = self.tjms_total_runs_by_day_of_week().values()
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["runs"])
             ws.cell(row=row, column=column_offset + 3, value=i["tjm"])
             row += 1
 
-        # Data_hour 
+        # Data_hour
         ws = workbook["Data_hour"]
-        window = ws["C5:D28"]
+
         # Data hour > Whole weeks
+        window = ws["C5:D28"]
+        data = self.total_runs_by_hour_and_direction(directions=(1, 2))
+        for row_idx, row in enumerate(window, 1):
+            hour = str(row_idx)
+            for column_idx, cell in enumerate(row, 1):
+                direction = str(column_idx)
+                cell.value = data[hour][direction]["runs"]
 
-        data = self.values_by_hour_and_direction((1,))
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
-            row += 1
+        # Data hour > Weekends only
+        window = ws["C37:D60"]
+        data = self.total_runs_by_hour_and_direction(directions=(1,), weekdays=(5, 6))
+        for row_idx, row in enumerate(window, 1):
+            hour = str(row_idx)
+            for column_idx, cell in enumerate(row, 1):
+                direction = str(column_idx)
+                cell.value = data[hour][direction]["runs"]
 
-        row_offset = 5
-        column_offset = 4
+        # Data hour > Only dir 1
+        window = ws["B69:H92"]
+        data = self.total_runs_by_hour_one_direction(1)
+        for row_idx, row in enumerate(window, 1):
+            hour = str(row_idx)
+            for column_idx, cell in enumerate(row, 0):
+                day = str(column_idx)
+                cell.value = data[day][hour]
 
-        data = self.values_by_hour_and_direction((2,))
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
-            row += 1
+        # Data hour > Only dir 2
+        window = ws["B101:H124"]
+        data = self.total_runs_by_hour_one_direction(2)
+        for row_idx, row in enumerate(window, 1):
+            hour = str(row_idx)
+            for column_idx, cell in enumerate(row, 0):
+                day = str(column_idx)
+                cell.value = data[day][hour]
 
-        # Weekend days only
-        row_offset = 37
-        column_offset = 3
-
-        data = self.values_by_hour_and_direction(directions=(1,), weekdays=(5, 6))
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
-            row += 1
-
-        row_offset = 37
-        column_offset = 4
-
-        data = self.values_by_hour_and_direction(2, [5, 6])
-        row = row_offset
-        for i in data:
-            ws.cell(row=row, column=column_offset, value=i["tjm"])
-            row += 1
-
-        row_offset = 64
-        column_offset = 1
-        data = self.values_by_day_and_hour()
-        for i in data:
-            ws.cell(
-                row=i["hour"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-            row_offset += 1
-
-        data = self.values_by_day_and_month()
-        for i in data:
-            ws.cell(
-                row=i["month"] + row_offset,
-                column=i["weekday"] + column_offset,
-                value=i["tjm"],
-            )
-
-        data = self.values_by_class()
+        data = self.total_runs_by_class()
         ws = workbook["Data_class"]
         window = ws["B4:H18"]
         for idx_row, row in enumerate(window, 0):
