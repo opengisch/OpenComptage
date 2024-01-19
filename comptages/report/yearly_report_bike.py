@@ -70,7 +70,7 @@ class YearlyReportBike:
 
     def total_runs_by_hour_and_direction(
         self, directions=(1, 2), weekdays=(0, 1, 2, 3, 4, 5, 6)
-    ) -> dict[str, Any]:
+    ) -> dict[int, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -92,8 +92,8 @@ class YearlyReportBike:
         )
 
         def partition(acc: dict, val: dict) -> dict:
-            hour = str(val["hour"])
-            direction = str(val["direction"])
+            hour = val["hour"]
+            direction = val["direction"]
 
             if hour not in acc:
                 acc[hour] = {}
@@ -101,12 +101,12 @@ class YearlyReportBike:
             if direction not in acc[hour]:
                 acc[hour][direction] = {}
 
-            acc[hour][direction][direction] = val
+            acc[hour][direction] = val
             return acc
 
         return reduce(partition, results, {})
 
-    def total_runs_by_hour_one_direction(self, direction: int) -> dict[str, Any]:
+    def total_runs_by_hour_one_direction(self, direction: int) -> dict[int, Any]:
         # Get all the count details for hours and the specific direction
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -119,12 +119,13 @@ class YearlyReportBike:
             .values("hour")
             .annotate(runs=Sum("times"))
             .values("runs", "hour")
-            .order_by("hour")
+            .annotate(day=ExtractIsoWeekDay("timestamp"))
+            .order_by("day")
         )
 
         def reducer(acc: dict, val: dict) -> dict:
-            day = str(val["day"])
-            hour = str(val["hour"])
+            day = val["day"]
+            hour = val["hour"]
 
             if not day in acc:
                 acc[day] = {}
@@ -248,8 +249,8 @@ class YearlyReportBike:
         )
 
         def reducer(acc: dict, i: dict):
-            code = str(i["code"])
-            day = str(i["day"])
+            code = i["code"]
+            day = i["day"]
             runs = i["runs"]
 
             if code not in acc:
@@ -434,51 +435,62 @@ class YearlyReportBike:
         ws = workbook["Data_hour"]
 
         # Data hour > Whole weeks
-        window = ws["C5:D28"]
+        print_area = ws["C5:D28"]
         data = self.total_runs_by_hour_and_direction(directions=(1, 2))
-        for row_idx, row in enumerate(window, 1):
-            hour = str(row_idx)
-            for column_idx, cell in enumerate(row, 1):
-                direction = str(column_idx)
-                cell.value = data[hour][direction]["runs"]
+        for hour, row in enumerate(print_area, 1):
+            if hour == 24:
+                hour = 0
+            for direction, cell in enumerate(row, 1):
+                if not hour in data or not direction in data[hour]:
+                    cell.value = 0
+                else:
+                    cell.value = data[hour][direction]["runs"]
 
         # Data hour > Weekends only
-        window = ws["C37:D60"]
-        data = self.total_runs_by_hour_and_direction(directions=(1,), weekdays=(5, 6))
-        for row_idx, row in enumerate(window, 1):
-            hour = str(row_idx)
-            for column_idx, cell in enumerate(row, 1):
-                direction = str(column_idx)
-                cell.value = data[hour][direction]["runs"]
+        print_area = ws["C37:D60"]
+        data = self.total_runs_by_hour_and_direction(directions=(1, 2), weekdays=(5, 6))
+        for hour, row in enumerate(print_area, 1):
+            if hour == 24:
+                hour = 0
+            for direction, cell in enumerate(row, 1):
+                if not hour in data or not direction in data[hour]:
+                    cell.value = 0
+                else:
+                    cell.value = data[hour][direction]["runs"]
 
         # Data hour > Only dir 1
-        window = ws["B69:H92"]
+        print_area = ws["B69:H92"]
         data = self.total_runs_by_hour_one_direction(1)
-        for row_idx, row in enumerate(window, 1):
-            hour = str(row_idx)
-            for column_idx, cell in enumerate(row, 0):
-                day = str(column_idx)
-                cell.value = data[day][hour]
+        for hour, row in enumerate(print_area, 1):
+            if hour == 24:
+                hour = 0
+            for day, cell in enumerate(row, 1):
+                if not day in data or not hour in data[day]:
+                    cell.value = 0
+                else:
+                    cell.value = data[day][hour]
 
         # Data hour > Only dir 2
-        window = ws["B101:H124"]
+        print_area = ws["B101:H124"]
         data = self.total_runs_by_hour_one_direction(2)
-        for row_idx, row in enumerate(window, 1):
-            hour = str(row_idx)
-            for column_idx, cell in enumerate(row, 0):
-                day = str(column_idx)
-                cell.value = data[day][hour]
+        for hour, row in enumerate(print_area, 1):
+            if hour == 24:
+                hour = 0
+            for day, cell in enumerate(row, 1):
+                if not day in data or not hour in data[day]:
+                    cell.value = 0
+                else:
+                    cell.value = data[day][hour]
 
         data = self.total_runs_by_class()
         ws = workbook["Data_class"]
-        window = ws["B4:H18"]
-        for idx_row, row in enumerate(window, 0):
-            code = str(idx_row)
-            for idx_column, cell in enumerate(row, 1):
-                day = str(idx_column)
-                cell.value = (
-                    data[code][day] if code in data and day in data[code] else ""
-                )
+        print_area = ws["B4:H18"]
+        for code, row in enumerate(print_area, 0):
+            for day, cell in enumerate(row, 1):
+                if not code in data or not day in data[code]:
+                    cell.value = 0
+                else:
+                    cell.value = data[code][day]
 
         ws = workbook["AN_GR"]
         ws.print_area = "A1:Z62"
