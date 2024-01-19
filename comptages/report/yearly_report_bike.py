@@ -4,7 +4,6 @@ import os
 from typing import Any, Union
 
 from django.db.models import Sum, Avg, F
-from django.db.models.functions import Cast
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     Cast,
@@ -13,7 +12,7 @@ from django.db.models.functions import (
     ExtractMonth,
     TruncDate,
 )
-from django.db.models import Count, Sum, Avg
+from django.db.models import Sum, Avg
 from openpyxl import load_workbook
 
 from comptages.core import definitions
@@ -70,31 +69,43 @@ class YearlyReportBike:
         return result
 
     def values_by_hour_and_direction(
-        self, direction, weekdays=[0, 1, 2, 3, 4, 5, 6]
-    ) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+        self, directions=(1, 2), weekdays=(0, 1, 2, 3, 4, 5, 6)
+    ) -> dict[str, Any]:
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
-            id_lane__direction=direction,
+            id_lane__direction__in=directions,
             timestamp__iso_week_day__in=weekdays,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
 
-        # TODO: don't divide by 365
-
-        # Total by hour (0->23)
-        result = (
-            qs.annotate(date=TruncDate("timestamp"))
-            .values("date")
+        results = (
+            qs.annotate(hour=ExtractHour("timestamp"))
+            .values("hour")
             .annotate(
-                tjm=Sum("times"),
-                hour=ExtractHour("timestamp"),
+                runs=Sum("times"),
+                direction=F("id_lane__direction"),
+                section=F("id_lane__id_section_id"),
             )
-            .values("hour", "tjm")
+            .values("runs", "hour", "direction", "section")
         )
 
-        return result
+        def partition(acc: dict, val: dict) -> dict:
+            hour = val["hour"]
+            section = val["section"]
+            direction = val["direction"]
+
+            if hour not in acc:
+                acc[hour] = {}
+
+            if section not in acc[hour]:
+                acc[hour][section] = {}
+
+            acc[hour][section][direction] = val
+            return acc
+
+        return reduce(partition, results, {})
 
     def values_by_day_and_month(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
@@ -366,11 +377,12 @@ class YearlyReportBike:
             ws.cell(row=row, column=column_offset + 3, value=i["tjm"])
             row += 1
 
+        # Data_hour 
         ws = workbook["Data_hour"]
-        row_offset = 5
-        column_offset = 3
+        window = ws["C5:D28"]
+        # Data hour > Whole weeks
 
-        data = self.values_by_hour_and_direction(1)
+        data = self.values_by_hour_and_direction((1,))
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
@@ -379,7 +391,7 @@ class YearlyReportBike:
         row_offset = 5
         column_offset = 4
 
-        data = self.values_by_hour_and_direction(2)
+        data = self.values_by_hour_and_direction((2,))
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
@@ -389,7 +401,7 @@ class YearlyReportBike:
         row_offset = 37
         column_offset = 3
 
-        data = self.values_by_hour_and_direction(1, [5, 6])
+        data = self.values_by_hour_and_direction(directions=(1,), weekdays=(5, 6))
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
