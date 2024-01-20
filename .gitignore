@@ -1,8 +1,11 @@
-.idea
+**/__pycache__/
+**/coverage_report.txt
+*.nix
+*.log
+.venv/
+.vscode/
 .docker/tests/
 .docker/tests/screenshot.png
 .env
-.vscode/settings.json
-*.nix
-*.log
-**/__pycache__/
+.idea
+.coverage

@@ -24,9 +24,9 @@ jobs:
         run: |
           pip install build
           python -m build .
-          pip install ./dist/comptages-0.1-py3-none-any.whl[check]
-      # - name: Package
-      #   run: qgis-plugin-ci package 'test'
+          pip install ./dist/comptages-0.1-py3-none-any.whl[test]
+      - name: Package
+        run: qgis-plugin-ci --no-validation package 'test'
       - name: Lint
         run: black . --check
 
@@ -40,3 +40,8 @@ jobs:
         run: docker compose up db -d
       - name: Running tests
         run: docker compose run qgis_tester
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_report.txt
+          path: testoutputs/coverage_report.txt

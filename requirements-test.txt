@@ -1,0 +1,4 @@
+pyright>=1.1.36
+black>=23.11.0
+qgis-plugin-ci>=2.8.1
+coverage>=7.4.0
