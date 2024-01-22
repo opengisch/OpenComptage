@@ -2,21 +2,20 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+package-dir = { "" = "comptages" }
+
 [project]
 name = "comptages"
 version = "0.1"
-dynamic = ["dependencies"]
-
-[project.optional-dependencies]
-check = ["pyright>=1.1.36", "black>=23.11.0", "qgis-plugin-ci>=2.8.1"]
+dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
+optional-dependencies.test = { file = "requirements-test.txt" }
 
-[tool.qgis-plugin-ci]
-plugin_path = "comptages"
-github_organization_slug = "opengisch"
-project_slug = "OpenComptage"
+[tool.coverage.run]
+omit = ["*/migrations/*", "*/qgissettingmanager/*"]
 
 [tool.pyright]
 pythonVersion = "3.10"
@@ -28,13 +27,10 @@ exclude = [
     "**/test",
     ".venv/",
 ]
-useLibraryCodeForTypes = true
 reportMissingImports = false
+useLibraryCodeForTypes = true
 reportUndefinedVariable = false
 reportInvalidStringEscapeSequence = "error"
-
-[tool.setuptools]
-package-dir = { "" = "comptages" }
 
 [tool.isort]
 profile = "black"
@@ -48,3 +44,8 @@ extend-exclude = '''
   | qgissettingmanager
 )/
 '''
+
+[tool.qgis-plugin-ci]
+plugin_path = "comptages"
+github_organization_slug = "opengisch"
+project_slug = "OpenComptage"
