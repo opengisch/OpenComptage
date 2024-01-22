@@ -1,15 +1,17 @@
-from itertools import islice
+from functools import reduce
 from pathlib import Path
-from typing import Any, Generator, Iterable
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
 from django.core.management import call_command
+from django.db.models.functions import ExtractMonth, ExtractIsoWeekDay
+from django.db.models import Sum
 from openpyxl import load_workbook
 
 from comptages.test import utils as test_utils
 from comptages.datamodel import models
-from comptages.core import report, importer, utils
+from comptages.report.yearly_report_bike import YearlyReportBike
+from comptages.core import report, importer
 
 
 class ImportTest(TransactionTestCase):
@@ -80,7 +82,7 @@ class ImportTest(TransactionTestCase):
         print("Imported 1 count files!")
 
         # Collect count details
-        details = utils.get_count_details_by_season(count)
+        details = YearlyReportBike.count_details_by_season(count)
 
         def inspect_leaves(d, res) -> list[int]:
             for v in d.values():
@@ -108,3 +110,52 @@ class ImportTest(TransactionTestCase):
                 cell.value = sum(details[season][category].values())
 
         wb.save(path_to_outputs)
+
+    def test_busiest_by_day_month(self):
+        # Import test data pertaining to "mobilité douce"
+        installation = models.Installation.objects.get(name="00107695")
+        model = models.Model.objects.all().first()
+        device = models.Device.objects.all().first()
+        sensor_type = models.SensorType.objects.all().first()
+        class_ = models.Class.objects.get(name="SPCH-MD 5C")
+        tz = pytz.timezone("Europe/Zurich")
+
+        count = models.Count.objects.create(
+            start_service_date=tz.localize(datetime(2021, 2, 1)),
+            end_service_date=tz.localize(datetime(2021, 12, 10)),
+            start_process_date=tz.localize(datetime(2021, 2, 10)),
+            end_process_date=tz.localize(datetime(2021, 12, 15)),
+            start_put_date=tz.localize(datetime(2021, 1, 1)),
+            end_put_date=tz.localize(datetime(2021, 1, 5)),
+            id_model=model,
+            id_device=device,
+            id_sensor_type=sensor_type,
+            id_class=class_,
+            id_installation=installation,
+        )
+
+        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+            "64540060_Latenium_PS2021_ChMixte.txt"
+        )
+        importer.import_file(str(path_to_file), count)
+        print("Imported 1 count files!")
+
+        # Collecting count details
+        data = YearlyReportBike.count_details_by_day_month(count)
+
+        # Prepare workbook
+        path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
+        path_to_outputs = Path("/OpenComptage/testoutputs").joinpath("yearly_bike.xlsx")
+        wb = load_workbook(path_to_inputs)
+
+        # Write data & save
+        ws = wb["Data_yearly_stats"]
+        print_area = ws["B31:H42"]
+        for row_idx, row in enumerate(print_area, 1):
+            for column_idx, cell in enumerate(row, 1):
+                cell.value = data[row_idx][column_idx]
+
+        wb.save(path_to_outputs)
+
+    def test_busiest_by_various_criteria(self):
+        ...

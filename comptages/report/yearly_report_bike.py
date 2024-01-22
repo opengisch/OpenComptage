@@ -1,8 +1,11 @@
+from datetime import datetime
+from functools import reduce
 import os
+from typing import Any
 
 
-from django.db.models import Sum, Count
-from django.db.models.functions import Cast
+from django.db.models import Sum, Count, F, QuerySet
+from django.db.models.functions import Cast, TruncDate
 from django.db.models.fields import DateField
 from django.db.models.functions import (
     ExtractIsoWeekDay,
@@ -13,7 +16,8 @@ from django.db.models.functions import (
 from openpyxl import load_workbook
 
 from comptages.core import definitions
-from comptages.datamodel.models import CountDetail, Section, Lane
+from comptages.datamodel.models import CountDetail, Section, Lane, ClassCategory
+from comptages.datamodel.models import Count as modelCount
 
 
 class YearlyReportBike:
@@ -227,6 +231,146 @@ class YearlyReportBike:
         )
 
         return qs[0]["total"], qs[0]["month"]
+
+    @staticmethod
+    def count_details_by_day_month(count: modelCount) -> dict[int, Any]:
+        # Preparing to filter out categories that don't reference the class picked out by `class_name`
+        class_name = "SPCH-MD 5C"
+        # Excluding irrelevant
+        categories_name_to_exclude = ("TRASH", "ELSE")
+        categories_ids = (
+            ClassCategory.objects.filter(id_class__name=class_name)
+            .exclude(id_category__name__in=categories_name_to_exclude)
+            .values_list("id_category", flat=True)
+        )
+        qs = (
+            CountDetail.objects.filter(
+                id_count=count.id, id_category__in=categories_ids
+            )
+            .annotate(
+                month=ExtractMonth("timestamp"), day=ExtractIsoWeekDay("timestamp")
+            )
+            .values("month", "day")
+            .annotate(Sum("times"))
+        )
+
+        def reducer(acc, item):
+            month = item["month"]
+            day = item["day"]
+            runs = item["times__sum"]
+            if not month in acc:
+                acc[month] = {}
+            if not day in acc[month]:
+                acc[month][day] = runs
+            return acc
+
+        return reduce(reducer, qs, {})
+
+    @staticmethod
+    def count_details_by_various_criteria(count: modelCount) -> dict[int, Any]:
+        # Preparing to filter out categories that don't reference the class picked out by `class_name`
+        class_name = "SPCH-MD 5C"
+        # Excluding irrelevant
+        categories_name_to_exclude = ("TRASH", "ELSE")
+        categories_ids = (
+            ClassCategory.objects.filter(id_class__name=class_name)
+            .exclude(id_category__name__in=categories_name_to_exclude)
+            .values_list("id_category", flat=True)
+        )
+        # Getting data
+        base_qs = CountDetail.objects.filter(
+            id_count=count.id, id_category__in=categories_ids
+        )
+        total_runs_in_year = base_qs.aggregate(total_runs=Sum("times"))
+        qs = (
+            base_qs.annotate(date=TruncDate("timestamp"))
+            .values("date")
+            .annotate(date_times=Sum("times"))
+            .values_list("date_times", "date")
+        )
+        total_runs_busiest_date, busiest_date = qs.order_by("-date_times").first()  # type: ignore
+        total_runs_least_busy_date, least_busy_date = qs.order_by("date_times").first()  # type: ignore
+        qs = (
+            base_qs.annotate(month=ExtractMonth("timestamp"))
+            .values("month")
+            .annotate(month_times=Sum("times"))
+            .values_list("month_times", "month")
+        )
+        total_runs_busies_month, busiest_month = qs.order_by("-month_times").first()  # type: ignore
+        total_runs_least_busy_month, least_busy_month = qs.order_by("month_times").first()  # type: ignore
+        qs = (
+            base_qs.annotate(
+                date=TruncDate("timestamp"),
+                hour=ExtractHour("timestamp"),
+                week_day=ExtractIsoWeekDay("timestamp"),
+            )
+            .values("date", "hour")
+            .annotate(Sum("times"))
+            .values_list("times__sum", "hour")
+            .order_by("-times__sum")
+        )
+        total_runs_busiest_hour, busiest_hour = qs.exclude(week_day__gt=5).first()  # type: ignore
+        total_runs_least_busy_hour, least_busy_hour = qs.exclude(week_day__lt=6).first()  # type: ignore
+        return {}
+
+    @staticmethod
+    def count_details_by_season(count: modelCount) -> dict[int, Any]:
+        """Break down count details by season x section x class"""
+        # Assuming seasons to run from 20 <month> to 21 <month n + 1>
+        seasons = {
+            "printemps": [3, 4, 5],
+            "été": [6, 7, 8],
+            "automne": [9, 10, 11],
+            "hiver": [12, 1, 2],
+        }
+        # Preparing to filter out categories that don't reference the class picked out by `class_name`
+        class_name = "SPCH-MD 5C"
+        # Excluding irrelevant
+        categories_name_to_exclude = ("TRASH", "ELSE")
+        categories_ids = (
+            ClassCategory.objects.filter(id_class__name=class_name)
+            .exclude(id_category__name__in=categories_name_to_exclude)
+            .values_list("id_category", flat=True)
+        )
+        # Getting data
+        count_details = (
+            CountDetail.objects.filter(
+                id_count=count.id, id_category__in=categories_ids
+            )
+            .annotate(
+                section=F("id_lane__id_section"), category_name=F("id_category__name")
+            )
+            .values("id", "section", "category_name", "times", "timestamp")
+        )
+
+        # Preparing to collect data
+        def reducer(acc: dict, detail) -> dict:
+            timestamp: datetime = detail["timestamp"]
+
+            for season, _range in seasons.items():
+                if timestamp.month in _range and (
+                    timestamp.month != _range[0] or timestamp.day >= 21
+                ):
+                    section_id = detail["section"]
+                    category_name = detail["category_name"]
+                    times = detail["times"]
+
+                    if season not in acc:
+                        acc[season] = {}
+
+                    if category_name not in acc[season]:
+                        acc[season][category_name] = {}
+
+                    if section_id not in acc[season][category_name]:
+                        acc[season][category_name][section_id] = 0
+
+                    acc[season][category_name][section_id] += times
+                    break
+
+            return acc
+
+        # Collecting
+        return reduce(reducer, count_details, {})
 
     def run(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
