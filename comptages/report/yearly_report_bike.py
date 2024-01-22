@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from functools import reduce
 import os
 from typing import Any
@@ -267,7 +267,7 @@ class YearlyReportBike:
         return reduce(reducer, qs, {})
 
     @staticmethod
-    def count_details_by_various_criteria(count: modelCount) -> dict[int, Any]:
+    def count_details_by_various_criteria(count: modelCount) -> dict[str, Any]:
         # Preparing to filter out categories that don't reference the class picked out by `class_name`
         class_name = "SPCH-MD 5C"
         # Excluding irrelevant
@@ -277,41 +277,99 @@ class YearlyReportBike:
             .exclude(id_category__name__in=categories_name_to_exclude)
             .values_list("id_category", flat=True)
         )
-        # Getting data
+        # Base QuerySet
         base_qs = CountDetail.objects.filter(
             id_count=count.id, id_category__in=categories_ids
         )
-        total_runs_in_year = base_qs.aggregate(total_runs=Sum("times"))
-        qs = (
-            base_qs.annotate(date=TruncDate("timestamp"))
-            .values("date")
-            .annotate(date_times=Sum("times"))
-            .values_list("date_times", "date")
+
+        # Specialized QuerySets
+        total_runs_in_year = (
+            base_qs.annotate(category_name=F("id_category__name"))
+            .values("category_name")
+            .annotate(total_runs=Sum("times"))
         )
-        total_runs_busiest_date, busiest_date = qs.order_by("-date_times").first()  # type: ignore
-        total_runs_least_busy_date, least_busy_date = qs.order_by("date_times").first()  # type: ignore
+
+        qs = (
+            base_qs.annotate(
+                category_name=F("id_category__name"), date=TruncDate("timestamp")
+            )
+            .values("date", "category_name")
+            .annotate(Sum("times"))
+            .order_by("-times__sum")
+        )
+        busiest_date = qs.first()
+        least_busy_date = qs.last()
+        assert busiest_date
+        assert least_busy_date
+
+        busiest_date_row = (
+            base_qs.annotate(
+                date=TruncDate("timestamp"), category_name=F("id_category__name")
+            )
+            .filter(date=busiest_date["date"])
+            .values("date", "category_name")
+            .annotate(Sum("times"))
+        )
+        least_busy_date_row = (
+            base_qs.annotate(
+                date=TruncDate("timestamp"), category_name=F("id_category__name")
+            )
+            .filter(date=least_busy_date["date"])
+            .values("date", "category_name")
+            .annotate(Sum("times"))
+        )
+
         qs = (
             base_qs.annotate(month=ExtractMonth("timestamp"))
             .values("month")
-            .annotate(month_times=Sum("times"))
-            .values_list("month_times", "month")
+            .annotate(Sum("times"))
+            .order_by("-times__sum")
         )
-        total_runs_busies_month, busiest_month = qs.order_by("-month_times").first()  # type: ignore
-        total_runs_least_busy_month, least_busy_month = qs.order_by("month_times").first()  # type: ignore
+        busiest_month = qs.first()
+        least_busy_month = qs.last()
+        assert busiest_month
+        assert least_busy_month
+
+        busiest_month_row = (
+            base_qs.annotate(
+                month=ExtractMonth("timestamp"), category_name=F("id_category__name")
+            )
+            .filter(month=busiest_month["month"])
+            .values("month", "category_name")
+            .annotate(Sum("times"))
+        )
+        least_busy_month_row = (
+            base_qs.annotate(
+                month=ExtractMonth("timestamp"), category_name=F("id_category__name")
+            )
+            .filter(month=least_busy_month["month"])
+            .values("month", "category_name")
+            .annotate(Sum("times"))
+        )
+
         qs = (
             base_qs.annotate(
+                category_name=F("id_category__name"),
                 date=TruncDate("timestamp"),
                 hour=ExtractHour("timestamp"),
                 week_day=ExtractIsoWeekDay("timestamp"),
             )
-            .values("date", "hour")
+            .values("date", "hour", "category_name")
             .annotate(Sum("times"))
-            .values_list("times__sum", "hour")
             .order_by("-times__sum")
         )
-        total_runs_busiest_hour, busiest_hour = qs.exclude(week_day__gt=5).first()  # type: ignore
-        total_runs_least_busy_hour, least_busy_hour = qs.exclude(week_day__lt=6).first()  # type: ignore
-        return {}
+        total_runs_busiest_hour_weekday = qs.exclude(week_day__gt=5).first()
+        total_runs_busiest_hour_weekend = qs.exclude(week_day__lt=6).first()
+
+        return {
+            "busiest_date_row": busiest_date_row,
+            "least_busy_date_row": least_busy_date_row,
+            "busiest_month_row": busiest_month_row,
+            "least_busy_month_row": least_busy_month_row,
+            "total_runs_busiest_hour_weekday": total_runs_busiest_hour_weekday,
+            "total_runs_busiest_hour_weekend": total_runs_busiest_hour_weekend,
+            "total_runs_in_year": total_runs_in_year,
+        }
 
     @staticmethod
     def count_details_by_season(count: modelCount) -> dict[int, Any]:
