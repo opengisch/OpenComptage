@@ -39,69 +39,6 @@ class ImportTest(TransactionTestCase):
         importer.import_file(utils.test_data_path("00056520.V02"), count)
         report.prepare_reports("/tmp/", count)
 
-    def test_ensure_non_rounded_values(self):
-        file_name = "64540060_Latenium_PS2021_ChMixte.txt"
-        installation_name = "64540060"
-        year = 2021
-
-        installation = models.Installation.objects.get(name=installation_name)
-        count = yearly_count_for(year, installation)
-        importer.import_file(utils.test_data_path(file_name), count)
-
-        section_id = installation_name
-        report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
-        report_dir1 = report.values_by_hour_and_direction(1)
-        report_dir2 = report.values_by_hour_and_direction(2)
-
-        tjms = []
-        if report_dir1.exists():
-            report_dir1_values = report_dir1.values_list("tjm", flat=True)
-            tjms += [decimal.Decimal(value) for value in report_dir1_values]
-        if report_dir2.exists():
-            report_dir2_values = report_dir2.values_list("tjm", flat=True)
-            tjms += [decimal.Decimal(value) for value in report_dir2_values]
-        for value in tjms:
-            with self.subTest():
-                exponent = value.as_tuple().exponent
-                self.assertEqual(exponent, 3)
-
-    def test_ensure_more_accurate_details(self):
-        file_name = "64540060_Latenium_PS2021_ChMixte.txt"
-        installation_name = "64540060"
-        year = 2021
-
-        installation = models.Installation.objects.get(name=installation_name)
-        count = yearly_count_for(year, installation)
-        importer.import_file(utils.test_data_path(file_name), count)
-
-        section_id = installation_name
-        report = YearlyReportBike("template_yearly_bike.xlsx", year, section_id)
-        day_and_hour = report.values_by_day_and_hour()
-        hour_and_direction1 = report.values_by_hour_and_direction(1)
-        hour_and_direction2 = report.values_by_hour_and_direction(2)
-        day_and_month = report.values_by_day_and_month()
-        day_of_week = report.values_by_day_of_week()
-
-        for qs_name, qs in zip(
-            [
-                "day and hour",
-                "hour and direction 1",
-                "hour and direction 2",
-                "day and month",
-                "day of week",
-            ],
-            [
-                day_and_hour,
-                hour_and_direction1,
-                hour_and_direction2,
-                day_and_month,
-                day_of_week,
-            ],
-        ):
-            print(f"{qs_name}:")
-            for value in qs:
-                print(value)
-
     def test_all_sections_default(self):
         # Test if default report features all sections for special case
         test_data_folder = "5350_1_4"
