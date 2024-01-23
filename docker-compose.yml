@@ -31,7 +31,7 @@ services:
       - ${PWD}/testoutputs:/OpenComptage/testoutputs
 
   db:
-    image: postgis/postgis:12-2.5
+    image: postgis/postgis:${POSTGIS_VERSION}
     ports:
       - 5432:5432
     environment:
