@@ -19,7 +19,7 @@ class ImportTest(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_outputs = Path("/OpenComptage/test_outputs")
-        cls.test_data = Path("/OpenComptage/comptages/test/test_data")
+        cls.test_data = Path("/OpenComptage/test_data")
 
         for file in cls.test_outputs.iterdir():
             os.remove(file)
