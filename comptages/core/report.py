@@ -49,9 +49,12 @@ def _prepare_default_reports(
     sections = models.Section.objects.filter(
         lane__id_installation__count=count
     ).distinct()
+    assert sections
 
     mondays_qty = len(list(_mondays_of_count(count)))
     mondays = _mondays_of_count(count)
+    assert mondays
+
     for section in sections:
         for i, monday in enumerate(mondays):
             progress = int(100 / mondays_qty * (i - 1))

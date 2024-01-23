@@ -15,6 +15,7 @@ from ...models import (
     Category,
     Class,
     ClassCategory,
+    CountDetail,
     Device,
     Installation,
     Model,
@@ -438,3 +439,7 @@ class Command(BaseCommand):
             import_file(str(file), count)
 
         print(f"Imported {len(files)} count files!")
+        print(
+            "Setting all count details' status to 'definitive' to dodge a few surprises in tests..."
+        )
+        CountDetail.objects.update(import_status=0)
