@@ -27,6 +27,7 @@ services:
         coverage report > /OpenComptage/testoutputs/coverage_report.txt' 
     volumes:
       - ${PWD}:/OpenComptage
+      - ${PWD}/test_data:/test_data
       - ${PWD}/testoutputs:/OpenComptage/testoutputs
 
   db:
