@@ -49,5 +49,5 @@ jobs:
       - name: Upload test coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage_report.txt
+          name: coverage_report-${{ matrix.postgis_versions }}.txt
           path: testoutputs/coverage_report.txt
