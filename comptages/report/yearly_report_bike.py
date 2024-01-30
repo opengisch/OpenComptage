@@ -4,7 +4,7 @@ import os
 from typing import Any
 
 
-from django.db.models import Sum, Count, F, QuerySet
+from django.db.models import Sum, Count, F
 from django.db.models.functions import Cast, TruncDate
 from django.db.models.fields import DateField
 from django.db.models.functions import (

@@ -24,14 +24,14 @@ services:
       sh -c 'xvfb-run \
         python3 manage.py migrate && \
         coverage run --source='.' manage.py test comptages.test -v2 && \
-        coverage report > /OpenComptage/testoutputs/coverage_report.txt' 
+        coverage report > /OpenComptage/test_outputs/coverage_report.txt' 
     volumes:
       - ${PWD}:/OpenComptage
       - ${PWD}/test_data:/test_data
-      - ${PWD}/testoutputs:/OpenComptage/testoutputs
+      - ${PWD}/test_outputs:/OpenComptage/test_outputs
 
   db:
-    image: postgis/postgis:${POSTGIS_VERSION}
+    image: postgis/postgis:${POSTGIS_VERSION:-12-3.4}
     ports:
       - 5432:5432
     environment:

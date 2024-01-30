@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Iterable
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
@@ -93,7 +94,9 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/testoutputs").joinpath("yearly_bike.xlsx")
+        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
+            "yearly_bike.xlsx"
+        )
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
@@ -142,7 +145,9 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/testoutputs").joinpath("yearly_bike.xlsx")
+        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
+            "yearly_bike.xlsx"
+        )
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
@@ -185,26 +190,92 @@ class ImportTest(TransactionTestCase):
 
         # Collecting count details
         data = YearlyReportBike.count_details_by_various_criteria(count)
-        print(data)
-        return
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/testoutputs").joinpath("yearly_bike.xlsx")
+        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
+            "yearly_bike.xlsx"
+        )
         wb = load_workbook(path_to_inputs)
+
+        def write_to_print_area(
+            *,
+            print_area: Iterable,
+            data: Iterable[dict],
+            item_key: str,
+            column_names: Iterable[str],
+        ):
+            for column_name, cell in zip(column_names, print_area):
+                if value := next(
+                    filter(
+                        lambda item: (
+                            item[item_key] == column_name if item_key in item else False
+                        ),
+                        data,
+                    ),
+                    None,
+                ):
+                    cell.value = value
 
         # Write data & save
         print(data)
         ws = wb["Data_yearly_stats"]
-        print_area = ws["B2:G8"]
-        row_names = data.keys()
         column_names = ("VELO", "MONO", "SHORT", "SPECIAL", "MULTI")
-        for row_name, row in zip(row_names, print_area):
-            for column_name, cell in zip(column_names, row):
-                print(row_name, column_name)
-                print(data[row_name])
-                if value := next(
-                    filter(lambda item: column_name in item, data[row_name]), None
-                ):
-                    cell.value = value
+
+        print_area = ws["B2:G2"]
+        write_to_print_area(
+            data=data["busiest_month_row"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B3:G3"]
+        write_to_print_area(
+            data=data["least_busy_date_row"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B4:G4"]
+        write_to_print_area(
+            data=data["busiest_month_row"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B5:G5"]
+        write_to_print_area(
+            data=data["least_busy_month_row"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B6:G6"]
+        write_to_print_area(
+            data=data["total_runs_busiest_hour_weekday"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B7:G7"]
+        write_to_print_area(
+            data=data["total_runs_busiest_hour_weekend"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
+        print_area = ws["B8:G8"]
+        write_to_print_area(
+            data=data["total_runs_busiest_hour_weekend"],
+            item_key="column_name",
+            print_area=print_area,
+            column_names=column_names,
+        )
+
         wb.save(path_to_outputs)
