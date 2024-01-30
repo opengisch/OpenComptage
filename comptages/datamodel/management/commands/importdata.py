@@ -15,6 +15,7 @@ from ...models import (
     Category,
     Class,
     ClassCategory,
+    CountDetail,
     Device,
     Installation,
     Model,
@@ -431,10 +432,14 @@ class Command(BaseCommand):
             id_installation=installation,
         )
 
-        path_to_files = Path("/OpenComptage/comptages/test/test_data/SWISS10_vbv_year")
+        path_to_files = Path("/OpenComptage/test_data/SWISS10_vbv_year")
         files = list(path_to_files.iterdir())[:50]
 
         for file in files:
             import_file(str(file), count)
 
         print(f"Imported {len(files)} count files!")
+        print(
+            "Setting all count details' status to 'definitive' to dodge a few surprises in tests..."
+        )
+        CountDetail.objects.update(import_status=0)

@@ -426,8 +426,8 @@ class Comptages(QObject):
                 yrb.run()
             else:
                 self.tm.allTasksFinished.connect(
-                    partial(self.all_tasks_finished, report)
-                )  # FIXME `report` is a mystery.
+                    partial(self.all_tasks_finished, "report")
+                )
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
@@ -439,6 +439,12 @@ class Comptages(QObject):
                     )
                 )
             # TODO: check if there are comptages for this section and year
+
+        QgsMessageLog.logMessage(
+            "{} - Generate yearly report action ended".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
     def do_import_ics_action(self):
         IcsImporter(self.layers)
