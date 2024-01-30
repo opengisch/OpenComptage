@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage_report.txt
-          path: testoutputs/coverage_report.txt
+          path: test_outputs/coverage_report.txt
