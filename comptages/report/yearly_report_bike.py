@@ -368,8 +368,12 @@ class YearlyReportBike:
             id_lane__id_section__id=self.section_id,
             timestamp__year=self.year,
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
-        )[0]
-        count = count_detail.id_count
+        )
+        if not count_detail.exists():
+            print("Aucun conmptage pour cette année ({}) et cette section ({})".format(self.year,self.section_id))
+            return
+
+        count = count_detail[0].id_count
 
         ws["B6"] = "Type de capteur : {}".format(count.id_sensor_type.name)
         ws["B7"] = "Modèle : {}".format(count.id_model.name)

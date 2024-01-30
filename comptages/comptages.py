@@ -440,6 +440,12 @@ class Comptages(QObject):
                 )
             # TODO: check if there are comptages for this section and year
 
+        QgsMessageLog.logMessage(
+            "{} - Generate yearly report action ended".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
+
     def do_import_ics_action(self):
         IcsImporter(self.layers)
 

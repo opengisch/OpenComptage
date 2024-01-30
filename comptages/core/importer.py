@@ -61,6 +61,7 @@ def _parse_and_write(
         with open(file_path, encoding=get_file_encoding(file_path)) as f:
             for i, line in enumerate(f):
                 rows = line_parser(line, **kwargs)
+                print("i=",i)
                 if not rows:
                     continue
 
@@ -337,7 +338,7 @@ def _parse_file_header(file_path: str):
                 elif file_header["CLASS"][:5] == "FHWA ":
                     file_header["CLASS"] = "FHWA13"
                 elif file_header["CLASS"] == "CAT-Cycle_dist-empat":
-                    file_header["CLASS"] = "SPCH-MD 5C"
+                    file_header["CLASS"] = "SPCH-MD_5C"
 
     return file_header
 
