@@ -1,5 +1,6 @@
 FROM opengisch/qgis:3.28.0-jammy
 RUN apt update && apt install iputils-ping glibc-tools libpq-dev python3-pip -y
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+COPY requirements.txt requirements-test.txt .
+RUN pip3 install -r requirements.txt && \
+    pip3 install -r requirements-test.txt
 WORKDIR /OpenComptage

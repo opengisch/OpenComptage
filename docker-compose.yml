@@ -22,7 +22,11 @@ services:
       dockerfile: ./Dockerfile-test
     environment:
       LOCAL_TEST: 1
-    command: sh -c 'xvfb-run python3 manage.py migrate && python3 manage.py test comptages.test -v2'
+    command: | 
+      sh -c 'xvfb-run \
+        python3 manage.py migrate && \
+        coverage run --source='.' manage.py test comptages.test -v2 && \
+        coverage report > /OpenComptage/testoutputs/coverage_report.txt' 
     volumes:
       - ${PWD}:/OpenComptage
       - ${PWD}/test_data:/test_data
