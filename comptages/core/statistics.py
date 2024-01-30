@@ -65,9 +65,9 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
     """Vehicles by hour and day of the week"""
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
-    
-    print('year=',year)
-    print('section=',section)
+
+    print("year=", year)
+    print("section=", section)
 
     # By lane/direction grouped per hour
 
@@ -80,17 +80,16 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
-        print('lane=',lane)
+        print("lane=", lane)
 
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
-        print('direction=',direction)
+        print("direction=", direction)
 
-    print('qs=',qs)
-    print('qs.count=',qs.count())
+    print("qs=", qs)
+    print("qs.count=", qs.count())
     if not qs.exists():
         return None
-
 
     # Vehicles by day and hour
     qs = (
@@ -102,8 +101,8 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
         .values("import_status", "date", "hour", "thm")
     )
 
-    print('qs annot=',qs)
-    print('qs.count=',qs.count())
+    print("qs annot=", qs)
+    print("qs.count=", qs.count())
 
     df = pd.DataFrame.from_records(qs)
     df = df.groupby([df["date"].dt.dayofweek, "hour"]).thm.sum()

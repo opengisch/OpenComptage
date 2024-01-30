@@ -95,7 +95,7 @@ def _prepare_yearly_report(
     count_qs = models.Count.objects.filter(
         id_installation__lane__id_section=section_id,
         start_process_date__year__lte=year,
-        end_process_date__year__gte=year
+        end_process_date__year__gte=year,
     )
     if not count_qs.exists():
         return
@@ -364,7 +364,7 @@ def _data_day_yearly(
             column=col_offset + i,
             value=int(df[df["date"] == i][df["id_category__light"] == False].value),
         )
-    
+
     # Direction 1
     row_offset = 5
     col_offset = 2
@@ -406,7 +406,7 @@ def _data_day_yearly(
 
     if df is None:
         return
-        
+
     for i in range(7):
         day_df = df[df["date"] == i]
         for row in day_df.itertuples():
@@ -491,6 +491,7 @@ def _data_month_yearly(
             # FIXME: calculate actual coefficients
             value=monthly_coefficients[i],
         )
+
 
 def _data_speed(
     count: models.Count, section: models.Section, monday, workbook: Workbook
