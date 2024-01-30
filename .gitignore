@@ -6,6 +6,7 @@
 .vscode/
 .docker/tests/
 .docker/tests/screenshot.png
+/test_outputs
 .env
 .idea
 .coverage
