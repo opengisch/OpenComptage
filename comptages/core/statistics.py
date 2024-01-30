@@ -1,3 +1,4 @@
+from functools import reduce
 import pandas as pd
 
 from datetime import timedelta, datetime
@@ -65,6 +66,9 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
 
+    print("year=", year)
+    print("section=", section)
+
     # By lane/direction grouped per hour
 
     qs = models.CountDetail.objects.filter(
@@ -76,9 +80,16 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
 
     if lane is not None:
         qs = qs.filter(id_lane=lane)
+        print("lane=", lane)
 
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
+        print("direction=", direction)
+
+    print("qs=", qs)
+    print("qs.count=", qs.count())
+    if not qs.exists():
+        return None
 
     # Vehicles by day and hour
     qs = (
@@ -89,6 +100,9 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
         .annotate(thm=Sum("times"))
         .values("import_status", "date", "hour", "thm")
     )
+
+    print("qs annot=", qs)
+    print("qs.count=", qs.count())
 
     df = pd.DataFrame.from_records(qs)
     df = df.groupby([df["date"].dt.dayofweek, "hour"]).thm.sum()
@@ -501,7 +515,7 @@ def get_special_periods(first_day, last_day):
     return qs
 
 
-def get_month_data(section: models.Section, start, end):
+def get_month_data(section: models.Section, start, end, direction=None):
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section, timestamp__gte=start, timestamp__lt=end
     )
@@ -514,5 +528,43 @@ def get_month_data(section: models.Section, start, end):
         .values("month", "tm", "import_status")
     )
 
+    if direction is not None:
+        qs = qs.filter(id_lane__direction=direction)
+
     df = pd.DataFrame.from_records(qs)
     return df
+
+
+def get_valid_days(year: int, section: models.Section) -> int:
+    """
+    Count valid days across all counts for `section` and `year`,
+    where a day is deemed valid just in case there are at least 14 1-hour blocks
+    between 6pm and 4pm with at least 1 vehicle.
+    """
+    start = datetime(year, 1, 1)
+    end = datetime(year + 1, 1, 1)
+    iterator = (
+        models.CountDetail.objects.filter(
+            id_lane__id_section=section,
+            id_category__isnull=False,
+            timestamp__gte=start,
+            timestamp__lt=end,
+        )
+        .annotate(
+            date=F("timestamp__date"), hour=ExtractHour("timestamp"), tj=Sum("times")
+        )
+        .order_by("date")
+        .values("date", "hour", "tj")
+    )
+
+    def count_valid_blocks(acc: dict, item: dict) -> dict[str, int]:
+        date = item["date"]
+        if date not in acc:
+            acc[date] = 0
+        if 6 <= item["hour"] <= 22 and item["tj"] > 0:
+            acc[date] += 1
+        return acc
+
+    valid_days = reduce(count_valid_blocks, iterator, {})
+    has_14_valid_blocks = lambda valid_blocks: valid_blocks >= 14
+    return len(list(filter(has_14_valid_blocks, valid_days.values())))

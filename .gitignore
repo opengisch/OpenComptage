@@ -7,5 +7,11 @@
 .docker/tests/
 .docker/tests/screenshot.png
 .env
+.vscode/
+shell.nix
+Pipfile
+/test_outputs
+*.nix
+*.log
 .idea
 .coverage

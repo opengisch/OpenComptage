@@ -1,4 +1,5 @@
 services:
+
   qgis:
     depends_on: [db]
     build: ./
@@ -6,6 +7,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix ro
       - ${PWD}/comptages:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/comptages/
       - ${PWD}/test_data:/test_data
+      - ${PWD}/test_outputs:/test_outputs
     command:
       - qgis
     environment:
@@ -24,11 +26,11 @@ services:
       sh -c 'xvfb-run \
         python3 manage.py migrate && \
         coverage run --source='.' manage.py test comptages.test -v2 && \
-        coverage report > /OpenComptage/testoutputs/coverage_report.txt' 
+        coverage report > /test_outputs/coverage_report.txt' 
     volumes:
       - ${PWD}:/OpenComptage
       - ${PWD}/test_data:/test_data
-      - ${PWD}/testoutputs:/OpenComptage/testoutputs
+      - ${PWD}/test_outputs:/test_outputs
 
   db:
     image: postgis/postgis:12-2.5
@@ -39,7 +41,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - 'postgis-data:/var/lib/postgresql'
+      - postgis-data:/var/lib/postgresql
     restart: "no"
 
 volumes:
