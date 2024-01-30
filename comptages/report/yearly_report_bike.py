@@ -370,7 +370,11 @@ class YearlyReportBike:
             import_status=definitions.IMPORT_STATUS_DEFINITIVE,
         )
         if not count_detail.exists():
-            print("Aucun conmptage pour cette année ({}) et cette section ({})".format(self.year,self.section_id))
+            print(
+                "Aucun conmptage pour cette année ({}) et cette section ({})".format(
+                    self.year, self.section_id
+                )
+            )
             return
 
         count = count_detail[0].id_count

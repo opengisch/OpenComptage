@@ -61,7 +61,7 @@ def _parse_and_write(
         with open(file_path, encoding=get_file_encoding(file_path)) as f:
             for i, line in enumerate(f):
                 rows = line_parser(line, **kwargs)
-                print("i=",i)
+                print("i=", i)
                 if not rows:
                     continue
 
