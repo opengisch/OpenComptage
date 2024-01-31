@@ -1,10 +1,11 @@
 from datetime import datetime
 from functools import reduce
 import os
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, Union
+from decimal import Decimal
 
 
-from django.db.models import Sum, Count, F
+from django.db.models import Sum, F
 from django.db.models.functions import Cast, TruncDate
 from django.db.models.fields import DateField
 from django.db.models.functions import (
@@ -130,10 +131,10 @@ class YearlyReportBike:
             day = val["day"]
             hour = val["hour"]
 
-            if not day in acc:
+            if day not in acc:
                 acc[day] = {}
 
-            if not hour in acc:
+            if hour not in acc:
                 acc[day][hour] = val["runs"]
 
             return acc
@@ -360,9 +361,9 @@ class YearlyReportBike:
             month = item["month"]
             day = item["day"]
             runs = item["times__sum"]
-            if not month in acc:
+            if month not in acc:
                 acc[month] = {}
-            if not day in acc[month]:
+            if day not in acc[month]:
                 acc[month][day] = runs
             return acc
 
@@ -716,7 +717,7 @@ class YearlyReportBike:
             if hour == 24:
                 hour = 0
             for direction, cell in enumerate(row, 1):
-                if not hour in data or not direction in data[hour]:
+                if hour not in data or direction not in data[hour]:
                     cell.value = 0
                 else:
                     cell.value = data[hour][direction]["runs"]
@@ -728,7 +729,7 @@ class YearlyReportBike:
             if hour == 24:
                 hour = 0
             for direction, cell in enumerate(row, 1):
-                if not hour in data or not direction in data[hour]:
+                if hour not in data or direction not in data[hour]:
                     cell.value = 0
                 else:
                     cell.value = data[hour][direction]["runs"]
@@ -740,7 +741,7 @@ class YearlyReportBike:
             if hour == 24:
                 hour = 0
             for day, cell in enumerate(row, 1):
-                if not day in data or not hour in data[day]:
+                if day not in data or hour not in data[day]:
                     cell.value = 0
                 else:
                     cell.value = data[day][hour]
@@ -752,7 +753,7 @@ class YearlyReportBike:
             if hour == 24:
                 hour = 0
             for day, cell in enumerate(row, 1):
-                if not day in data or not hour in data[day]:
+                if day not in data or hour not in data[day]:
                     cell.value = 0
                 else:
                     cell.value = data[day][hour]
@@ -795,7 +796,7 @@ class YearlyReportBike:
         print_area = ws["B4:H18"]
         for code, row in enumerate(print_area, 0):
             for day, cell in enumerate(row, 1):
-                if not code in data or not day in data[code]:
+                if code not in data or day not in data[code]:
                     cell.value = 0
                 else:
                     cell.value = data[code][day]

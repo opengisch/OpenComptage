@@ -183,7 +183,7 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
         parsed_line["category"] = int(line[51:54].strip())
         parsed_line["height"] = ""
         parsed_line["times"] = 1
-    except ValueError as e:
+    except ValueError:
         # QgsMessageLog.logMessage(
         #     'ValueError: {}'.format(e),  'Comptages', Qgis.Info)
 

@@ -7,6 +7,7 @@ from django.core.management import call_command
 from openpyxl import load_workbook
 
 from comptages.test import utils as test_utils
+from comptages.test import yearly_count_for
 from comptages.datamodel import models
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.core import report, importer
@@ -34,8 +35,8 @@ class ImportTest(TransactionTestCase):
         # Create count and import some data
         installation = models.Installation.objects.get(name="00056520")
         count = yearly_count_for(2021, installation)
-        importer.import_file(utils.test_data_path("00056520.V01"), count)
-        importer.import_file(utils.test_data_path("00056520.V02"), count)
+        importer.import_file(test_utils.test_data_path("00056520.V01"), count)
+        importer.import_file(test_utils.test_data_path("00056520.V02"), count)
         report.prepare_reports("/tmp/", count)
 
     def test_all_sections_default(self):
