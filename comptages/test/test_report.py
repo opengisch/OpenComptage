@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+import os
 import pytz
 from datetime import datetime
 from django.test import TransactionTestCase
