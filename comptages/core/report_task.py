@@ -34,8 +34,7 @@ class ReportTask(QgsTask):
                 self.count,
                 self.year,
                 self.template,
-                self.section_id,
-                self.only_sections_ids,
+                sections_ids=[self.section_id] if self.section_id else None,
                 callback_progress=self.setProgress,
             )
             return True

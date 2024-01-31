@@ -16,6 +16,7 @@ from ...models import (
     Category,
     Class,
     ClassCategory,
+    CountDetail,
     Device,
     Installation,
     Model,
@@ -442,8 +443,8 @@ class Command(BaseCommand):
         path_to_files = Path("/test_data/SWISS10_vbv_year")
         files = list(path_to_files.iterdir())
 
-        if limit:
-            files = files[:limit]
+        path_to_files = Path("/OpenComptage/test_data/SWISS10_vbv_year")
+        files = list(path_to_files.iterdir())[:50]
 
         imported = 0
         for file in files:
@@ -452,3 +453,7 @@ class Command(BaseCommand):
             print(f"Imported {file} ({len(files) - imported} left...)")
 
         print(f"Imported {len(files)} count files!")
+        print(
+            "Setting all count details' status to 'definitive' to dodge a few surprises in tests..."
+        )
+        CountDetail.objects.update(import_status=0)

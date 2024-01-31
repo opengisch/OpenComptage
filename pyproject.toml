@@ -25,9 +25,12 @@ exclude = [
     "**/migrations",
     "**/qgissettingmanager",
     "**/test",
+    ".venv/",
 ]
 reportMissingImports = false
 useLibraryCodeForTypes = true
+reportUndefinedVariable = false
+reportInvalidStringEscapeSequence = "error"
 
 [tool.isort]
 profile = "black"

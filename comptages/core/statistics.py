@@ -1,10 +1,9 @@
-from functools import reduce
+from typing import Any
 import pandas as pd
 
 from datetime import timedelta, datetime
 
-from django.db.models import F, CharField, Value, Q
-from django.db.models import Sum
+from django.db.models import F, CharField, Value, Q, Sum, QuerySet
 from django.db.models.functions import ExtractHour, Trunc, Concat
 
 from comptages.core import definitions
@@ -61,7 +60,9 @@ def get_time_data(
     return df
 
 
-def get_time_data_yearly(year, section, lane=None, direction=None):
+def get_time_data_yearly(
+    year, section: models.Section, lane=None, direction=None
+) -> pd.DataFrame:
     """Vehicles by hour and day of the week"""
     start = datetime(year, 1, 1)
     end = datetime(year + 1, 1, 1)
@@ -100,6 +101,10 @@ def get_time_data_yearly(year, section, lane=None, direction=None):
         .annotate(thm=Sum("times"))
         .values("import_status", "date", "hour", "thm")
     )
+    if not qs.exists():
+        print(
+            f"Year: {year}. Section: {section}. Lane: {lane}. Direction: {direction}. Query: {str(qs.query)}"
+        )
 
     print("qs annot=", qs)
     print("qs.count=", qs.count())
@@ -120,7 +125,7 @@ def get_day_data(
     exclude_trash=False,
     start=None,
     end=None,
-):
+) -> tuple[pd.DataFrame, int]:
     if not start:
         start = count.start_process_date
     if not end:
@@ -173,7 +178,7 @@ def get_category_data(
     status=definitions.IMPORT_STATUS_DEFINITIVE,
     start=None,
     end=None,
-):
+) -> pd.DataFrame:
     if not start:
         start = count.start_process_date
     if not end:
@@ -216,7 +221,7 @@ def get_speed_data(
     exclude_trash=False,
     start=None,
     end=None,
-):
+) -> pd.DataFrame:
     if not start:
         start = count.start_process_date
     if not end:
@@ -279,7 +284,7 @@ def get_light_numbers(
     direction=None,
     start=None,
     end=None,
-):
+) -> dict:
     if not start:
         start = count.start_process_date
     if not end:
@@ -313,7 +318,7 @@ def get_light_numbers(
 
 def get_light_numbers_yearly(
     section: models.Section, lane=None, direction=None, start=None, end=None
-):
+) -> pd.DataFrame:
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section,
         id_category__isnull=False,
@@ -345,7 +350,7 @@ def get_speed_data_by_hour(
     end=None,
     speed_low=0,
     speed_high=15,
-):
+) -> "ValuesQuerySet[models.CountDetail, Any]":
     if not start:
         start = count.start_process_date
     if not end:
@@ -387,7 +392,7 @@ def get_characteristic_speed_by_hour(
     start=None,
     end=None,
     v=0.15,
-):
+) -> pd.DataFrame:
     if not start:
         start = count.start_process_date
     if not end:
@@ -430,7 +435,7 @@ def get_average_speed_by_hour(
     start=None,
     end=None,
     v=0.15,
-):
+) -> pd.DataFrame:
     if not start:
         start = count.start_process_date
     if not end:
@@ -474,7 +479,7 @@ def get_category_data_by_hour(
     direction=None,
     start=None,
     end=None,
-):
+) -> "ValuesQuerySet[models.CountDetail, Any]":
     if not start:
         start = count.start_process_date
     if not end:
@@ -507,7 +512,7 @@ def get_category_data_by_hour(
     return qs
 
 
-def get_special_periods(first_day, last_day):
+def get_special_periods(first_day, last_day) -> QuerySet[models.SpecialPeriod]:
     qs = models.SpecialPeriod.objects.filter(
         Q((Q(start_date__lte=first_day) & Q(end_date__gte=last_day)))
         | (Q(start_date__lte=last_day) & Q(end_date__gte=first_day))
@@ -515,7 +520,7 @@ def get_special_periods(first_day, last_day):
     return qs
 
 
-def get_month_data(section: models.Section, start, end, direction=None):
+def get_month_data(section: models.Section, start, end) -> pd.DataFrame:
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section, timestamp__gte=start, timestamp__lt=end
     )
