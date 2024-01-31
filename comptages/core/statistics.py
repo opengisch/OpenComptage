@@ -1,5 +1,6 @@
 from typing import Any
 import pandas as pd
+from functools import reduce
 from datetime import timedelta, datetime
 
 from django.db.models import F, CharField, Value, Q, Sum, QuerySet

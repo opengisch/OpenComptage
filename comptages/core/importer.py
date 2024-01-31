@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Iterator, List, Optional
+from typing import Callable, Iterator, Optional
 import pytz
 import os
 from datetime import datetime, timedelta
@@ -61,7 +61,6 @@ def _parse_and_write(
         with open(file_path, encoding=get_file_encoding(file_path)) as f:
             for i, line in enumerate(f):
                 rows = line_parser(line, **kwargs)
-                print("i=", i)
                 if not rows:
                     continue
 
@@ -107,7 +106,7 @@ def _parse_and_write(
     bulk_mgr.done()
 
 
-def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_vbv1(line: str, **kwargs) -> Optional[list[dict]]:
     if line.startswith("* "):
         return None
 
@@ -156,7 +155,7 @@ def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
     return [parsed_line]
 
 
-def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_mc(line: str, **kwargs) -> Optional[list[dict]]:
     if not line.startswith("20"):
         return None
 
@@ -193,7 +192,7 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
     return [parsed_line]
 
 
-def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
+def _parse_line_int2(line, **kwargs) -> Iterator[Optional[dict]]:
     if line.startswith("* "):
         return None
 

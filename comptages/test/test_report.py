@@ -100,7 +100,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+        path_to_file = Path("/test_data").joinpath(
             "64540060_Latenium_PS2021_ChMixte.txt"
         )
         importer.import_file(str(path_to_file), count)
@@ -121,9 +121,7 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
-            "yearly_bike.xlsx"
-        )
+        path_to_outputs = Path("/test_outputs").joinpath("yearly_bike.xlsx")
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
@@ -161,7 +159,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+        path_to_file = Path("/test_data").joinpath(
             "64540060_Latenium_PS2021_ChMixte.txt"
         )
         importer.import_file(str(path_to_file), count)
@@ -172,9 +170,7 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
-            "yearly_bike.xlsx"
-        )
+        path_to_outputs = Path("/test_outputs").joinpath("yearly_bike.xlsx")
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
@@ -209,7 +205,7 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        path_to_file = Path("/OpenComptage/comptages/test/test_data").joinpath(
+        path_to_file = Path("/test_data").joinpath(
             "64540060_Latenium_PS2021_ChMixte.txt"
         )
         importer.import_file(str(path_to_file), count)
@@ -220,9 +216,7 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/OpenComptage/test_outputs").joinpath(
-            "yearly_bike.xlsx"
-        )
+        path_to_outputs = Path("/test_outputs").joinpath("yearly_bike.xlsx")
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
