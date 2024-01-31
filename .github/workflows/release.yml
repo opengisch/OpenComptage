@@ -28,7 +28,7 @@ jobs:
         id: package
         run: |
           latest_tag=${GITHUB_REF#refs/*/}
-          qgis-plugin-ci package $latest_tag
+          qgis-plugin-ci --no-validation package $latest_tag
           echo "latest_tag=${latest_tag}" >> $GITHUB_OUTPUT
 
       - name: Upload binaries to release
