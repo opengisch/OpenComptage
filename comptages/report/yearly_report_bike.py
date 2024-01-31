@@ -1,7 +1,7 @@
-from datetime import datetime, date
+from datetime import datetime
 from functools import reduce
 import os
-from typing import Any
+from typing import Any, Iterable, Optional
 
 
 from django.db.models import Sum, Count, F
@@ -267,7 +267,9 @@ class YearlyReportBike:
         return reduce(reducer, qs, {})
 
     @staticmethod
-    def count_details_by_various_criteria(count: modelCount) -> dict[str, Any]:
+    def count_details_by_various_criteria(
+        count: modelCount,
+    ) -> dict[str, tuple["ValueQuerySet[CountDetail]", Optional[str]]]:
         # Preparing to filter out categories that don't reference the class picked out by `class_name`
         class_name = "SPCH-MD 5C"
         # Excluding irrelevant
@@ -286,7 +288,7 @@ class YearlyReportBike:
         total_runs_in_year = (
             base_qs.annotate(category_name=F("id_category__name"))
             .values("category_name")
-            .annotate(total_runs=Sum("times"))
+            .annotate(value=Sum("times"))
         )
 
         qs = (
@@ -294,8 +296,8 @@ class YearlyReportBike:
                 category_name=F("id_category__name"), date=TruncDate("timestamp")
             )
             .values("date", "category_name")
-            .annotate(Sum("times"))
-            .order_by("-times__sum")
+            .annotate(value=Sum("times"))
+            .order_by("-value")
         )
         busiest_date = qs.first()
         least_busy_date = qs.last()
@@ -308,7 +310,7 @@ class YearlyReportBike:
             )
             .filter(date=busiest_date["date"])
             .values("date", "category_name")
-            .annotate(Sum("times"))
+            .annotate(value=Sum("times"))
         )
         least_busy_date_row = (
             base_qs.annotate(
@@ -316,14 +318,14 @@ class YearlyReportBike:
             )
             .filter(date=least_busy_date["date"])
             .values("date", "category_name")
-            .annotate(Sum("times"))
+            .annotate(value=Sum("times"))
         )
 
         qs = (
             base_qs.annotate(month=ExtractMonth("timestamp"))
             .values("month")
-            .annotate(Sum("times"))
-            .order_by("-times__sum")
+            .annotate(value=Sum("times"))
+            .order_by("-value")
         )
         busiest_month = qs.first()
         least_busy_month = qs.last()
@@ -336,7 +338,7 @@ class YearlyReportBike:
             )
             .filter(month=busiest_month["month"])
             .values("month", "category_name")
-            .annotate(Sum("times"))
+            .annotate(value=Sum("times"))
         )
         least_busy_month_row = (
             base_qs.annotate(
@@ -344,7 +346,7 @@ class YearlyReportBike:
             )
             .filter(month=least_busy_month["month"])
             .values("month", "category_name")
-            .annotate(Sum("times"))
+            .annotate(value=Sum("times"))
         )
 
         qs = (
@@ -355,20 +357,34 @@ class YearlyReportBike:
                 week_day=ExtractIsoWeekDay("timestamp"),
             )
             .values("date", "hour", "category_name")
-            .annotate(Sum("times"))
-            .order_by("-times__sum")
+            .annotate(value=Sum("times"))
+            .order_by("-value")
         )
-        total_runs_busiest_hour_weekday = qs.exclude(week_day__gt=5).first()
-        total_runs_busiest_hour_weekend = qs.exclude(week_day__lt=6).first()
+        total_runs_busiest_hour_weekday = qs.exclude(week_day__gt=5)
+        total_runs_busiest_hour_weekend = qs.exclude(week_day__lt=6)
+
+        busiest_weekday = total_runs_busiest_hour_weekday.first()
+        busiest_weekend = total_runs_busiest_hour_weekend[:2]
+        assert busiest_weekday
+        assert busiest_weekend
 
         return {
-            "busiest_date_row": busiest_date_row,
-            "least_busy_date_row": least_busy_date_row,
-            "busiest_month_row": busiest_month_row,
-            "least_busy_month_row": least_busy_month_row,
-            "total_runs_busiest_hour_weekday": total_runs_busiest_hour_weekday,
-            "total_runs_busiest_hour_weekend": total_runs_busiest_hour_weekend,
-            "total_runs_in_year": total_runs_in_year,
+            "busiest_date_row": (busiest_date_row, busiest_date["date"]),
+            "least_busy_date_row": (least_busy_date_row, str(least_busy_date["date"])),
+            "busiest_month_row": (busiest_month_row, str(busiest_month["month"])),
+            "least_busy_month_row": (
+                least_busy_month_row,
+                str(least_busy_month["month"]),
+            ),
+            "total_runs_busiest_hour_weekday": (
+                total_runs_busiest_hour_weekday,
+                str(busiest_weekday["date"]),
+            ),
+            "total_runs_busiest_hour_weekend": (
+                total_runs_busiest_hour_weekend,
+                ", ".join(str(item["date"]) for item in busiest_weekend),
+            ),
+            "total_runs_in_year": (total_runs_in_year, None),
         }
 
     @staticmethod
@@ -429,6 +445,30 @@ class YearlyReportBike:
 
         # Collecting
         return reduce(reducer, count_details, {})
+
+    @staticmethod
+    def write_to_row(
+        *,
+        row_name: str,
+        row: Iterable,
+        data: dict,
+        key: str,
+        column_names: Iterable[str],
+    ):
+        items, day_or_month_or_weekend = data[row_name]
+        for column_name, cell in zip(column_names, row):
+            if column_name == "day_or_month_or_weekend":
+                cell.value = day_or_month_or_weekend or "-"
+            elif item := next(
+                filter(
+                    lambda item: (item[key] == column_name),
+                    items,
+                ),
+                None,
+            ):
+                cell.value = item["value"]
+            else:
+                cell.value = "-"
 
     def run(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))

@@ -198,84 +198,33 @@ class ImportTest(TransactionTestCase):
         )
         wb = load_workbook(path_to_inputs)
 
-        def write_to_print_area(
-            *,
-            print_area: Iterable,
-            data: Iterable[dict],
-            item_key: str,
-            column_names: Iterable[str],
-        ):
-            for column_name, cell in zip(column_names, print_area):
-                if value := next(
-                    filter(
-                        lambda item: (
-                            item[item_key] == column_name if item_key in item else False
-                        ),
-                        data,
-                    ),
-                    None,
-                ):
-                    cell.value = value
-
         # Write data & save
-        print(data)
         ws = wb["Data_yearly_stats"]
-        column_names = ("VELO", "MONO", "SHORT", "SPECIAL", "MULTI")
-
-        print_area = ws["B2:G2"]
-        write_to_print_area(
-            data=data["busiest_month_row"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
+        column_names = (
+            "VELO",
+            "MONO",
+            "SHORT",
+            "SPECIAL",
+            "MULTI",
+            "day_or_month_or_weekend",
         )
-
-        print_area = ws["B3:G3"]
-        write_to_print_area(
-            data=data["least_busy_date_row"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
+        row_names = (
+            "total_runs_in_year",
+            "busiest_date_row",
+            "least_busy_date_row",
+            "busiest_month_row",
+            "least_busy_month_row",
+            "total_runs_busiest_hour_weekday",
+            "total_runs_busiest_hour_weekend",
         )
-
-        print_area = ws["B4:G4"]
-        write_to_print_area(
-            data=data["busiest_month_row"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
-        )
-
-        print_area = ws["B5:G5"]
-        write_to_print_area(
-            data=data["least_busy_month_row"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
-        )
-
-        print_area = ws["B6:G6"]
-        write_to_print_area(
-            data=data["total_runs_busiest_hour_weekday"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
-        )
-
-        print_area = ws["B7:G7"]
-        write_to_print_area(
-            data=data["total_runs_busiest_hour_weekend"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
-        )
-
-        print_area = ws["B8:G8"]
-        write_to_print_area(
-            data=data["total_runs_busiest_hour_weekend"],
-            item_key="column_name",
-            print_area=print_area,
-            column_names=column_names,
-        )
-
+        print_area = ws["B2:G8"]
+        for row_idx, row_name in enumerate(row_names, 0):
+            row = print_area[row_idx]
+            YearlyReportBike.write_to_row(
+                row_name=row_name,
+                row=row,
+                data=data,
+                key="category_name",
+                column_names=column_names,
+            )
         wb.save(path_to_outputs)
