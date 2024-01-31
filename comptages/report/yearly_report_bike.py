@@ -475,6 +475,8 @@ class YearlyReportBike:
         template = os.path.join(current_dir, "template_yearly_bike.xlsx")
         workbook = load_workbook(filename=template)
 
+        """ Data_count """
+
         ws = workbook["Data_count"]
 
         section = Section.objects.get(id=self.section_id)
@@ -518,6 +520,8 @@ class YearlyReportBike:
 
         ws["B11"] = lanes[0].id_section.place_name
 
+        """ AN_TE"""
+
         ws = workbook["AN_TE"]
 
         row_offset = 14
@@ -541,6 +545,8 @@ class YearlyReportBike:
                 value=i["tjm"],
             )
 
+        """ CV_LV """
+
         ws = workbook["CV_LV"]
 
         ws["F11"] = self.tjm_direction_bike([1], 1, weekdays=[0, 1, 2, 3, 4])
@@ -563,6 +569,8 @@ class YearlyReportBike:
         ws["J41"] = self.min_month()[0]
         ws["k41"] = self.min_month()[1]
 
+        """ Data_year """
+
         ws = workbook["Data_year"]
         row_offset = 4
         column_offset = 1
@@ -574,6 +582,8 @@ class YearlyReportBike:
             ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
             row += 1
 
+        """ Data_week """
+
         ws = workbook["Data_week"]
         row_offset = 4
         column_offset = 2
@@ -583,6 +593,8 @@ class YearlyReportBike:
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
             row += 1
+
+        """ Data_hour """
 
         ws = workbook["Data_hour"]
         row_offset = 5
@@ -622,6 +634,40 @@ class YearlyReportBike:
             ws.cell(row=row, column=column_offset, value=i["tjm"])
             row += 1
 
+        """ Data_yearly_stats """
+
+        ws = workbook["Data_yearly_stats"]
+        print_area = ws["B2:G8"]
+        data = YearlyReportBike.count_details_by_various_criteria(count)
+        column_names = (
+            "VELO",
+            "MONO",
+            "SHORT",
+            "SPECIAL",
+            "MULTI",
+            "day_or_month_or_weekend",
+        )
+        row_names = (
+            "total_runs_in_year",
+            "busiest_date_row",
+            "least_busy_date_row",
+            "busiest_month_row",
+            "least_busy_month_row",
+            "total_runs_busiest_hour_weekday",
+            "total_runs_busiest_hour_weekend",
+        )
+        for row_idx, row_name in enumerate(row_names, 0):
+            row = print_area[row_idx]
+            YearlyReportBike.write_to_row(
+                row_name=row_name,
+                row=row,
+                data=data,
+                key="category_name",
+                column_names=column_names,
+            )
+
+        """ Data_class """
+
         ws = workbook["Data_class"]
         row_offset = 4
         column_offset = 2
@@ -642,5 +688,4 @@ class YearlyReportBike:
         output = os.path.join(
             self.file_path, "{}_{}_r.xlsx".format(self.section_id, self.year)
         )
-
         workbook.save(filename=output)
