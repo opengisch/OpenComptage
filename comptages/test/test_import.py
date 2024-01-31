@@ -1,5 +1,5 @@
 import pytz
-from datetime import datetime
+from datetime import datetime, timezone, tzinfo
 from django.test import TransactionTestCase
 from django.core.management import call_command
 
@@ -42,14 +42,17 @@ class ImportTest(TransactionTestCase):
         importer.import_file(utils.test_data_path("00056520.V01"), count)
 
         self.assertEqual(models.CountDetail.objects.count(), 18114)
+        first = models.CountDetail.objects.first()
+        last = models.CountDetail.objects.last()
+        assert first
+        assert last
 
-        tz = pytz.timezone("Europe/Zurich")
+        zurich_timezone = pytz.timezone("Europe/Zurich")
+        first = first.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
+        last = last.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
 
-        first = tz.normalize(models.CountDetail.objects.first().timestamp)
-        last = tz.normalize(models.CountDetail.objects.last().timestamp)
-
-        self.assertEqual(first, tz.localize(datetime(2021, 10, 15, 9, 46, 43, 500000)))
-        self.assertEqual(last, tz.localize(datetime(2021, 10, 15, 23, 59, 54, 600000)))
+        self.assertEqual(first, datetime(2021, 10, 15, 9, 46, 43, 500000))
+        self.assertEqual(last, datetime(2021, 10, 15, 23, 59, 54, 600000))
 
     def test_import_mc(self):
         model = models.Model.objects.all()[0]
@@ -76,13 +79,18 @@ class ImportTest(TransactionTestCase):
 
         self.assertEqual(models.CountDetail.objects.count(), 25867)
 
-        tz = pytz.timezone("Europe/Zurich")
+        first = models.CountDetail.objects.first()
+        last = models.CountDetail.objects.last()
+        zurich_timezone = pytz.timezone("Europe/Zurich")
 
-        first = tz.normalize(models.CountDetail.objects.first().timestamp)
-        last = tz.normalize(models.CountDetail.objects.last().timestamp)
+        assert first
+        assert last
 
-        self.assertEqual(first, tz.localize(datetime(2021, 9, 10, 4, 16, 16)))
-        self.assertEqual(last, tz.localize(datetime(2021, 9, 21, 8, 2, 15)))
+        first = first.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
+        last = last.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
+
+        self.assertEqual(first, datetime(2021, 9, 10, 4, 16, 16))
+        self.assertEqual(last, datetime(2021, 9, 21, 8, 2, 15))
 
     def test_import_int2(self):
         model = models.Model.objects.all()[0]
@@ -107,13 +115,17 @@ class ImportTest(TransactionTestCase):
 
         importer.import_file(utils.test_data_path("10020260.A01"), count)
 
-        tz = pytz.timezone("Europe/Zurich")
+        first = models.CountDetail.objects.first()
+        last = models.CountDetail.objects.last()
+        assert first
+        assert last
 
-        first = tz.normalize(models.CountDetail.objects.first().timestamp)
-        last = tz.normalize(models.CountDetail.objects.last().timestamp)
+        zurich_timezone = pytz.timezone("Europe/Zurich")
+        first = first.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
+        last = last.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
 
-        self.assertEqual(first, tz.localize(datetime(2018, 4, 13, 12, 0)))
-        self.assertEqual(last, tz.localize(datetime(2018, 5, 1, 13, 0)))
+        self.assertEqual(first, datetime(2018, 4, 13, 12, 0))
+        self.assertEqual(last, datetime(2018, 5, 1, 13, 0))
 
     def test_import_simple_int2(self):
         model = models.Model.objects.all()[0]
@@ -142,13 +154,17 @@ class ImportTest(TransactionTestCase):
 
         self.assertEqual(models.CountDetail.objects.count(), 52)
 
-        tz = pytz.timezone("Europe/Zurich")
+        first = models.CountDetail.objects.first()
+        last = models.CountDetail.objects.last()
+        assert first
+        assert last
 
-        first = tz.normalize(models.CountDetail.objects.first().timestamp)
-        last = tz.normalize(models.CountDetail.objects.last().timestamp)
+        zurich_timezone = pytz.timezone("Europe/Zurich")
+        first = first.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
+        last = last.timestamp.astimezone(zurich_timezone).replace(tzinfo=None)
 
-        self.assertEqual(first, tz.localize(datetime(2018, 9, 24, 0, 0)))
-        self.assertEqual(last, tz.localize(datetime(2018, 9, 24, 1, 0)))
+        self.assertEqual(first, datetime(2018, 9, 24, 0, 0))
+        self.assertEqual(last, datetime(2018, 9, 24, 1, 0))
 
         speed20 = models.CountDetail.objects.filter(speed=20)
         self.assertEqual(speed20[0].times, 3)

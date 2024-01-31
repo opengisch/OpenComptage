@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 package-dir = { "" = "comptages" }
 
 [project]
+requires-python = ">=3.9.0,<=3.9.18"
 name = "comptages"
 version = "0.1"
 dynamic = ["dependencies", "optional-dependencies"]
