@@ -919,7 +919,7 @@ def _remove_useless_sheets(count: models.Count, workbook: Workbook):
 
     for key in to_remove_from_spreadsheet:
         try:
-            workbook.remove_sheet(workbook[key])
+            workbook.remove(workbook[key])
         except KeyError:
             continue
 

@@ -72,10 +72,15 @@ class ImportTest(TransactionTestCase):
             id_installation=installation,
         )
 
-        importer.import_file(test_utils.test_data_path("00056520.V01"), count)
-        importer.import_file(test_utils.test_data_path("00056520.V02"), count)
+        for file in Path(test_utils.test_data_path(test_data_folder)).iterdir():
+            importer.import_file(test_utils.test_data_path(str(file)), count)
 
-        report.prepare_reports("/tmp/", count)
+        report.prepare_reports(self.test_outputs, count)
+        found_files = len(list(Path(self.test_outputs).iterdir()))
+        # The number of files generated is expected to be: weeks measured x sections
+        # so let's make sure all sections are considered in the files generation
+        self.assertGreater(found_files, 0)
+        self.assertEqual(found_files % n_sections, 0)
 
     def test_busiest_by_season(self):
         # Import test data pertaining to "mobilité douce"

@@ -9,8 +9,9 @@ from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
 
 
-def simple_print_callback(progress):
-    print(f"Importing... {progress}%")
+def simple_print_callback(progress: int):
+    if progress % 10 == 0:
+        print(f"Importing... {progress}%")
 
 
 def import_file(file_path: str, count, callback_progress=simple_print_callback):
@@ -337,7 +338,7 @@ def _parse_file_header(file_path: str):
                 elif file_header["CLASS"][:5] == "FHWA ":
                     file_header["CLASS"] = "FHWA13"
                 elif file_header["CLASS"] == "CAT-Cycle_dist-empat":
-                    file_header["CLASS"] = "SPCH-MD_5C"
+                    file_header["CLASS"] = "SPCH-MD 5C"
 
     return file_header
 

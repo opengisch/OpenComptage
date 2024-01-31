@@ -415,7 +415,7 @@ class Command(BaseCommand):
         Municipality.objects.bulk_create(objects)
         print(f"Inserted {len(objects)} municipalities.")
 
-    def import_count(self, limit: Optional[int] = None):
+    def import_count(self, limit=50):
         section_id = "00107695"
         year = 2021
         installations = Installation.objects.filter(lane__id_section=section_id)
@@ -444,7 +444,11 @@ class Command(BaseCommand):
         files = list(path_to_files.iterdir())
 
         path_to_files = Path("/OpenComptage/test_data/SWISS10_vbv_year")
-        files = list(path_to_files.iterdir())[:50]
+
+        if limit == 0:
+            files = list(path_to_files.iterdir())
+        else:
+            files = list(path_to_files.iterdir())[:limit]
 
         imported = 0
         for file in files:
