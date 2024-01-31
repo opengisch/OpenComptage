@@ -545,9 +545,9 @@ class Comptages(QObject):
         )
 
         if report_selection_dialog.exec_():
-            selected_sections_dates: dict[
-                str, list[date]
-            ] = report_selection_dialog.get_inputs()
+            selected_sections_dates: dict[str, list[date]] = (
+                report_selection_dialog.get_inputs()
+            )
             title = "Exporter un rapport"
 
             path = self.settings.value("report_export_directory")
