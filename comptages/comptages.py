@@ -33,6 +33,8 @@ from comptages.ui.resources import *
 from comptages.ui.select_reports import SelectSectionsToReport
 from comptages.core import definitions
 
+from django.core.management import call_command
+
 
 class Comptages(QObject):
     def __init__(self, iface):
@@ -674,6 +676,12 @@ class Comptages(QObject):
                     qs = qs.filter(status=definitions.IMPORT_STATUS_DEFINITIVE)
 
                 qs.delete()
+                call_command("tjmreset")
+                QgsMessageLog.logMessage(
+                    "Les TJMs ont été réinitialisés; rouvrir cette fenêtre pour afficher les données actualisées!",
+                    "Comptages",
+                    Qgis.Info,
+                )
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db

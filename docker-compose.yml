@@ -30,10 +30,10 @@ services:
     volumes:
       - ${PWD}:/OpenComptage
       - ${PWD}/test_data:/test_data
-      - ${PWD}/test_outputs:/test_outputs
-      
+      - ${PWD}/test_outputs:/OpenComptage/test_outputs
+
   db:
-    image: postgis/postgis:12-2.5
+    image: postgis/postgis:${POSTGIS_VERSION:-12-3.4}
     ports:
       - 5432:5432
     environment:

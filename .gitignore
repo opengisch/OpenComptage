@@ -7,6 +7,7 @@ test_outputs/
 .vscode/
 .docker/tests/
 .docker/tests/screenshot.png
+/test_outputs
 .env
 .vscode/
 shell.nix
