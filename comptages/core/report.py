@@ -5,7 +5,7 @@ from typing import Generator
 from datetime import timedelta, datetime
 from typing import Optional
 from openpyxl import load_workbook, Workbook
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 
 from comptages.core import statistics
 from comptages.datamodel import models

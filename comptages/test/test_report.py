@@ -121,7 +121,7 @@ class ImportTest(TransactionTestCase):
 
         # Prepare workbook
         path_to_inputs = Path("comptages/report").joinpath("template_yearly_bike.xlsx")
-        path_to_outputs = Path("/test_outputs").joinpath("yearly_bike.xlsx")
+        path_to_outputs = self.test_outputs.joinpath("yearly_bike.xlsx")
         wb = load_workbook(path_to_inputs)
 
         # Write data & save
