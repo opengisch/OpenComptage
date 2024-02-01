@@ -69,7 +69,7 @@ def connect_to_db():
     return db
 
 
-def to_time_aware_utc(d: datetime | date) -> datetime:
+def to_time_aware_utc(d: Union[datetime, date]) -> datetime:
     """Time aware datetimes"""
     if isinstance(d, datetime):
         return d.astimezone(pytz.timezone("UTC"))
