@@ -185,7 +185,7 @@ class YearlyReportBike:
 
         return result
 
-    def tjm_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
+    def tjms_by_day(self) -> "ValuesQuerySet[CountDetail, dict[str, Any]]":
         # Get all the count details for section and the year
         qs = CountDetail.objects.filter(
             id_lane__id_section__id=self.section_id,
@@ -643,7 +643,7 @@ class YearlyReportBike:
 
         row_offset = 14
         column_offset = 1
-        data = self.values_by_day_and_hour()
+        data = self.tjms_by_weekday_hour()
         for i in data:
             ws.cell(
                 row=i["hour"] + row_offset,
@@ -654,7 +654,7 @@ class YearlyReportBike:
         row_offset = 47
         column_offset = 1
 
-        data = self.tjm_by_day()
+        data = self.tjms_by_weekday_and_month()
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["date"])
@@ -686,7 +686,7 @@ class YearlyReportBike:
         row_offset = 4
         column_offset = 1
 
-        data = self.values_by_day()
+        data = self.tjms_by_day()
         row = row_offset
         for i in data:
             ws.cell(row=row, column=column_offset, value=i["date"])
