@@ -11,8 +11,9 @@ from comptages.core import statistics
 from comptages.datamodel import models
 
 
-def simple_print_callback(progress):
-    print(f"Generating report... {progress}%")
+def simple_print_callback(progress: int):
+    if progress > 0:
+        print(f"Generating report... {progress}%")
 
 
 def prepare_reports(

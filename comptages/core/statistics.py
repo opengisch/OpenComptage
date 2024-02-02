@@ -531,7 +531,7 @@ def get_special_periods(first_day, last_day) -> QuerySet[models.SpecialPeriod]:
     return qs
 
 
-def get_month_data(section: models.Section, start, end) -> pd.DataFrame:
+def get_month_data(section: models.Section, start, end, direction=None) -> pd.DataFrame:
     qs = models.CountDetail.objects.filter(
         id_lane__id_section=section, timestamp__gte=start, timestamp__lt=end
     )
@@ -543,7 +543,6 @@ def get_month_data(section: models.Section, start, end) -> pd.DataFrame:
         .annotate(tm=Sum("times"))
         .values("month", "tm", "import_status")
     )
-
     if direction is not None:
         qs = qs.filter(id_lane__direction=direction)
 

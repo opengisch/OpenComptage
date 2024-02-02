@@ -655,30 +655,32 @@ class YearlyReportBike:
         column_offset = 1
 
         data = self.tjms_by_weekday_and_month()
-        row = row_offset
         for i in data:
-            ws.cell(row=row, column=column_offset, value=i["date"])
-            ws.cell(row=row, column=column_offset + 1, value=i["tjm"])
-            row += 1
+            ws.cell(
+                row=i["month"] + row_offset,
+                column=i["weekday"] + column_offset,
+                value=i["tjm"],
+            )
 
         """ CV_LV """
+        # Is this superseded by the `Data_yearly_stats` tab ?
 
-        ws = workbook["CV_LV"]
+        # ws = workbook["CV_LV"]
 
-        ws["F12"] = self.tjms_by_direction_bike([1], 1)
-        ws["G12"] = self.tjms_by_direction_bike([1], 2)
-        ws["H12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 1)
-        ws["I12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 2)
+        # ws["F12"] = self.tjms_by_direction_bike([1], 1)
+        # ws["G12"] = self.tjms_by_direction_bike([1], 2)
+        # ws["H12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 1)
+        # ws["I12"] = self.tjms_by_direction_bike([2, 3, 4, 5], 2)
 
-        ws["J35"] = self.total()
-        ws["J39"] = self.max_day()[0]
-        ws["K39"] = self.max_day()[1]
+        # ws["K35"] = self.total()
+        # ws["J39"] = self.max_day()[0]
+        # ws["K39"] = self.max_day()[1]
 
-        ws["J40"] = self.max_month()[0]
-        ws["K40"] = self.max_month()[1]
+        # ws["J40"] = self.max_month()[0]
+        # ws["K40"] = self.max_month()[1]
 
-        ws["J41"] = self.min_month()[0]
-        ws["k41"] = self.min_month()[1]
+        # ws["J41"] = self.min_month()[0]
+        # ws["k41"] = self.min_month()[1]
 
         """ Data_year """
 
