@@ -46,7 +46,7 @@ def prepare_django(default_db=None, **additional_settings):
         USE_TZ=True,
         TIME_ZONE="Europe/Zurich",
         SECRET_KEY="09n+dhzh+02+_#$!1+8h-&(s-wbda#0*2mrv@lx*y#&fzlv&l)",
-        **additional_settings
+        **additional_settings,
     )
     django.setup()
 

@@ -1,11 +1,12 @@
-import pytz
 from datetime import datetime, timedelta
-from django.test import TransactionTestCase
-from django.core.management import call_command
 
-from comptages.test import utils
+import pytz
+from django.core.management import call_command
+from django.test import TransactionTestCase
+
+from comptages.core import definitions, importer, statistics
 from comptages.datamodel import models
-from comptages.core import importer, statistics, definitions
+from comptages.test import utils
 
 
 class StatisticsTest(TransactionTestCase):
@@ -269,3 +270,11 @@ class StatisticsTest(TransactionTestCase):
         self.assertTrue(statistics.get_speed_data(count, sections[0]).empty)
 
         self.assertFalse(statistics.get_speed_data(count, sections[2]).empty)
+
+    def test_get_valid_days(self):
+        call_command("importdata", "--only-count", "--limit=0")
+        section_id = "00107695"
+        section = models.Section.objects.get(id=section_id)
+        # 2021 comes from the call to `importdata --only count`
+        valid = statistics.get_valid_days(2021, section)
+        self.assertGreaterEqual(valid, 100)

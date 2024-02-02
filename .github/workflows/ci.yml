@@ -11,14 +11,14 @@ on:
   pull_request:
 
 jobs:
-  build_package_lint_check:
-    name: Build, package, lint, check
+  ensure_build_package:
+    name: Ensure build and package
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.9"
           cache: "pip"
       - name: Setup, build, install
         run: |
@@ -29,19 +29,32 @@ jobs:
         run: qgis-plugin-ci --no-validation package 'test'
       - name: Lint
         run: black . --check
+      - name: Check
+        run: pyright . > pyright_report.txt
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Pyright Report
+          path: pyright_report.txt
 
   test:
-    name: Test
     runs-on: ubuntu-22.04
-    timeout-minutes: 15
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        postgis_versions:
+          - 12-3.4
+          - 15-3.4
+    name: Test with PostGIS v. ${{ matrix.postgis_versions }}
     steps:
       - uses: actions/checkout@v4
       - name: Start docker stack
-        run: docker compose up db -d
+        run: POSTGIS_VERSION=${{ matrix.postgis_versions }} docker compose up db -d
       - name: Running tests
-        run: docker compose run qgis_tester
+        run: POSTGIS_VERSION=${{ matrix.postgis_versions }} docker compose run qgis_tester
       - name: Upload test coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage_report.txt
-          path: testoutputs/coverage_report.txt
+          name: coverage_report-${{ matrix.postgis_versions }}.txt
+          path: test_outputs/coverage_report.txt

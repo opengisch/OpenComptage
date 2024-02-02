@@ -1,4 +1,19 @@
 # Development
+
+## Upgrade dependencies
+
+__Disclaimer__: This section presupposes that you are using a version of `pip-tools` matching your Python interpreter. In other words, if you want to upgrade or pin dependencies for Python 3.9, `pip-tools` has to be built for Python 3.9 -- which in turn means that if you install it through `pip`, you have to use `pip` built for Python 3.9. (You could use the python:3.9 Docker image available from Docker Hub to meet all these requirements with minimal footwork.)
+
+Once `pip-tools` is installed, to upgrade the dependencies run
+
+    pip-compile --upgrade
+
+If it fails you can re-generate `requirements.txt`, which amounts to pinning the dependencies described in `requirements.in` and constrained by `pyproject.toml` to a version matching the project's configuration:
+
+    pip-compile -o requirements.txt pyproject.toml
+    
+Now `pip-compile --upgrade` should work.
+
 ## Data model
 The data model has been created to easily allow to add functionality to the product
 e.g. adding new vehicle classes and to be as simple as possible and easily
@@ -18,10 +33,13 @@ run the script `create_data_model_sql_script.sh`.
    | Directory  | Content                                                                                                                                                    |
    |------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
    | .docker/   | docker-compose files to run a development environment (i.e. PostGIS db) or a test environment (i.e. PostGIS db and QGIS to allow using QGIS API in Travis) |
-   | comptages/ | root directory of the QGIS plugin (for more details see the "Code Structure" section)                                                                      |
+   | comptages/ | root directory of the QGIS plugin (for more details see the "Code Structure" section)                                                                 |
    | db/        | contains the sql files to create the database structure and a dump of the initial data                                                                     |
-   | docs/      | contains the user manual that is published online using Github Pages                                                                                       |
-   | scripts/   | contains useful scripts to launch docker enviroments, run tests, create the database, etc                                                                  |
+   | docs/      | contains the user manual that is published online using Github Pages                                                                    |
+   | scripts/   | contains useful scripts to launch docker enviroments, run tests, create the database, etc                                                                      |
+   | pyproject.toml       | configuration file (entry point for packaging and building)      | 
+   | requirements.txt     | Python dependencies, including transitive dependencies, pinned to an exact version matching the project's requirements                                                             |
+   | requiremnts.in       | Python dependencies, not including transitive dependencies, unpinned                                                   
 
 ## Code structure
 
@@ -44,3 +62,4 @@ The code of the plugin (directory =comptages=) is structured in the following wa
    | ui/                 | contains QT's files with the definition of the user interface dialogs              |
    | comptages.py        | plugin main module                                                                 |
    | metadata.txt        | plugin metadata                                                                    |
+

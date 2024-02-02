@@ -1,6 +1,6 @@
 import os
 import pytz
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from functools import partial
 
 from qgis.PyQt.QtGui import QIcon
@@ -20,7 +20,8 @@ from comptages.core.layers import Layers
 from comptages.core.filter_dialog import FilterDialog
 from comptages.core.yearly_report_dialog import YearlyReportDialog
 from comptages.core.delete_dialog import DeleteDialog
-from comptages.core.utils import push_info
+from comptages.core.utils import push_info, push_error
+from comptages.core.statistics import get_valid_days
 from comptages.datamodel import models
 from comptages.core import importer, importer_task, report, report_task
 from comptages.chart.chart_dialog import ChartDock
@@ -29,7 +30,10 @@ from comptages.plan.plan_creator import PlanCreator
 from comptages.report.yearly_report_bike import YearlyReportBike
 from comptages.ics.ics_importer import IcsImporter
 from comptages.ui.resources import *
+from comptages.ui.select_reports import SelectSectionsToReport
 from comptages.core import definitions
+
+from django.core.management import call_command
 
 
 class Comptages(QObject):
@@ -389,6 +393,7 @@ class Comptages(QObject):
             selected_feature = next(layer.getSelectedFeatures())
 
         section_id = selected_feature.attribute("id")
+        section = models.Section.objects.get(id=section_id)
 
         classes = self.layers.get_classes_of_section(section_id)
         dlg = YearlyReportDialog(self.iface)
@@ -421,13 +426,21 @@ class Comptages(QObject):
                 Qgis.Info,
             )
 
+            # Do not proceed unless the number of processed days exceeds 100 days
+            valid_days = get_valid_days(year, section)
+            if valid_days < 100:
+                push_error(
+                    f"This section ({section_id}) lacks valid days for this year ({year}). Found only {valid_days} out of 100."
+                )
+                return
+
             if clazz.startswith("SPCH-MD"):
                 yrb = YearlyReportBike(file_path, year, section_id)
                 yrb.run()
             else:
                 self.tm.allTasksFinished.connect(
-                    partial(self.all_tasks_finished, report)
-                )  # FIXME `report` is a mystery.
+                    partial(self.all_tasks_finished, "report")
+                )
 
                 # TODO: consider the chosed class too
                 self.tm.addTask(
@@ -439,6 +452,12 @@ class Comptages(QObject):
                     )
                 )
             # TODO: check if there are comptages for this section and year
+
+        QgsMessageLog.logMessage(
+            "{} - Generate yearly report action ended".format(datetime.now()),
+            "Comptages",
+            Qgis.Info,
+        )
 
     def do_import_ics_action(self):
         IcsImporter(self.layers)
@@ -515,34 +534,51 @@ class Comptages(QObject):
             return
 
         file_dialog = QFileDialog()
-        title = "Exporter un rapport"
-        path = self.settings.value("report_export_directory")
-        file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
+        mondays = list(report._mondays_of_count(count))
+        sections_ids = (
+            models.Section.objects.filter(lane__id_installation__count=count)
+            .distinct()
+            .values_list("id", flat=True)
+        )
+        report_selection_dialog = SelectSectionsToReport(
+            sections_ids=list(sections_ids), mondays=mondays
+        )
 
-        if not file_path:
+        if report_selection_dialog.exec_():
+            selected_sections_dates: dict[str, list[date]] = (
+                report_selection_dialog.get_inputs()
+            )
+            title = "Exporter un rapport"
+
+            path = self.settings.value("report_export_directory")
+            file_path = QFileDialog.getExistingDirectory(file_dialog, title, path)
+
+            if not file_path:
+                QgsMessageLog.logMessage(
+                    "{} - Generate report action ended: No file_path given".format(
+                        datetime.now()
+                    ),
+                    "Comptages",
+                    Qgis.Info,
+                )
+                return
             QgsMessageLog.logMessage(
-                "{} - Generate report action ended: No file_path given".format(
-                    datetime.now()
-                ),
+                f"""
+                {datetime.now()} - Generate report action can really begin now for count {count.id} with file_path: {file_path}.
+                Selected sections and dates: {selected_sections_dates}
+                """,
                 "Comptages",
                 Qgis.Info,
             )
-            return
-        QgsMessageLog.logMessage(
-            "{} - Generate report action can really begin now for count {} with file_path: {}".format(
-                datetime.now(), count.id, file_path
-            ),
-            "Comptages",
-            Qgis.Info,
-        )
 
-        self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "report"))
-        self.tm.addTask(
-            report_task.ReportTask(
-                file_path=file_path,
-                count=count,
+            self.tm.allTasksFinished.connect(partial(self.all_tasks_finished, "report"))
+            self.tm.addTask(
+                report_task.ReportTask(
+                    file_path=file_path,
+                    count=count,
+                    selected_sections_dates=selected_sections_dates,
+                )
             )
-        )
 
     def do_export_plan_action(self, count_id):
         count = models.Count.objects.get(id=count_id)
@@ -640,6 +676,12 @@ class Comptages(QObject):
                     qs = qs.filter(status=definitions.IMPORT_STATUS_DEFINITIVE)
 
                 qs.delete()
+                call_command("tjmreset")
+                QgsMessageLog.logMessage(
+                    "Les TJMs ont été réinitialisés; rouvrir cette fenêtre pour afficher les données actualisées!",
+                    "Comptages",
+                    Qgis.Info,
+                )
 
     def enable_actions_if_needed(self):
         """Enable actions if the plugin is connected to the db

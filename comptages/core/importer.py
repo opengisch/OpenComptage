@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Iterator, List, Optional
+from typing import Callable, Iterator, Optional
 import pytz
 import os
 from datetime import datetime, timedelta
@@ -9,8 +9,9 @@ from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
 
 
-def simple_print_callback(progress):
-    print(f"Importing... {progress}%")
+def simple_print_callback(progress: int):
+    if progress % 10 == 0:
+        print(f"Importing... {progress}%")
 
 
 def import_file(file_path: str, count, callback_progress=simple_print_callback):
@@ -106,7 +107,7 @@ def _parse_and_write(
     bulk_mgr.done()
 
 
-def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_vbv1(line: str, **kwargs) -> Optional[list[dict]]:
     if line.startswith("* "):
         return None
 
@@ -155,7 +156,7 @@ def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
     return [parsed_line]
 
 
-def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_mc(line: str, **kwargs) -> Optional[list[dict]]:
     if not line.startswith("20"):
         return None
 
@@ -182,7 +183,7 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
         parsed_line["category"] = int(line[51:54].strip())
         parsed_line["height"] = ""
         parsed_line["times"] = 1
-    except ValueError as e:
+    except ValueError:
         # QgsMessageLog.logMessage(
         #     'ValueError: {}'.format(e),  'Comptages', Qgis.Info)
 
@@ -192,7 +193,7 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
     return [parsed_line]
 
 
-def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
+def _parse_line_int2(line, **kwargs) -> Iterator[Optional[dict]]:
     if line.startswith("* "):
         return None
 
