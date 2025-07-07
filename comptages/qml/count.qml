@@ -345,23 +345,23 @@
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
     <columns>
       <column width="-1" hidden="0" type="field" name="id"/>
-      <column width="-1" hidden="0" type="field" name="start_service_date"/>
-      <column width="-1" hidden="0" type="field" name="end_service_date"/>
-      <column width="-1" hidden="0" type="field" name="start_put_date"/>
-      <column width="-1" hidden="0" type="field" name="end_put_date"/>
       <column width="-1" hidden="0" type="field" name="start_process_date"/>
       <column width="-1" hidden="0" type="field" name="end_process_date"/>
+      <column width="-1" hidden="0" type="field" name="start_put_date"/>
+      <column width="-1" hidden="0" type="field" name="end_put_date"/>
+      <column width="-1" hidden="0" type="field" name="start_service_date"/>
+      <column width="-1" hidden="0" type="field" name="end_service_date"/>
+      <column width="-1" hidden="0" type="field" name="Periode speciale"/>
       <column width="-1" hidden="0" type="field" name="valid"/>
       <column width="-1" hidden="0" type="field" name="dysfunction"/>
       <column width="-1" hidden="0" type="field" name="remarks"/>
-      <column width="-1" hidden="0" type="field" name="id_model"/>
-      <column width="-1" hidden="0" type="field" name="id_device"/>
       <column width="-1" hidden="0" type="field" name="id_sensor_type"/>
       <column width="-1" hidden="0" type="field" name="id_class"/>
+      <column width="-1" hidden="0" type="field" name="id_model"/>
+      <column width="-1" hidden="0" type="field" name="id_device"/>
       <column width="-1" hidden="0" type="field" name="id_installation"/>
-      <column width="-1" hidden="0" type="actions"/>
-      <column width="-1" hidden="0" type="field" name="Periode speciale"/>
       <column width="-1" hidden="0" type="field" name="tjm"/>
+      <column width="-1" hidden="0" type="actions"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -408,6 +408,7 @@ def on_dialog_changed(dialog, attribute, value, attributeChanged):
     <attributeEditorField showLabel="1" index="13" name="id_model"/>
     <attributeEditorField showLabel="1" index="11" name="id_device"/>
     <attributeEditorField showLabel="1" index="12" name="id_installation"/>
+    <attributeEditorField showLabel="1" index="17" name="tjm"/>
   </attributeEditorForm>
   <editable>
     <field editable="0" name="Periode speciale"/>

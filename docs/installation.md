@@ -62,31 +62,35 @@ If starting from zero, restore a backup of opencomptages database or follow [Dev
 
 ### Deploying plugin
 
-1. Look into `requirements.txt` file and install dependencies by opening QGIS > Python Console:
+1. Make sure Django will be aware of GDAL by setting `GDAL_LIBRARY_PATH` environment variable in QGIS settings.
+You'll have to find the GDAL dll path in the `bin` folder of your QGIS installation.
+For instance `C:/Program Files/QGIS 3.36.3/bin/gdal309.dll`.
+
+2. Look into `requirements.txt` file and install dependencies by opening QGIS > Python Console:
 
 ```python
 subprocess.check_call(['python', '-m', 'pip', 'install', '<package_1>', '<package_n*>'])
 ```
 
-2. Deploy to your custom qgis plugin repository:
+3. Deploy to your custom qgis plugin repository:
 
 ```powershell
 cd .\scripts\windows
 .\deploy.ps1
 ```
 
-3. Install plugin from your custom repository.
+4. Install plugin from your custom repository.
 
-4. Make sure the user in the plugin settings is owner of the database otherwise migrations will not work.
+5. Make sure the user in the plugin settings is owner of the database otherwise migrations will not work.
 
-5. Run migrations. Open Python console in QGIS:
+6. Run migrations. Open Python console in QGIS:
 
 ```python
 from django.core.management import call_command
 call_command('migrate', 'comptages')
 ```
 
-6. Revert ownership of database if required
+7. Revert ownership of database if required
 
 ## Recalculate TJM of the counts
 

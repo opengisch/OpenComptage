@@ -1,6 +1,6 @@
-from typing import Callable, Dict, Iterator, List, Optional
-import pytz
-import os
+from typing import Callable, Iterator, Optional
+from pytz import timezone
+from os import path
 from datetime import datetime, timedelta
 from django.db.models import Q
 
@@ -8,9 +8,12 @@ from comptages.core import definitions
 from comptages.datamodel import models
 from comptages.core.bulk_create_manager import BulkCreateManager
 
+TZ = timezone("Europe/Zurich")
 
-def simple_print_callback(progress):
-    print(f"Importing... {progress}%")
+
+def simple_print_callback(progress: int):
+    if progress % 10 == 0:
+        print(f"Importing... {progress}%")
 
 
 def import_file(file_path: str, count, callback_progress=simple_print_callback):
@@ -50,8 +53,8 @@ def _parse_and_write(
     from_aggregate: bool = False,
     **kwargs,
 ):
-    basename = os.path.basename(file_path)
-    bulk_mgr = BulkCreateManager(chunk_size=1000)
+    basename = path.basename(file_path)
+    bulk_mgr = BulkCreateManager(chunk_size=500)
     lanes = _populate_lane_dict(count)
     directions = _populate_direction_dict(count)
     cat_bins = _populate_category_dict(count)
@@ -101,20 +104,21 @@ def _parse_and_write(
                     )
 
     except Exception as e:
+        print(f"_parse_and_write - Une erreur est survenue, la categorie {row['category']} n'est probablement pas disponible"
+              " dans la classification utilisée par ce comptage !")
         raise e
 
     bulk_mgr.done()
 
 
-def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_vbv1(line: str, **kwargs) -> Optional[list[dict]]:
     if line.startswith("* "):
         return None
 
     parsed_line = {}
-    tz = pytz.timezone("Europe/Zurich")
     try:
         parsed_line["numbering"] = line[0:6]
-        parsed_line["timestamp"] = tz.localize(
+        parsed_line["timestamp"] = TZ.localize(
             datetime.strptime("{}0000".format(line[7:24]), "%d%m%y %H%M %S %f")
         )
         parsed_line["reserve_code"] = line[25:31]
@@ -134,38 +138,42 @@ def _parse_line_vbv1(line: str, **kwargs) -> Optional[List[Dict]]:
         parsed_line["distance_front_back"] = float(line[42:46])
         parsed_line["speed"] = int(line[47:50])
         parsed_line["length"] = int(line[52:56])
-        parsed_line["category"] = int(line[60:62].strip())
+        parsed_line["category"] = int(line[60:62])
         parsed_line["height"] = line[63:65].strip()
 
         # If the speed of a vehicle is 0, we put it in the category 0
         if parsed_line["speed"] == 0:
+            print('_parse_line_vbv1 - "speed" est égal à 0 km/h !  -> véhicule passé en TRASH')
             parsed_line["category"] = 0
 
         # If the speed of a vehicle is greater than 3*max_speed or 150km/h
         # TODO: get actual speed limit of the section
         if parsed_line["speed"] > 150:
+            print(f'_parse_line_vbv1 - "speed={parsed_line["speed"]}" est supérieur à 150 kmh !  -> véhicule passé en TRASH')
             parsed_line["category"] = 0
 
     except ValueError:
         if "lane" not in parsed_line:
+            print(f'_parse_line_vbv1 - Erreur: véhicule sans voie ({line})')
             return None
         if "direction" not in parsed_line:
+            print(f'_parse_line_vbv1 - Erreur: véhicule sans direction ({line})')
             return None
+        print(f'_parse_line_vbv1 - parsed_line(!exception!): {parsed_line}')
 
     return [parsed_line]
 
 
-def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
+def _parse_line_mc(line: str, **kwargs) -> Optional[list[dict]]:
     if not line.startswith("20"):
         return None
 
     parsed_line = {}
     try:
-        tz = pytz.timezone("Europe/Zurich")
         # TODO: numbering
         numbering = 1
         parsed_line["numbering"] = numbering
-        parsed_line["timestamp"] = tz.localize(
+        parsed_line["timestamp"] = TZ.localize(
             datetime.strptime(line[0:19], "%Y-%m-%d %H:%M:%S")
         )
         # On MetroCount files, the direction is 0-1 instead of 1-2
@@ -182,7 +190,7 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
         parsed_line["category"] = int(line[51:54].strip())
         parsed_line["height"] = ""
         parsed_line["times"] = 1
-    except ValueError as e:
+    except ValueError:
         # QgsMessageLog.logMessage(
         #     'ValueError: {}'.format(e),  'Comptages', Qgis.Info)
 
@@ -192,12 +200,11 @@ def _parse_line_mc(line: str, **kwargs) -> Optional[List[Dict]]:
     return [parsed_line]
 
 
-def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
+def _parse_line_int2(line, **kwargs) -> Iterator[Optional[dict]]:
     if line.startswith("* "):
         return None
 
     parsed_line = {}
-    tz = pytz.timezone("Europe/Zurich")
     # TODO: numbering
     numbering = 1
     parsed_line["numbering"] = numbering
@@ -205,10 +212,10 @@ def _parse_line_int2(line, **kwargs) -> Iterator[Optional[Dict]]:
     # instead of 0000 of the next day
     if line[7:9] == "24":
         line = line[:7] + "00" + line[9:]
-        end = tz.localize(datetime.strptime("{}".format(line[0:11]), "%d%m%y %H%M"))
+        end = TZ.localize(datetime.strptime("{}".format(line[0:11]), "%d%m%y %H%M"))
         end += timedelta(days=1)
     else:
-        end = tz.localize(datetime.strptime("{}".format(line[0:11]), "%d%m%y %H%M"))
+        end = TZ.localize(datetime.strptime("{}".format(line[0:11]), "%d%m%y %H%M"))
 
     parsed_line["end"] = end
     parsed_line["start"] = parsed_line["end"] - timedelta(minutes=kwargs["interval"])
@@ -293,7 +300,6 @@ def _get_int_bins(
 
 def _parse_file_header(file_path: str):
     file_header = dict()
-    tz = pytz.timezone("Europe/Zurich")
 
     with open(file_path, encoding=get_file_encoding(file_path)) as f:
         for line in f:
@@ -307,12 +313,12 @@ def _parse_file_header(file_path: str):
                     if key == "CLASS" and value == "SPECIAL10":
                         value = "SWISS10"
                     if key in ["STARTREC", "STOPREC"]:
-                        value = tz.localize(datetime.strptime(value, "%H:%M %d/%m/%y"))
+                        value = TZ.localize(datetime.strptime(value, "%H:%M %d/%m/%y"))
                     file_header[key] = value
             # MetroCount
             elif line.startswith("MetroCount"):
                 file_header["FORMAT"] = "MC"
-            elif line.startswith("Place"):
+            elif line.startswith("Place") and "SITE" not in file_header:
                 file_header["SITE"] = line[line.find("[") + 1 : line.find("]")].replace(
                     "-", ""
                 )
@@ -321,11 +327,11 @@ def _parse_file_header(file_path: str):
                 and file_header["FORMAT"] == "MC"
                 and "STARTREC" not in file_header
             ):
-                file_header["STARTREC"] = tz.localize(
+                file_header["STARTREC"] = TZ.localize(
                     datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S")
                 )
             elif line.startswith("20") and file_header["FORMAT"] == "MC":
-                file_header["STOPREC"] = tz.localize(
+                file_header["STOPREC"] = TZ.localize(
                     datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S")
                 )
             elif line.startswith("Type de Cat") and file_header["FORMAT"] == "MC":
@@ -336,8 +342,12 @@ def _parse_file_header(file_path: str):
                     file_header["CLASS"] = "NZ13"
                 elif file_header["CLASS"][:5] == "FHWA ":
                     file_header["CLASS"] = "FHWA13"
-                elif file_header["CLASS"] == "CAT-Cycle_dist-empat":
-                    file_header["CLASS"] = "SPCH-MD 5C"
+                elif file_header["CLASS"] in (
+                    "CAT-Cycle_dist-empat",
+                    "SPCH-MD5C",
+                    "SPCH-MD 5C",
+                ):
+                    file_header["CLASS"] = "SPCH-MD_5C"
 
     return file_header
 

@@ -30,14 +30,16 @@ class ImporterTask(QgsTask):
     def finished(self, result: Any):
         if result:
             QgsMessageLog.logMessage(
-                "{} - Import file {} ended".format(datetime.now(), self.basename),
+                "{} - Task import for file {} created".format(
+                    datetime.now(), self.basename
+                ),
                 "Comptages",
                 Qgis.Info,
             )
 
         else:
             QgsMessageLog.logMessage(
-                "{} - Import file {} ended with errors: {}".format(
+                "{} - Task import creation for file {} ended with errors: {}".format(
                     datetime.now(), self.basename, self.exception
                 ),
                 "Comptages",
